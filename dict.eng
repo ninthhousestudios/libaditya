@@ -1,0 +1,122 @@
+[PLANETS]
+Sun = Sun
+Moon = Moon
+Mercury = Mercury
+Venus = Venus
+Mars = Mars
+Jupiter = Jupiter
+Saturn = Saturn
+Uranus = Uranus
+Neptune = Neptune
+Pluto = Pluto
+Ketu = Ketu
+Rahu = Rahu
+Earth = Earth
+
+[RASIS]
+Aries = Aries
+Taurus = Taurus
+Gemini = Gemini
+Cancer = Cancer
+Leo = Leo       
+Virgo = Virgo
+Libra = Libra
+Scorpio = Scorpio
+Sagittarius = Sagittarius
+Capricorn = Capricorn
+Aquarius = Aquarius
+Pisces = Pisces
+
+[KARANA]
+Kimtughna = Kimtughna
+Bava = Bava
+Balava = Balava
+Kaulava = Kaulava
+Taitula = Taitula
+Garija = Garija
+Vanija = Vanija
+Vishti = Vishti
+Shakuni = Shakuni
+Chatushpada = Chatushpada
+Naga = Naga
+
+[NAKSHATRA]
+Ashvini = Ashvini
+Bharani = Bharani
+Krittika = Krittika
+Rohini = Rohini
+Mrigashira = Mrigashira
+Ardra = Ardra
+Punarvasu = Punarvasu
+Pushya = Pushya
+Ashlesha = Ashlesha
+Magha = Magha
+Purva Phalguni = P. Phalguni
+Uttara Phalguni = U. Phalguni
+Hasta = Hasta
+Chitra = Chitra
+Svati = Svati
+Vishakha = Vishakha
+Anuradha = Anuradha
+Jyeshtha = Jyeshtha
+Mula = Mula
+Purva Ashadha = P. Ashadha
+Uttara Ashadha = U. Ashadha
+Shravana = Shravana
+Danishtha = Danishtha
+Shatabhisha = Shatabhisha
+Purva Bhadrapada = P. Bhadrapada
+Uttara Bhadrapada = U. Bhadrapada
+Revati = Revati
+  
+[VARA]
+Ravivara = Ravivara
+Somavara = Somavara
+Mangalavara = Mangalavara
+Budhavara = Budhavara
+Guruvara = Guruvara
+Shukravara = Shukravara
+Shanivara = Shanivara
+
+[YOGAS]
+Vishkambha = Vishkambha
+Priti = Priti
+Ayushman = Ayushman
+Saubhagya = Saubhagya
+Shobana = Shobana
+Atiganda = Atiganda
+Sukarma = Sukarma
+Dhriti = Dhriti
+Shoola = Shoola
+Ganda = Ganda
+Vriddhi = Vriddhi
+Dhruva = Dhruva
+Vyaghata = Vyaghata
+Harshana = Harshana
+Vajra = Vajra
+Siddhi = Siddhi
+Vyatipata = Vyatipata
+Variyan = Variyan
+Parigha = Parigha
+Shiva = Shiva
+Siddha = Siddha
+Sadhya = Sadhya
+Shubha = Shubha
+Shukla = Shukla
+Brahma = Brahma
+Indra = Indra
+Vaidhriti = Vaidhriti
+
+[ADITYAS]
+Aryama = Aryama
+Mitra = Mitra
+Varuna = Varuna
+Indra = Indra
+Vivasvan = Vivasvan
+Tvashta = Tvashta
+Vishnu = Vishnu
+Amshu = Amshu
+Bhaga = Bhaga
+Pusha = Pusha
+Parjanya = Parjanya
+Dhata = Dhata
