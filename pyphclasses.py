@@ -191,6 +191,16 @@ class Planet:
             )[1][0]
         )
 
+    def daily_motion(self, sysflag=pglob.ECL):
+        """
+        return daily motion in degress that the planet traverses
+        in the next 24 hours from self.julianday
+        """
+        return (
+            (swe.calc_ut(self.jd + 1, self.pnumber, sysflag)[0][0])
+            - (swe.calc_ut(self.jd, self.pnumber, sysflag)[0][0])
+        )
+
     def table_list(self, sysflg=pglob.ECL):
         """
         add planet name to self.get_coords(sysflg)
