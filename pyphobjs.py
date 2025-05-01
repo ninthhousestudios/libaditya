@@ -32,6 +32,43 @@ class Moon(Planet):
         super().__init__(swe.MOON, julianday)
 
 
+class Rahu(Planet):
+    def __init__(self, julianday=JulianDay()):
+        super().__init__(pglob.true_node, julianday)
+        self.planet_name = "Rahu"
+
+
+class Ketu(Planet):
+    def __init__(self, julianday=JulianDay()):
+        super().__init__(pglob.true_node, julianday)
+        self.planet_name = "Ketu"
+        self.coords[0] = (self.coords[0] - 180) % 360
+
+    def get_coords(self, sysflg=pglob.ECL):
+        """
+        return swe.calc_ut tuple for coords of Planet at time self.jd
+        sysflg tells what kind of coordinates: ECL,EQU,HELIO,BARY
+        """
+        coords = list(swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0])
+        return [(coords[0] - 180) % 360] + coords[1:]
+
+    def init_nakshatra(self, ayanamsa=pglob.ayanamsa):
+        if ayanamsa == 98:
+            return self.init_dhruvequ()
+        swe.set_sid_mode(ayanamsa)
+        sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
+        sidlong = (sidlong - 180) % 360
+        return sidlong, putil.nakshatra_index(sidlong)
+
+    def init_dhruvequ(self):
+        swe.set_sid_mode(36)
+        aval = swe.get_ayanamsa(self.jd)
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        sidlong = (equlong - aval) % 360
+        sidlong = (sidlong - 180) % 360
+        return sidlong, putil.nakshatra_index(sidlong)
+
+
 class Panchanga(JulianDay):
     def __init__(self, julianday=JulianDay()):
         super().__init__(julianday.jd)

@@ -2,6 +2,7 @@ import swisseph as swe
 import pyphglobals as pglob
 import pyphutils as putil
 from pyphclasses import *
+from pyphobjs import *
 from prettytable import PrettyTable
 
 # printing functions for pyphemeris
@@ -17,10 +18,8 @@ def init_Planets(tjd=JulianDay()):
     planets = []
     for i in range(10):
         planets.append(Planet(i, tjd))  # Planet takes a JulianDay class, tjd
-    planets.append(Planet(pglob.true_node, tjd))
-    planets[pglob.ketu].planet_name = "Ketu"
-    planets.append(Planet(pglob.true_node, tjd))
-    planets[pglob.rahu].planet_name = "Rahu"
+    planets.append(Rahu(tjd))
+    planets.append(Ketu(tjd))
     # must use swe.EARTH=14, if changed will given wrong results
     # plgob.earth is 12 since it indexes
     planets.append(Planet(swe.EARTH, tjd))
@@ -72,10 +71,12 @@ def planets_str(tjd=JulianDay(), sysflg=0):
 
     # if getting ECL or EQU, add Rahu and Ketu
     if sysflg == pglob.ECL or sysflg == pglob.EQU:
-        output.add_row(Planets[pglob.rahu].table_list(sysflg))
-        ketuls = Planets[pglob.ketu].table_list(sysflg)
-        ketuls[1] = pglob.sign_func((Planets[pglob.rahu].coords[0] - 180) % 360)
-        output.add_row(ketuls)
+        # output.add_row(Planets[pglob.rahu].table_list(sysflg))
+        # ketuls = Planets[pglob.ketu].table_list(sysflg)
+        # ketuls[1] = pglob.sign_func((Planets[pglob.rahu].coords[0] - 180) % 360)
+        # output.add_row(ketuls)
+        output.add_row(Planets[10].table_list(sysflg))
+        output.add_row(Planets[11].table_list(sysflg))
 
     # if helio or bary coordinates, dont add rahu or ketu but add earth
     if sysflg == pglob.HELIO or sysflg == pglob.BARY:
@@ -102,10 +103,10 @@ def print_Cusps(loc=Location(), tjd=JulianDay()):
     print(output)
 
 
-def print_planet_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
+def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
     print("\nNakshatras of the planets:")
     print(tjd)
-    print(f"{swe.get_ayanamsa_name(ayanamsa)}")
+    print(f"Got #{ayanamsa}: {swe.get_ayanamsa_name(ayanamsa)}")
     print(pnakshatra_str(tjd, ayanamsa))
 
 
@@ -115,22 +116,24 @@ def pnakshatra_str(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
     output.field_names = ["Planet", "Nakshatra", "Percent Elapsed"]
     output.align["Planet"] = "l"
     output.align["Nakshatra"] = "l"
-    output.align["Percent Elapsed"] = "l"
+    output.align["Percent Elapsed"] = "r"
 
     for i in range(10):
-        output.add_row(planets[i].nakshatra_table_list())
+        output.add_row(planets[i].nakshatra_table_list(ayanamsa))
 
-    ketulong = (planets[pglob.rahu].sidlong - 180) % 360
-    output.add_row(planets[pglob.rahu].nakshatra_table_list())
-    ketunindex = putil.nakshatra_index(ketulong)
-    output.add_row(
-        list(
-            (
-                "Ketu",
-                pglob.nakshatra[ketunindex],
-                round(((ketulong - ketunindex * pglob.nak) / pglob.nak) * 100, 2),
-            )
-        )
-    )
+    output.add_row(planets[10].nakshatra_table_list(ayanamsa))
+    output.add_row(planets[11].nakshatra_table_list(ayanamsa))
+    # ketulong = (planets[pglob.rahu].sidlong - 180) % 360
+    # output.add_row(planets[pglob.rahu].nakshatra_table_list())
+    # ketunindex = putil.nakshatra_index(ketulong)
+    # output.add_row(
+    #    list(
+    #        (
+    #            "Ketu",
+    #            pglob.nakshatra[ketunindex],
+    #            round(((ketulong - ketunindex * pglob.nak) / pglob.nak) * 100, 2),
+    #        )
+    #    )
+    # )
 
     return output.get_string()

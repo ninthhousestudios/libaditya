@@ -63,6 +63,26 @@ class JulianDay:
         """return the jd that is at midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
 
+    def shift(self, dir, unit, number):
+        """
+        shift the julianday in 'dir'ection 'f'orward or 'b'ackward
+        by number units, 'second','minute','hour','day','month','year'
+        """
+        sf = 1
+        if dir == "b":
+            sf = -1
+        if unit == "second":
+            sf = sf * pglob.onesecjd
+        if unit == "minute":
+            sf = sf * pglob.oneminjd
+        if unit == "hour":
+            sf = sf * pglob.onehrjd
+        if unit == "day":
+            sf = sf * pglob.onedayjd
+        if unit == "year":
+            sf = sf * pglob.oneyearjd
+        return JulianDay(self.jd + (number * sf))
+
     def usrdt(self):
         """
         transform utc time into user specified time with pglob.utcoffset and timezone string
@@ -117,14 +137,6 @@ class JulianDay:
         return (usryear, usrmonth, usrday, usrhr)
 
 
-"""
-Planet inherits from JulianDay because in calculation we
-always are using a specific planet at a specific time
-
-It isn't quite right, but let us see if it works
-"""
-
-
 class Location:
     def __init__(
         self,
@@ -165,7 +177,6 @@ class Planet:
         self.julianday = julianday  # the JulianDay class of this planet
         self.jd = self.julianday.jd
         self.coords = self.get_coords()
-        self.sidlong, self.nindex = self.init_nakshatra()
 
     def __str__(self):
         return f"{self.planet_name} on {self.julianday}"
@@ -203,14 +214,26 @@ class Planet:
         )
 
     def init_nakshatra(self, ayanamsa=pglob.ayanamsa):
+        if ayanamsa == 98:
+            return self.init_dhruvequ()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         return sidlong, putil.nakshatra_index(sidlong)
 
-    def nakshatra_table_list(self):
+    def init_dhruvequ(self):
+        swe.set_sid_mode(36)
+        aval = swe.get_ayanamsa(self.jd)
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        sidlong = (equlong - aval) % 360
+        return sidlong, putil.nakshatra_index(sidlong)
+
+    def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
+        sidlong, nindex = self.init_nakshatra(ayanamsa)
         pname = self.planet_name
-        nname = pglob.nakshatra[self.nindex]
-        elapsed = round(((self.sidlong - self.nindex * pglob.nak) / pglob.nak) * 100, 2)
+        nname = pglob.nakshatra[nindex]
+        in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
+        percent_elapsed = round((in_nak_long / pglob.nak) * 100, 2)
+        elapsed = f"{in_nak_long} deg ({percent_elapsed} %)"
         return list((pname, nname, elapsed))
 
     def nakshatra(self):

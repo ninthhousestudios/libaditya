@@ -93,7 +93,8 @@ def main():
 
     if args.ayanamsa:
         pglob.ayanamsa = int(args.ayanamsa)
-    print_planet_nakshatras(ephtime, pglob.ayanamsa)
+    print(f"Using ayanamsa {pglob.ayanamsa}")
+    print_planets_nakshatras(ephtime, pglob.ayanamsa)
 
     if pglob.show_adityas:
         pglob.signs = pglob.adityas
