@@ -21,8 +21,6 @@ def init_Planets(tjd=JulianDay()):
     planets[pglob.ketu].planet_name = "Ketu"
     planets.append(Planet(pglob.true_node, tjd))
     planets[pglob.rahu].planet_name = "Rahu"
-    print(f"Rahu: {planets[pglob.rahu].coords[0]}")
-    print(f"Ketu: {planets[pglob.ketu].coords[0]}")
     # must use swe.EARTH=14, if changed will given wrong results
     # plgob.earth is 12 since it indexes
     planets.append(Planet(swe.EARTH, tjd))
@@ -102,3 +100,37 @@ def print_Cusps(loc=Location(), tjd=JulianDay()):
     print(f"Location: {loc.place()}")
     print(f"Time: {tjd}")
     print(output)
+
+
+def print_planet_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
+    print("\nNakshatras of the planets:")
+    print(tjd)
+    print(f"{swe.get_ayanamsa_name(ayanamsa)}")
+    print(pnakshatra_str(tjd, ayanamsa))
+
+
+def pnakshatra_str(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
+    planets = init_Planets(tjd)
+    output = PrettyTable()
+    output.field_names = ["Planet", "Nakshatra", "Percent Elapsed"]
+    output.align["Planet"] = "l"
+    output.align["Nakshatra"] = "l"
+    output.align["Percent Elapsed"] = "l"
+
+    for i in range(10):
+        output.add_row(planets[i].nakshatra_table_list())
+
+    ketulong = (planets[pglob.rahu].sidlong - 180) % 360
+    output.add_row(planets[pglob.rahu].nakshatra_table_list())
+    ketunindex = putil.nakshatra_index(ketulong)
+    output.add_row(
+        list(
+            (
+                "Ketu",
+                pglob.nakshatra[ketunindex],
+                round(((ketulong - ketunindex * pglob.nak) / pglob.nak) * 100, 2),
+            )
+        )
+    )
+
+    return output.get_string()

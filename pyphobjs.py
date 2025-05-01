@@ -71,11 +71,12 @@ class Panchanga(JulianDay):
         ).isoweekday()  # 1 is Monday
         sunriseyk = self.sun.sunrise_yamakoti()
         if sunriseyk < self.julianday:
-            return pglob.vara[(weekday + 1 % 7)]
+            return pglob.vara[(weekday + 1) % 7]
         else:
             return pglob.vara[weekday % 7]
 
-    # insert nakshatra here
+    def nakshatra(self):
+        return self.moon.nakshatra()
 
     def init_yoga(self):
         yraw = ((self.moon.longitude() + self.sun.longitude()) % 360) / (13 + (20 / 60))

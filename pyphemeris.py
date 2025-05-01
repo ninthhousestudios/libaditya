@@ -91,6 +91,10 @@ def main():
     if pglob.show_baryos:
         print_planets(ephtime, pglob.BARY)
 
+    if args.ayanamsa:
+        pglob.ayanamsa = int(args.ayanamsa)
+    print_planet_nakshatras(ephtime, pglob.ayanamsa)
+
     if pglob.show_adityas:
         pglob.signs = pglob.adityas
         print_planets(ephtime, pglob.ECL)

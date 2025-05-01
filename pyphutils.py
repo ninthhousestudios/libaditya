@@ -6,6 +6,19 @@ module of utility functions for pyphemeris
 """
 
 
+def nakshatra_index(sidlong, n=0):
+    """
+    sidlong is the sidereal longitude of a planet
+    finds the proper index for the nakshatra array
+    n is the index since this is a recursive function;
+    needs to be called with n=0 the first time
+    """
+    if (n * pglob.nak) <= sidlong and sidlong <= ((n + 1) * pglob.nak):
+        return n
+    else:
+        return nakshatra_index(sidlong, n + 1)
+
+
 def yessignize(long):
     """
     return a string with 360degree longitude long given with

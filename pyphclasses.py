@@ -165,6 +165,7 @@ class Planet:
         self.julianday = julianday  # the JulianDay class of this planet
         self.jd = self.julianday.jd
         self.coords = self.get_coords()
+        self.sidlong, self.nindex = self.init_nakshatra()
 
     def __str__(self):
         return f"{self.planet_name} on {self.julianday}"
@@ -200,6 +201,20 @@ class Planet:
             (swe.calc_ut(self.jd + 1, self.pnumber, sysflag)[0][0])
             - (swe.calc_ut(self.jd, self.pnumber, sysflag)[0][0])
         )
+
+    def init_nakshatra(self, ayanamsa=pglob.ayanamsa):
+        swe.set_sid_mode(ayanamsa)
+        sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
+        return sidlong, putil.nakshatra_index(sidlong)
+
+    def nakshatra_table_list(self):
+        pname = self.planet_name
+        nname = pglob.nakshatra[self.nindex]
+        elapsed = round(((self.sidlong - self.nindex * pglob.nak) / pglob.nak) * 100, 2)
+        return list((pname, nname, elapsed))
+
+    def nakshatra(self):
+        return pglob.nakshatra[self.nindex]
 
     def table_list(self, sysflg=pglob.ECL):
         """
@@ -252,3 +267,14 @@ class Cusps:
 
     def house_name(self):
         return self.hname
+
+    def cusps_nakshatras(self, ayanamsa=pglob.ayanamsa):
+        swe.set_sid_mode(ayanamsa)
+        aval = swe.get_ayanamsa(self.jd)
+        sidcusps = []
+        for cusp in self.cusps:
+            sidcusps.append(cusp - aval)
+        cusps_nakshatras = []
+        for sidcusp in sidcusps:
+            cusps_nakshatras.append(pglob.nakshatra[putil.nakshatra_index(sidcusp)])
+        return cusps_nakshatras
