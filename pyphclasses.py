@@ -174,7 +174,7 @@ class Planet:
         return swe.calc_ut tuple for coords of Planet at time self.jd
         sysflg tells what kind of coordinates: ECL,EQU,HELIO,BARY
         """
-        return swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0]
+        return list(swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0])
 
     def longitude(self):
         return self.coords[0]

@@ -168,7 +168,7 @@ def init_names(langfile):
     vara.append(vnames["Ravivara"])
     vara.append(vnames["Somavara"])
     vara.append(vnames["Mangalavara"])
-    vara.append(vnames["Budhvara"])
+    vara.append(vnames["Budhavara"])
     vara.append(vnames["Guruvara"])
     vara.append(vnames["Shukravara"])
     vara.append(vnames["Shanivara"])

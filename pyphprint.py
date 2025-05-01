@@ -17,10 +17,12 @@ def init_Planets(tjd=JulianDay()):
     planets = []
     for i in range(10):
         planets.append(Planet(i, tjd))  # Planet takes a JulianDay class, tjd
-    planets.append(Planet(pglob.ketu, tjd))
+    planets.append(Planet(pglob.true_node, tjd))
     planets[pglob.ketu].planet_name = "Ketu"
     planets.append(Planet(pglob.true_node, tjd))
     planets[pglob.rahu].planet_name = "Rahu"
+    print(f"Rahu: {planets[pglob.rahu].coords[0]}")
+    print(f"Ketu: {planets[pglob.ketu].coords[0]}")
     # must use swe.EARTH=14, if changed will given wrong results
     # plgob.earth is 12 since it indexes
     planets.append(Planet(swe.EARTH, tjd))
@@ -73,7 +75,9 @@ def planets_str(tjd=JulianDay(), sysflg=0):
     # if getting ECL or EQU, add Rahu and Ketu
     if sysflg == pglob.ECL or sysflg == pglob.EQU:
         output.add_row(Planets[pglob.rahu].table_list(sysflg))
-        output.add_row(Planets[pglob.ketu].table_list(sysflg))
+        ketuls = Planets[pglob.ketu].table_list(sysflg)
+        ketuls[1] = pglob.sign_func((Planets[pglob.rahu].coords[0] - 180) % 360)
+        output.add_row(ketuls)
 
     # if helio or bary coordinates, dont add rahu or ketu but add earth
     if sysflg == pglob.HELIO or sysflg == pglob.BARY:
