@@ -81,17 +81,17 @@ class JulianDay:
         by number units, 'second','minute','hour','day','month','year'
         """
         sf = 1
-        if dir == "b":
+        if dir.startswith("b"):
             sf = -1
-        elif unit == "second":
+        elif unit.startswith("s"):
             sf = sf * pglob.onesecjd
-        elif unit == "minute":
+        elif unit.startswith("m"):
             sf = sf * pglob.oneminjd
-        elif unit == "hour":
+        elif unit.startswith("h"):
             sf = sf * pglob.onehrjd
-        elif unit == "day":
+        elif unit.startswith("d"):
             sf = sf * pglob.onedayjd
-        elif unit == "year":
+        elif unit.startswith("y"):
             sf = sf * pglob.oneyearjd
         else:
             print("given unit not recognized")

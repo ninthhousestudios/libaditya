@@ -176,7 +176,7 @@ def print_panchanga_addendum(panch=Panchanga()):
     telapsed = round(panch.tithi_degrees_elapsed(), 2)
     tremaining = round(panch.tithi_degrees_remaining(), 2)
 
-    print("\nTithi:")
+    print(f"\nTithi: {panch.tithi()}")
     print("Elapsed: ", telapsed, " degrees (", round((telapsed / 12) * 100, 2), "%)")
     print(
         "Remaining: ", tremaining, " degree (", round((tremaining / 12) * 100, 2), "%)"
@@ -194,10 +194,10 @@ def print_panchanga_addendum(panch=Panchanga()):
         Location()
     )  # the default location, which should update if the user passes arguments
     print(
-        f"\nSunrise today {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE)}\n"
+        f"\nSunrise {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE)}\n"
     )
     print(
-        f"Sunset today {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET)}\n"
+        f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET)}\n"
     )
 
     hrsnxtvara = (panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd
@@ -206,6 +206,15 @@ def print_panchanga_addendum(panch=Panchanga()):
         f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from now\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
     )
 
+    # give moonrise for three days, the one before, this one, and the one after
+    # yesterpanch = Panchanga(panch.shift("b", "day", 1))
+    # morrowpanch = Panchanga(panch.shift("f", "day", 1))
+    print(
+        f"\nMoonrise {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_RISE)}"
+    )
+    print(
+        f"\nMoonset {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_SET)}"
+    )
     # nakshatra
     ninfo = panch.moon.nakshatra_table_list(pglob.ayanamsa)
     print(f"\nNakshatra: {ninfo[1]}")
@@ -224,7 +233,7 @@ def print_panchanga_addendum(panch=Panchanga()):
     yelapsed = round(panch.yoga_degrees_elapsed(), 2)
     yremaining = round(panch.yoga_degrees_remaining(), 2)
 
-    print("\nYoga:")
+    print(f"\nYoga: {panch.yoga()}")
     print("Elapsed: ", yelapsed, " degrees (", round((yelapsed / 12) * 100, 2), "%)")
     print(
         "Remaining: ", yremaining, " degree (", round((yremaining / 12) * 100, 2), "%)"
@@ -241,6 +250,14 @@ def print_panchanga_addendum(panch=Panchanga()):
 def print_next_new_moon(panch=Panchanga()):
     next = panch.next_new_moon()  # return the Panchanga of the next new moon
     print("\nNext new moon at:")
+    print(next)
+    print(f"In the sign of: {next.moon.sign()}")
+    print(f"Nakshatra: {next.moon.nakshatra()}")
+
+
+def print_next_full_moon(panch=Panchanga()):
+    next = panch.next_full_moon()  # return the Panchanga of the next new moon
+    print("\nNext full moon at:")
     print(next)
     print(f"In the sign of: {next.moon.sign()}")
     print(f"Nakshatra: {next.moon.nakshatra()}")

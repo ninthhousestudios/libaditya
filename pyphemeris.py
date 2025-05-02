@@ -123,6 +123,7 @@ def main():
     print_panchanga(panch)
     print_panchanga_addendum(panch)
     print_next_new_moon(panch)
+    print_next_full_moon(panch)
 
 
 def get_args():
