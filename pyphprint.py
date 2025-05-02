@@ -117,7 +117,7 @@ def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDa
 
     print(f"\nHouse Cusps nakshatras\nwith house system {theCusps.house_name()}")
     if pglob.ayanamsa == 98:
-        print("using Dhurva GC mid-Mula equatorial ayanamsa")
+        print("using Dhruva GC mid-Mula equatorial ayanamsa")
     else:
         print(f"using {swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(f"Location: {loc.place()}")
@@ -129,7 +129,7 @@ def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
     print("\nNakshatras of the planets:")
     print(tjd)
     if ayanamsa == 98:
-        print("Dhurva GC mid-Mula equatorial ayanamsa")
+        print("Dhruva GC mid-Mula equatorial ayanamsa")
     else:
         print(f"{swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(pnakshatra_str(tjd, ayanamsa))
@@ -236,3 +236,11 @@ def print_panchanga_addendum(panch=Panchanga()):
     print(
         f"Ending time of current yoga: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
     )
+
+
+def print_next_new_moon(panch=Panchanga()):
+    next = panch.next_new_moon()  # return the Panchanga of the next new moon
+    print("\nNext new moon at:")
+    print(next)
+    print(f"In the sign of: {next.moon.sign()}")
+    print(f"Nakshatra: {next.moon.nakshatra()}")

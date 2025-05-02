@@ -119,8 +119,10 @@ def main():
             pglob.ayanamsa, Location(lat=pglob.lat, long=pglob.long), ephtime
         )
 
-    print_panchanga(Panchanga(ephtime))
-    print_panchanga_addendum(Panchanga(ephtime))
+    panch = Panchanga(ephtime)
+    print_panchanga(panch)
+    print_panchanga_addendum(panch)
+    print_next_new_moon(panch)
 
 
 def get_args():

@@ -73,6 +73,7 @@ class Panchanga(JulianDay):
     def __init__(self, julianday=JulianDay()):
         super().__init__(julianday.jd)
         self.julianday = julianday
+        self.jd = self.julianday.jd
         self.sun = Sun(
             self
         )  # since Panchanga is a kind of Julian Day, we can pass it to Sun
@@ -139,3 +140,39 @@ class Panchanga(JulianDay):
 
     def yoga_degrees_remaining(self):
         return self.yremaining
+
+    # next next moon and next full moon
+    # its not techincally panchanga
+    # but i need the sun and the moon and the tithi
+    # which is all in the panchanga already
+
+    def next_new_moon(self):
+        """
+        return the JulianDay of the new moon that comes after
+        self.julianday
+        """
+        if (
+            self.tithi() != 30
+        ):  # if the tithi isnt 30, it cant be a new moon, so go forward 8 hours
+            return Panchanga(self.shift("f", "hour", 8)).next_new_moon()
+        if abs(round(self.sun.longitude() - self.moon.longitude(), 4)) <= 0.0001:
+            return self
+        elapsed = self.tithi_degrees_elapsed()
+        remaining = self.tithi_degrees_remaining()
+        # if there are more than x degrees remaining, check a time y forward
+        if remaining > 6:
+            return Panchanga(self.shift("f", "hour", 8)).next_new_moon()
+        elif remaining > 3:
+            return Panchanga(self.shift("f", "hour", 4)).next_new_moon()
+        elif remaining > 1:
+            return Panchanga(self.shift("f", "minute", 30)).next_new_moon()
+        elif remaining > 0.5:
+            return Panchanga(self.shift("f", "minute", 15)).next_new_moon()
+        elif remaining > 0.1:
+            return Panchanga(self.shift("f", "minute", 1)).next_new_moon()
+        elif remaining > 0.01:
+            return Panchanga(self.shift("f", "second", 1)).next_new_moon()
+        elif remaining < 0.001:
+            return Panchanga(self.shift("f", "second", 1 / 4)).next_new_moon()
+        else:
+            return Panchanga(self.shift("f", "second", 1)).next_new_moon()

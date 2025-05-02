@@ -203,7 +203,10 @@ class Planet:
         return list(swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0])
 
     def longitude(self):
-        return self.coords[0]
+        return swe.calc_ut(self.jd, self.pnumber)[0][0]
+
+    def sign(self):
+        return pglob.signs[int(self.longitude() / 30)]
 
     # rising time of this planet on the calendar day of self.julianday
     # rs is the swe flag that indicates rise or set
@@ -313,7 +316,7 @@ class Cusps:
         aval = swe.get_ayanamsa(self.jd)
         sidcusps = []
         for cusp in self.cusps:
-            sidcusps.append(cusp - aval)
+            sidcusps.append((cusp - aval) % 360)
         cusps_nakshatras = []
         for sidcusp in sidcusps:
             cusps_nakshatras.append(pglob.nakshatra[putil.nakshatra_index(sidcusp)])
