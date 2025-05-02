@@ -19,6 +19,10 @@ def nakshatra_index(sidlong, n=0):
         return nakshatra_index(sidlong, n + 1)
 
 
+def ecliptic_obliquity(year):
+    return dms2dec((23, 27, 8.26)) - 0.4684 * (year - 1900)
+
+
 def yessignize(long):
     """
     return a string with 360degree longitude long given with

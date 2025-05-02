@@ -53,6 +53,12 @@ class JulianDay:
     def time(self):
         return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} utc"
 
+    def year(self):
+        return int(self.datetime[0])
+
+    def hour(self):
+        return float(self.datetime[3])
+
     def usrdate(self):
         return f"{putil.date2str(self.usrdatetime)}"
 
@@ -236,8 +242,9 @@ class Planet:
         elapsed = f"{in_nak_long} deg ({percent_elapsed} %)"
         return list((pname, nname, elapsed))
 
-    def nakshatra(self):
-        return pglob.nakshatra[self.nindex]
+    def nakshatra(self, ayanamsa=pglob.ayanamsa):
+        sidlong, nindex = self.init_nakshatra(ayanamsa)
+        return pglob.nakshatra[nindex]
 
     def table_list(self, sysflg=pglob.ECL):
         """
@@ -292,11 +299,31 @@ class Cusps:
         return self.hname
 
     def cusps_nakshatras(self, ayanamsa=pglob.ayanamsa):
+        if ayanamsa == 98:
+            return self.cusps_dhruvequ()
         swe.set_sid_mode(ayanamsa)
         aval = swe.get_ayanamsa(self.jd)
         sidcusps = []
         for cusp in self.cusps:
             sidcusps.append(cusp - aval)
+        cusps_nakshatras = []
+        for sidcusp in sidcusps:
+            cusps_nakshatras.append(pglob.nakshatra[putil.nakshatra_index(sidcusp)])
+        return cusps_nakshatras
+
+    def cusps_dhruvequ(self):
+        swe.set_sid_mode(36)
+        aval = swe.get_ayanamsa(self.jd)
+        equcusps = []  # get equatorial coordinates of cusps from ecliptic ones in self.cusps
+        for cusp in self.cusps:
+            equcusps.append(
+                swe.cotrans(
+                    (cusp, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
+                )[0]
+            )
+        sidcusps = []  # longitude of cusps that will be passed to nakshatra_index
+        for i in range(len(equcusps)):
+            sidcusps.append((equcusps[i] - aval) % 360)
         cusps_nakshatras = []
         for sidcusp in sidcusps:
             cusps_nakshatras.append(pglob.nakshatra[putil.nakshatra_index(sidcusp)])

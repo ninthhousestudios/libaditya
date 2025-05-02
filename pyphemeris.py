@@ -93,7 +93,6 @@ def main():
 
     if args.ayanamsa:
         pglob.ayanamsa = int(args.ayanamsa)
-    print(f"Using ayanamsa {pglob.ayanamsa}")
     print_planets_nakshatras(ephtime, pglob.ayanamsa)
 
     if pglob.show_adityas:
@@ -116,6 +115,12 @@ def main():
         if args.house:
             pglob.hsys = args.house
         print_Cusps(Location(lat=pglob.lat, long=pglob.long), ephtime)
+        print_Cusps_nakshatras(
+            pglob.ayanamsa, Location(lat=pglob.lat, long=pglob.long), ephtime
+        )
+
+    print_panchanga(Panchanga(ephtime))
+    print_panchanga_addendum(Panchanga(ephtime))
 
 
 def get_args():

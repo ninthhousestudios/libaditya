@@ -84,7 +84,7 @@ class Panchanga(JulianDay):
             if (self.tremaining > 6)
             else (self.tithi_int - 1, 1)
         )
-        self.yoga_raw, self.relapsed, self.rremaining = self.init_yoga()
+        self.yoga_raw, self.yelapsed, self.yremaining = self.init_yoga()
         self.yoga_int = int(self.yoga_raw + 1)
 
     def init_tithi(self):

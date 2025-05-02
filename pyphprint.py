@@ -103,10 +103,35 @@ def print_Cusps(loc=Location(), tjd=JulianDay()):
     print(output)
 
 
+def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDay()):
+    theCusps = Cusps(pglob.hsys, loc, tjd)
+    theCusps.init_cusps()
+    output = PrettyTable(["Cusp", "Nakshatra"])
+    output.align["Cusp"] = "r"
+    output.align["Nakshatra"] = "l"
+
+    cusps_nakshatras = theCusps.cusps_nakshatras(ayanamsa)
+
+    for i in range(12):
+        output.add_row([i + 1, cusps_nakshatras[i]])
+
+    print(f"\nHouse Cusps nakshatras\nwith house system {theCusps.house_name()}")
+    if pglob.ayanamsa == 98:
+        print("using Dhurva GC mid-Mula equatorial ayanamsa")
+    else:
+        print(f"using {swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
+    print(f"Location: {loc.place()}")
+    print(f"Time: {tjd}")
+    print(output)
+
+
 def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
     print("\nNakshatras of the planets:")
     print(tjd)
-    print(f"Got #{ayanamsa}: {swe.get_ayanamsa_name(ayanamsa)}")
+    if ayanamsa == 98:
+        print("Dhurva GC mid-Mula equatorial ayanamsa")
+    else:
+        print(f"{swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(pnakshatra_str(tjd, ayanamsa))
 
 
@@ -123,17 +148,66 @@ def pnakshatra_str(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
 
     output.add_row(planets[10].nakshatra_table_list(ayanamsa))
     output.add_row(planets[11].nakshatra_table_list(ayanamsa))
-    # ketulong = (planets[pglob.rahu].sidlong - 180) % 360
-    # output.add_row(planets[pglob.rahu].nakshatra_table_list())
-    # ketunindex = putil.nakshatra_index(ketulong)
-    # output.add_row(
-    #    list(
-    #        (
-    #            "Ketu",
-    #            pglob.nakshatra[ketunindex],
-    #            round(((ketulong - ketunindex * pglob.nak) / pglob.nak) * 100, 2),
-    #        )
-    #    )
-    # )
 
     return output.get_string()
+
+
+def print_panchanga(panch=Panchanga()):
+    print("\nPanchanga")
+    print(panch)
+
+    print(f"\nAbsolute tithi: {panch.tithi()}")
+    if panch.tithi() > 15:
+        print(f"Relative tithi: {panch.tithi() - 15}")
+
+    print(f"Karana: {panch.karana()}")
+    print(f"Vara: {panch.vara()}")
+    print(f"Nakshatra: {panch.moon.nakshatra()}")
+    print(f"Yoga: {panch.yoga()}")
+
+
+def print_panchanga_addendum(panch=Panchanga()):
+    print("\nPanchanga addendum\n")
+
+    dmsun = panch.sun.daily_motion()
+    dmmoon = panch.moon.daily_motion()
+
+    # tithi
+    elapsed = round(panch.tithi_degrees_elapsed(), 2)
+    remaining = round(panch.tithi_degrees_remaining(), 2)
+
+    print("Tithi:")
+    print("Elapsed: ", elapsed, " degrees (", round((elapsed / 12) * 100, 2), "%)")
+    print("Remaining: ", remaining, " degree (", round((remaining / 12) * 100, 2), "%)")
+
+    ending_time = ((remaining) / (dmmoon - dmsun)) * 24
+    ephtime = swe.revjul(panch.jd)
+    ending_clock = (panch.hour() + ending_time) % 24
+    endingjd = panch.jd + (ending_time * pglob.onehrjd)
+    endingday = swe.revjul(endingjd)
+    print(
+        f"Ending time of this tithi: {round(ending_time, 2)} hours from {putil.time2str(putil.dec2dms(panch.hour()))} utc - {putil.time2str(putil.dec2dms(panch.hour() + pglob.utcoffset))} edt on {putil.date2str(ephtime)}"
+    )
+    print(
+        f"        at {putil.time2str(putil.dec2dms(ending_clock))} utc - {putil.time2str(putil.dec2dms(ending_clock + pglob.utcoffset))} edt on {putil.date2str(endingday)}"
+    )
+
+    # yoga
+
+    elapsed = round(panch.yoga_degrees_elapsed(), 2)
+    remaining = round(panch.yoga_degrees_remaining(), 2)
+    print("Yoga:")
+    print("Elapsed: ", elapsed, " degrees (", round((elapsed / 12) * 100, 2), "%)")
+    print("Remaining: ", remaining, " degree (", round((remaining / 12) * 100, 2), "%)")
+
+    ending_time = ((remaining) / (dmmoon - dmsun)) * 24
+    ephtime = swe.revjul(panch.jd)
+    ending_clock = (panch.hour() + ending_time) % 24
+    endingjd = panch.jd + (ending_time * pglob.onehrjd)
+    endingday = swe.revjul(endingjd)
+    print(
+        f"Ending time of this yoga: {round(ending_time, 2)} hours from {putil.time2str(putil.dec2dms(panch.hour()))} utc - {putil.time2str(putil.dec2dms(panch.hour() + pglob.utcoffset))} edt on {putil.date2str(ephtime)}"
+    )
+    print(
+        f"        at {putil.time2str(putil.dec2dms(ending_clock))} utc - {putil.time2str(putil.dec2dms(ending_clock + pglob.utcoffset))} edt on {putil.date2str(endingday)}"
+    )
