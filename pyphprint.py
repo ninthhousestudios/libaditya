@@ -257,7 +257,7 @@ def print_next_new_moon(panch=Panchanga()):
 
 def print_next_full_moon(panch=Panchanga()):
     next = panch.next_full_moon()  # return the Panchanga of the next new moon
-    print("\nNext full moon at:")
+    print("\nNext full moon at: THIS FUNCTION DOES NOT WORK RIGHT")
     print(next)
     print(f"In the sign of: {next.moon.sign()}")
     print(f"Nakshatra: {next.moon.nakshatra()}")

@@ -180,20 +180,3 @@ class Panchanga(JulianDay):
     def next_full_moon(self):
         if self.tithi() != 15:  # if the tithi is not 15 it cant be a full moon
             return Panchanga(self.shift("f", "hours", 8)).next_full_moon()
-        test = abs(round(self.sun.longitude() - self.moon.longitude(), 4))
-        if test >= 179.999 or test <= 180.0001:
-            return self
-        # tithi is 30 but it is not quite the full moon
-        remaining = abs(180 - test)
-        if remaining > 6:
-            return Panchanga(self.shift("f", "hours", 6)).next_full_moon()
-        elif remaining > 3:
-            return Panchanga(self.shift("f", "hours", 3)).next_full_moon()
-        elif remaining > 1:
-            return Panchanga(self.shift("f", "minutes", 15)).next_full_moon()
-        elif remaining < 1:
-            return Panchanga(self.shift("f", "minutes", 1)).next_full_moon()
-        elif remaining < 0.01:
-            return Panchanga(self.shift("f", "seconds", 1)).next_full_moon()
-        else:
-            return Panchanga(self.shift("f", "seconds", 1)).next_full_moon()
