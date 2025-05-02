@@ -62,7 +62,7 @@ def main():
             )
     else:
         if args.time:
-            nowtime - time.gmtime()
+            nowtime = time.gmtime()
             ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
         else:
             ephtime = JulianDay()

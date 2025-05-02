@@ -53,6 +53,9 @@ class JulianDay:
     def time(self):
         return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} utc"
 
+    def timedate(self):
+        return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} utc on {putil.date2str(self.datetime)}"
+
     def year(self):
         return int(self.datetime[0])
 
@@ -64,6 +67,9 @@ class JulianDay:
 
     def usrtime(self):
         return f"{putil.time2str(putil.dec2dms(self.usrdatetime[3]))} {pglob.timezone}"
+
+    def usrtimedate(self):
+        return f"{putil.time2str(putil.dec2dms(self.usrdatetime[3]))} {pglob.timezone} on {putil.date2str(self.usrdatetime)}"
 
     def midnightjd(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
@@ -77,16 +83,18 @@ class JulianDay:
         sf = 1
         if dir == "b":
             sf = -1
-        if unit == "second":
+        elif unit == "second":
             sf = sf * pglob.onesecjd
-        if unit == "minute":
+        elif unit == "minute":
             sf = sf * pglob.oneminjd
-        if unit == "hour":
+        elif unit == "hour":
             sf = sf * pglob.onehrjd
-        if unit == "day":
+        elif unit == "day":
             sf = sf * pglob.onedayjd
-        if unit == "year":
+        elif unit == "year":
             sf = sf * pglob.oneyearjd
+        else:
+            print("given unit not recognized")
         return JulianDay(self.jd + (number * sf))
 
     def usrdt(self):
@@ -162,7 +170,7 @@ class Location:
         return f"{self.placename} at ({self.lat},{self.long})\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def place(self):
-        return f"{self.placename} at ({self.lat},{self.long})"
+        return f"{self.placename} ({self.lat},{self.long})"
 
     def risetrans_location(self):
         return (self.long, self.lat, self.alt)

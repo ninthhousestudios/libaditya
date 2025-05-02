@@ -16,7 +16,7 @@ class Sun(Planet):
     def riseset(self, rs, location=Location()):
         return JulianDay(
             swe.rise_trans(
-                self.julianday.midnightjd(),
+                self.julianday.midnightjd() if (rs == swe.CALC_RISE) else self.jd,
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
                 location.risetrans_location(),

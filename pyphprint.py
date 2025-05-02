@@ -167,47 +167,72 @@ def print_panchanga(panch=Panchanga()):
 
 
 def print_panchanga_addendum(panch=Panchanga()):
-    print("\nPanchanga addendum\n")
+    print("\nPanchanga addendum")
 
     dmsun = panch.sun.daily_motion()
     dmmoon = panch.moon.daily_motion()
 
     # tithi
-    elapsed = round(panch.tithi_degrees_elapsed(), 2)
-    remaining = round(panch.tithi_degrees_remaining(), 2)
+    telapsed = round(panch.tithi_degrees_elapsed(), 2)
+    tremaining = round(panch.tithi_degrees_remaining(), 2)
 
-    print("Tithi:")
-    print("Elapsed: ", elapsed, " degrees (", round((elapsed / 12) * 100, 2), "%)")
-    print("Remaining: ", remaining, " degree (", round((remaining / 12) * 100, 2), "%)")
-
-    ending_time = ((remaining) / (dmmoon - dmsun)) * 24
-    ephtime = swe.revjul(panch.jd)
-    ending_clock = (panch.hour() + ending_time) % 24
-    endingjd = panch.jd + (ending_time * pglob.onehrjd)
-    endingday = swe.revjul(endingjd)
+    print("\nTithi:")
+    print("Elapsed: ", telapsed, " degrees (", round((telapsed / 12) * 100, 2), "%)")
     print(
-        f"Ending time of this tithi: {round(ending_time, 2)} hours from {putil.time2str(putil.dec2dms(panch.hour()))} utc - {putil.time2str(putil.dec2dms(panch.hour() + pglob.utcoffset))} edt on {putil.date2str(ephtime)}"
+        "Remaining: ", tremaining, " degree (", round((tremaining / 12) * 100, 2), "%)"
+    )
+
+    hours_left = ((tremaining) / (dmmoon - dmsun)) * 24
+    end_time = panch.shift("f", "hour", hours_left)
+
+    print(
+        f"Ending time of current tithi: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
+    )
+
+    # vara
+    loc = (
+        Location()
+    )  # the default location, which should update if the user passes arguments
+    print(
+        f"\nSunrise today {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE)}\n"
     )
     print(
-        f"        at {putil.time2str(putil.dec2dms(ending_clock))} utc - {putil.time2str(putil.dec2dms(ending_clock + pglob.utcoffset))} edt on {putil.date2str(endingday)}"
+        f"Sunset today {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET)}\n"
+    )
+
+    hrsnxtvara = (panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd
+    nxtvara = panch.shift("f", "hour", hrsnxtvara)
+    print(
+        f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from now\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
+    )
+
+    # nakshatra
+    ninfo = panch.moon.nakshatra_table_list(pglob.ayanamsa)
+    print(f"\nNakshatra: {ninfo[1]}")
+    print(f"Elapsed: {ninfo[2]}")
+    degremain = pglob.nak - float(ninfo[2].split(" ")[0])
+    print(
+        f"Remaining: {round(degremain, 2)} deg ({round((degremain / pglob.nak) * 100, 2)} %)"
+    )
+    hours_left = (degremain / dmmoon) * 24
+    end_time = panch.shift("f", "hour", hours_left)
+    print(
+        f"Ending time of current nakshatra: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
     )
 
     # yoga
+    yelapsed = round(panch.yoga_degrees_elapsed(), 2)
+    yremaining = round(panch.yoga_degrees_remaining(), 2)
 
-    elapsed = round(panch.yoga_degrees_elapsed(), 2)
-    remaining = round(panch.yoga_degrees_remaining(), 2)
-    print("Yoga:")
-    print("Elapsed: ", elapsed, " degrees (", round((elapsed / 12) * 100, 2), "%)")
-    print("Remaining: ", remaining, " degree (", round((remaining / 12) * 100, 2), "%)")
-
-    ending_time = ((remaining) / (dmmoon - dmsun)) * 24
-    ephtime = swe.revjul(panch.jd)
-    ending_clock = (panch.hour() + ending_time) % 24
-    endingjd = panch.jd + (ending_time * pglob.onehrjd)
-    endingday = swe.revjul(endingjd)
+    print("\nYoga:")
+    print("Elapsed: ", yelapsed, " degrees (", round((yelapsed / 12) * 100, 2), "%)")
     print(
-        f"Ending time of this yoga: {round(ending_time, 2)} hours from {putil.time2str(putil.dec2dms(panch.hour()))} utc - {putil.time2str(putil.dec2dms(panch.hour() + pglob.utcoffset))} edt on {putil.date2str(ephtime)}"
+        "Remaining: ", yremaining, " degree (", round((yremaining / 12) * 100, 2), "%)"
     )
+
+    hours_left = ((yremaining) / (dmmoon - dmsun)) * 24
+    end_time = panch.shift("f", "hour", hours_left)
+
     print(
-        f"        at {putil.time2str(putil.dec2dms(ending_clock))} utc - {putil.time2str(putil.dec2dms(ending_clock + pglob.utcoffset))} edt on {putil.date2str(endingday)}"
+        f"Ending time of current yoga: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
     )
