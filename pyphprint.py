@@ -129,7 +129,9 @@ def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
     print("\nNakshatras of the planets:")
     print(tjd)
     if ayanamsa == 98:
-        print("Dhruva GC mid-Mula equatorial ayanamsa")
+        print("Dhruva GC mid-Mula equatorial coordinates ayanamsa")
+    elif ayanamsa == 99:
+        print("Dhruva GC mid-Mula ecliptic coordinates ayanamsa")
     else:
         print(f"{swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(pnakshatra_str(tjd, ayanamsa))
@@ -261,3 +263,17 @@ def print_next_full_moon(panch=Panchanga()):
     print(next)
     print(f"At: {next.moon.signize()}")
     print(f"Nakshatra: {next.moon.nakshatra()}")
+
+
+def print_dhruva_equ_ecl():
+    eo = putil.ecliptic_obliquity(JulianDay().year())
+    nak = pglob.nak
+    output = PrettyTable(["Equatorial", "Ecliptic"])
+    thisrow = []
+    for i in range(27):
+        thisrow.append(round(nak * i, 3))
+        thisrow.append(round(swe.cotrans((i * nak, 0, 1), eo)[0], 3))
+        output.add_row(thisrow)
+        thisrow = []
+
+    print(output)

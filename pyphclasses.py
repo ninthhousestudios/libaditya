@@ -236,6 +236,8 @@ class Planet:
     def init_nakshatra(self, ayanamsa=pglob.ayanamsa):
         if ayanamsa == 98:
             return self.init_dhruvequ()
+        if ayanamsa == 99:
+            return self.init_dhruvecl()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         return sidlong, putil.nakshatra_index(sidlong)
@@ -246,6 +248,21 @@ class Planet:
         equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
         sidlong = (equlong - aval) % 360
         return sidlong, putil.nakshatra_index(sidlong)
+
+    def init_dhruvecl(self):
+        swe.set_sid_mode(36)
+        aval = swe.get_ayanamsa(self.jd)
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        sidlong = (equlong - aval) % 360
+        # now transform this equatorial (sidereal) longitude into ecliptic longitude
+        eclsidlong = swe.cotrans(
+            (sidlong, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
+        )[0]
+        print(f"getting nakshatra of {self.planet_name}")
+        print(f"equlong  = {equlong}")
+        print(f"sidlong = {sidlong}")
+        print(f"eclsidlong = {eclsidlong}")
+        return eclsidlong, putil.dhruvecl_index(eclsidlong)
 
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
         sidlong, nindex = self.init_nakshatra(ayanamsa)
@@ -322,7 +339,11 @@ class Cusps:
             sidcusps.append((cusp - aval) % 360)
         cusps_nakshatras = []
         for sidcusp in sidcusps:
-            cusps_nakshatras.append(pglob.nakshatra[putil.nakshatra_index(sidcusp)])
+            if ayanamsa == 99:
+                nindex = putil.dhruvecl_index(sidcusp, self.julianday.year())
+            else:
+                nindex = putil.nakshatra_index(sidcusp)
+            cusps_nakshatras.append(pglob.nakshatra[nindex])
         return cusps_nakshatras
 
     def cusps_dhruvequ(self):

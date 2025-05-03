@@ -19,6 +19,36 @@ def nakshatra_index(sidlong, n=0):
         return nakshatra_index(sidlong, n + 1)
 
 
+def dhruvecl_index(sidlong, year=2025, n=0):
+    """
+    generate the nakshatra index for dhruva ecliptic
+    with dhruva eclitpic, the nakshatra boundaries have been projected
+    onto the eclitpic from the equator, so dhruva nakshatras are not
+    equal on the ecliptic, thus we cant index with nakshatra_index,
+    we need to actually build the index of where the nakshatras are,
+    then we can find the right index
+    """
+    ecl_points = build_dhruvecl_boundaries(year)
+    return dindex(sidlong, ecl_points, year, 0)
+
+
+def dindex(sidlong, ecl_points, year=2025, n=0):
+    if ecl_points[n] <= sidlong and sidlong <= ecl_points[n + 1]:
+        return n
+    else:
+        return dindex(sidlong, ecl_points, year, n + 1)
+
+
+def build_dhruvecl_boundaries(year=2025):
+    eo = ecliptic_obliquity(year)
+    nak = pglob.nak
+    ecl_points = []
+    for i in range(27):
+        ecl_points.append(round(swe.cotrans((i * nak, 0, 1), eo)[0], 3))
+    ecl_points.append(360)
+    return ecl_points
+
+
 def ecliptic_obliquity(year):
     return dms2dec((23, 27, 8.26)) - 0.4684 * (year - 1900)
 
