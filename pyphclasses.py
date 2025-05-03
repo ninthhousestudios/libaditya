@@ -268,8 +268,19 @@ class Planet:
         sidlong, nindex = self.init_nakshatra(ayanamsa)
         pname = self.planet_name
         nname = pglob.nakshatra[nindex]
-        in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
-        percent_elapsed = round((in_nak_long / pglob.nak) * 100, 2)
+        if ayanamsa == 99:
+            in_nak_long = round(
+                abs(sidlong - putil.build_dhruvecl_boundaries()[nindex]), 1
+            )
+            this_nak_length = (
+                putil.build_dhruvecl_boundaries()[nindex + 1]
+                - putil.build_dhruvecl_boundaries()[nindex]
+            )
+        else:
+            in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
+            this_nak_length = pglob.nak
+        print(f"sidlong = {sidlong}\nnindex={nindex}\nin_nak_long={in_nak_long}")
+        percent_elapsed = round((in_nak_long / this_nak_length) * 100, 2)
         elapsed = f"{in_nak_long} deg ({percent_elapsed} %)"
         return list((pname, nname, elapsed))
 
