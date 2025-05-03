@@ -179,4 +179,29 @@ class Panchanga(JulianDay):
 
     def next_full_moon(self):
         if self.tithi() != 15:  # if the tithi is not 15 it cant be a full moon
-            return Panchanga(self.shift("f", "hours", 8)).next_full_moon()
+            return Panchanga(self.shift("f", "hours", 12)).next_full_moon()
+        # now tithi = 15, so we can possibly be at the full moon
+        # full moon is when (lsun+180)%360==lmoon
+        test = (round(self.sun.longitude(), 3) - 180) % 360
+        if test == round(self.moon.longitude(), 3):
+            return self
+        remainder = abs(self.moon.longitude() - test)
+        if remainder > 6:  # at least six more degrees until a full moon
+            # moon moves about 1 degree/2 hours, so lets move it 5 degrees forward => 10 hours
+            return Panchanga(self.shift("f", "hours", 4)).next_full_moon()
+        elif remainder > 3:
+            # so moon is between 3 and 6 degrees from full, so lets move it 2 degrees
+            return Panchanga(self.shift("f", "hours", 1)).next_full_moon()
+        elif remainder > 1:
+            # moon is between 1 and 3 degrees from full, so move forward 1 degree
+            return Panchanga(self.shift("f", "hours", 0.5)).next_full_moon()
+        elif remainder > 0.1:
+            # moon is between .1 and  1 degree from full, so move foward about .1 degrees
+            return Panchanga(self.shift("f", "minutes", 1)).next_full_moon()
+        elif remainder > 0.01:
+            # moon is between .01 and .1 degree from full, so move forward about .01 degrees
+            return Panchanga(self.shift("f", "seconds", 5)).next_full_moon()
+        elif remainder > 0.001:
+            return Panchanga(self.shift("f", "seconds", 1 / 2)).next_full_moon()
+        else:
+            return Panchanga(self.shift("f", "seconds", 1)).next_full_moon()

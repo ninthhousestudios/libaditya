@@ -208,6 +208,9 @@ class Planet:
     def sign(self):
         return pglob.signs[int(self.longitude() / 30)]
 
+    def signize(self):
+        return putil.yessignize(self.longitude())
+
     # rising time of this planet on the calendar day of self.julianday
     # rs is the swe flag that indicates rise or set
     def riseset(self, rs, location=Location()):
