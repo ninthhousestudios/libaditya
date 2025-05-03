@@ -240,6 +240,8 @@ class Planet:
             return self.init_dhruvecl()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
+        if self.planet_name == "Ketu":
+            sidlong = (sidlong - 180) % 360
         return sidlong, putil.nakshatra_index(sidlong)
 
     def init_dhruvequ(self):
@@ -247,6 +249,8 @@ class Planet:
         aval = swe.get_ayanamsa(self.jd)
         equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
         sidlong = (equlong - aval) % 360
+        if self.planet_name == "Ketu":
+            sidlong = (sidlong - 180) % 360
         return sidlong, putil.nakshatra_index(sidlong)
 
     def init_dhruvecl(self):
@@ -258,6 +262,8 @@ class Planet:
         eclsidlong = swe.cotrans(
             (sidlong, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
         )[0]
+        if self.planet_name == "Ketu":
+            eclsidlong = (eclsidlong - 180) % 360
         return eclsidlong, putil.dhruvecl_index(eclsidlong)
 
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
