@@ -118,6 +118,8 @@ def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDa
     print(f"\nHouse Cusps nakshatras\nwith house system {theCusps.house_name()}")
     if pglob.ayanamsa == 98:
         print("using Dhruva GC mid-Mula equatorial ayanamsa")
+    if pglob.ayanamsa == 99:
+        print("using Dhruva GC mid-Mula ecliptic coordinates ayanamsa")
     else:
         print(f"using {swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(f"Location: {loc.place()}")

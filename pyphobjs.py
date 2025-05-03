@@ -42,7 +42,7 @@ class Ketu(Planet):
     def __init__(self, julianday=JulianDay()):
         super().__init__(pglob.true_node, julianday)
         self.planet_name = "Ketu"
-        self.coords[0] = (self.coords[0] - 180) % 360
+        self.coords = self.get_coords()
 
     def get_coords(self, sysflg=pglob.ECL):
         """
@@ -55,6 +55,8 @@ class Ketu(Planet):
     def init_nakshatra(self, ayanamsa=pglob.ayanamsa):
         if ayanamsa == 98:
             return self.init_dhruvequ()
+        if ayanamsa == 99:
+            return self.init_dhruvecl()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         sidlong = (sidlong - 180) % 360
@@ -67,6 +69,18 @@ class Ketu(Planet):
         sidlong = (equlong - aval) % 360
         sidlong = (sidlong - 180) % 360
         return sidlong, putil.nakshatra_index(sidlong)
+
+    def init_dhruvecl(self):
+        swe.set_sid_mode(36)
+        aval = swe.get_ayanamsa(self.jd)
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        sidlong = (equlong - aval) % 360
+        sidlong = (sidlong - 180) % 360
+        # now transform this equatorial (sidereal) longitude into ecliptic longitude
+        eclsidlong = swe.cotrans(
+            (sidlong, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
+        )[0]
+        return eclsidlong, putil.dhruvecl_index(eclsidlong)
 
 
 class Panchanga(JulianDay):

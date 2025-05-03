@@ -258,10 +258,6 @@ class Planet:
         eclsidlong = swe.cotrans(
             (sidlong, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
         )[0]
-        print(f"getting nakshatra of {self.planet_name}")
-        print(f"equlong  = {equlong}")
-        print(f"sidlong = {sidlong}")
-        print(f"eclsidlong = {eclsidlong}")
         return eclsidlong, putil.dhruvecl_index(eclsidlong)
 
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
@@ -269,9 +265,7 @@ class Planet:
         pname = self.planet_name
         nname = pglob.nakshatra[nindex]
         if ayanamsa == 99:
-            in_nak_long = round(
-                abs(sidlong - putil.build_dhruvecl_boundaries()[nindex]), 1
-            )
+            in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries()[nindex], 1)
             this_nak_length = (
                 putil.build_dhruvecl_boundaries()[nindex + 1]
                 - putil.build_dhruvecl_boundaries()[nindex]
@@ -279,7 +273,6 @@ class Planet:
         else:
             in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
             this_nak_length = pglob.nak
-        print(f"sidlong = {sidlong}\nnindex={nindex}\nin_nak_long={in_nak_long}")
         percent_elapsed = round((in_nak_long / this_nak_length) * 100, 2)
         elapsed = f"{in_nak_long} deg ({percent_elapsed} %)"
         return list((pname, nname, elapsed))

@@ -33,6 +33,9 @@ def dhruvecl_index(sidlong, year=2025, n=0):
 
 
 def dindex(sidlong, ecl_points, year=2025, n=0):
+    # print(f"dindex n={n}")
+    # print(f"sidlong = {sidlong}")
+    # print(f"{ecl_points[n]} <= {sidlong} <= {ecl_points[n + 1]}")
     if ecl_points[n] <= sidlong and sidlong <= ecl_points[n + 1]:
         return n
     else:
@@ -44,9 +47,16 @@ def build_dhruvecl_boundaries(year=2025):
     nak = pglob.nak
     ecl_points = []
     for i in range(27):
-        ecl_points.append(round(swe.cotrans((i * nak, 0, 1), eo)[0], 3))
+        ecl_points.append(swe.cotrans((i * nak, 0, 1), eo)[0])
     ecl_points.append(360)
     return ecl_points
+
+
+def ketuize(long):
+    """
+    take rahus longitude and make it ketus
+    """
+    return (long - 180) % 360
 
 
 def ecliptic_obliquity(year):
