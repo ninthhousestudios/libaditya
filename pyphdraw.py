@@ -2,6 +2,7 @@ from drawlib.apis import *
 import math
 import pyphglobals as pglob
 import pyphprint
+from pyphconstants import *
 
 pglob.init_names()
 
@@ -23,135 +24,15 @@ def draw_base_chart():
     # draw_adityas()
 
 
-planet_glyphs = [
-    "images/glyphs/sun.png",
-    "images/glyphs/moon.png",
-    "images/glyphs/mercury.png",
-    "images/glyphs/venus.png",
-    "images/glyphs/mars.png",
-    "images/glyphs/jupiter.png",
-    "images/glyphs/saturn.png",
-    "images/glyphs/uranus.png",
-    "images/glyphs/neptune.png",
-    "images/glyphs/pluto.png",
-    "images/glyphs/rahu.png",
-    "images/glyphs/ketu.png",
-    "images/glyphs/earth.png",
-]
-
-# these are coordinates for where to draw planets
-# where to draw the planet obviously depends on the sign,
-# but then also how many planets are in the sign
-# so the arrays will contain a list of tuples
-# that contain the coordinates of successive planets
-
-aries_coords = [
-    (82, 55),
-    (82, 45),
-    (76, 53),
-    (76, 47),
-    (70, 53),
-    (70, 47),
-    (63, 50),
-]
-
-taurus_coords = [
-    (75, 70),
-    (80, 63),
-    (70, 66),
-    (75, 60),
-    (66, 62),
-    (70, 58),
-    (60, 56),
-]
-
-virgo_coords = [
-    (25, 70),
-    (20, 63),
-    (30, 66),
-    (25, 60),
-    (34, 62),
-    (30, 58),
-    (40, 56),
-]
-
-aquarius_coords = [
-    (70, 25),
-    (63, 20),
-    (66, 30),
-    (60, 25),
-    (62, 34),
-    (58, 30),
-    (56, 40),
-]
-
-scorpio_coords = [
-    (25, 30),
-    (20, 37),
-    (30, 34),
-    (25, 40),
-    (34, 38),
-    (30, 42),
-    (40, 44),
-]
-
-cancer_coords = [
-    (55, 82),
-    (45, 82),
-    (53, 76),
-    (47, 76),
-    (53, 70),
-    (47, 70),
-    (50, 63),
-]
-
-libra_coords = [
-    (18, 55),
-    (18, 45),
-    (24, 53),
-    (24, 47),
-    (30, 53),
-    (30, 47),
-    (37, 50),
-]
-
-capricorn_coords = [
-    (55, 18),
-    (45, 18),
-    (53, 24),
-    (47, 24),
-    (53, 30),
-    (47, 30),
-    (50, 37),
-]
-
-coords_list = [
-    aries_coords,
-    taurus_coords,
-    cancer_coords,
-    virgo_coords,
-    libra_coords,
-    scorpio_coords,
-    capricorn_coords,
-    acquarius_coords,
-]
-pwidth = 4
-
-
 def draw_planets():
-    planets = pyphprint.init_Planets()
+    """
+    draw the planets
+    function below draws all the planets in predetermined positions
     for i in range(len(coords_list)):
         for n in range(len(coords_list[i])):
             image(xy=coords_list[i][n], width=pwidth, image=planet_glyphs[n])
-
-
-#    image(xy=(75, 70), width=pwidth, image=planet_glyphs[11])
-#    image(xy=(80, 63), width=pwidth, image=planet_glyphs[9])
-#    image(xy=(70, 66), width=pwidth, image=planet_glyphs[7])
-#    image(xy=(75, 60), width=pwidth, image=planet_glyphs[3])
-#    image(xy=(66, 62), width=pwidth, image=planet_glyphs[0])
-#    image(xy=(70, 58), width=pwidth, image=planet_glyphs[2])
-#    image(xy=(60, 56), width=pwidth, image=planet_glyphs[5])
+    """
+    planets = pyphprint.init_Planets()
 
 
 def draw_heliocentric():
