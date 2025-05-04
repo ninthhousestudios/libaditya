@@ -4,14 +4,14 @@ import pyphglobals as pglob
 
 
 def main():
-    config(width=100, height=100, grid_only=True)
+    config(width=100, height=100, grid_only=False)
     # used typst to make a circle with 12 lines, angles of 30 degrees
     draw_heliocentric()
     # outer edge of the wheel
     donuts(xy=(50, 50), radius=40, width=4)
-    draw_signs()
-    # pglob.init_names()
-    # draw_adityas()
+    # draw_signs()
+    pglob.init_names()
+    draw_adityas()
     save()
 
 
@@ -42,19 +42,23 @@ def draw_signs():
 
 
 def draw_adityas():
-    # now draw sign glyphs onto the circle
-    text(xy=(88, 50), text=pglob.adityas[0])
-    text(xy=(82.5, 70), text=pglob.adityas[1])
-    text(xy=(69, 83), text=pglob.adityas[2])
-    text(xy=(50, 88), text=pglob.adityas[3])
-    text(xy=(31, 83), text=pglob.adityas[4])
-    text(xy=(17.5, 70), text=pglob.adityas[5])
-    text(xy=(12, 50), text=pglob.adityas[6])
-    text(xy=(17.5, 30), text=pglob.adityas[7])
-    text(xy=(31, 17), text=pglob.adityas[8])
-    text(xy=(50, 12), text=pglob.adityas[9])
-    text(xy=(69, 17), text=pglob.adityas[10])
-    text(xy=(82.5, 30), text=pglob.adityas[11])
+    # now draw aditya names on the outside of the circle
+    # these names were very specifically placed
+    text(
+        xy=(95, 50),
+        text=pglob.adityas[0],  # , style=TextStyle(font=FontSerif.COURIER_BOLD)
+    )
+    text(xy=(89, 72), text=pglob.adityas[1])
+    text(xy=(72, 89), text=pglob.adityas[2])
+    text(xy=(50, 94), text=pglob.adityas[3])
+    text(xy=(26, 88), text=pglob.adityas[4])
+    text(xy=(10, 72), text=pglob.adityas[5])
+    text(xy=(5, 50), text=pglob.adityas[6])
+    text(xy=(10, 29), text=pglob.adityas[7])
+    text(xy=(26, 13), text=pglob.adityas[8])
+    text(xy=(50, 5), text=pglob.adityas[9])
+    text(xy=(74, 12), text=pglob.adityas[10])
+    text(xy=(89, 29), text=pglob.adityas[11])
 
 
 main()
