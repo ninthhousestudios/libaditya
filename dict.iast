@@ -1,0 +1,124 @@
+[PLANETS]
+Sun = 
+Moon = 
+Mercury = 
+Venus = 
+Mars = 
+Jupiter = 
+Saturn = 
+Uranus = 
+Neptune = 
+Pluto =
+Ketu = 
+Rahu = 
+
+[RASIS]
+Aries = 
+Taurus = 
+Gemini = 
+Cancer = 
+Leo = 
+Virgo = 
+Libra = 
+Scorpio = 
+Sagittarius = 
+Capricorn = 
+Aquarius = 
+Pisces = 
+
+[KARANA]
+Kimtughna = 
+Bava = 
+Balava = 
+Kaulava = 
+Taitula = 
+Garija = 
+Vanija = 
+Vishti = 
+Shakuni = 
+Chatushpada = 
+Naga
+
+[NAKSHATRA]
+Ashvini = 
+Bharani = 
+Krittika = 
+Rohini = 
+Mrigashira = 
+Ardra = 
+Punarvasu = 
+Pushya = 
+Ashlesha = 
+Magha = 
+Purva Phalguni = 
+Uttara Phalguni = 
+Hasta = 
+Chitra = 
+Svati = 
+Vishakha = 
+Anuradha = 
+Jyeshtha = 
+Mula = 
+Purva Ashadha = 
+Uttara Ashadha = 
+Shravana = 
+Danishtha = 
+Shatabhisha = 
+Purva Bhadrapada = 
+Uttara Bhadrapada = 
+Revati = 
+
+[VARA]
+Ravivara = 
+Somavara = 
+Mangalavara = 
+Budhvara = 
+Guruvara = 
+Shukravara = 
+Shanivara = 
+
+[YOGAS]
+Vishkambha = 
+Priti = 
+Ayushman = 
+Saubhagya = 
+Shobana = 
+Atiganda = 
+Sukarma = 
+Dhriti = 
+Shoola = 
+Ganda = 
+Vriddhi = 
+Dhruva = 
+Vyaghata = 
+Harshana = 
+Vajra = 
+Siddhi = 
+Vyatipata = 
+Variyan = 
+Parigha = 
+Shiva = 
+Siddha = 
+Sadhya = 
+Shubha = 
+Shukla = 
+Brahma = 
+Indra = 
+Vaidhriti = 
+
+[ADITYAS]
+Aryama = 
+Mitra = 
+Varuna = 
+Indra = 
+Vivasvan = 
+Tvashta = 
+Vishnu = 
+Amshu = 
+Bhaga = 
+Pusha = 
+Parjanya = 
+Dhata = 
+
+
+

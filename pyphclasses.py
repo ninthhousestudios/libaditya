@@ -6,6 +6,8 @@ import pyphutils as putil
 nowtime = time.gmtime()
 nowjdfloat = putil.tmod_to_jd(nowtime)
 
+pglob.init_names()
+
 """
 classes take the present as a default
 other defaults come directly from pyphglobals
@@ -187,7 +189,7 @@ class Planet:
 
     def __init__(self, pnumber, julianday=JulianDay()):
         self.pnumber = pnumber
-        self.planet_name = swe.get_planet_name(pnumber)
+        self.planet_name = pglob.planets[pnumber]
         self.julianday = julianday  # the JulianDay class of this planet
         self.jd = self.julianday.jd
         self.coords = self.get_coords()
@@ -205,8 +207,11 @@ class Planet:
     def longitude(self):
         return swe.calc_ut(self.jd, self.pnumber)[0][0]
 
+    def sign_index(self):
+        return int(self.longitude() / 30)
+
     def sign(self):
-        return pglob.signs[int(self.longitude() / 30)]
+        return pglob.signs[self.sign_index]
 
     def signize(self):
         return putil.yessignize(self.longitude())

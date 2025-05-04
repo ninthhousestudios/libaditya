@@ -104,11 +104,10 @@ def init_names(langfile="dict.eng"):
     planets.append(pnames["Uranus"])
     planets.append(pnames["Neptune"])
     planets.append(pnames["Pluto"])
-    planets.append(pnames["Ketu"])
     planets.append(pnames["Rahu"])  # index 11
-    planets.append([])  # index 12
-    planets.append([])  # index 13
-    # we use swe.EARTH, which is 14, though not in loops
+    planets.append(pnames["Ketu"])
+    planets.append([])
+    planets.append([])
     planets.append(pnames["Earth"])
 
     rasis.append(rnames["Aries"])

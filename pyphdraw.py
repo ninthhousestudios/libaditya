@@ -1,18 +1,92 @@
 from drawlib.apis import *
 import math
 import pyphglobals as pglob
+import pyphprint
 
 
-def main():
-    config(width=100, height=100, grid_only=False)
+def draw_chart():
+    draw_base_chart()
+    draw_planets()
+    save()
+
+
+def draw_base_chart():
+    config(width=100, height=100, grid_only=True)
     # used typst to make a circle with 12 lines, angles of 30 degrees
     draw_heliocentric()
+    # draw_barycentric()
     # outer edge of the wheel
     donuts(xy=(50, 50), radius=40, width=4)
-    # draw_signs()
+    draw_signs()
     pglob.init_names()
     draw_adityas()
-    save()
+
+
+planet_glyphs = [
+    "images/glyphs/sun.png",
+    "images/glyphs/moon.png",
+    "images/glyphs/mercury.png",
+    "images/glyphs/venus.png",
+    "images/glyphs/mars.png",
+    "images/glyphs/jupiter.png",
+    "images/glyphs/saturn.png",
+    "images/glyphs/uranus.png",
+    "images/glyphs/neptune.png",
+    "images/glyphs/pluto.png",
+    "images/glyphs/rahu.png",
+    "images/glyphs/ketu.png",
+    "images/glyphs/earth.png",
+]
+
+# these are coordinates for where to draw planets
+# where to draw the planet obviously depends on the sign,
+# but then also how many planets are in the sign
+# so the arrays will contain a list of tuples
+# that contain the coordinates of successive planets
+
+aries_coords = [
+    (82, 55),
+    (82, 45),
+    (76, 53),
+    (76, 47),
+    (70, 53),
+    (70, 47),
+    (63, 50),
+]
+
+cancer_coords = [
+    (55, 82),
+    (45, 82),
+    (53, 76),
+    (47, 76),
+    (53, 70),
+    (47, 70),
+    (50, 63),
+]
+
+libra_coords = [
+    (18, 55),
+    (18, 45),
+    (24, 53),
+    (24, 47),
+    (30, 53),
+    (30, 47),
+    (37, 50),
+]
+
+capricorn_coords = [
+    (55, 18),
+    (45, 18),
+    (53, 24),
+    (47, 24),
+    (53, 30),
+    (47, 30),
+    (50, 37),
+]
+
+
+def draw_planets():
+    planets = pyphprint.init_Planets()
 
 
 def draw_heliocentric():
@@ -61,4 +135,4 @@ def draw_adityas():
     text(xy=(89, 29), text=pglob.adityas[11])
 
 
-main()
+draw_chart()
