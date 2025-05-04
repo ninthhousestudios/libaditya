@@ -3,6 +3,8 @@ import math
 import pyphglobals as pglob
 import pyphprint
 
+pglob.init_names()
+
 
 def draw_chart():
     draw_base_chart()
@@ -18,8 +20,7 @@ def draw_base_chart():
     # outer edge of the wheel
     donuts(xy=(50, 50), radius=40, width=4)
     draw_signs()
-    pglob.init_names()
-    draw_adityas()
+    # draw_adityas()
 
 
 planet_glyphs = [
@@ -54,6 +55,46 @@ aries_coords = [
     (63, 50),
 ]
 
+taurus_coords = [
+    (75, 70),
+    (80, 63),
+    (70, 66),
+    (75, 60),
+    (66, 62),
+    (70, 58),
+    (60, 56),
+]
+
+virgo_coords = [
+    (25, 70),
+    (20, 63),
+    (30, 66),
+    (25, 60),
+    (34, 62),
+    (30, 58),
+    (40, 56),
+]
+
+aquarius_coords = [
+    (70, 25),
+    (63, 20),
+    (66, 30),
+    (60, 25),
+    (62, 34),
+    (58, 30),
+    (56, 40),
+]
+
+scorpio_coords = [
+    (25, 30),
+    (20, 37),
+    (30, 34),
+    (25, 40),
+    (34, 38),
+    (30, 42),
+    (40, 44),
+]
+
 cancer_coords = [
     (55, 82),
     (45, 82),
@@ -84,9 +125,33 @@ capricorn_coords = [
     (50, 37),
 ]
 
+coords_list = [
+    aries_coords,
+    taurus_coords,
+    cancer_coords,
+    virgo_coords,
+    libra_coords,
+    scorpio_coords,
+    capricorn_coords,
+    acquarius_coords,
+]
+pwidth = 4
+
 
 def draw_planets():
     planets = pyphprint.init_Planets()
+    for i in range(len(coords_list)):
+        for n in range(len(coords_list[i])):
+            image(xy=coords_list[i][n], width=pwidth, image=planet_glyphs[n])
+
+
+#    image(xy=(75, 70), width=pwidth, image=planet_glyphs[11])
+#    image(xy=(80, 63), width=pwidth, image=planet_glyphs[9])
+#    image(xy=(70, 66), width=pwidth, image=planet_glyphs[7])
+#    image(xy=(75, 60), width=pwidth, image=planet_glyphs[3])
+#    image(xy=(66, 62), width=pwidth, image=planet_glyphs[0])
+#    image(xy=(70, 58), width=pwidth, image=planet_glyphs[2])
+#    image(xy=(60, 56), width=pwidth, image=planet_glyphs[5])
 
 
 def draw_heliocentric():
