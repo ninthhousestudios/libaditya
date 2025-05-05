@@ -86,6 +86,13 @@ def init_names(langfile=eng):
     global adityas
     global signs
 
+    # because of needing these names in pyphclasses i called init_names()
+    # there, which when i run the whole program thus initializes them twice
+    # which causes the karana especially to not work right
+    # so if planets is not an empty list, then we have already done the names
+    if planets != []:
+        return
+
     pnames = names["PLANETS"]
     rnames = names["RASIS"]
     knames = names["KARANA"]
