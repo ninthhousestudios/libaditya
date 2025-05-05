@@ -1,38 +1,90 @@
 from drawlib.apis import *
 import math
 import pyphglobals as pglob
+import pyphutils as putil
 import pyphprint
+from pyphobjs import *
 from pyphconstants import *
 
 pglob.init_names()
 
 
-def draw_chart():
-    draw_base_chart()
-    draw_planets()
+def draw_chart(sysflg):
+    planets = pyphprint.init_Planets()
+
+    draw_base_chart(pglob.HELIO, "signs")
+    if sysflg == pglob.HELIO:
+        draw_date(planets[0].julianday)
+        # draw_table(pyphprint.planets_str(planets[0].julianday, sysflg))
+        draw_heliocentric_planets(planets)
+
     save()
 
 
-def draw_base_chart():
-    config(width=100, height=100, grid_only=True)
+def draw_base_chart(ctype, signs):
+    config(width=100, height=200, grid_only=True)
     # used typst to make a circle with 12 lines, angles of 30 degrees
-    draw_heliocentric()
-    # draw_barycentric()
+    if ctype == pglob.HELIO:
+        draw_heliocentric()
+    if ctype == pglob.BARY:
+        draw_barycentric()
+
     # outer edge of the wheel
     donuts(xy=(50, 50), radius=40, width=4)
-    draw_signs()
-    # draw_adityas()
+
+    if signs == "signs":
+        draw_signs()
+    if signs == "adityas":
+        draw_adityas()
 
 
-def draw_planets():
+def draw_date(jd=JulianDay()):
+    txt = f"{jd}"
+    utc, usr, julian = txt.split("\n")
+    text(xy=(2, 197), text=utc, style=TextStyle(halign="left"))
+    text(xy=(2, 194), text=usr, style=TextStyle(halign="left"))
+    text(xy=(2, 191), text=julian, style=TextStyle(halign="left"))
+
+
+def draw_heliocentric_planets(planets):
+    # since it is heliocentric, there is no Sun and no Rahu and Ketu
+    # so indexes 1,2,3,4,5,6,7,8,9 and 12 will be printed
+    signs_index = per_sign(planets, pglob.HELIO)
+    for sign in range(12):
+        if len(signs_index[sign]) == 1:
+            image(
+                xy=coords_list[sign][0],
+                width=pwidth,
+                image=planet_glyphs[signs_index[sign][0]],
+            )
+        if len(signs_index[sign]) > 1:
+            for n in range(len(signs_index[sign])):
+                image(
+                    xy=coords_list[sign][n + 1],
+                    width=pwidth,
+                    image=planet_glyphs[signs_index[sign][n]],
+                )
+
+
+def per_sign(planets, sysflg):
     """
-    draw the planets
-    function below draws all the planets in predetermined positions
-    for i in range(len(coords_list)):
-        for n in range(len(coords_list[i])):
-            image(xy=coords_list[i][n], width=pwidth, image=planet_glyphs[n])
+    takes a list of planets, and returns a list of lists of indexes
+    showing what planet is in which sign
+    e.g., if sun and mercury are in aries, then the first element of the list
+    will be the list [0,2], containing the indexes of the planets in the sign
     """
-    planets = pyphprint.init_Planets()
+    signs_index = [
+        [] for _ in range(12)
+    ]  # initialize our empty list with 12 empty lists
+    for i in range(len(planets)):
+        if sysflg == pglob.HELIO:  # skip sun, rahu, ketu
+            if i == 0 or i == 10 or i == 11:
+                continue
+        if sysflg == pglob.BARY:  # skip rahu and ketu
+            if i == 10 or i == 11:
+                continue
+        signs_index[planets[i].sign_index(sysflg)].append(i)
+    return signs_index
 
 
 def draw_heliocentric():
@@ -81,4 +133,4 @@ def draw_adityas():
     text(xy=(89, 29), text=pglob.adityas[11])
 
 
-draw_chart()
+draw_chart(pglob.HELIO)

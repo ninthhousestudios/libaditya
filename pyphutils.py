@@ -73,7 +73,7 @@ def yessignize(long):
         (long % 360) / 30
     )  # mod 360 in case long=360...but it probably wouldnt with swe, right?
     inlong = pglob.round_func(long - (rasi * 30), 4)
-    return f"{inlong} {pglob.signs[rasi]}"
+    return f"{dec2deg(inlong)} {pglob.signs[rasi]}"
 
 
 def nosignize(long):
@@ -112,6 +112,16 @@ def dec2dms(dd):
     minutes, seconds = divmod(dd * 3600, 60)
     degrees, minutes = divmod(minutes, 60)
     return (degrees, minutes, seconds)
+
+
+def dec2deg(dd):
+    """
+    take a decimal dd and return the equivalent DD:MM:SS as a string
+    """
+    dd = abs(dd)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
+    return f"{round(degrees)}:{round(minutes)}:{round(seconds)}"
 
 
 def dms2dec(dms):

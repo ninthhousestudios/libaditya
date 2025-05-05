@@ -204,14 +204,14 @@ class Planet:
         """
         return list(swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0])
 
-    def longitude(self):
-        return swe.calc_ut(self.jd, self.pnumber)[0][0]
+    def longitude(self, sysflg=pglob.ECL):
+        return swe.calc_ut(self.jd, self.pnumber, sysflg)[0][0]
 
-    def sign_index(self):
-        return int(self.longitude() / 30)
+    def sign_index(self, sysflg=pglob.ECL):
+        return int(self.longitude(sysflg) / 30)
 
     def sign(self):
-        return pglob.signs[self.sign_index]
+        return pglob.signs[self.sign_index()]
 
     def signize(self):
         return putil.yessignize(self.longitude())
