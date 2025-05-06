@@ -1,3 +1,6 @@
+from drawlib.apis import *
+import pyphglobals as pglob
+
 image_dir = "/home/josh/w/astro/soft/pyphemeris/images/"
 
 planet_glyphs = [
@@ -169,3 +172,57 @@ coords_list = [
     pisces_coords,
 ]
 pwidth = 4
+
+
+def draw_heliocentric_base():
+    image(xy=(50, 50), width=100, image=image_dir + "heliocentric.png")
+    # outer edge of the wheel
+    donuts(xy=(50, 50), radius=40, width=4)
+
+
+def draw_barycentric_base():
+    image(
+        xy=(50, 50), width=100, image=image_dir + "barycentric.png"
+    )  # for barycentric charts
+    # outer edge of the wheel
+    donuts(xy=(50, 50), radius=40, width=4)
+
+
+def draw_south_indian_base():
+    image(xy=(50, 50), width=100, image=image_dir + "south_indian_base.png")
+
+
+def draw_signs_circle():
+    # now draw sign glyphs onto the circle
+    image(xy=(88, 50), width=3, image=image_dir + "glyphs/aries.png")
+    image(xy=(82.5, 70), width=3, image=image_dir + "glyphs/taurus.png")
+    image(xy=(69, 83), width=3, image=image_dir + "glyphs/gemini.png")
+    image(xy=(50, 88), width=3, image=image_dir + "glyphs/cancer.png")
+    image(xy=(31, 83), width=3, image=image_dir + "glyphs/leo.png")
+    image(xy=(17.5, 70), width=3, image=image_dir + "glyphs/virgo.png")
+    image(xy=(12, 50), width=3, image=image_dir + "glyphs/libra.png")
+    image(xy=(17.5, 30), width=3, image=image_dir + "glyphs/scorpio.png")
+    image(xy=(31, 17), width=3, image=image_dir + "glyphs/sagittarius.png")
+    image(xy=(50, 12), width=3, image=image_dir + "glyphs/capricorn.png")
+    image(xy=(69, 17), width=3, image=image_dir + "glyphs/aquarius.png")
+    image(xy=(82.5, 30), width=3, image=image_dir + "glyphs/pisces.png")
+
+
+def draw_adityas_circle():
+    # now draw aditya names on the outside of the circle
+    # these names were very specifically placed
+    text(
+        xy=(95, 50),
+        text=pglob.adityas[0],  # , style=TextStyle(font=FontSerif.COURIER_BOLD)
+    )
+    text(xy=(89, 72), text=pglob.adityas[1])
+    text(xy=(72, 89), text=pglob.adityas[2])
+    text(xy=(50, 94), text=pglob.adityas[3])
+    text(xy=(26, 88), text=pglob.adityas[4])
+    text(xy=(10, 72), text=pglob.adityas[5])
+    text(xy=(5, 50), text=pglob.adityas[6])
+    text(xy=(10, 29), text=pglob.adityas[7])
+    text(xy=(26, 13), text=pglob.adityas[8])
+    text(xy=(50, 5), text=pglob.adityas[9])
+    text(xy=(74, 12), text=pglob.adityas[10])
+    text(xy=(89, 29), text=pglob.adityas[11])

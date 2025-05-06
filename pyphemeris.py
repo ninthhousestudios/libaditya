@@ -112,11 +112,16 @@ def main():
             lat, long = args.position.split(",")
             pglob.lat = float(lat)
             pglob.long = long = float(long)
+            pglob.placename = ""
         if args.house:
             pglob.hsys = args.house
-        print_Cusps(Location(lat=pglob.lat, long=pglob.long), ephtime)
+        print_Cusps(
+            Location(lat=pglob.lat, long=pglob.long, placename=pglob.placename), ephtime
+        )
         print_Cusps_nakshatras(
-            pglob.ayanamsa, Location(lat=pglob.lat, long=pglob.long), ephtime
+            pglob.ayanamsa,
+            Location(lat=pglob.lat, long=pglob.long, placename=pglob.placename),
+            ephtime,
         )
 
     panch = Panchanga(ephtime)
