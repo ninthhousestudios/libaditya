@@ -109,7 +109,7 @@ def draw_base_chart(ctype, signs):
         if ctype == pglob.HELIO or ctype == pglob.BARY:
             draw_adityas_circle()
         else:
-            draw_signs_square()
+            draw_adityas_square()
 
 
 def draw_date(jd=JulianDay()):
@@ -172,7 +172,38 @@ def draw_barycentric_planets(planets):
 
 
 def draw_south_indian_planets(planets):
-    text(xy=(50, 50), text="working on drawing these charts")
+    pwidth = 4
+    image(xy=(60, 83), width=pwidth, image=planet_glyphs[0])
+    image(xy=(55, 90), width=pwidth, image=planet_glyphs[1])
+    image(xy=(67, 76), width=pwidth, image=planet_glyphs[3])
+    image(xy=(53, 76), width=pwidth, image=planet_glyphs[2])
+    image(xy=(53, 83), width=pwidth, image=planet_glyphs[4])
+    image(xy=(67, 83), width=pwidth, image=planet_glyphs[5])
+    image(xy=(60, 76), width=pwidth, image=planet_glyphs[5])
+
+
+geo_aries_coords = [
+    (39, 83),
+    (45, 90),
+    (33, 76),
+    (45, 76),
+    (33, 83),
+    (45, 83),
+    (39, 76),
+]
+
+geo_taurus_coords = [
+    (60, 83),
+    (53, 92),
+    (67, 76),
+    (53, 76),
+    (53, 83),
+    (67, 83),
+    (60, 76),
+]
+
+
+geo_coords_list = [geo_aries_coords, geo_taurus_coords]
 
 
 def per_sign(planets, sysflg):
@@ -194,14 +225,6 @@ def per_sign(planets, sysflg):
                 continue
         signs_index[planets[i].sign_index(sysflg)].append(i)
     return signs_index
-
-
-def draw_signs_square():
-    return
-
-
-def draw_adityas_square():
-    return
 
 
 def init_Planets(tjd=JulianDay()):
@@ -240,7 +263,6 @@ def planets_table(planets, sysflg=pglob.ECL):
             "Longitude",
         ]
     )
-
     # get coordinates for Sun through Pluto, 10 planets
     for i in range(10):
         if (

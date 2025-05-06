@@ -226,3 +226,34 @@ def draw_adityas_circle():
     text(xy=(50, 5), text=pglob.adityas[9])
     text(xy=(74, 12), text=pglob.adityas[10])
     text(xy=(89, 29), text=pglob.adityas[11])
+
+
+def draw_signs_square():
+    pwidth = 3
+    image(xy=(31, 91), width=pwidth, image=image_dir + "glyphs/aries.png")
+    image(xy=(69, 91), width=pwidth, image=image_dir + "glyphs/taurus.png")
+    image(xy=(90, 91), width=pwidth, image=image_dir + "glyphs/gemini.png")
+    image(xy=(90, 69), width=pwidth, image=image_dir + "glyphs/cancer.png")
+    image(xy=(90, 47), width=pwidth, image=image_dir + "glyphs/leo.png")
+    image(xy=(90, 23), width=pwidth, image=image_dir + "glyphs/virgo.png")
+    image(xy=(70, 23), width=pwidth, image=image_dir + "glyphs/libra.png")
+    image(xy=(31, 23), width=pwidth, image=image_dir + "glyphs/scorpio.png")
+    image(xy=(10, 23), width=pwidth, image=image_dir + "glyphs/sagittarius.png")
+    image(xy=(10, 46), width=pwidth, image=image_dir + "glyphs/capricorn.png")
+    image(xy=(10, 69), width=pwidth, image=image_dir + "glyphs/aquarius.png")
+    image(xy=(10, 91), width=pwidth, image=image_dir + "glyphs/pisces.png")
+
+
+def draw_adityas_square():
+    text(xy=(33, 91), text=pglob.adityas[11])
+    text(xy=(65, 91), text=pglob.adityas[0])
+    text(xy=(88, 91), text=pglob.adityas[1])
+    text(xy=(88, 69), text=pglob.adityas[2])
+    text(xy=(88, 47), text=pglob.adityas[3])
+    text(xy=(88, 24), text=pglob.adityas[4])
+    text(xy=(66, 24), text=pglob.adityas[5])
+    text(xy=(33, 24), text=pglob.adityas[6])
+    text(xy=(12, 24), text=pglob.adityas[7])
+    text(xy=(12, 46), text=pglob.adityas[8])
+    text(xy=(12, 68), text=pglob.adityas[9])
+    text(xy=(12, 91), text=pglob.adityas[10])
