@@ -25,7 +25,7 @@ planet_glyphs = [
 # so the arrays will contain a list of tuples
 # that contain the coordinates of successive planets
 
-aries_coords = [
+hb_aries_coords = [
     (82, 50),
     (82, 55),
     (82, 45),
@@ -36,7 +36,7 @@ aries_coords = [
     (63, 50),
 ]
 
-taurus_coords = [
+hb_taurus_coords = [
     (77, 66),
     (75, 70),
     (80, 63),
@@ -47,7 +47,7 @@ taurus_coords = [
     (60, 56),
 ]
 
-gemini_coords = [
+hb_gemini_coords = [
     (66, 77),
     (63, 80),
     (69, 75),
@@ -58,7 +58,7 @@ gemini_coords = [
     (55, 60),
 ]
 
-cancer_coords = [
+hb_cancer_coords = [
     (50, 80),
     (55, 82),
     (45, 82),
@@ -69,7 +69,7 @@ cancer_coords = [
     (50, 63),
 ]
 
-leo_coords = [
+hb_leo_coords = [
     (34, 77),
     (37, 80),
     (31, 75),
@@ -80,7 +80,7 @@ leo_coords = [
     (45, 60),
 ]
 
-virgo_coords = [
+hb_virgo_coords = [
     (23, 66),
     (25, 70),
     (20, 63),
@@ -91,7 +91,7 @@ virgo_coords = [
     (40, 56),
 ]
 
-libra_coords = [
+hb_libra_coords = [
     (18, 50),
     (18, 55),
     (18, 45),
@@ -102,7 +102,7 @@ libra_coords = [
     (37, 50),
 ]
 
-scorpio_coords = [
+hb_scorpio_coords = [
     (23, 34),
     (25, 30),
     (20, 37),
@@ -113,7 +113,7 @@ scorpio_coords = [
     (40, 44),
 ]
 
-sagittarius_coords = [
+hb_sagittarius_coords = [
     (34, 23),
     (37, 20),
     (31, 25),
@@ -124,7 +124,7 @@ sagittarius_coords = [
     (45, 40),
 ]
 
-capricorn_coords = [
+hb_capricorn_coords = [
     (50, 20),
     (55, 18),
     (45, 18),
@@ -135,7 +135,7 @@ capricorn_coords = [
     (50, 37),
 ]
 
-aquarius_coords = [
+hb_aquarius_coords = [
     (66, 23),
     (70, 25),
     (63, 20),
@@ -146,7 +146,7 @@ aquarius_coords = [
     (56, 40),
 ]
 
-pisces_coords = [
+hb_pisces_coords = [
     (77, 34),
     (75, 30),
     (80, 37),
@@ -157,19 +157,19 @@ pisces_coords = [
     (60, 44),
 ]
 
-coords_list = [
-    aries_coords,
-    taurus_coords,
-    gemini_coords,
-    cancer_coords,
-    leo_coords,
-    virgo_coords,
-    libra_coords,
-    scorpio_coords,
-    sagittarius_coords,
-    capricorn_coords,
-    aquarius_coords,
-    pisces_coords,
+hb_coords_list = [
+    hb_aries_coords,
+    hb_taurus_coords,
+    hb_gemini_coords,
+    hb_cancer_coords,
+    hb_leo_coords,
+    hb_virgo_coords,
+    hb_libra_coords,
+    hb_scorpio_coords,
+    hb_sagittarius_coords,
+    hb_capricorn_coords,
+    hb_aquarius_coords,
+    hb_pisces_coords,
 ]
 pwidth = 4
 

@@ -138,14 +138,14 @@ def draw_heliocentric_planets(planets):
     for sign in range(12):
         if len(signs_index[sign]) == 1:
             image(
-                xy=coords_list[sign][0],
+                xy=hb_coords_list[sign][0],
                 width=pwidth,
                 image=planet_glyphs[signs_index[sign][0]],
             )
         if len(signs_index[sign]) > 1:
             for n in range(len(signs_index[sign])):
                 image(
-                    xy=coords_list[sign][n + 1],
+                    xy=hb_coords_list[sign][n + 1],
                     width=pwidth,
                     image=planet_glyphs[signs_index[sign][n]],
                 )
@@ -169,6 +169,10 @@ def draw_barycentric_planets(planets):
                     width=pwidth,
                     image=planet_glyphs[signs_index[sign][n]],
                 )
+
+
+def draw_south_indian_planets(planets):
+    text(xy=(50, 50), text="working on drawing these charts")
 
 
 def per_sign(planets, sysflg):

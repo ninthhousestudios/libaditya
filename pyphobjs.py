@@ -52,6 +52,10 @@ class Ketu(Planet):
         coords = list(swe.calc_ut(self.jd, self.pnumber, swe.FLG_SPEED | sysflg)[0])
         return [(coords[0] - 180) % 360] + coords[1:]
 
+    def longitude(self, sysflg=pglob.ECL):
+        long = swe.calc_ut(self.jd, self.pnumber, sysflg)[0][0]
+        return (long - 180) % 360
+
 
 class Panchanga(JulianDay):
     def __init__(self, julianday=JulianDay()):
