@@ -1,17 +1,19 @@
+image_dir = "/home/josh/w/astro/soft/pyphemeris/images/"
+
 planet_glyphs = [
-    "images/glyphs/sun.png",
-    "images/glyphs/moon.png",
-    "images/glyphs/mercury.png",
-    "images/glyphs/venus.png",
-    "images/glyphs/mars.png",
-    "images/glyphs/jupiter.png",
-    "images/glyphs/saturn.png",
-    "images/glyphs/uranus.png",
-    "images/glyphs/neptune.png",
-    "images/glyphs/pluto.png",
-    "images/glyphs/rahu.png",
-    "images/glyphs/ketu.png",
-    "images/glyphs/earth.png",
+    image_dir + "glyphs/sun.png",
+    image_dir + "glyphs/moon.png",
+    image_dir + "glyphs/mercury.png",
+    image_dir + "glyphs/venus.png",
+    image_dir + "glyphs/mars.png",
+    image_dir + "glyphs/jupiter.png",
+    image_dir + "glyphs/saturn.png",
+    image_dir + "glyphs/uranus.png",
+    image_dir + "glyphs/neptune.png",
+    image_dir + "glyphs/pluto.png",
+    image_dir + "glyphs/rahu.png",
+    image_dir + "glyphs/ketu.png",
+    image_dir + "glyphs/earth.png",
 ]
 
 # these are coordinates for where to draw planets

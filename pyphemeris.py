@@ -128,7 +128,7 @@ def main():
 
 def get_args():
     parser = argparse.ArgumentParser(
-        prog="ephemeris",
+        prog="pyphemeris",
         usage="%(prog)s [options]",
         description="get ephemeris for -dMM/DD/YYYY -tHH:MM:SS (utc)",
     )
