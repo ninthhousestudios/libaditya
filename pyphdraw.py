@@ -75,8 +75,14 @@ def main():
 
     # start drawing the chart
     draw_base_chart(sysflg, signs)
-    draw_date(ephtime)
-    draw_panchanga(Panchanga(ephtime))
+    if sysflg != pglob.ECL:
+        draw_date_circle(ephtime)
+        draw_panchanga_circle(Panchanga(ephtime))
+        draw_table_circle(planets_table_circle(planets, sysflg))
+    else:
+        draw_date_square(ephtime)
+        draw_panchanga_square(Panchanga(ephtime))
+        draw_table_square(planets_table_square(planets, sysflg))
 
     if sysflg == pglob.HELIO:
         draw_heliocentric_planets(planets)
@@ -85,19 +91,19 @@ def main():
     else:
         draw_south_indian_planets(planets)
 
-    draw_table(planets_table(planets, sysflg))
-
     save(file=image_dir + "pyphdraw.png")
 
 
 def draw_base_chart(ctype, signs):
-    config(width=100, height=150, grid_only=True)
     # used typst to make a circle with 12 lines, angles of 30 degrees
     if ctype == pglob.HELIO:
+        config(width=100, height=150, grid_only=True)
         draw_heliocentric_base()
     elif ctype == pglob.BARY:
+        config(width=100, height=150, grid_only=True)
         draw_barycentric_base()
     else:
+        config(width=100, height=175, grid_only=True)
         draw_south_indian_base()
 
     if signs == "rasis":
@@ -112,7 +118,7 @@ def draw_base_chart(ctype, signs):
             draw_adityas_square()
 
 
-def draw_date(jd=JulianDay()):
+def draw_date_circle(jd=JulianDay()):
     txt = f"{jd}"
     utc, usr, julian = txt.split("\n")
     text(xy=(60, 143), text=utc, style=TextStyle(halign="left"))
@@ -120,7 +126,26 @@ def draw_date(jd=JulianDay()):
     text(xy=(60, 137), text=julian, style=TextStyle(halign="left"))
 
 
-def draw_table(tdata):
+def draw_date_square(jd=JulianDay()):
+    txt = f"{jd}"
+    utc, usr, julian = txt.split("\n")
+    text(xy=(5, 165), text=utc, style=TextStyle(halign="left"))
+    text(xy=(5, 161), text=usr, style=TextStyle(halign="left"))
+    text(xy=(5, 157), text=julian, style=TextStyle(halign="left"))
+
+
+def draw_table_circle(tdata):
+    table = dsart.Table()
+    table.clear_styles()
+    table.draw(
+        xy=(2, 145),
+        width=40,
+        height=50,
+        data=tdata,
+    )
+
+
+def draw_table_square(tdata):
     table = dsart.Table()
     table.clear_styles()
     table.draw(
@@ -158,14 +183,14 @@ def draw_barycentric_planets(planets):
     for sign in range(12):
         if len(signs_index[sign]) == 1:
             image(
-                xy=coords_list[sign][0],
+                xy=hb_coords_list[sign][0],
                 width=pwidth,
                 image=planet_glyphs[signs_index[sign][0]],
             )
         if len(signs_index[sign]) > 1:
             for n in range(len(signs_index[sign])):
                 image(
-                    xy=coords_list[sign][n + 1],
+                    xy=hb_coords_list[sign][n + 1],
                     width=pwidth,
                     image=planet_glyphs[signs_index[sign][n]],
                 )
@@ -245,18 +270,62 @@ def init_Planets(tjd=JulianDay()):
     return planets
 
 
-def planets_table(planets, sysflg=pglob.ECL):
+def planets_table_circle(planets, sysflg=pglob.ECL):
     """
     return a PrettyTable string with coordinates for all planets on julianday
     using sysflag coordinates
     """
     output = []
-    if sysflg == pglob.ECL:
-        output.append(["Ecliptic", " "])
     if sysflg == pglob.HELIO:
         output.append(["Heliocentric", " "])
     if sysflg == pglob.BARY:
         output.append(["Barycentric", " "])
+    output.append(
+        [
+            "Planet",
+            "Longitude",
+        ]
+    )
+    # get coordinates for Sun through Pluto, 10 planets
+    for i in range(10):
+        if (
+            i == 0 and sysflg == pglob.HELIO
+        ):  # dont print sun if heliocentric coordinates
+            continue
+        output.append(
+            [planets[i].planet_name] + [putil.yessignize(planets[i].longitude(sysflg))]
+        )
+
+    # if getting ECL or EQU, add Rahu and Ketu
+    if sysflg == pglob.ECL:
+        # output.add_row(Planets[pglob.rahu].table_list(sysflg))
+        # ketuls = Planets[pglob.ketu].table_list(sysflg)
+        # ketuls[1] = pglob.sign_func((Planets[pglob.rahu].coords[0] - 180) % 360)
+        # output.add_row(ketuls)
+        output.append(
+            [planets[10].planet_name]
+            + [putil.yessignize(planets[10].longitude(sysflg))]
+        )
+        output.append(
+            [planets[11].planet_name]
+            + [putil.yessignize(planets[11].longitude(sysflg))]
+        )
+
+    # if helio or bary coordinates, dont add rahu or ketu but add earth
+    if sysflg == pglob.HELIO or sysflg == pglob.BARY:
+        output.append(
+            ["Earth"] + [putil.yessignize(planets[pglob.earth].longitude(sysflg))]
+        )
+
+    return output
+
+
+def planets_table_square(planets, sysflg=pglob.ECL):
+    """
+    return a PrettyTable string with coordinates for all planets on julianday
+    using sysflag coordinates
+    """
+    output = []
     output.append(
         [
             "Planet",
@@ -310,7 +379,7 @@ def panchanga_str(panch=Panchanga()):
     return str
 
 
-def draw_panchanga(panch=Panchanga()):
+def draw_panchanga_circle(panch=Panchanga()):
     title, tithi, karana, vara, nakshatra, yoga = panchanga_str(panch).split("\n")
 
     text(xy=(60, 125), text=title, style=TextStyle(halign="left"))
@@ -319,6 +388,17 @@ def draw_panchanga(panch=Panchanga()):
     text(xy=(60, 116), text=vara, style=TextStyle(halign="left"))
     text(xy=(60, 113), text=nakshatra, style=TextStyle(halign="left"))
     text(xy=(60, 110), text=yoga, style=TextStyle(halign="left"))
+
+
+def draw_panchanga_square(panch=Panchanga()):
+    title, tithi, karana, vara, nakshatra, yoga = panchanga_str(panch).split("\n")
+
+    text(xy=(50, 166), text=title, style=TextStyle(halign="left"))
+    text(xy=(50, 162), text=tithi, style=TextStyle(halign="left"))
+    text(xy=(50, 159), text=karana, style=TextStyle(halign="left"))
+    text(xy=(50, 156), text=vara, style=TextStyle(halign="left"))
+    text(xy=(50, 153), text=nakshatra, style=TextStyle(halign="left"))
+    text(xy=(50, 150), text=yoga, style=TextStyle(halign="left"))
 
 
 def get_args():
