@@ -29,9 +29,6 @@ def main():
     else:
         swe.set_ephe_path(pglob.edir)
 
-    if args.timezone:
-        pglob.timezone = args.timezone
-
     if args.julian:
         # user entered a julian day
         ephtime = JulianDay(float(args.julian))
@@ -92,7 +89,22 @@ def main():
         if args.adityas:
             draw_south_indian_planets_adityas(planets)
         else:
-            draw_south_indian_planets(planets)
+            draw_south_indian_planets_rasis(planets)
+
+    if args.position:
+        lat, long = args.position.split(",")
+        lat = float(lat)
+        long = float(long)
+        if args.house:
+            hsys = args.house
+        else:
+            hsys = "C"
+        cusps = Cusps(hsys, Location(lat=lat, long=long), ephtime)
+        if args.adityas:
+            draw_south_indian_cusps_adityas(cusps)
+        else:
+            draw_south_indian_cusps_rasis(cusps)
+        # draw_table_cusps_square(cusps)
 
     save(file=image_dir + "pyphdraw.png")
 
@@ -100,13 +112,13 @@ def main():
 def draw_base_chart(ctype, signs):
     # used typst to make a circle with 12 lines, angles of 30 degrees
     if ctype == pglob.HELIO:
-        config(width=100, height=150, grid_only=True)
+        config(width=100, height=150, grid_only=False)
         draw_heliocentric_base()
     elif ctype == pglob.BARY:
-        config(width=100, height=150, grid_only=True)
+        config(width=100, height=150, grid_only=False)
         draw_barycentric_base()
     else:
-        config(width=100, height=175, grid_only=True)
+        config(width=100, height=175, grid_only=False)
         draw_south_indian_base()
 
     if signs == "rasis":
@@ -119,6 +131,7 @@ def draw_base_chart(ctype, signs):
             draw_adityas_circle()
         else:
             draw_adityas_square()
+            draw_aditya_chart_lines()
 
 
 def draw_date_circle(jd=JulianDay()):
@@ -199,8 +212,8 @@ def draw_barycentric_planets(planets):
                 )
 
 
-def draw_south_indian_planets(planets):
-    pwidth = 4
+def draw_south_indian_planets_rasis(planets):
+    pwidth = 6
     signs_index = per_sign(planets, pglob.ECL)
     for sign in range(12):
         for planet in range(len(signs_index[sign])):
@@ -212,7 +225,7 @@ def draw_south_indian_planets(planets):
 
 
 def draw_south_indian_planets_adityas(planets):
-    pwidth = 4
+    pwidth = 6
     signs_index = per_sign(planets, pglob.ECL)
     for sign in range(12):
         for planet in range(len(signs_index[sign])):
@@ -222,6 +235,35 @@ def draw_south_indian_planets_adityas(planets):
                 width=pwidth,
                 image=planet_glyphs[signs_index[sign][planet]],
             )
+
+
+def draw_south_indian_cusps_rasis(cusps):
+    signs_index = per_sign_cusps(cusps)
+    for sign in range(len(signs_index)):
+        for cusp in range(len(signs_index[sign])):
+            text(
+                xy=cusps_coords[sign][cusp],
+                text=cusps_numerals[signs_index[sign][cusp]],
+            )
+
+
+def draw_south_indian_cusps_adityas(cusps):
+    signs_index = per_sign_cusps(cusps)
+    for sign in range(len(signs_index)):
+        for cusp in range(len(signs_index[sign])):
+            text(
+                xy=cusps_coords[(sign + 1) % 12][cusp],
+                text=cusps_numerals[signs_index[sign][cusp]],
+            )
+
+
+def per_sign_cusps(cusps):
+    signs_index = [[] for _ in range(12)]
+    cusps.init_cusps()
+    for cusp in range(len(cusps.cusps)):
+        sign = putil.sign_index(cusps.cusps[cusp])
+        signs_index[sign].append(cusp)
+    return signs_index
 
 
 def per_sign(planets, sysflg):
@@ -449,9 +491,6 @@ def get_args():
         help="toggle printing adityas from the default behavior",
     )
     parser.add_argument("-l", "--lang", help="language file; default is ./dict.eng")
-    parser.add_argument(
-        "-z", "--timezone", help="a string showing the timezone; e.g., CDT"
-    )
     args = parser.parse_args()
     return args
 

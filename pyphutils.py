@@ -6,6 +6,10 @@ module of utility functions for pyphemeris
 """
 
 
+def sign_index(long):
+    return int(long / 30)
+
+
 def nakshatra_index(sidlong, n=0):
     """
     sidlong is the sidereal longitude of a planet

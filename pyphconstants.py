@@ -357,6 +357,13 @@ def draw_south_indian_base():
     image(xy=(50, 50), width=100, image=image_dir + "south_indian_base.png")
 
 
+def draw_aditya_chart_lines():
+    line(xy1=(50, 89), xy2=(50, 78))
+    line(xy1=(50, 22), xy2=(50, 10))
+    line(xy1=(11, 50), xy2=(22, 50))
+    line(xy1=(78, 50), xy2=(89, 50))
+
+
 def draw_signs_circle():
     # now draw sign glyphs onto the circle
     image(xy=(88, 50), width=3, image=image_dir + "glyphs/aries.png")
