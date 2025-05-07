@@ -89,7 +89,10 @@ def main():
     elif sysflg == pglob.BARY:
         draw_barycentric_planets(planets)
     else:
-        draw_south_indian_planets(planets)
+        if args.adityas:
+            draw_south_indian_planets_adityas(planets)
+        else:
+            draw_south_indian_planets(planets)
 
     save(file=image_dir + "pyphdraw.png")
 
@@ -198,37 +201,27 @@ def draw_barycentric_planets(planets):
 
 def draw_south_indian_planets(planets):
     pwidth = 4
-    image(xy=(60, 83), width=pwidth, image=planet_glyphs[0])
-    image(xy=(55, 90), width=pwidth, image=planet_glyphs[1])
-    image(xy=(67, 76), width=pwidth, image=planet_glyphs[3])
-    image(xy=(53, 76), width=pwidth, image=planet_glyphs[2])
-    image(xy=(53, 83), width=pwidth, image=planet_glyphs[4])
-    image(xy=(67, 83), width=pwidth, image=planet_glyphs[5])
-    image(xy=(60, 76), width=pwidth, image=planet_glyphs[5])
+    signs_index = per_sign(planets, pglob.ECL)
+    for sign in range(12):
+        for planet in range(len(signs_index[sign])):
+            image(
+                xy=geo_coords_list[sign][planet],
+                width=pwidth,
+                image=planet_glyphs[signs_index[sign][planet]],
+            )
 
 
-geo_aries_coords = [
-    (39, 83),
-    (45, 90),
-    (33, 76),
-    (45, 76),
-    (33, 83),
-    (45, 83),
-    (39, 76),
-]
-
-geo_taurus_coords = [
-    (60, 83),
-    (53, 92),
-    (67, 76),
-    (53, 76),
-    (53, 83),
-    (67, 83),
-    (60, 76),
-]
-
-
-geo_coords_list = [geo_aries_coords, geo_taurus_coords]
+def draw_south_indian_planets_adityas(planets):
+    pwidth = 4
+    signs_index = per_sign(planets, pglob.ECL)
+    for sign in range(12):
+        for planet in range(len(signs_index[sign])):
+            image(
+                # planets in aries go into taurus for the adityas
+                xy=geo_coords_list[(sign + 1) % 12][planet],
+                width=pwidth,
+                image=planet_glyphs[signs_index[sign][planet]],
+            )
 
 
 def per_sign(planets, sysflg):
@@ -247,6 +240,9 @@ def per_sign(planets, sysflg):
                 continue
         if sysflg == pglob.BARY:  # skip rahu and ketu
             if i == 10 or i == 11:
+                continue
+        if sysflg == pglob.ECL:  # skip the earth
+            if i == 12:
                 continue
         signs_index[planets[i].sign_index(sysflg)].append(i)
     return signs_index

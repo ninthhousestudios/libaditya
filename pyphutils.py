@@ -121,7 +121,7 @@ def dec2deg(dd):
     dd = abs(dd)
     minutes, seconds = divmod(dd * 3600, 60)
     degrees, minutes = divmod(minutes, 60)
-    return f"{round(degrees)}:{round(minutes)}:{round(seconds)}"
+    return f"{round(degrees):02d}:{round(minutes):02d}:{round(seconds):02d}"
 
 
 def dms2dec(dms):
@@ -153,7 +153,7 @@ def intize_time(time):
 
 def date2str(date):
     """date is a revjul-tuple (year,month,day,hour); return a string 'month/day/year'"""
-    return f"{date[1]}/{date[2]}/{date[0]}"
+    return f"{date[1]:02d}/{date[2]:02d}/{date[0]:02d}"
 
 
 def time2str(time):
