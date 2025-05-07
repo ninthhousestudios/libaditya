@@ -63,8 +63,10 @@ def main():
 
     if args.adityas:
         signs = "adityas"
+        pglob.signs = pglob.adityas
     else:
         signs = "rasis"
+        pglob.signs = pglob.rasis
 
     # the correct coordinates according to sysflg
     # are gotten in the per_signs function
