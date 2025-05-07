@@ -204,7 +204,7 @@ def print_panchanga_addendum(panch=Panchanga()):
         f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET)}\n"
     )
 
-    hrsnxtvara = (panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd
+    hrsnxtvara = ((panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd) % 24
     nxtvara = panch.shift("f", "hour", hrsnxtvara)
     print(
         f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from now\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
