@@ -138,16 +138,12 @@ def draw_date_circle(jd=JulianDay()):
     txt = f"{jd}"
     utc, usr, julian = txt.split("\n")
     text(xy=(60, 143), text=utc, style=TextStyle(halign="left"))
-    text(xy=(60, 140), text=usr, style=TextStyle(halign="left"))
-    text(xy=(60, 137), text=julian, style=TextStyle(halign="left"))
 
 
 def draw_date_square(jd=JulianDay()):
     txt = f"{jd}"
     utc, usr, julian = txt.split("\n")
     text(xy=(5, 165), text=utc, style=TextStyle(halign="left"))
-    text(xy=(5, 161), text=usr, style=TextStyle(halign="left"))
-    text(xy=(5, 157), text=julian, style=TextStyle(halign="left"))
 
 
 def draw_table_circle(tdata):
