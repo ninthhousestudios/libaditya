@@ -130,6 +130,13 @@ class Panchanga(JulianDay):
     def yoga_degrees_remaining(self):
         return self.yremaining
 
+    def ayanamsa_name(self):
+        if self.ayanamsa == 98:
+            return "Dhruva GC mid-Mula equatorial coordinates"
+        if self.ayanamsa == 99:
+            return "Dhruva GC mid-Mula eclitpic coordinates"
+        return swe.get_ayanamsa_name(self.ayanamsa)
+
     # next next moon and next full moon
     # its not techincally panchanga
     # but i need the sun and the moon and the tithi

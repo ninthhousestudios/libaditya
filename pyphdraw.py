@@ -70,9 +70,11 @@ def main():
 
     if args.name:
         name = args.name
+    else:
+        name = ""
 
     if args.ayanamsa:
-        ayanamsa = args.ayanamsa
+        ayanamsa = int(args.ayanamsa)
     else:
         ayanamsa = 98  # 98 is dhurva equatorial; 99 is dhruva ecliptic
 
@@ -449,6 +451,11 @@ def draw_panchanga_square(panch=Panchanga()):
     text(xy=(5, 160), text=vara, style=TextStyle(halign="left"))
     text(xy=(5, 157), text=nakshatra, style=TextStyle(halign="left"))
     text(xy=(5, 154), text=yoga, style=TextStyle(halign="left"))
+    text(
+        xy=(5, 147),
+        text=f"{panch.ayanamsa_name()} ayanamsa",
+        style=TextStyle(halign="left"),
+    )
 
 
 def get_args():
