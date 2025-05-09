@@ -58,7 +58,7 @@ class Ketu(Planet):
 
 
 class Panchanga(JulianDay):
-    def __init__(self, julianday=JulianDay()):
+    def __init__(self, julianday=JulianDay(), ayanamsa=98):
         super().__init__(julianday.jd)
         self.julianday = julianday
         self.jd = self.julianday.jd
@@ -75,6 +75,7 @@ class Panchanga(JulianDay):
         )
         self.yoga_raw, self.yelapsed, self.yremaining = self.init_yoga()
         self.yoga_int = int(self.yoga_raw + 1)
+        self.ayanamsa = ayanamsa
 
     def init_tithi(self):
         traw = ((self.moon.longitude() - self.sun.longitude()) % 360) / 12
@@ -102,7 +103,7 @@ class Panchanga(JulianDay):
             return pglob.vara[weekday % 7]
 
     def nakshatra(self):
-        return self.moon.nakshatra()
+        return self.moon.nakshatra(self.ayanamsa)
 
     def init_yoga(self):
         yraw = ((self.moon.longitude() + self.sun.longitude()) % 360) / (13 + (20 / 60))

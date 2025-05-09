@@ -124,7 +124,7 @@ def main():
             ephtime,
         )
 
-    panch = Panchanga(ephtime)
+    panch = Panchanga(ephtime, pglob.ayanamsa)
     print_panchanga(panch)
     print_panchanga_addendum(panch)
     print_next_new_moon(panch)

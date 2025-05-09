@@ -71,6 +71,11 @@ def main():
     if args.name:
         name = args.name
 
+    if args.ayanamsa:
+        ayanamsa = args.ayanamsa
+    else:
+        ayanamsa = 98  # 98 is dhurva equatorial; 99 is dhruva ecliptic
+
     # the correct coordinates according to sysflg
     # are gotten in the per_signs function
     planets = init_Planets(ephtime)
@@ -79,12 +84,12 @@ def main():
     draw_base_chart(sysflg, signs)
     if sysflg != pglob.ECL:
         draw_date_circle(ephtime)
-        draw_panchanga_circle(Panchanga(ephtime))
+        draw_panchanga_circle(Panchanga(ephtime, ayanamsa))
         draw_table_circle(planets_table_circle(planets, sysflg))
     else:
         draw_date_square(ephtime, name)
-        draw_panchanga_square(Panchanga(ephtime))
-        draw_planets_table_square(planets_table_square(planets, sysflg))
+        draw_panchanga_square(Panchanga(ephtime, ayanamsa))
+        draw_planets_table_square(planets_table_square(planets, sysflg, ayanamsa))
 
     if sysflg == pglob.HELIO:
         draw_heliocentric_planets(planets)
@@ -394,7 +399,7 @@ def planets_table_square(planets, sysflg=pglob.ECL, ayanamsa=98):
         output.append(
             [planets[i].planet_name]
             + [putil.yessignize(planets[i].longitude(sysflg))]
-            + [planets[i].nakshatra()]
+            + [planets[i].nakshatra(ayanamsa)]
         )
 
     output.append(
@@ -419,7 +424,7 @@ def panchanga_str(panch=Panchanga()):
 
     str += f"Karana: {panch.karana()}\n"
     str += f"Vara: {panch.vara()}\n"
-    str += f"Nakshatra: {panch.moon.nakshatra()}\n"
+    str += f"Nakshatra: {panch.nakshatra()}\n"
     str += f"Yoga: {panch.yoga()}"
     return str
 
@@ -466,11 +471,6 @@ def get_args():
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files")
     parser.add_argument(
         "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa"
-    )
-    parser.add_argument(
-        "-u",
-        "--utcoffset",
-        help="utc offset in hours, positive is east; default is currently -4 (EDT)",
     )
     parser.add_argument(
         "-H",

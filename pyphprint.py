@@ -166,7 +166,7 @@ def print_panchanga(panch=Panchanga()):
 
     print(f"Karana: {panch.karana()}")
     print(f"Vara: {panch.vara()}")
-    print(f"Nakshatra: {panch.moon.nakshatra()}")
+    print(f"Nakshatra: {panch.nakshatra()}")
     print(f"Yoga: {panch.yoga()}")
 
 
