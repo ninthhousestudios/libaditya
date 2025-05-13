@@ -38,6 +38,8 @@ def main():
         fromfile = True
         input = open(args.input, "r")
         for line in input:
+            if not "=" in line:
+                continue
             field, value = line.split("=")
             field = field.strip()
             value = value.strip()
@@ -143,7 +145,6 @@ def main():
             hsys = args.house
         else:
             hsys = "C"
-        print(f"lat and long and date: {lat}, {long}, {swe.revjul(ephtime.jd)}")
         cusps = Cusps(hsys, Location(lat=lat, long=long), ephtime)
         if args.adityas:
             draw_south_indian_cusps_adityas(cusps)
