@@ -29,30 +29,57 @@ def main():
     else:
         swe.set_ephe_path(pglob.edir)
 
+    name = None  # this is for later, in case they do pass a name, when we check if --name was used also
+    fromfile = False
+    # user passed an input file with the chart information
+    if args.input:
+        fromfile = True
+        input = open(args.input, "r")
+        for line in input:
+            field, value = line.split("=")
+            field = field.strip()
+            value = value.strip()
+            if field.startswith("Na") or field.startswith("na"):
+                name = value
+            if field.startswith("Da") or field.startswith("da"):
+                month, day, year = putil.intize_date(value)
+            if field.startswith("Ti") or field.startswith("ti"):
+                ephclock = putil.intize_time(value)
+            if field.startswith("La") or field.startswith("la"):
+                lat = float(value)
+            if field.startswith("Lo") or field.startswith("lo"):
+                long = float(value)
+        ephtime = JulianDay(swe.julday(year, month, day, ephclock))
+        input.close()
+
     if args.julian:
         # user entered a julian day
         ephtime = JulianDay(float(args.julian))
 
-    if args.date:
-        month, day, year = putil.intize_date(args.date)
-    if args.time:
-        ephclock = putil.intize_time(args.time)
-    if args.date:
+    if not fromfile:
+        if args.date:
+            month, day, year = putil.intize_date(args.date)
         if args.time:
-            ephtime = JulianDay(swe.julday(year, month, day, ephclock))
-        else:
-            nowtime = time.gmtime()
-            ephtime = JulianDay(
-                swe.julday(
-                    year, month, day, nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+            ephclock = putil.intize_time(args.time)
+        if args.date:
+            if args.time:
+                ephtime = JulianDay(swe.julday(year, month, day, ephclock))
+            else:
+                nowtime = time.gmtime()
+                ephtime = JulianDay(
+                    swe.julday(
+                        year,
+                        month,
+                        day,
+                        nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600,
+                    )
                 )
-            )
-    else:
-        if args.time:
-            nowtime = time.gmtime()
-            ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
         else:
-            ephtime = JulianDay()
+            if args.time:
+                nowtime = time.gmtime()
+                ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
+            else:
+                ephtime = JulianDay()
 
     if args.helios:
         sysflg = pglob.HELIO
@@ -70,6 +97,8 @@ def main():
 
     if args.name:
         name = args.name
+    elif name != None:
+        pass
     else:
         name = ""
 
@@ -107,10 +136,12 @@ def main():
         lat, long = args.position.split(",")
         lat = float(lat)
         long = float(long)
+    if isinstance(lat, float):
         if args.house:
             hsys = args.house
         else:
             hsys = "C"
+        print(f"lat and long and date: {lat}, {long}, {swe.revjul(ephtime.jd)}")
         cusps = Cusps(hsys, Location(lat=lat, long=long), ephtime)
         if args.adityas:
             draw_south_indian_cusps_adityas(cusps)
@@ -118,7 +149,10 @@ def main():
             draw_south_indian_cusps_rasis(cusps)
         draw_cusps_table_square(cusps_table_square(cusps), hsys)
 
-    save(file=image_dir + "pyphdraw.png")
+    if args.output:
+        save(file=args.output)
+    else:
+        save(file=image_dir + "pyphdraw.png")
 
 
 def draw_base_chart(ctype, signs):
@@ -194,6 +228,13 @@ def draw_cusps_table_square(cdata, hsys="C"):
 
 
 def cusps_table_square(cusps):
+    # line below draws the position under the date and name
+    # an ugly solution, but i need the lat and long and this just works
+    text(
+        xy=(50, 160),
+        text=f"Lat,Lon: {cusps.location.lat},{cusps.location.long}",
+        style=TextStyle(halign="left", size=25),
+    )
     output = []
     output.append(["Cusp", "Longitude"])
     for cusp in range(12):
@@ -506,6 +547,10 @@ def get_args():
     )
     parser.add_argument("-n", "--name", help="name of the person whose chart it is")
     parser.add_argument("-l", "--lang", help="language file; default is ./dict.eng")
+    parser.add_argument("-o", "--output", help="name of output image file")
+    parser.add_argument(
+        "-i", "--input", help="make chart using information in this file"
+    )
     args = parser.parse_args()
     return args
 
