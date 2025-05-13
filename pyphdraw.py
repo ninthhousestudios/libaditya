@@ -31,6 +31,8 @@ def main():
 
     name = None  # this is for later, in case they do pass a name, when we check if --name was used also
     fromfile = False
+    lat = 0
+    long = 0
     # user passed an input file with the chart information
     if args.input:
         fromfile = True
