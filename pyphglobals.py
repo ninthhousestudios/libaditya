@@ -6,7 +6,7 @@ import pyphutils as putil
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
 ayanamsa = 98  # new code for dhruva equatorial
 show_helios = 0
-show_baryos = 1
+show_baryos = 0
 show_topo = 0
 show_adityas = 0
 show_equ = 0
