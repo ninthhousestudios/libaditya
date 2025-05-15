@@ -162,9 +162,9 @@ class Location:
         placename=pglob.placename,
         timezone=pglob.timezone,
     ):
-        self.lat = lat
-        self.long = long
-        self.alt = alt
+        self.lat = float(lat)
+        self.long = float(long)
+        self.alt = float(alt)
         self.placename = placename
         self.timezone = timezone
 

@@ -126,7 +126,19 @@ def main():
 
     panch = Panchanga(ephtime, pglob.ayanamsa)
     print_panchanga(panch)
-    print_panchanga_addendum(panch)
+    if args.position:
+        lat, long = args.position.split(",")
+        lat = float(lat)
+        long = float(long)
+        if args.placename:
+            placename = args.placename
+        else:
+            placename = ""
+        print_panchanga_addendum(
+            panch, Location(lat=lat, long=long, placename=placename)
+        )
+    else:
+        print_panchanga_addendum(panch)
     print_next_new_moon(panch)
     print_next_full_moon(panch)
 
@@ -166,6 +178,11 @@ def get_args():
         "-p",
         "--position",
         help="latitude and longitutde in the form NN,EE; north and east are positive; don't pass directional letters; if latitude is negative, pass argument as -p=-30,40, for example",
+    )
+    parser.add_argument(
+        "-P",
+        "--placename",
+        help="a string that describes the place given by the position argument",
     )
     parser.add_argument(
         "-s", "--helios", action="store_true", help="toggle heliocentric coordinates"

@@ -170,7 +170,7 @@ def print_panchanga(panch=Panchanga()):
     print(f"Yoga: {panch.yoga()}")
 
 
-def print_panchanga_addendum(panch=Panchanga()):
+def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     print("\nPanchanga addendum")
 
     dmsun = panch.sun.daily_motion()
@@ -194,14 +194,11 @@ def print_panchanga_addendum(panch=Panchanga()):
     )
 
     # vara
-    loc = (
-        Location()
-    )  # the default location, which should update if the user passes arguments
     print(
-        f"\nSunrise {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE)}\n"
+        f"\nSunrise {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE, loc)}\n"
     )
     print(
-        f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET)}\n"
+        f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET, loc)}\n"
     )
 
     hrsnxtvara = ((panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd) % 24
@@ -214,10 +211,10 @@ def print_panchanga_addendum(panch=Panchanga()):
     # yesterpanch = Panchanga(panch.shift("b", "day", 1))
     # morrowpanch = Panchanga(panch.shift("f", "day", 1))
     print(
-        f"\nMoonrise {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_RISE)}"
+        f"\nMoonrise {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_RISE, loc)}"
     )
     print(
-        f"\nMoonset {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_SET)}"
+        f"\nMoonset {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_SET, loc)}"
     )
     # nakshatra
     ninfo = panch.moon.nakshatra_table_list(pglob.ayanamsa)
