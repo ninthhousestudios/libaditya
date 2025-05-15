@@ -161,6 +161,7 @@ def print_panchanga(panch=Panchanga()):
     print(panch)
 
     print(f"\nAbsolute tithi: {panch.tithi()}")
+    print(f"Type: {panch.tithi_type()}")
     if panch.tithi() > 15:
         print(f"Relative tithi: {panch.tithi() - 15}")
 

@@ -27,6 +27,13 @@ Capricorn =
 Aquarius = 
 Pisces = 
 
+[TITHI]
+Nanda =
+Bhadra = 
+Jaya = 
+Rkta = 
+Purna = 
+
 [KARANA]
 Kimtughna = 
 Bava = 
@@ -38,7 +45,7 @@ Vanija =
 Vishti = 
 Shakuni = 
 Chatushpada = 
-Naga
+Naga = 
 
 [NAKSHATRA]
 Ashvini = 

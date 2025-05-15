@@ -27,6 +27,13 @@ Capricorn = Capricorn
 Aquarius = Aquarius
 Pisces = Pisces
 
+[TITHI]
+Nanda = nanda
+Bhadra = bhadra
+Jaya = jaya
+Rkta = rikta
+Purna = purna
+
 [KARANA]
 Kimtughna = Kimtughna
 Bava = Bava

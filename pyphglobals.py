@@ -65,6 +65,7 @@ signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎
 
 planets = []
 rasis = []
+tithi = []
 karana = []
 nakshatra = []
 vara = []
@@ -79,6 +80,7 @@ def init_names(langfile=eng):
 
     global planets
     global rasis
+    global tithi
     global karana
     global nakshatra
     global vara
@@ -89,6 +91,7 @@ def init_names(langfile=eng):
     # because of importing and such things
     planets = []
     rasis = []
+    tithi = []
     karana = []
     nakshatra = []
     vara = []
@@ -105,6 +108,7 @@ def init_names(langfile=eng):
 
     pnames = names["PLANETS"]
     rnames = names["RASIS"]
+    tnames = names["TITHI"]
     knames = names["KARANA"]
     nnames = names["NAKSHATRA"]
     vnames = names["VARA"]
@@ -139,6 +143,12 @@ def init_names(langfile=eng):
     rasis.append(rnames["Capricorn"])
     rasis.append(rnames["Aquarius"])
     rasis.append(rnames["Pisces"])
+
+    tithi.append(tnames["Nanda"])
+    tithi.append(tnames["Bhadra"])
+    tithi.append(tnames["Jaya"])
+    tithi.append(tnames["Rkta"])
+    tithi.append(tnames["Purna"])
 
     karana.append(knames["Kimtughna"])
     karana.append(knames["Bava"])

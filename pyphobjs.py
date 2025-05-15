@@ -115,6 +115,9 @@ class Panchanga(JulianDay):
     def yoga(self):
         return f"{self.yoga_int} {pglob.yogas[self.yoga_int - 1]}"
 
+    def tithi_type(self):
+        return pglob.tithi[(self.tithi() - 1) % 5]
+
     # above is the basic panchanga
     # below is other interesting information from the panchanga
 
