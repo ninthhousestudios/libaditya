@@ -83,6 +83,8 @@ def main():
     print(f"\nDate: {ephtime.date()}\t\t{ephtime.usrdate()}")
     print(f"Time: {ephtime.time()}\t{ephtime.usrtime()}")
 
+    if pglob.show_adityas:
+        pglob.signs = pglob.adityas
     print_planets(ephtime, 0)
     if pglob.show_equ:
         print_planets(ephtime, pglob.EQU)
@@ -94,16 +96,6 @@ def main():
     if args.ayanamsa:
         pglob.ayanamsa = int(args.ayanamsa)
     print_planets_nakshatras(ephtime, pglob.ayanamsa)
-
-    if pglob.show_adityas:
-        pglob.signs = pglob.adityas
-        print_planets(ephtime, pglob.ECL)
-        if pglob.show_equ:
-            print_planets(ephtime, pglob.EQU)
-        if pglob.show_helios:
-            print_planets(ephtime, pglob.HELIO)
-        if pglob.show_baryos:
-            print_planets(ephtime, pglob.BARY)
 
     # houses
 
