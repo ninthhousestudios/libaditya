@@ -35,13 +35,13 @@ class Moon(Planet):
 class Rahu(Planet):
     def __init__(self, julianday=JulianDay()):
         super().__init__(pglob.true_node, julianday)
-        self.planet_name = "Rahu"
+        self.planet_name = pglob.planets[10]
 
 
 class Ketu(Planet):
     def __init__(self, julianday=JulianDay()):
         super().__init__(pglob.true_node, julianday)
-        self.planet_name = "Ketu"
+        self.planet_name = pglob.planets[11]
         self.coords = self.get_coords()
 
     def get_coords(self, sysflg=pglob.ECL):
