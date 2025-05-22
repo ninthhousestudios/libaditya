@@ -80,7 +80,7 @@ def main():
     # later we will check adityas and go through again if wanted
     pglob.signs = pglob.rasis
 
-    print(f"\nDate: {ephtime.date()}\t\t{ephtime.usrdate()}")
+    print(f"\nDate: {ephtime.date()}\t{ephtime.usrdate()}")
     print(f"Time: {ephtime.time()}\t{ephtime.usrtime()}")
 
     if pglob.show_adityas:
