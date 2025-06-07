@@ -115,6 +115,27 @@ def main():
     # are gotten in the per_signs function
     planets = init_Planets(ephtime)
 
+    # insert here vargas
+    # planets holds the rashi chart, essentially, see simply
+    # pass them to a varga function, have the return value assigned
+    # to planets, and then print as usual; will need to find a way to identify
+    # which varga
+    if not args.varga: # user did not specify a varga, so draw rashi chart
+        varga = "rashi chart"
+    else:
+        match args.varga:
+            case "d2":
+                varga = "bphs d2"
+                #planets = d2_bphs(planets)
+            case "d2p":
+                varga = "d2 parivritti"
+                #planets = d2_parivritti(planets)
+            case "d2r":
+                varga = "d2 parivritti with even sign horas reversed"
+                #planets = d2_parivritti_reversed(planets)
+            case _: # if they didnt give a supported varga, draw the rashi chart
+                varga = "rashi chart"
+
     # start drawing the chart
     draw_base_chart(sysflg, signs)
     if sysflg != pglob.ECL:
@@ -122,7 +143,7 @@ def main():
         draw_panchanga_circle(Panchanga(ephtime, ayanamsa))
         draw_table_circle(planets_table_circle(planets, sysflg))
     else:
-        draw_date_square(ephtime, name)
+        draw_date_square(ephtime, name, varga)
         draw_panchanga_square(Panchanga(ephtime, ayanamsa))
         draw_planets_table_square(planets_table_square(planets, sysflg, ayanamsa))
 
@@ -189,11 +210,14 @@ def draw_date_circle(jd=JulianDay()):
     text(xy=(60, 143), text=utc, style=TextStyle(halign="left"))
 
 
-def draw_date_square(jd=JulianDay(), name=""):
+def draw_date_square(jd=JulianDay(), name="", varga="rashi chart"):
     txt = f"{jd}"
     utc, usr, julian = txt.split("\n")
     text(xy=(50, 170), text=name, style=TextStyle(halign="left", size=25))
     text(xy=(50, 165), text=utc, style=TextStyle(halign="left", size=25))
+    # below the time is the lat,long if provided, so the varga will go beneath that
+    # lat,long is at (50,160)
+    text(xy=(50, 155), text=varga, style=TextStyle(halign="left", size=20))
 
 
 def draw_table_circle(tdata):
@@ -303,7 +327,7 @@ def draw_south_indian_planets_adityas(planets):
     for sign in range(12):
         for planet in range(len(signs_index[sign])):
             image(
-                # planets in aries go into taurus for the adityas
+                # planets in aries go into taurus, etc., for the adityas
                 xy=geo_coords_list[(sign + 1) % 12][planet],
                 width=pwidth,
                 image=planet_glyphs[signs_index[sign][planet]],
@@ -553,6 +577,9 @@ def get_args():
     parser.add_argument("-o", "--output", help="name of output image file")
     parser.add_argument(
         "-i", "--input", help="make chart using information in this file"
+    )
+    parser.add_argument(
+        "-v", "--varga", help="draw a particular varga. current options:d2=(bphs hora)d2p=(parivritti hora) d2r=(parivritti hora with hora of even signs reversed)"
     )
     args = parser.parse_args()
     return args
