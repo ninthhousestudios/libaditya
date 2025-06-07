@@ -193,6 +193,7 @@ class Planet:
         self.julianday = julianday  # the JulianDay class of this planet
         self.jd = self.julianday.jd
         self.coords = self.get_coords()
+        self.varga_long = 0 # for longitude in a varga if calculating
 
     def __str__(self):
         return f"{self.planet_name} on {self.julianday}"
@@ -206,6 +207,12 @@ class Planet:
 
     def longitude(self, sysflg=pglob.ECL):
         return swe.calc_ut(self.jd, self.pnumber, sysflg)[0][0]
+
+    def set_varga_long(self,long):
+        self.varga_long = long
+
+    def get_varga_long(self):
+        return self.varga_long
 
     def sign_index(self, sysflg=pglob.ECL):
         return int(self.longitude(sysflg) / 30)

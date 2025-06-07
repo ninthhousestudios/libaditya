@@ -12,11 +12,13 @@ from pyphconstants import *
 
 
 global ephtime
+global varga
 image_dir = "/home/josh/w/astro/soft/pyphemeris/images/"
 
 
 def main():
     global ephtime
+    global varga = "rashi"
     args = get_args()
 
     if args.lang:
@@ -121,20 +123,23 @@ def main():
     # to planets, and then print as usual; will need to find a way to identify
     # which varga
     if not args.varga: # user did not specify a varga, so draw rashi chart
-        varga = "rashi chart"
+        varga_name = "rashi chart"
     else:
         match args.varga:
             case "d2":
-                varga = "bphs d2"
+                varga = "d2"
+                varga_name = "bphs d2"
                 #planets = d2_bphs(planets)
             case "d2p":
-                varga = "d2 parivritti"
+                varga = "d2p"
+                varga_name = "d2 parivritti"
                 #planets = d2_parivritti(planets)
             case "d2r":
-                varga = "d2 parivritti with even sign horas reversed"
+                varga = "d2r"
+                varga_name = "d2 parivritti with even sign horas reversed"
                 #planets = d2_parivritti_reversed(planets)
             case _: # if they didnt give a supported varga, draw the rashi chart
-                varga = "rashi chart"
+                varga_name = "rashi chart"
 
     # start drawing the chart
     draw_base_chart(sysflg, signs)
@@ -161,12 +166,24 @@ def main():
         lat, long = args.position.split(",")
         lat = float(lat)
         long = float(long)
-    if isinstance(lat, float):
+    if isinstance(lat, float): # i forgot exactly what this is doing
         if args.house:
             hsys = args.house
         else:
             hsys = "C"
         cusps = Cusps(hsys, Location(lat=lat, long=long), ephtime)
+        # before drawing cusps we need to see if it for a certain varga
+        # i know it would be better to do it up above all together, but
+        # that isnt what is happening right now
+        match varga:
+            case "d2":
+                cusps = d2_bphs_cusps(cusps)
+            case "d2p":
+                #cusps = d2_parivritti_cusps(cusps)
+            case "d2r":
+                #cusps = d2_parivritti_reversed_cusps(cusps)
+            case _: # if they didnt give a supported varga, draw the rashi chart
+                continue
         if args.adityas:
             draw_south_indian_cusps_adityas(cusps)
         else:
@@ -392,7 +409,7 @@ def init_Planets(tjd=JulianDay()):
     return a list of Planet classes, one for each
     Sun,Moon,Mercury,Venus,Mars,Jupiter,Saturn,Uranus,Neptune,Pluto (indexes 0-9)
     Rahu at index 11, Ketu at index 10
-    Earth at index 12
+    Earth at index 12 
     """
     planets = []
     for i in range(10):
