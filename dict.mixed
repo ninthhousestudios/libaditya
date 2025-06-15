@@ -1,31 +1,31 @@
 [PLANETS]
-Sun = sūrya
-Moon = candra
-Mercury = budha
-Venus = śukra
-Mars = maṅgala
-Jupiter = guru
-Saturn = śani
-Uranus = brahmā
-Neptune = viṣṇu
-Pluto =śiva
-Rahu = rāhu
-Ketu = ketu
-Earth = bhūmi
+Sun = Sun
+Moon = Moon
+Mercury = Mercury
+Venus = Venus
+Mars = Mars
+Jupiter = Jupiter
+Saturn = Saturn
+Uranus = Uranus
+Neptune = Neptune
+Pluto = Pluto
+Rahu = Rahu
+Ketu = Ketu
+Earth = Earth
 
 [RASIS]
-Aries = meṣa
-Taurus = vṛṣabha
-Gemini = mithuna
-Cancer = karka
-Leo = siṃha
-Virgo = kanyā
-Libra = tulā
-Scorpio = vṛścika
-Sagittarius = dhanus
-Capricorn = nakra
-Aquarius = kumbha
-Pisces = mīna
+Aries = Aries
+Taurus = Taurus
+Gemini = Gemini
+Cancer = Cancer
+Leo = Leo       
+Virgo = Virgo
+Libra = Libra
+Scorpio = Scorpio
+Sagittarius = Sagittarius
+Capricorn = Capricorn
+Aquarius = Aquarius
+Pisces = Pisces
 
 [TITHI]
 Nanda = nanda
