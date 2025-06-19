@@ -1,7 +1,5 @@
 import configparser
 
-global nakshatra
-
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
 eng = pyphpath + "dict.eng"
 iast = pyphpath + "dict.iast"
@@ -9,11 +7,10 @@ deva = pyphpath + "dict.deva"
 mixed = pyphpath + "dict.mixed.sbc"
 langfile = mixed
 
-def init_sbcaditya_names(langfile=mixed):
+def init_sbc_nakshatra_names(langfile=mixed):
     names = configparser.ConfigParser()
     names.read(langfile)
 
-    global nakshatra
     nakshatra = []
 
     nnames = names["NAKSHATRA"]
@@ -46,4 +43,31 @@ def init_sbcaditya_names(langfile=mixed):
     nakshatra.append(nnames["Revati"])
     nakshatra.append(nnames["Ashvini"])
     nakshatra.append(nnames["Bharani"])
+
     return nakshatra
+
+def init_sbc_aditya_names(langfile=mixed):
+    names = configparser.ConfigParser()
+    names.read(langfile)
+
+    adityas = []
+
+    anames = names["ADITYAS"]
+
+    adityas.append(anames["Dhata"])
+    adityas.append(anames["Aryama"])
+    adityas.append(anames["Mitra"])
+    adityas.append(anames["Varuna"])
+    adityas.append(anames["Indra"])
+    adityas.append(anames["Vivasvan"])
+    adityas.append(anames["Tvashta"])
+    adityas.append(anames["Vishnu"])
+    adityas.append(anames["Amshu"])
+    adityas.append(anames["Bhaga"])
+    adityas.append(anames["Pusha"])
+    adityas.append(anames["Parjanya"])
+    
+    return adityas
+
+
+
