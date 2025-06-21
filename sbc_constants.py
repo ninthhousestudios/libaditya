@@ -3,6 +3,15 @@ import sbcnames
 
 sbc_image="images/sbc.svg"
 sbc_image_zodiac="images/sbc-zodiac"
+default_input="chart-ex.sbc"
+
+
+pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
+eng = pyphpath + "dict.eng"
+iast = pyphpath + "dict.iast"
+deva = pyphpath + "dict.deva"
+mixed = pyphpath + "dict.mixed.sbc"
+langfile = mixed
 
 def make_coords(x=40,y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row
@@ -12,17 +21,48 @@ def make_coords(x=40,y=40):
             coords[i].append(tuple((x*(i+2)-4,y+(40*(n+1))-5)))
     return coords
 
+def make_nak_coords():
+    # nakshatra names have to be drawn in order
+    nak_coords=[]
+    for y in range(1,8):
+        nak_coords.append((y,0))
+    for y in range(1,8):
+        nak_coords.append((8,y))
+    for y in range(1,8).__reversed__():
+        nak_coords.append((y,8))
+    for y in range(1,8).__reversed__():
+        nak_coords.append((0,y))
+    return nak_coords
+
+
+# diagonals will be purple, here are their sbc coordinates
+diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
+diag_color=0
+# the outer most square of 20 letters
+outer_letters_coords=[(2,1),(3,1),(4,1),(5,1),(6,1),(7,2),(7,3),(7,4),(7,5),(7,6),(6,7),(5,7),(4,7),(3,7),(2,7),(1,6),(1,5),(1,4),(1,3),(1,2)]
+outer_letters_color=0
+# rashis
+rashis_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
+rashis_color=0
+# four tithis
+tithi_coords=[(4,3),(5,4),(4,5),(3,4)]
+tithi_color=0
+# nakshatra coordinates, in the proper order
+nak_coords = make_nak_coords()
+nak_color=0
 
 # pass in the drawsvg.drawing.Drawing object; return it too
-def draw_chakra(d,zodiac=False):
+def draw_chakra(d,zodiac=False,langfile=mixed):
     d.append(draw.Circle(250,250,250,fill='yellow'))
     d.append(draw.Circle(250,250,245,fill='black'))
     d.append(draw.Circle(250,250,240,fill='yellow'))
     d.append(draw.Circle(250,250,225,fill='blue'))
+    d.append(draw.Circle(250,250,215.5,fill='forestgreen'))
+    d.append(draw.Circle(250,250,209.25,fill='blue'))
     d.append(draw.Circle(250,250,200,fill='yellow'))
     d.append(draw.Circle(250,250,175,fill='red'))
     d.append(draw.Circle(250,250,150,fill='yellow'))
-    d.append(draw.Circle(250,250,125,fill='purple'))
+    d.append(draw.Circle(250,250,125,fill='#6b00ff'))
     d.append(draw.Circle(250,250,100,fill='yellow'))
     d.append(draw.Circle(250,250,75,fill='black'))
     d.append(draw.Circle(250,250,50,fill='yellow'))
@@ -32,28 +72,10 @@ def draw_chakra(d,zodiac=False):
     # cth column and rth row
     coords=make_coords()
 
-    # nakshatra names have to be drawn in order, but for drawing and coloring
-    # the boxes themselves, any order is fine
-    nak_coords = []
-    for y in range(1,8):
-        nak_coords.append((y,0))
-        nak_coords.append((0,y))
-        nak_coords.append((y,8))
-        nak_coords.append((8,y))
+
 
     # coloring the boxes
-    # diagonals will be purple, here are their sbc coordinates
-    diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
-
-    # the outer most square of letters
-    outer_letters_coords=[(2,1),(3,1),(4,1),(5,1),(6,1),(7,2),(7,3),(7,4),(7,5),(7,6),(6,7),(5,7),(4,7),(3,7),(2,7),(1,6),(1,5),(1,4),(1,3),(1,2)]
-
-    # rashis
-    rashis_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
-
-    # four tithis
-    tithi_coords=[(4,3),(5,4),(4,5),(3,4)]
-    
+   
     # draw the 81 squares of the chakra
     for i in range(9):
         for n in range(9):
@@ -85,58 +107,68 @@ def draw_chakra(d,zodiac=False):
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
     # initalize all the names to write
-    nakshatra,adityas,tithi,vara,signs = sbcnames.init_sbc_names()
+    nakshatra,adityas,tithi,vara,zsigns = sbcnames.init_sbc_names(langfile)
     if zodiac:
-        adityas=signs
+        print("using the zodiac={zodiac}")
+        adityas=zsigns
 
-    # draw names of nakshatras {{{1
+    # draw names of nakshatras {{{1 }}}
     # init names
     # nnames = init_sbc_nakshatra_names()
     nak = 0 # 0 is krittika, and so on
 
-    ## first seven{{{2
-    for y in range(1,8):
-        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-        # first row
-        if(len(nakshatra[nak]) > 9):
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0],y=coords[y][0][1]+25))
-        else:
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0]+10,y=coords[y][0][1]+25))
-        nak+=1
+    for n in range(28):
+        thiscol = nak_coords[n][0]
+        thisrow = nak_coords[n][1]
+        d.append(draw.Text(nakshatra[n],font_size=5,x=coords[thiscol][thisrow][0]+5,y=coords[thiscol][thisrow][1]+25))
 
-    ## second seven, along the side{{{2
-    for y in range(1,8):
-        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-        # first row
-        if(len(nakshatra[nak]) > 9):
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0],y=coords[8][y][1]+25))
-        else:
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0]+10,y=coords[8][y][1]+25))
-        nak+=1
-
-    ## third seven, along the bottom, need to count backwards this time{{{2
-    for y in range(1,8).__reversed__():
-        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-        # first row
-        if(len(nakshatra[nak]) > 9):
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0],y=coords[y][8][1]+25))
-        else:
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0]+10,y=coords[y][8][1]+25))
-        nak+=1
-
-    ## fourth seven, along the left, need to count backwards this time{{{2
-    for y in range(1,8).__reversed__():
-        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-        # first row
-        if(len(nakshatra[nak]) > 9):
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0],y=coords[0][y][1]+25))
-        else:
-            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0]+10,y=coords[0][y][1]+25))
-        nak+=1
+#    ## first seven{{{2
+#    for y in range(1,8):
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0],y=coords[y][0][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0]+10,y=coords[y][0][1]+25))
+#        nak+=1
+#
+#    ## second seven, along the side{{{2
+#    for y in range(1,8):
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0],y=coords[8][y][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0]+10,y=coords[8][y][1]+25))
+#        nak+=1
+#
+#    ## third seven, along the bottom, need to count backwards this time{{{2
+#    for y in range(1,8).__reversed__():
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0],y=coords[y][8][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0]+10,y=coords[y][8][1]+25))
+#        nak+=1
+#
+#    ## fourth seven, along the left, need to count backwards this time{{{2
+#    for y in range(1,8).__reversed__():
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0],y=coords[0][y][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0]+10,y=coords[0][y][1]+25))
+#        nak+=1
+#
+#                                                                         #}}}
+#                                                                          #}}}
+                                      #}}}
 
     # draw sanskrit letters {{{1
 

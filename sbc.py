@@ -11,17 +11,22 @@ from pyphclasses import *
 from pyphobjs import *
 
 
-
+# to create a new fold
+# :syn region myFold start="{" end="}" transparent fold
 
 def main():
     args = get_args()
     d = draw.Drawing(500, 500)
-    d = sc.draw_chakra(d)
+    if args.lang:
+        d = sc.draw_chakra(d,langfile=args.lang)
+    else:
+        d = sc.draw_chakra(d,langfile=sc.langfile)
 
-    # read birth data and transit data from file {{{1
+    # read birth data and transit data from file #pyph 
     if args.input_file:
-        fromfile = True
         input = open(args.input_file, "r")
+    else:
+        input = open(sc.default_input, "r")
         for line in input:
             if not "=" in line:
                 continue
@@ -64,8 +69,10 @@ def main():
 
         print(f"Got birth time: {ephtime}")
         print(f"Got transit time: {transit_ephtime}")
-                                                    #}}}
+#hpyp#
 
+
+    # display to the correct output file #pyph
     d.set_pixel_scale(2)
     if args.output_file:
         d.save_svg(args.output_file)
@@ -74,10 +81,10 @@ def main():
     else:
         d.save_svg(f"sbc-{name}")
     d
+#hpyp#
 
 
-
-# get_args function {{{1
+# get_args function #pyph
 def get_args():
     parser = argparse.ArgumentParser(
         prog="sbc",
@@ -95,6 +102,7 @@ def get_args():
         action="store_true",
         help="use zodiac signs on the sbc. default is adityas",
     )
+    parser.add_argument("-l", "--lang", help="language file; default is ./dict.eng")
     parser.add_argument(
         "-o",
         "--output-file",
@@ -104,5 +112,6 @@ def get_args():
 
     args = parser.parse_args()
     return args
-                       #}}}
+#hpyp#
+
 main()
