@@ -7,6 +7,15 @@ deva = pyphpath + "dict.deva"
 mixed = pyphpath + "dict.mixed.sbc"
 langfile = mixed
 
+def make_coords(x=40,y=40):
+    # each list is a column, so coords[3][4] will get the 4th column of the 5th row
+    coords = [[],[],[],[],[],[],[],[],[]]
+    for i in range(9):
+        for n in range(9):
+            coords[i].append(tuple((x*(i+2)-4,y+(40*(n+1))-5)))
+    return coords
+
+
 def init_sbc_names(langfile=mixed):
     names = configparser.ConfigParser()
     names.read(langfile)
@@ -15,11 +24,13 @@ def init_sbc_names(langfile=mixed):
     adityas = []
     tithi = []
     vara = []
+    rasis = []
 
     nnames = names["NAKSHATRA"]
     anames = names["ADITYAS"]
     tnames = names["TITHI"]
     vnames = names["VARA"]
+    rnames = names["RASIS"]
 
     nakshatra.append(nnames["Krittika"])
     nakshatra.append(nnames["Rohini"])
@@ -50,7 +61,6 @@ def init_sbc_names(langfile=mixed):
     nakshatra.append(nnames["Ashvini"])
     nakshatra.append(nnames["Bharani"])
 
-    adityas.append(anames["Dhata"])
     adityas.append(anames["Aryama"])
     adityas.append(anames["Mitra"])
     adityas.append(anames["Varuna"])
@@ -62,6 +72,7 @@ def init_sbc_names(langfile=mixed):
     adityas.append(anames["Bhaga"])
     adityas.append(anames["Pusha"])
     adityas.append(anames["Parjanya"])
+    adityas.append(anames["Dhata"])
 
     tithi.append(tnames["Nanda"])
     tithi.append(tnames["Bhadra"])
@@ -77,7 +88,20 @@ def init_sbc_names(langfile=mixed):
     vara.append(vnames["Shukravara"])
     vara.append(vnames["Shanivara"])
 
-    return [nakshatra,adityas,tithi,vara]
+    rasis.append(rnames["Aries"])
+    rasis.append(rnames["Taurus"])
+    rasis.append(rnames["Gemini"])
+    rasis.append(rnames["Cancer"])
+    rasis.append(rnames["Leo"])
+    rasis.append(rnames["Virgo"])
+    rasis.append(rnames["Libra"])
+    rasis.append(rnames["Scorpio"])
+    rasis.append(rnames["Sagittarius"])
+    rasis.append(rnames["Capricorn"])
+    rasis.append(rnames["Aquarius"])
+    rasis.append(rnames["Pisces"])
+
+    return [nakshatra,adityas,tithi,vara,rasis]
 
 
 def init_sbc_nakshatra_names(langfile=mixed):
