@@ -11,7 +11,7 @@ eng = pyphpath + "dict.eng"
 iast = pyphpath + "dict.iast"
 deva = pyphpath + "dict.deva"
 mixed = pyphpath + "dict.mixed.sbc"
-langfile = mixed
+langfile = deva
 
 def make_coords(x=40,y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row

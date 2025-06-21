@@ -11,8 +11,6 @@ from pyphclasses import *
 from pyphobjs import *
 
 
-# to create a new fold
-# :syn region myFold start="{" end="}" transparent fold
 
 def main():
     args = get_args()
@@ -22,7 +20,7 @@ def main():
     else:
         d = sc.draw_chakra(d,langfile=sc.langfile)
 
-    # read birth data and transit data from file #pyph 
+    # read birth data and transit data from file 
     if args.input_file:
         input = open(args.input_file, "r")
     else:
@@ -66,13 +64,19 @@ def main():
         ephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
         transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
         input.close()
+    
 
-        print(f"Got birth time: {ephtime}")
-        print(f"Got transit time: {transit_ephtime}")
-#hpyp#
+    # birth panchanga
+    birth_panchanga = panchanga_string(Panchanga(ephtime))
+    d.append(draw.Rectangle(395, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
+    d.append(draw.Text(birth_panchanga,font_size=7.5,x=400,y=450))
 
+    # transit panchanga
+    transit_panchanga = panchanga_string(Panchanga(transit_ephtime))
+    d.append(draw.Rectangle(35, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
+    d.append(draw.Text(transit_panchanga,font_size=7.5,x=38,y=450))
 
-    # display to the correct output file #pyph
+    # display to the correct output file 
     d.set_pixel_scale(2)
     if args.output_file:
         d.save_svg(args.output_file)
@@ -81,10 +85,21 @@ def main():
     else:
         d.save_svg(f"sbc-{name}")
     d
-#hpyp#
 
 
-# get_args function #pyph
+
+# panchanga string
+def panchanga_string(panch=Panchanga()):
+    s=""
+    s+=f"\nTithi: {panch.tithi()}"
+    s+=f"\nKarana: {panch.karana()}"
+    s+=f"\nVara: {panch.vara()}"
+    s+=f"\nNakshatra: {panch.nakshatra()}"
+    s+=f"\nYoga: {panch.yoga()}"
+    return s
+
+
+# get_args function 
 def get_args():
     parser = argparse.ArgumentParser(
         prog="sbc",
@@ -112,6 +127,5 @@ def get_args():
 
     args = parser.parse_args()
     return args
-#hpyp#
 
 main()

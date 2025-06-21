@@ -75,7 +75,7 @@ adityas = []
 signs = []
 
 
-def init_names(langfile=eng):
+def init_names(langfile=mixed):
     names = configparser.ConfigParser()
     names.read(langfile)
 
