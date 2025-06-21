@@ -5,7 +5,6 @@ import argparse
 import sbcnames
 
 def main():
-
     args = get_args()
 
     d = draw.Drawing(500, 500)
@@ -17,10 +16,19 @@ def main():
     # cth column and rth row
     coords=sbcnames.make_coords()
 
+    # coloring the boxes
+    # diagonals will be purple, here are their sbc coordinates
+    diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
+
     # draw the 81 squares of the chakra
     for i in range(9):
         for n in range(9):
-            d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
+            if (i,n) in diag_coords:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='#6b00ff'))
+            else:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
     # initalize all the names to write
     nakshatra,adityas,tithi,vara,signs = sbcnames.init_sbc_names()
@@ -127,7 +135,7 @@ def main():
 
     # draw aditya names {{{1
     # adityas = init_sbc_aditya_names()
-    adit_coords=[(2,3),(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4)]
+    adit_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
 
     for n in range(12):
         thisx=adit_coords[n][0]
@@ -146,16 +154,17 @@ def main():
 
     # Display
     d.set_pixel_scale(2)
-    d.save_svg('sbc-algo.svg')
+    if args.zodiac:
+        d.save_svg('sbc-signs.svg')
+    d.save_svg('sbc.svg')
     d
 
 
 def get_args():
-
     parser = argparse.ArgumentParser(
         prog="make-sbc-image",
-        usage="%(prog)s [options]",
-        description="make an image of the sarvatobhadra charka, an svg image",
+        usage="%(prog)s [options]", 
+        description=f"make an image of the sarvatobhadra charka, an svg image. default is adityas and \n28 equal nakshatras with krtikka and aryama at the ascending equinox",
     )
     parser.add_argument(
         "-Z",
@@ -167,4 +176,4 @@ def get_args():
     args = parser.parse_args()
     return args
 
- 
+main() 
