@@ -9,17 +9,45 @@ def main():
 
     d = draw.Drawing(500, 500)
 
-    d.append(draw.Circle(250,250,250,fill='khaki'))
+    d.append(draw.Circle(250,250,250,fill='yellow'))
+    d.append(draw.Circle(250,250,245,fill='black'))
+    d.append(draw.Circle(250,250,240,fill='yellow'))
+    d.append(draw.Circle(250,250,225,fill='blue'))
+    d.append(draw.Circle(250,250,200,fill='yellow'))
+    d.append(draw.Circle(250,250,175,fill='red'))
+    d.append(draw.Circle(250,250,150,fill='yellow'))
+    d.append(draw.Circle(250,250,125,fill='purple'))
+    d.append(draw.Circle(250,250,100,fill='yellow'))
+    d.append(draw.Circle(250,250,75,fill='black'))
+    d.append(draw.Circle(250,250,50,fill='yellow'))
 
     # makes coordinate system that that
     # coords[c][r] gives the coordinates for the square in the
     # cth column and rth row
     coords=sbcnames.make_coords()
 
+    # nakshatra names have to be drawn in order, but for drawing and coloring
+    # the boxes themselves, any order is fine
+    nak_coords = []
+    for y in range(1,8):
+        nak_coords.append((y,0))
+        nak_coords.append((0,y))
+        nak_coords.append((y,8))
+        nak_coords.append((8,y))
+
     # coloring the boxes
     # diagonals will be purple, here are their sbc coordinates
     diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
 
+    # the outer most square of letters
+    outer_letters_coords=[(2,1),(3,1),(4,1),(5,1),(6,1),(7,2),(7,3),(7,4),(7,5),(7,6),(6,7),(5,7),(4,7),(3,7),(2,7),(1,6),(1,5),(1,4),(1,3),(1,2)]
+
+    # rashis
+    rashis_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
+
+    # four tithis
+    tithi_coords=[(4,3),(5,4),(4,5),(3,4)]
+    
     # draw the 81 squares of the chakra
     for i in range(9):
         for n in range(9):
@@ -27,6 +55,26 @@ def main():
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
                                         fill='#6b00ff'))
+            elif (i,n) in outer_letters_coords:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='forestgreen'))
+            elif (i,n) in nak_coords:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='orange')) # #9980ff
+            elif (i,n) in rashis_coords:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='cyan'))
+            elif (i,n) in tithi_coords:
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='red'))
+            elif (i,n) == (4,4):
+                d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
+                                        30, rx='1', ry='1', stroke='black',
+                                        fill='black'))
             else:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
@@ -143,20 +191,32 @@ def main():
         d.append(draw.Text(adityas[n],font_size=5,x=coords[thisx][thisy][0]+5,y=coords[thisx][thisy][1]+25))
 
 
-    # draw tithi names {{{1
-        # nanda, bhadra, jaya, rikta, purna
-        d.append(draw.Text(tithi[0],font_size=5,x=coords[4][3][0]+7,y=coords[4][3][1]+5))
-        d.append(draw.Text(tithi[1],font_size=5,x=coords[5][4][0]+7,y=coords[5][4][1]+5))
-        d.append(draw.Text(tithi[2],font_size=5,x=coords[4][5][0]+10,y=coords[4][5][1]+5))
-        d.append(draw.Text(tithi[3],font_size=5,x=coords[3][4][0]+9,y=coords[3][4][1]+5))
-        d.append(draw.Text(tithi[4],font_size=5,x=coords[4][4][0]+7,y=coords[4][4][1]+5))
+    # draw tithi names and vara names {{{1
+        # nanda, ravivara, mangalavara
+        d.append(draw.Text(tithi[0],font_size=5,x=coords[4][3][0]+9,y=coords[4][3][1]+5))
+        d.append(draw.Text(vara[0],font_size=5,x=coords[4][3][0]+7,y=coords[4][3][1]+20))
+        d.append(draw.Text(vara[2],font_size=5,x=coords[4][3][0]+3,y=coords[4][3][1]+25))
+        # bhadra, somavara, budhavara
+        d.append(draw.Text(tithi[1],font_size=5,x=coords[5][4][0]+8,y=coords[5][4][1]+5))
+        d.append(draw.Text(vara[1],font_size=5,x=coords[5][4][0]+6,y=coords[5][4][1]+20))
+        d.append(draw.Text(vara[3],font_size=5,x=coords[5][4][0]+5,y=coords[5][4][1]+25))
+        # jaya, guruvara
+        d.append(draw.Text(tithi[2],font_size=5,x=coords[4][5][0]+11,y=coords[4][5][1]+5))
+        d.append(draw.Text(vara[4],font_size=5,x=coords[4][5][0]+7,y=coords[4][5][1]+25))
+        # rikta, shukravara
+        d.append(draw.Text(tithi[3],font_size=5,x=coords[3][4][0]+11,y=coords[3][4][1]+5))
+        d.append(draw.Text(vara[5],font_size=5,x=coords[3][4][0]+6,y=coords[3][4][1]+25))
+        # purna, shanivara
+        d.append(draw.Text(tithi[4],font_size=5,x=coords[4][4][0]+9,y=coords[4][4][1]+5,fill="white"))
+        d.append(draw.Text(vara[6],font_size=5,x=coords[4][4][0]+7,y=coords[4][4][1]+25,fill="white"))
     #}}}                      
 
     # Display
     d.set_pixel_scale(2)
     if args.zodiac:
         d.save_svg('sbc-signs.svg')
-    d.save_svg('sbc.svg')
+    else:
+        d.save_svg('sbc.svg')
     d
 
 
