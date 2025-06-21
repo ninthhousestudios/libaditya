@@ -7,14 +7,6 @@ deva = pyphpath + "dict.deva"
 mixed = pyphpath + "dict.mixed.sbc"
 langfile = mixed
 
-def make_coords(x=40,y=40):
-    # each list is a column, so coords[3][4] will get the 4th column of the 5th row
-    coords = [[],[],[],[],[],[],[],[],[]]
-    for i in range(9):
-        for n in range(9):
-            coords[i].append(tuple((x*(i+2)-4,y+(40*(n+1))-5)))
-    return coords
-
 
 def init_sbc_names(langfile=mixed):
     names = configparser.ConfigParser()

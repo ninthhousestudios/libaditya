@@ -1,14 +1,20 @@
-#!/usr/bin/python
-
 import drawsvg as draw
-import argparse
 import sbcnames
 
-def main():
-    args = get_args()
+sbc_image="images/sbc.svg"
+sbc_image_zodiac="images/sbc-zodiac"
 
-    d = draw.Drawing(500, 500)
+def make_coords(x=40,y=40):
+    # each list is a column, so coords[3][4] will get the 4th column of the 5th row
+    coords = [[],[],[],[],[],[],[],[],[]]
+    for i in range(9):
+        for n in range(9):
+            coords[i].append(tuple((x*(i+2)-4,y+(40*(n+1))-5)))
+    return coords
 
+
+# pass in the drawsvg.drawing.Drawing object; return it too
+def draw_chakra(d,zodiac=False):
     d.append(draw.Circle(250,250,250,fill='yellow'))
     d.append(draw.Circle(250,250,245,fill='black'))
     d.append(draw.Circle(250,250,240,fill='yellow'))
@@ -24,7 +30,7 @@ def main():
     # makes coordinate system that that
     # coords[c][r] gives the coordinates for the square in the
     # cth column and rth row
-    coords=sbcnames.make_coords()
+    coords=make_coords()
 
     # nakshatra names have to be drawn in order, but for drawing and coloring
     # the boxes themselves, any order is fine
@@ -80,7 +86,7 @@ def main():
 
     # initalize all the names to write
     nakshatra,adityas,tithi,vara,signs = sbcnames.init_sbc_names()
-    if args.zodiac:
+    if zodiac:
         adityas=signs
 
     # draw names of nakshatras {{{1
@@ -210,30 +216,4 @@ def main():
         d.append(draw.Text(tithi[4],font_size=5,x=coords[4][4][0]+9,y=coords[4][4][1]+5,fill="white"))
         d.append(draw.Text(vara[6],font_size=5,x=coords[4][4][0]+7,y=coords[4][4][1]+25,fill="white"))
     #}}}                      
-
-    # Display
-    d.set_pixel_scale(2)
-    if args.zodiac:
-        d.save_svg('sbc-signs.svg')
-    else:
-        d.save_svg('sbc.svg')
-    d
-
-
-def get_args():
-    parser = argparse.ArgumentParser(
-        prog="make-sbc-image",
-        usage="%(prog)s [options]", 
-        description=f"make an image of the sarvatobhadra charka, an svg image. default is adityas and \n28 equal nakshatras with krtikka and aryama at the ascending equinox",
-    )
-    parser.add_argument(
-        "-Z",
-        "--zodiac",
-        action="store_true",
-        help="use zodiac signs on the sbc. default is adityas",
-    )
-
-    args = parser.parse_args()
-    return args
-
-main() 
+    return d
