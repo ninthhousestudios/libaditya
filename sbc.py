@@ -32,52 +32,51 @@ def main():
         input = open(args.input_file, "r")
     else:
         input = open(sc.default_input, "r")
-        for line in input:
-            if not "=" in line:
-                continue
-            field, value = line.split("=")
-            field = field.strip()
-            value = value.strip()
-            # get birth data
-            if field.startswith("Na") or field.startswith("na"):
-                name = value
-            if field.startswith("Da") or field.startswith("da"):
-                bmonth, bday, byear = putil.intize_date(value)
-            if field.startswith("Pla") or field.startswith("pla"):
-                bplace = value
-            if field.startswith("Ti") or field.startswith("ti"):
-                ephclock = putil.intize_time(value)
-            if field.startswith("La") or field.startswith("la"):
-                blat = float(value)
-            if field.startswith("Lo") or field.startswith("lo"):
-                blong = float(value)
-            # get transit data; time and lat and long
-            if field.startswith("TDa") or field.startswith("tda"):
-                if value == "now":
-                    nowtime = time.gmtime()
-                    tyear = nowtime[0]
-                    tmonth = nowtime[1] 
-                    tday = nowtime[2]
-                else:
-                    tmonth, tday, tyear = putil.intize_date(value)
-            if field.startswith("TPla") or field.startswith("tpla"):
-                tplace = value
+    for line in input:
+        if not "=" in line:
+            continue
+        field, value = line.split("=")
+        field = field.strip()
+        value = value.strip()
+        # get birth data
+        if field.startswith("Na") or field.startswith("na"):
+            name = value
+        if field.startswith("Da") or field.startswith("da"):
+            bmonth, bday, byear = putil.intize_date(value)
+        if field.startswith("Pla") or field.startswith("pla"):
+            bplace = value
+        if field.startswith("Ti") or field.startswith("ti"):
+            ephclock = putil.intize_time(value)
+        if field.startswith("La") or field.startswith("la"):
+            blat = float(value)
+        if field.startswith("Lo") or field.startswith("lo"):
+            blong = float(value)
+        # get transit data; time and lat and long
+        if field.startswith("TDa") or field.startswith("tda"):
+            if value == "now":
+                nowtime = time.gmtime()
+                tyear = nowtime[0]
+                tmonth = nowtime[1] 
+                tday = nowtime[2]
             else:
-                tplace = ""
-            if field.startswith("TTi") or field.startswith("tti"):
-                if value == "now":
-                    nowtime = time.gmtime()
-                    transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-                else:
-                    transit_ephclock = putil.intize_time(value)
-            if field.startswith("TLa") or field.startswith("tla"):
-                tlat = float(value)
-            if field.startswith("TLo") or field.startswith("tlo"):
-                tlong = float(value)
-        bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
-        transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
-        input.close()
-    
+                tmonth, tday, tyear = putil.intize_date(value)
+        if field.startswith("TPla") or field.startswith("tpla"):
+            tplace = value
+            print(f"got transit place name {tplace}")
+        if field.startswith("TTi") or field.startswith("tti"):
+            if value == "now":
+                nowtime = time.gmtime()
+                transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+            else:
+                transit_ephclock = putil.intize_time(value)
+        if field.startswith("TLa") or field.startswith("tla"):
+            tlat = float(value)
+        if field.startswith("TLo") or field.startswith("tlo"):
+            tlong = float(value)
+    bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
+    transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
+    input.close()
+
 
     # display panchangas
     # birth panchanga
@@ -94,7 +93,7 @@ def main():
 
     # display time and place, birth and transit
     bntstr = name_time_string(name,blat,blong,bplace,bephtime)
-    tntstr = name_time_string(tplace,tlat,tlong,tplace,jd=transit_ephtime)
+    tntstr = name_time_string("",tlat,tlong,tplace,jd=transit_ephtime)
 
     d.append(draw.Rectangle(400, 0, 100, 45, rx='1', ry='1', stroke='black', fill='yellow'))
     d.append(draw.Text(bntstr,font_size=7.5,x=405,y=10))

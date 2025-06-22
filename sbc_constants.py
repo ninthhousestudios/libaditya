@@ -3,17 +3,18 @@ import sbcnames
 
 sbc_image="images/sbc.svg"
 sbc_image_zodiac="images/sbc-zodiac"
-default_input="chart-ex.sbc"
+default_input="sbc-config/charts/chart-ex.sbc"
 
 
-pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
-eng = pyphpath + "dict.eng"
-iast = pyphpath + "dict.iast"
-deva = pyphpath + "dict.deva"
-mixed = pyphpath + "dict.mixed.sbc"
+sbcpath = "/home/josh/w/astro/soft/pyphemeris/"
+dictpath = "/home/josh/w/astro/soft/pyphemeris/sbc-config/dicts/"
+eng = dictpath + "dict.eng.sbc"
+iast = dictpath + "dict.iast.sbc"
+deva = dictpath + "dict.deva.sbc"
+mixed = dictpath + "dict.mixed.sbc"
 langfile = deva
 
-themepath = pyphpath + "images/sbc-themes/"
+themepath = sbcpath + "sbc-config/themes/"
 theme = "joshs-theme.sbc"
 
 def make_coords(x=40,y=40):
@@ -40,19 +41,14 @@ def make_nak_coords():
 
 # diagonals will be purple, here are their sbc coordinates
 diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
-diagonal_color=0
 # the outer most square of 20 letters
 outer_letters_coords=[(2,1),(3,1),(4,1),(5,1),(6,1),(7,2),(7,3),(7,4),(7,5),(7,6),(6,7),(5,7),(4,7),(3,7),(2,7),(1,6),(1,5),(1,4),(1,3),(1,2)]
-outer_letters_color=0
 # rashis
 rashis_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
-rashi_color=0
 # four tithis
 tithi_coords=[(4,3),(5,4),(4,5),(3,4)]
-tithi_color=0
 # nakshatra coordinates, in the proper order
 nak_coords = make_nak_coords()
-nak_color=0
 
 def get_colors(file=themepath+theme):
     input = open(file, "r")
@@ -77,30 +73,36 @@ def get_colors(file=themepath+theme):
             outer_letters_color = value
         if field.startswith("di"):
             diagonal_color = value
-    return [nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color]
+        if field.startswith("ci"):
+            circle_color = value
+    return [nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color,circle_color]
  
 # pass in the drawsvg.drawing.Drawing object; return it too
 def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
-    d.append(draw.Circle(250,250,250,fill='yellow'))
-    d.append(draw.Circle(250,250,245,fill='black'))
-    d.append(draw.Circle(250,250,240,fill='yellow'))
-    d.append(draw.Circle(250,250,225,fill='blue'))
-    d.append(draw.Circle(250,250,215.5,fill='forestgreen'))
-    d.append(draw.Circle(250,250,209.25,fill='blue'))
-    d.append(draw.Circle(250,250,200,fill='yellow'))
-    d.append(draw.Circle(250,250,175,fill='red'))
-    d.append(draw.Circle(250,250,150,fill='yellow'))
-    d.append(draw.Circle(250,250,125,fill='#6b00ff'))
-    d.append(draw.Circle(250,250,100,fill='yellow'))
-    d.append(draw.Circle(250,250,75,fill='black'))
-    d.append(draw.Circle(250,250,50,fill='yellow'))
+    nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color,circle_color = get_colors(themefile)
+
+    if circle_color.startswith("va"): # varied, make circle art
+        d.append(draw.Circle(250,250,250,fill='yellow'))
+        d.append(draw.Circle(250,250,245,fill='black'))
+        d.append(draw.Circle(250,250,240,fill='yellow'))
+        d.append(draw.Circle(250,250,225,fill='blue'))
+        d.append(draw.Circle(250,250,215.5,fill='forestgreen'))
+        d.append(draw.Circle(250,250,209.25,fill='blue'))
+        d.append(draw.Circle(250,250,200,fill='yellow'))
+        d.append(draw.Circle(250,250,175,fill='red'))
+        d.append(draw.Circle(250,250,150,fill='yellow'))
+        d.append(draw.Circle(250,250,125,fill='#6b00ff'))
+        d.append(draw.Circle(250,250,100,fill='yellow'))
+        d.append(draw.Circle(250,250,75,fill='black'))
+        d.append(draw.Circle(250,250,50,fill='yellow'))
+    else:
+        d.append(draw.Circle(250,250,250,fill=circle_color))
 
     # makes coordinate system that that
     # coords[c][r] gives the coordinates for the square in the
     # cth column and rth row
     coords=make_coords()
 
-    nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color = get_colors(themefile)
 
     # coloring the boxes
    
