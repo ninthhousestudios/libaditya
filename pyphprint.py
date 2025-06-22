@@ -12,7 +12,7 @@ def init_Planets(tjd=JulianDay()):
     """
     return a list of Planet classes, one for each
     Sun,Moon,Mercury,Venus,Mars,Jupiter,Saturn,Uranus,Neptune,Pluto (indexes 0-9)
-    Rahu at index 11, Ketu at index 10
+    Rahu at index 10, Ketu at index 11
     Earth at index 12
     """
     planets = []

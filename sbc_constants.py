@@ -17,6 +17,23 @@ langfile = deva
 themepath = sbcpath + "sbc-config/themes/"
 theme = "joshs-theme.sbc"
 
+# planetary glyphs to use
+sun = "☉"
+moon = "☾"
+mars = "♂"
+mercury = "☿"
+jupiter = "♃"
+venus = "♀"
+saturn = "♄"
+rahu = "☊"
+ketu = "☋"
+lagna = "Lg"
+# this is for looping and printing planets
+# this goes in the order the planets are in this list of Planet classes
+plist=[sun,moon,mercury,venus,mars,jupiter,saturn,rahu,ketu]
+
+hsys='C'
+
 def make_coords(x=40,y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row
     coords = [[],[],[],[],[],[],[],[],[]]

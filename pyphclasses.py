@@ -351,6 +351,10 @@ class Cusps:
     def house_name(self):
         return self.hname
 
+    def get_lagna(self):
+        """returns ecliptic longitude of lagna"""
+        return self.cusps[0]
+
     def cusps_nakshatras(self, ayanamsa=pglob.ayanamsa):
         if ayanamsa == 98:
             return self.cusps_dhruvequ()
