@@ -15,10 +15,17 @@ from pyphobjs import *
 def main():
     args = get_args()
     d = draw.Drawing(500, 500)
+
     if args.lang:
-        d = sc.draw_chakra(d,langfile=args.lang)
+        if args.theme:
+            d = sc.draw_chakra(d,langfile=args.lang,themefile=sc.themepath+args.theme)
+        else:
+            d = sc.draw_chakra(d,langfile=args.lang)
     else:
-        d = sc.draw_chakra(d,langfile=sc.langfile)
+        if args.theme:
+            d = sc.draw_chakra(d,langfile=sc.langfile,themefile=sc.themepath+args.theme)
+        else:
+            d = sc.draw_chakra(d,langfile=sc.langfile)
 
     # read birth data and transit data from file 
     if args.input_file:
@@ -36,12 +43,14 @@ def main():
                 name = value
             if field.startswith("Da") or field.startswith("da"):
                 bmonth, bday, byear = putil.intize_date(value)
+            if field.startswith("Pla") or field.startswith("pla"):
+                bplace = value
             if field.startswith("Ti") or field.startswith("ti"):
                 ephclock = putil.intize_time(value)
             if field.startswith("La") or field.startswith("la"):
-                lat = float(value)
+                blat = float(value)
             if field.startswith("Lo") or field.startswith("lo"):
-                long = float(value)
+                blong = float(value)
             # get transit data; time and lat and long
             if field.startswith("TDa") or field.startswith("tda"):
                 if value == "now":
@@ -51,6 +60,10 @@ def main():
                     tday = nowtime[2]
                 else:
                     tmonth, tday, tyear = putil.intize_date(value)
+            if field.startswith("TPla") or field.startswith("tpla"):
+                tplace = value
+            else:
+                tplace = ""
             if field.startswith("TTi") or field.startswith("tti"):
                 if value == "now":
                     nowtime = time.gmtime()
@@ -61,13 +74,14 @@ def main():
                 tlat = float(value)
             if field.startswith("TLo") or field.startswith("tlo"):
                 tlong = float(value)
-        ephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
+        bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
         transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
         input.close()
     
 
+    # display panchangas
     # birth panchanga
-    birth_panchanga = panchanga_string(Panchanga(ephtime))
+    birth_panchanga = panchanga_string(Panchanga(bephtime))
     d.append(draw.Rectangle(395, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
     d.append(draw.Text(birth_panchanga,font_size=7.5,x=400,y=450))
 
@@ -75,6 +89,19 @@ def main():
     transit_panchanga = panchanga_string(Panchanga(transit_ephtime))
     d.append(draw.Rectangle(35, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
     d.append(draw.Text(transit_panchanga,font_size=7.5,x=38,y=450))
+
+
+
+    # display time and place, birth and transit
+    bntstr = name_time_string(name,blat,blong,bplace,bephtime)
+    tntstr = name_time_string(tplace,tlat,tlong,tplace,jd=transit_ephtime)
+
+    d.append(draw.Rectangle(400, 0, 100, 45, rx='1', ry='1', stroke='black', fill='yellow'))
+    d.append(draw.Text(bntstr,font_size=7.5,x=405,y=10))
+
+    d.append(draw.Rectangle(0, 0, 100, 50, rx='1', ry='1', stroke='black', fill='yellow'))
+    d.append(draw.Text(tntstr,font_size=7.5,x=5,y=10))
+
 
     # display to the correct output file 
     d.set_pixel_scale(2)
@@ -88,7 +115,7 @@ def main():
 
 
 
-# panchanga string
+# def: panchanga string
 def panchanga_string(panch=Panchanga()):
     s=""
     s+=f"\nTithi: {panch.tithi()}"
@@ -97,6 +124,23 @@ def panchanga_string(panch=Panchanga()):
     s+=f"\nNakshatra: {panch.nakshatra()}"
     s+=f"\nYoga: {panch.yoga()}"
     return s
+
+# def: name_time_string
+def name_time_string(name,lat,long,placename="",jd=JulianDay()):
+    """
+    name is the persons name for a birth chart, or the place name for transit
+    placename is for a birth chart, if someone includes it.
+    """
+    s=""
+    s+=f"{name}\n"
+    s+=f"Date: {jd.date()}\n"
+    s+=f"Time: {jd.time()}\n"
+    s+=f"(Lat,Long): {(round(lat,2),round(long,2))}\n"
+    if placename != "" :
+        s+=f"Place: {placename}\n"
+    return s
+
+
 
 
 # get_args function 
@@ -123,7 +167,12 @@ def get_args():
         "--output-file",
         help="name of output file; default is images/sbc.svg, images/sbc-zodiac.svg if -Z is selected",
     )
-
+    parser.add_argument(
+        "-t",
+        "--theme",
+        help="theme file to use. default directory is $pyphpath/images/sbc-themes",
+    )
+ 
 
     args = parser.parse_args()
     return args

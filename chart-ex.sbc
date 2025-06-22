@@ -1,10 +1,12 @@
 Name = Josh
 Date = 06/01/1989
+Place = Noblesville, IN
 
 Time = 20:08:00
 Lat = 39.95
 Long = -86.016667
 
+TPlace = Fishers, IN
 TDate = now
 TTime = now
 TLat = 39.95

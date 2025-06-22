@@ -1,6 +1,5 @@
 backups/
 __pycache__/
-images/
 pyphdraw.png
 chart-ex.pyph
 example*

@@ -13,6 +13,9 @@ deva = pyphpath + "dict.deva"
 mixed = pyphpath + "dict.mixed.sbc"
 langfile = deva
 
+themepath = pyphpath + "images/sbc-themes/"
+theme = "joshs-theme.sbc"
+
 def make_coords(x=40,y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row
     coords = [[],[],[],[],[],[],[],[],[]]
@@ -37,13 +40,13 @@ def make_nak_coords():
 
 # diagonals will be purple, here are their sbc coordinates
 diag_coords=[(0,0),(1,1),(2,2),(3,3),(8,8),(7,7),(6,6),(5,5),(8,0),(7,1),(6,2),(5,3),(0,8),(1,7),(2,6),(3,5)]
-diag_color=0
+diagonal_color=0
 # the outer most square of 20 letters
 outer_letters_coords=[(2,1),(3,1),(4,1),(5,1),(6,1),(7,2),(7,3),(7,4),(7,5),(7,6),(6,7),(5,7),(4,7),(3,7),(2,7),(1,6),(1,5),(1,4),(1,3),(1,2)]
 outer_letters_color=0
 # rashis
 rashis_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
-rashis_color=0
+rashi_color=0
 # four tithis
 tithi_coords=[(4,3),(5,4),(4,5),(3,4)]
 tithi_color=0
@@ -51,8 +54,33 @@ tithi_color=0
 nak_coords = make_nak_coords()
 nak_color=0
 
+def get_colors(file=themepath+theme):
+    input = open(file, "r")
+    for line in input:
+        if not "=" in line:
+            continue
+        field, value = line.split("=")
+        field = field.strip()
+        value = value.strip()
+        if field.startswith("na"):
+            nak_color = value
+        if field.startswith("ti"):
+            vals = value.split(",") # if two values given, the second is for purna tithi
+            if len(vals) == 2:
+                tithi_color = vals[0].strip()
+                purna_color = vals[1].strip()
+            else:
+                tithi_color = purna_color = value
+        if field.startswith("ra"):
+            rashi_color = value
+        if field.startswith("ou"):
+            outer_letters_color = value
+        if field.startswith("di"):
+            diagonal_color = value
+    return [nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color]
+ 
 # pass in the drawsvg.drawing.Drawing object; return it too
-def draw_chakra(d,zodiac=False,langfile=mixed):
+def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     d.append(draw.Circle(250,250,250,fill='yellow'))
     d.append(draw.Circle(250,250,245,fill='black'))
     d.append(draw.Circle(250,250,240,fill='yellow'))
@@ -72,7 +100,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed):
     # cth column and rth row
     coords=make_coords()
 
-
+    nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color = get_colors(themefile)
 
     # coloring the boxes
    
@@ -82,27 +110,27 @@ def draw_chakra(d,zodiac=False,langfile=mixed):
             if (i,n) in diag_coords:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='#6b00ff'))
+                                        fill=diagonal_color))
             elif (i,n) in outer_letters_coords:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='forestgreen'))
+                                        fill=outer_letters_color))
             elif (i,n) in nak_coords:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='orange')) # #9980ff
+                                        fill=nak_color)) # #9980ff
             elif (i,n) in rashis_coords:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='cyan'))
+                                        fill=rashi_color))
             elif (i,n) in tithi_coords:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='red'))
+                                        fill=tithi_color))
             elif (i,n) == (4,4):
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30,
                                         30, rx='1', ry='1', stroke='black',
-                                        fill='black'))
+                                        fill=purna_color))
             else:
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
