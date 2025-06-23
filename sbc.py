@@ -178,9 +178,14 @@ def main():
     # so i can print all planets at 15pt
     # these are the offsets for a nakshatra box on the krittika row
     # there are ten coordinates, for 9 planets and the lagna...just in case
-    tl=[(2,-2),(20,-2),(2,-15),(20,-15),(20,-30),(2,-2),(20,-2),(2,-15),(20,-15),(20,-30)]
-    toffsets = {n: tl[:n] for n in range(len(tl)+1)} # a quick way of writing it
-                                                   # all
+    tup=[(2,-2),(20,-2),(2,-15),(20,-15),(2,-30),(20,-30),(2,-45),(20,-45)]
+    toffup = {n: tup[:n] for n in range(len(tup)+1)} # a quick way of writing it
+    tright=[(35,13),(35,27),(50,13),(49,26),(65,13),(65,27),(80,13),(80,27)]
+    toffright = {n: tright[:n] for n in range(len(tright)+1)} # a quick way of writing it
+    tbot=[(2,42),(20,42),(2,57),(20,57),(2,72),(20,72),(2,87),(20,87)]
+    toffbot = {n: tbot[:n] for n in range(len(tbot)+1)} # a quick way of writing it
+    tleft=[(-15,13),(-15,27),(-30,13),(-30,26),(-45,13),(-45,27),(-60,13),(-60,27)]
+    toffleft = {n: tleft[:n] for n in range(len(tleft)+1)} # a quick way of writing it
     # specific nakshatra box (x,y), increasing to the right and down
     nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
 
@@ -192,14 +197,45 @@ def main():
         ncol,nrow = sc.nak_coords[tnaks[n]]
         #print(f"debug: num is {num}, tnaks[n]={tnaks[n]},nakcount[tnaks[n]]={nakcount[tnaks[n]]}")
         if nrow == 0: # the row of seven nakshatras, krtikkikadi
-            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1])))
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffup[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffup[num][nakcount[tnaks[n]]][1])))
         if nrow == 8: # the bottom of of seven nakshatras
-            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]+40),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+60)))
-        if ncol == 0: # the row of seven nakshatras, krtikkikadi
-            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]-34),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+30)))
-        if ncol == 8: # the row of seven nakshatras, krtikkikadi
-            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]+32),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+15)))
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffbot[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffbot[num][nakcount[tnaks[n]]][1])))
+        if ncol == 0: # the first column of nakshatras, i.e., ending with bharani
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffleft[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffleft[num][nakcount[tnaks[n]]][1])))
+        if ncol == 8: # the rightmost column of nakshatras
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffright[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffright[num][nakcount[tnaks[n]]][1])))
         nakcount[tnaks[n]]+=1
+
+# this was used to test positions of nakshatras
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 24 
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffleft[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffleft[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 14 
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffbot[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffbot[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 9
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffright[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffright[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 3
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffup[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffup[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+
 
 
     # display to the correct output file 
