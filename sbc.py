@@ -11,25 +11,31 @@ from pyphclasses import *
 from pyphobjs import *
 
 
+# make actual coordinates for the chakra image
+# here because i need them in a function definition below
+coords = sc.make_coords()
 
 def main():
     args = get_args()
     d = draw.Drawing(500, 500)
+    langfile=sc.langfile # default
+    themefile = sc.default_theme
+    zodiac = False
 
     if args.lang:
-        if args.theme:
-            d = sc.draw_chakra(d,langfile=args.lang,themefile=sc.themepath+args.theme)
-        else:
-            d = sc.draw_chakra(d,langfile=args.lang)
-    else:
-        if args.theme:
-            d = sc.draw_chakra(d,langfile=sc.langfile,themefile=sc.themepath+args.theme)
-        else:
-            d = sc.draw_chakra(d,langfile=sc.langfile)
+        langfile=args.lang
+    if args.theme:
+        themefile = sc.themepath+args.theme 
+    if args.zodiac:
+        zodiac = True
+    d = sc.draw_chakra(d,zodiac=zodiac,langfile=langfile,themefile=themefile)
+
+    if args.english_letters:
+        d = draw_english_letters(d)
 
     # read birth data and transit data from file 
     if args.input_file:
-        input = open(args.input_file, "r")
+        input = open(sc.chartspath+args.input_file, "r")
     else:
         input = open(sc.default_input, "r")
     for line in input:
@@ -100,8 +106,6 @@ def main():
     d.append(draw.Text(tntstr,font_size=7.5,x=5,y=10))
 
 
-    # make actual coordinates for the chakra image
-    coords = sc.make_coords()
     # get planet information
     bplanets = init_Planets(bephtime)
     tplanets = init_Planets(transit_ephtime)
@@ -124,11 +128,34 @@ def main():
     # get nakshatra coordinates
     # takes a list of coordinates, returns a list of indices
     bnaks = get_nakshatras(long_list(bplanets,to_print))
+    # also want to print lagna in its nakshatra; do that last
+    bnaks.append(int(divmod(bcusps.get_lagna(),360/28)[0]))
 
-    for n in range(9):
+    poffsets = {1: [15,[(10,15)]], 2: [12,[(2,15),(15,15)]], 3:
+                [10,[(5,15),(20,25),(15,15)]], 4:
+                [10,[(5,10),(20,25),(20,10),(11,19)]], 5:
+                [10,[(5,10),(20,25),(20,10),(5,19),(15,19)]], 6:
+                [7,[(5,8),(20,25),(20,8),(5,19),(12,19),(12.5,8)]], 7:
+                [7,[(5,8),(20,25),(20,8),(5,19),(12,19),(12.5,8),(20,19)]], 8:
+                [7,[(5,8),(20,25),(20,8),(5,19),(12,19),(12.5,8),(20,19),(24,15)]]}
+    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+
+    # if there are multiple planets in a nakshatra, print them in different
+    # places
+    for n in range(len(bnaks)):
+        num = bnaks.count(bnaks[n]) # how many planets are in nakshatra bnaks[n]
         ny,nx = sc.nak_coords[bnaks[n]]
-        print(f"ny,nx = {ny},{nx}")
-        d.append(draw.Text(sc.plist[n],font_size=15,x=coords[ny][nx][0]+10,y=coords[ny][nx][1]+15))
+        d.append(draw.Text(sc.pglyphs[n],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[bnaks[n]]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[bnaks[n]]][1])))
+        nakcount[bnaks[n]]+=1
+
+#    this was to test where glyphs were placed
+#    nakcount[27]=0
+#    for i in range(8):
+#        num = 8
+#        ny,nx = sc.nak_coords[27]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[27]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[27]][1])))
+#        nakcount[27]+=1
+
     
 
     # display to the correct output file 
@@ -136,9 +163,9 @@ def main():
     if args.output_file:
         d.save_svg(args.output_file)
     elif args.zodiac:
-        d.save_svg(f"zodiac-sbc-{name}")
+        d.save_svg(f"zodiac-sbc-{name.replace(' ','').lower()}.svg")
     else:
-        d.save_svg(f"sbc-{name}")
+        d.save_svg(f"sbc-{name.replace(' ','').lower()}.svg")
     d
 
 
@@ -209,6 +236,38 @@ def long_list(planets,to_print):
     print(f"long_list {coords}")
     return coords
 
+def draw_english_letters(d):
+    """draw english letter equivalents on the sanskrit letter boxes"""
+
+    d.append(draw.Text("a",font_size=5,x=coords[0][0][0]+2,y=coords[0][0][1]+28))
+    d.append(draw.Text("A",font_size=5,x=coords[8][0][0]+2,y=coords[8][0][1]+28))
+    d.append(draw.Text("i",font_size=5,x=coords[8][8][0]+2,y=coords[8][8][1]+28))
+    d.append(draw.Text("I",font_size=5,x=coords[0][8][0]+2,y=coords[0][8][1]+28))
+    eng_letters=["u","a","va","ka","ha","Da","U","m","Ta","pa","ra","ta","R","na","ya","bha","ja","kha","RR","ga","sa","da","ca","la"]
+    elet=0
+    for y in range(1,8):
+        d.append(draw.Text(eng_letters[elet],font_size=5,x=coords[y][1][0]+2,y=coords[y][1][1]+28))
+        elet+=1
+    for y in range(2,8):
+        d.append(draw.Text(eng_letters[elet],font_size=5,x=coords[7][y][0]+2,y=coords[7][y][1]+28))
+        elet+=1
+    for y in range(1,7).__reversed__():
+        d.append(draw.Text(eng_letters[elet],font_size=5,x=coords[y][7][0]+2,y=coords[y][7][1]+28))
+        elet+=1
+    for y in range(2,7).__reversed__():
+        d.append(draw.Text(eng_letters[elet],font_size=5,x=coords[1][y][0]+2,y=coords[1][y][1]+28))
+        elet+=1
+    d.append(draw.Text("lR",font_size=5,x=coords[2][2][0]+2,y=coords[2][2][1]+28))
+    d.append(draw.Text("lRR",font_size=5,x=coords[6][2][0]+2,y=coords[6][2][1]+28))
+    d.append(draw.Text("e",font_size=5,x=coords[6][6][0]+2,y=coords[6][6][1]+28))
+    d.append(draw.Text("ai",font_size=5,x=coords[2][6][0]+2,y=coords[2][6][1]+28))
+
+    d.append(draw.Text("o",font_size=5,x=coords[3][3][0]+2,y=coords[3][3][1]+28))
+    d.append(draw.Text("au",font_size=5,x=coords[5][3][0]+2,y=coords[5][3][1]+28))
+    d.append(draw.Text("aṃ",font_size=5,x=coords[5][5][0]+2,y=coords[5][5][1]+28))
+    d.append(draw.Text("aḥ",font_size=5,x=coords[3][5][0]+2,y=coords[3][5][1]+28))
+    return d
+
 # get_args function 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -238,7 +297,13 @@ def get_args():
         "--theme",
         help="theme file to use. default directory is $pyphpath/images/sbc-themes",
     )
- 
+    parser.add_argument(
+        "-e",
+        "--english-letters",
+        action="store_true",
+        help="display english letters in addition to sanskrit letters",
+    )
+  
 
     args = parser.parse_args()
     return args

@@ -16,6 +16,8 @@ langfile = deva
 
 themepath = sbcpath + "sbc-config/themes/"
 theme = "joshs-theme.sbc"
+default_theme = themepath+theme
+chartspath = sbcpath + "sbc-config/charts/"
 
 # planetary glyphs to use
 sun = "☉"
@@ -30,7 +32,7 @@ ketu = "☋"
 lagna = "Lg"
 # this is for looping and printing planets
 # this goes in the order the planets are in this list of Planet classes
-plist=[sun,moon,mercury,venus,mars,jupiter,saturn,rahu,ketu]
+pglyphs=[sun,moon,mercury,venus,mars,jupiter,saturn,rahu,ketu,"Lg"]
 
 hsys='C'
 
@@ -155,9 +157,6 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
 
     # initalize all the names to write
     nakshatra,adityas,tithi,vara,zsigns = sbcnames.init_sbc_names(langfile)
-    if zodiac:
-        print("using the zodiac={zodiac}")
-        adityas=zsigns
 
     # draw names of nakshatras {{{1 }}}
     # init names
@@ -225,6 +224,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     d.append(draw.Text("इ",font_size=20,x=coords[8][8][0]+8,y=coords[8][8][1]+22))
     d.append(draw.Text("ई",font_size=20,x=coords[0][8][0]+8,y=coords[0][8][1]+24))
 
+
     ## inner square of 28 letters {{{2
     letters=["उ","अ","व","क","ह","ड","ऊ","म","ट","प","र","त","ऋ","न","य","भ","ज","ख","ॠ","ग","स","द","च","ल"]
     let=0
@@ -269,6 +269,10 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     # draw aditya names {{{1
     # adityas = init_sbc_aditya_names()
     adit_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
+
+    if zodiac:
+        print(f"using the zodiac={zodiac}")
+        adityas=zsigns
 
     for n in range(12):
         thisx=adit_coords[n][0]
