@@ -108,12 +108,13 @@ def main():
 
     # get planet information
     bplanets = init_Planets(bephtime)
-    tplanets = init_Planets(transit_ephtime)
+    # tplanets = init_Planets(transit_ephtime)
+    # above is actually called below
 
+    # cut cusps; originally i included the transit planets here
+    # but then moved all the transit stuff to the same section later
     bcusps = Cusps(sc.hsys,Location(lat=blat,long=blong,placename=bplace),bephtime)
     bcusps.init_cusps()
-    tcusps = Cusps(sc.hsys,Location(lat=tlat,long=tlong,placename=tplace),transit_ephtime)
-    tcusps.init_cusps()
 
     # display birth lagna and moon in the signs
     moon_rashi=get_rashi(bplanets[swe.MOON].longitude())
@@ -130,6 +131,8 @@ def main():
     bnaks = get_nakshatras(long_list(bplanets,to_print))
     # also want to print lagna in its nakshatra; do that last
     bnaks.append(int(divmod(bcusps.get_lagna(),360/28)[0]))
+    #for i in range(len(bnaks)):
+     #   print(f"{i}th nakshatra is {bnaks[i]}")
 
     poffsets = {1: [15,[(10,15)]], 2: [12,[(2,15),(15,15)]], 3:
                 [10,[(5,15),(20,25),(15,15)]], 4:
@@ -156,7 +159,48 @@ def main():
 #        d.append(draw.Text(sc.pglyphs[i],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[27]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[27]][1])))
 #        nakcount[27]+=1
 
+    # display transit planets
+    tplanets = init_Planets(transit_ephtime)
+    tcusps = Cusps(sc.hsys,Location(lat=tlat,long=tlong,placename=tplace),transit_ephtime)
+    tcusps.init_cusps()
+
+    # planets to print, sun-sa, rahuketu, not u,n,p
+    to_print=[0,1,2,3,4,5,6,10,11]
+    # get nakshatra coordinates
+    # takes a list of coordinates, returns a list of indices
+    tnaks = get_nakshatras(long_list(tplanets,to_print))
+    # also want to print lagna in its nakshatra; do that last
+    tnaks.append(int(divmod(tcusps.get_lagna(),360/28)[0]))
     
+    #for i in range(len(tnaks)):
+        #print(f"{i}th nakshatra is {tnaks[i]}")
+    # transits are on the outside, not in a box
+    # so i can print all planets at 15pt
+    # these are the offsets for a nakshatra box on the krittika row
+    # there are ten coordinates, for 9 planets and the lagna...just in case
+    tl=[(2,-2),(20,-2),(2,-15),(20,-15),(20,-30),(2,-2),(20,-2),(2,-15),(20,-15),(20,-30)]
+    toffsets = {n: tl[:n] for n in range(len(tl)+1)} # a quick way of writing it
+                                                   # all
+    # specific nakshatra box (x,y), increasing to the right and down
+    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+
+    # if there are multiple planets in a nakshatra, print them in different
+    # places
+    for n in range(len(tnaks)):
+        num = tnaks.count(tnaks[n]) # how many planets are in nakshatra tnaks[n]
+        #ncol,nrow = sc.nak_coords[tnaks[n]]
+        ncol,nrow = sc.nak_coords[tnaks[n]]
+        #print(f"debug: num is {num}, tnaks[n]={tnaks[n]},nakcount[tnaks[n]]={nakcount[tnaks[n]]}")
+        if nrow == 0: # the row of seven nakshatras, krtikkikadi
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1])))
+        if nrow == 8: # the bottom of of seven nakshatras
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]+40),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+60)))
+        if ncol == 0: # the row of seven nakshatras, krtikkikadi
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]-34),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+30)))
+        if ncol == 8: # the row of seven nakshatras, krtikkikadi
+            d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffsets[num][nakcount[tnaks[n]]][0]+32),y=coords[ncol][nrow][1]+(toffsets[num][nakcount[tnaks[n]]][1]+15)))
+        nakcount[tnaks[n]]+=1
+
 
     # display to the correct output file 
     d.set_pixel_scale(2)
@@ -233,7 +277,6 @@ def long_list(planets,to_print):
     coords=[]
     for n in to_print:
         coords.append(planets[n].longitude())
-    print(f"long_list {coords}")
     return coords
 
 def draw_english_letters(d):
@@ -264,8 +307,8 @@ def draw_english_letters(d):
 
     d.append(draw.Text("o",font_size=5,x=coords[3][3][0]+2,y=coords[3][3][1]+28))
     d.append(draw.Text("au",font_size=5,x=coords[5][3][0]+2,y=coords[5][3][1]+28))
-    d.append(draw.Text("aṃ",font_size=5,x=coords[5][5][0]+2,y=coords[5][5][1]+28))
-    d.append(draw.Text("aḥ",font_size=5,x=coords[3][5][0]+2,y=coords[3][5][1]+28))
+    d.append(draw.Text("aM",font_size=5,x=coords[5][5][0]+2,y=coords[5][5][1]+28))
+    d.append(draw.Text("aH",font_size=5,x=coords[3][5][0]+2,y=coords[3][5][1]+28))
     return d
 
 # get_args function 
@@ -301,7 +344,7 @@ def get_args():
         "-e",
         "--english-letters",
         action="store_true",
-        help="display english letters in addition to sanskrit letters",
+        help="display kyoto-harvard letters in addition to sanskrit letters",
     )
   
 
