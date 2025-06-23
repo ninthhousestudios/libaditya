@@ -179,13 +179,13 @@ def main():
     # these are the offsets for a nakshatra box on the krittika row
     # there are ten coordinates, for 9 planets and the lagna...just in case
     tup=[(2,-2),(20,-2),(2,-15),(20,-15),(2,-30),(20,-30),(2,-45),(20,-45)]
-    toffup = {n: tup[:n] for n in range(len(tup)+1)} # a quick way of writing it
+    toffup = {n: tup[:n] for n in range(1,len(tup)+1)} # a quick way of writing it
     tright=[(35,13),(35,27),(50,13),(49,26),(65,13),(65,27),(80,13),(80,27)]
-    toffright = {n: tright[:n] for n in range(len(tright)+1)} # a quick way of writing it
+    toffright = {n: tright[:n] for n in range(1,len(tright)+1)} # a quick way of writing it
     tbot=[(2,42),(20,42),(2,57),(20,57),(2,72),(20,72),(2,87),(20,87)]
-    toffbot = {n: tbot[:n] for n in range(len(tbot)+1)} # a quick way of writing it
-    tleft=[(-15,13),(-15,27),(-30,13),(-30,26),(-45,13),(-45,27),(-60,13),(-60,27)]
-    toffleft = {n: tleft[:n] for n in range(len(tleft)+1)} # a quick way of writing it
+    toffbot = {n: tbot[:n] for n in range(1,len(tbot)+1)} # a quick way of writing it
+    tleft=[(-18,13),(-18,27),(-30,13),(-30,26),(-45,13),(-45,27),(-60,13),(-60,27)]
+    toffleft = {n: tleft[:n] for n in range(1,len(tleft)+1)} # a quick way of writing it
     # specific nakshatra box (x,y), increasing to the right and down
     nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
 
@@ -243,9 +243,9 @@ def main():
     if args.output_file:
         d.save_svg(args.output_file)
     elif args.zodiac:
-        d.save_svg(f"zodiac-sbc-{name.replace(' ','').lower()}.svg")
+        d.save_svg(f"zodiac-sbc-{name.replace(' ','-').lower()}.svg")
     else:
-        d.save_svg(f"sbc-{name.replace(' ','').lower()}.svg")
+        d.save_svg(f"sbc-{name.replace(' ','-').lower()}.svg")
     d
 
 
