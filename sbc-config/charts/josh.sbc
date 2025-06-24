@@ -13,4 +13,7 @@ TLat = 39.95
 TLong = -86.07
 
 theme = joshs-theme
+dict = deva
+zodiac = false
+english letters = false
 output = josh.svg

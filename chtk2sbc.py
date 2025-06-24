@@ -3,7 +3,6 @@
 import argparse
 import os
 import codecs
-import sbc_config as sconf
 
 
 def main():
@@ -18,7 +17,7 @@ def main():
         #print(f"{n}: {line.decode(errors='ignore')}")
         match n:
             case 0:
-                name = clean_line(line.decode(errors='ignore'))
+                name = clean_line(line)
             case 1:
                 year = intize_line(codecs.decode(line))
             case 2:
@@ -34,15 +33,15 @@ def main():
             case 7:
                 sex = intize_line(codecs.decode(line))
             case 8:
-                country = clean_line(line.decode(errors='ignore'))
+                country = clean_line(line)
             case 9:
-                city = clean_line(line.decode(errors='ignore'))
+                city = clean_line(line)
             case 10:
-                long = long_to_float(clean_line(line.decode(errors='ignore')))
+                long = long_to_float(clean_line(line))
             case 11:
-                lat = lat_to_float(clean_line(line.decode(errors='ignore')))
+                lat = lat_to_float(clean_line(line))
             case 12:
-                h,m,s = clean_line(line.decode(errors='ignore')).split(":")
+                h,m,s = clean_line(line).split(":")
                 utcoff = int(h)+(int(m)/60) + (int(s)/3600)
         n+=1
     input.close() 
@@ -126,10 +125,11 @@ def intize_line(line):
 
 def clean_line(line):
     """
-    line is a string (of decoded bytes)
-    we remove all the space, etc. characters, then
-    can return the integer of the string
+    line is a line of bytes
+    we remove all the space, carriage return, and newlinecharacters, then
+    can return the string as only a string
     """
+    line=line.decode(errors='ignore')
     nochars = ["\x00","\r","\n"]
     count = 0
     line=list(line)
@@ -157,8 +157,6 @@ def dms2dec(dms):
     dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
-
-
 
 
 def get_args():

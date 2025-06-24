@@ -29,10 +29,10 @@ def main():
     # your-chart.sbc
     if args.input_file:
         config = sconf.init_chart(file=sc.chartspath+args.input_file)
-    elif args.file:
-        config = sconf.init_chart(file=sc.chartspath+args.file)
-    else:
-        config = sconf.init_chart(file=sc.default_chart)
+    else: # args.file either has the positional argument, if not, default
+        config = sconf.init_chart(file=args.file)
+    #else:
+     #   config = sconf.init_chart(file=sc.default_chart)
     
     # soon to implement
     # call sbc with -D "field:value,field:value,..."
@@ -329,10 +329,7 @@ def main():
 
     # display to the correct output file 
     d.set_pixel_scale(2)
-    if args.zodiac:
-        d.save_svg(f"zodiac-sbc-{output_file}")
-    else:
-        d.save_svg(output_file)
+    d.save_svg(output_file)
     d
 
 
@@ -469,7 +466,7 @@ def get_args():
         action="store_true",
         help="display kyoto-harvard letters in addition to sanskrit letters",
     )
-    parser.add_argument("file",help=".sbc file to use")
+    parser.add_argument("file",nargs='?',default=sc.default_chart,help=".sbc file to use")
   
 
     args = parser.parse_args()
