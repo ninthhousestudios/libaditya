@@ -6,4 +6,5 @@ example*
 *.pdf
 *.chtk
 test.svg
+*.chtk
 *.svg

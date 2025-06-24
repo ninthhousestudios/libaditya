@@ -75,7 +75,7 @@ def main():
         english_letters = True
     if args.output_file:
         output_file = args.output_file
- 
+    output_file = output_file.replace(' ','-').lower() 
 
 
     d = sc.draw_chakra(d,zodiac=zodiac,langfile=langfile,themefile=themefile)

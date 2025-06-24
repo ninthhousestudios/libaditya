@@ -3,6 +3,7 @@
 import argparse
 import os
 import codecs
+import sbc_config as sconf
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
     
     n=0
     fsize = os.path.getsize(args.file)
+    fname = args.file.split('.')[0].strip().replace(' ','-').lower()
     input = open(args.file, "rb")
     lines = input.readlines()
     for line in lines:
@@ -52,6 +54,31 @@ def main():
     print(city)
     print(f"(lat,long): ({lat},{long})")
     print(utcoff)
+
+    # time for config needs to be utc
+    # so we take the time here and add utcoffset
+    time = dms2dec((int(hour),int(min),int(sec))) # turn into float
+    time += utcoff # utcoff is already a float
+    time = dec2dms(time) # return the float as a string HH:MM:SS
+    print(time)
+
+    out = []
+    out.append(f"Name = {name}\n")
+    out.append(f"Date = {month:02d}/{day:02d}/{year}\n")
+    out.append(f"Time = {time}\n")
+    out.append(f"Place = {city}, {country}\n")
+    out.append(f"Lat = {lat}\n")
+    out.append(f"Long = {long}\n")
+    out.append(f"\nTPlace = {city}, {country}\n")
+    out.append(f"TDate = now\n")
+    out.append(f"TTime = now\n")
+    out.append(f"TLat = {lat}\n")
+    out.append(f"TLong = {long}\n")
+    out.append(f"\noutput = {name}.svg\n")
+    fout = open(fname+".sbc","w")
+    fout.writelines(out)
+    fout.close()
+
 
 def lat_to_float(lat):
     """
@@ -114,6 +141,23 @@ def clean_line(line):
     retval = ''.join(line)
     print(retval)
     return retval
+
+def dec2dms(dd):
+    """
+    take a decimal dd and return the equivalent DD:MM:SS as a string
+    """
+    dd = abs(dd)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
+    return f"{round(degrees):02d}:{round(minutes):02d}:{round(seconds):02d}"
+
+
+def dms2dec(dms):
+    """
+    dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
+    """
+    return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
+
 
 
 
