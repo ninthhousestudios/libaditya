@@ -26,8 +26,6 @@ def init_config(file=sc.config_base):
        value = value.strip()
        config[field]=value 
     input.close()
-    print("init config")
-    print(config)
     return config
 
 def init_chart(file=sc.config_base):

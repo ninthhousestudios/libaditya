@@ -25,9 +25,7 @@ def main():
     else:
         config = sconf.init_chart(file=sc.default_chart)
 
-    print(config)
-    exit
-
+    
     name = config["name"]
     bmonth, bday, byear = putil.intize_date(config["date"])
     bplace = config["place"]
@@ -40,12 +38,18 @@ def main():
         tyear = nowtime[0]
         tmonth = nowtime[1] 
         tday = nowtime[2]
+    elif config["tdate"] == "birth": # transit date to current day
+        tyear=byear
+        tmonth=bmonth
+        tday=bday
     else:
         print(f"config[tdate]={config["tdate"]}")
         tmonth, tday, tyear = putil.intize_date(config["tdate"])
     if config["ttime"] == "now":
         nowtime = time.gmtime()
         transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+    elif config["ttime"] == "birth":
+        transit_ephclock = ephclock
     else:
         transit_ephclock = putil.intize_time(config["ttime"])
     tlat = float(config["tlat"])
@@ -60,12 +64,11 @@ def main():
     english_letters = False if config["english letters"] == "false" else True
     output_file = config["output"]
 
-    # this is from file
     # i want cmdline args to override these values if they are given
     if args.lang:
-        langfile=f"{dictspath}.dict.{args.lang}.sbc"
+        langfile=f"{sc.dictpath}dict.{args.lang}.sbc"
     if args.theme:
-        themefile=f"{themepath}{args.theme}.sbc"
+        themefile=f"{sc.themepath}{args.theme}.sbc"
     if args.zodiac:
         zodiac = True
     if args.english_letters:
@@ -75,7 +78,6 @@ def main():
  
 
 
-    print(f"langfile: {langfile}")
     d = sc.draw_chakra(d,zodiac=zodiac,langfile=langfile,themefile=themefile)
 
     if english_letters:

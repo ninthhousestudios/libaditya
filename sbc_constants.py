@@ -273,7 +273,6 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     adit_coords=[(3,2),(4,2),(5,2),(6,3),(6,4),(6,5),(5,6),(4,6),(3,6),(2,5),(2,4),(2,3)]
 
     if zodiac:
-        # print(f"using the zodiac={zodiac}")
         adityas=zsigns
 
     for n in range(12):

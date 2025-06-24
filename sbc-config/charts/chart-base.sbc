@@ -10,11 +10,12 @@ Time = HH:MM:SS
 Lat = (N and E are positive)
 Long = (N and E are positive)
 
+# consider these as defaults
 TPlace = 
-TDate = MM/DD/YYYY
-TTime = HH:MM:SS
-TLat = (N and E are positive)
-TLong = (N and E are positive)
+TDate = now
+TTime = now
+TLat = -86
+TLong = 40
 
 # if one of these options is not included, default is used
 # if flag is passed on command, it overrides the options here
