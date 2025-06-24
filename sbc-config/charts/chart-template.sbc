@@ -1,3 +1,4 @@
+# this is a template for a person filling out the chart
 Name = (optional)
 Date = MM/DD/YYYY
 Place = (optional)
@@ -16,7 +17,7 @@ TLong = (N and E are positive)
 # if flag is passed on command, it overrides the options here
 
 theme = theme (must be in sbc-config/themes/)
-dict = dict (must be in sbc-config/dicts/)
+dict = eng/iast/deva/mixed (must be in sbc-config/dicts/)
 zodiac = true to use signs; false to use adityas
 english letters = true or false (print english letters on sanskrit letter boxes)
 output = (name of output file)

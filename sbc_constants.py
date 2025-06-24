@@ -18,6 +18,8 @@ themepath = sbcpath + "sbc-config/themes/"
 theme = "joshs-theme.sbc"
 default_theme = themepath+theme
 chartspath = sbcpath + "sbc-config/charts/"
+config_base = chartspath+"chart-base.sbc"
+default_chart = chartspath+"josh.sbc"
 
 # planetary glyphs to use
 sun = "☉"

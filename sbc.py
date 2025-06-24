@@ -7,6 +7,7 @@ import drawsvg as draw
 import pyphglobals as pglob
 import pyphutils as putil
 import sbc_constants as sc
+import sbc_config as sconf
 from pyphclasses import *
 from pyphobjs import *
 
@@ -18,70 +19,121 @@ coords = sc.make_coords()
 def main():
     args = get_args()
     d = draw.Drawing(500, 500)
-    langfile=sc.langfile # default
-    themefile = sc.default_theme
-    zodiac = False
 
-    if args.lang:
-        langfile=args.lang
-    if args.theme:
-        themefile = sc.themepath+args.theme 
-    if args.zodiac:
-        zodiac = True
-    d = sc.draw_chakra(d,zodiac=zodiac,langfile=langfile,themefile=themefile)
-
-    if args.english_letters:
-        d = draw_english_letters(d)
-
-    # read birth data and transit data from file 
     if args.input_file:
-        input = open(sc.chartspath+args.input_file, "r")
+        config = sconf.init_chart(file=sc.chartspath+args.input_file)
     else:
-        input = open(sc.default_input, "r")
-    for line in input:
-        if not "=" in line:
-            continue
-        field, value = line.split("=")
-        field = field.strip()
-        value = value.strip()
-        # get birth data
-        if field.startswith("Na") or field.startswith("na"):
-            name = value
-        if field.startswith("Da") or field.startswith("da"):
-            bmonth, bday, byear = putil.intize_date(value)
-        if field.startswith("Pla") or field.startswith("pla"):
-            bplace = value
-        if field.startswith("Ti") or field.startswith("ti"):
-            ephclock = putil.intize_time(value)
-        if field.startswith("La") or field.startswith("la"):
-            blat = float(value)
-        if field.startswith("Lo") or field.startswith("lo"):
-            blong = float(value)
-        # get transit data; time and lat and long
-        if field.startswith("TDa") or field.startswith("tda"):
-            if value == "now":
-                nowtime = time.gmtime()
-                tyear = nowtime[0]
-                tmonth = nowtime[1] 
-                tday = nowtime[2]
-            else:
-                tmonth, tday, tyear = putil.intize_date(value)
-        if field.startswith("TPla") or field.startswith("tpla"):
-            tplace = value
-        if field.startswith("TTi") or field.startswith("tti"):
-            if value == "now":
-                nowtime = time.gmtime()
-                transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-            else:
-                transit_ephclock = putil.intize_time(value)
-        if field.startswith("TLa") or field.startswith("tla"):
-            tlat = float(value)
-        if field.startswith("TLo") or field.startswith("tlo"):
-            tlong = float(value)
+        config = sconf.init_chart(file=sc.default_chart)
+
+    print(config)
+    exit
+
+    name = config["name"]
+    bmonth, bday, byear = putil.intize_date(config["date"])
+    bplace = config["place"]
+    ephclock = putil.intize_time(config["time"])
+    blat = float(config["lat"])
+    blong = float(config["long"])
+    tplace = config["tplace"]
+    if config["tdate"] == "now": # transit date to current day
+        nowtime = time.gmtime()
+        tyear = nowtime[0]
+        tmonth = nowtime[1] 
+        tday = nowtime[2]
+    else:
+        print(f"config[tdate]={config["tdate"]}")
+        tmonth, tday, tyear = putil.intize_date(config["tdate"])
+    if config["ttime"] == "now":
+        nowtime = time.gmtime()
+        transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+    else:
+        transit_ephclock = putil.intize_time(config["ttime"])
+    tlat = float(config["tlat"])
+    tlong = float(config["tlong"])
+
     bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
     transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
-    input.close()
 
+    langfile=f"{sc.dictpath}dict.{config["dict"]}.sbc"
+    themefile=f"{sc.themepath}{config["theme"]}.sbc"
+    zodiac = False if config["zodiac"] == "false" else True
+    english_letters = False if config["english letters"] == "false" else True
+    output_file = config["output"]
+
+    # this is from file
+    # i want cmdline args to override these values if they are given
+    if args.lang:
+        langfile=f"{dictspath}.dict.{args.lang}.sbc"
+    if args.theme:
+        themefile=f"{themepath}{args.theme}.sbc"
+    if args.zodiac:
+        zodiac = True
+    if args.english_letters:
+        english_letters = True
+    if args.output_file:
+        output_file = args.output_file
+ 
+
+
+    print(f"langfile: {langfile}")
+    d = sc.draw_chakra(d,zodiac=zodiac,langfile=langfile,themefile=themefile)
+
+    if english_letters:
+       d = draw_english_letters(d)
+
+# original parsing of arguments
+#    langfile=sc.langfile # default
+#    themefile = sc.default_theme
+#    zodiac = False
+#
+#        # read birth data and transit data from file 
+#    if args.input_file:
+#        input = open(sc.chartspath+args.input_file, "r")
+#    else:
+#        input = open(sc.default_input, "r")
+#    for line in input:
+#        if not "=" in line:
+#            continue
+#        field, value = line.split("=")
+#        field = field.strip()
+#        value = value.strip()
+#        # get birth data
+#        if field.startswith("Na") or field.startswith("na"):
+#            name = value
+#        if field.startswith("Da") or field.startswith("da"):
+#            bmonth, bday, byear = putil.intize_date(value)
+#        if field.startswith("Pla") or field.startswith("pla"):
+#            bplace = value
+#        if field.startswith("Ti") or field.startswith("ti"):
+#            ephclock = putil.intize_time(value)
+#        if field.startswith("La") or field.startswith("la"):
+#            blat = float(value)
+#        if field.startswith("Lo") or field.startswith("lo"):
+#            blong = float(value)
+#        # get transit data; time and lat and long
+#        if field.startswith("TDa") or field.startswith("tda"):
+#            if value == "now":
+#                nowtime = time.gmtime()
+#                tyear = nowtime[0]
+#                tmonth = nowtime[1] 
+#                tday = nowtime[2]
+#            else:
+#                tmonth, tday, tyear = putil.intize_date(value)
+#        if field.startswith("TPla") or field.startswith("tpla"):
+#            tplace = value
+#        if field.startswith("TTi") or field.startswith("tti"):
+#            if value == "now":
+#                nowtime = time.gmtime()
+#                transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+#            else:
+#                transit_ephclock = putil.intize_time(value)
+#        if field.startswith("TLa") or field.startswith("tla"):
+#            tlat = float(value)
+#        if field.startswith("TLo") or field.startswith("tlo"):
+#            tlong = float(value)
+#    bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
+#    transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
+#    input.close()
 
     # display panchangas
     # birth panchanga
@@ -240,12 +292,10 @@ def main():
 
     # display to the correct output file 
     d.set_pixel_scale(2)
-    if args.output_file:
-        d.save_svg(args.output_file)
-    elif args.zodiac:
-        d.save_svg(f"zodiac-sbc-{name.replace(' ','-').lower()}.svg")
+    if args.zodiac:
+        d.save_svg(f"zodiac-sbc-{output_file}")
     else:
-        d.save_svg(f"sbc-{name.replace(' ','-').lower()}.svg")
+        d.save_svg(output_file)
     d
 
 

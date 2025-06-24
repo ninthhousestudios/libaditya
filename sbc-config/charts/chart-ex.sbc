@@ -1,4 +1,4 @@
-Name = WhoKnows
+Name = 
 Date = 10/01/1936
 Place = Noblesville, IN
 
@@ -12,3 +12,4 @@ TTime = now
 TLat = 39.95
 TLong = -86.07
 
+output = chart-ex-output.svg

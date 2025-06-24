@@ -15,8 +15,7 @@ TLong = -77.04
 # if one of these options is not included, default is used
 # if flag is passed on command, it overrides the options here
 
-theme = theme (must be in sbc-config/themes/)
-dict = dict (must be in sbc-config/dicts/)
-rashis = (signs or adityas; default is adityas)
-english letters = true or false (print english letters on sanskrit letter boxes)
-output = (name of output file)
+dict = eng
+rashis = false
+english letters = true
+output = dt-sbc.svg

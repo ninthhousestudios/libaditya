@@ -1,0 +1,26 @@
+# this is a base config; it contains all options
+# these are the most default options
+# if values are not overriden in the chart.sbc or
+# on cmd line, these values will be used
+Name = 
+Date = MM/DD/YYYY
+Place = (optional)
+
+Time = HH:MM:SS
+Lat = (N and E are positive)
+Long = (N and E are positive)
+
+TPlace = 
+TDate = MM/DD/YYYY
+TTime = HH:MM:SS
+TLat = (N and E are positive)
+TLong = (N and E are positive)
+
+# if one of these options is not included, default is used
+# if flag is passed on command, it overrides the options here
+
+theme = joshs-theme
+dict = deva
+zodiac = false
+english letters = false
+output = chart-base-output.svg
