@@ -1,0 +1,14 @@
+Name = Marisa
+Date = 05/06/1987
+Time = 17:22:00
+Place = Monroeville, PA, USA
+Lat = 40.42111111111111
+Long = -78.21166666666667
+
+TPlace = Monroeville, PA, USA
+TDate = now
+TTime = now
+TLat = 40.42111111111111
+TLong = -78.21166666666667
+
+output = Marisa.svg

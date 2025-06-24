@@ -11,11 +11,11 @@ def main():
     
     n=0
     fsize = os.path.getsize(args.file)
-    fname = args.file.split('.')[0].strip().replace(' ','-').lower()
+    foutname = args.file.split('.')[0].strip().replace(' ','-').lower()
     input = open(args.file, "rb")
     lines = input.readlines()
     for line in lines:
-        print(f"{n}: {line.decode(errors='ignore')}")
+        #print(f"{n}: {line.decode(errors='ignore')}")
         match n:
             case 0:
                 name = clean_line(line.decode(errors='ignore'))
@@ -46,21 +46,21 @@ def main():
                 utcoff = int(h)+(int(m)/60) + (int(s)/3600)
         n+=1
     input.close() 
-    print(name)
-    print(f"{month:02d}/{day:02d}/{year}")
-    print(f"{hour:02d}:{min:02d}:{sec:02d}")
-    print(f"{"male" if sex==1 else "female"}")
-    print(country)
-    print(city)
-    print(f"(lat,long): ({lat},{long})")
-    print(utcoff)
+#    print(name)
+#    print(f"{month:02d}/{day:02d}/{year}")
+#    print(f"{hour:02d}:{min:02d}:{sec:02d}")
+#    print(f"{"male" if sex==1 else "female"}")
+#    print(country)
+#    print(city)
+#    print(f"(lat,long): ({lat},{long})")
+#    print(utcoff)
 
     # time for config needs to be utc
     # so we take the time here and add utcoffset
     time = dms2dec((int(hour),int(min),int(sec))) # turn into float
     time += utcoff # utcoff is already a float
     time = dec2dms(time) # return the float as a string HH:MM:SS
-    print(time)
+#    print(time)
 
     out = []
     out.append(f"Name = {name}\n")
@@ -75,7 +75,7 @@ def main():
     out.append(f"TLat = {lat}\n")
     out.append(f"TLong = {long}\n")
     out.append(f"\noutput = {name}.svg\n")
-    fout = open(fname+".sbc","w")
+    fout = open(foutname+".sbc","w")
     fout.writelines(out)
     fout.close()
 
@@ -121,7 +121,7 @@ def intize_line(line):
             continue
         count+=1
     retval = int(''.join(line))
-    print(retval)
+#    print(retval)
     return retval
 
 def clean_line(line):
@@ -139,7 +139,7 @@ def clean_line(line):
             continue
         count+=1
     retval = ''.join(line)
-    print(retval)
+#    print(retval)
     return retval
 
 def dec2dms(dd):
@@ -162,7 +162,6 @@ def dms2dec(dms):
 
 
 def get_args():
-    print("getting args")
     parser = argparse.ArgumentParser(
         prog="chtk2sbc",
         usage="%(prog)s [options]", 

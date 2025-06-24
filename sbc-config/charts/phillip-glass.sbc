@@ -1,0 +1,14 @@
+Name = Philip Glass
+Date = 01/31/1937
+Time = 25:12:44
+Place = Baltimore, MD, USA
+Lat = 39.290277777777774
+Long = -75.3875
+
+TPlace = Baltimore, MD, USA
+TDate = now
+TTime = now
+TLat = 39.290277777777774
+TLong = -75.3875
+
+output = Philip Glass.svg

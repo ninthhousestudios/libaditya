@@ -1,0 +1,14 @@
+Name = Irina Tweedie
+Date = 04/20/1907
+Time = 02:54:59
+Place = Odessa, Odes'ka Oblast, Ukraine
+Lat = 46.46666666666667
+Long = 30.733333333333334
+
+TPlace = Odessa, Odes'ka Oblast, Ukraine
+TDate = now
+TTime = now
+TLat = 46.46666666666667
+TLong = 30.733333333333334
+
+output = Irina Tweedie.svg

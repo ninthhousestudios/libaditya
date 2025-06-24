@@ -1,10 +1,7 @@
 import drawsvg as draw
 import sbcnames
 
-sbc_image="images/sbc.svg"
-sbc_image_zodiac="images/sbc-zodiac"
 default_input="sbc-config/charts/chart-ex.sbc"
-
 
 sbcpath = "/home/josh/w/astro/soft/pyphemeris/"
 dictpath = "/home/josh/w/astro/soft/pyphemeris/sbc-config/dicts/"
@@ -43,6 +40,8 @@ def make_coords(x=40,y=40):
     coords = [[],[],[],[],[],[],[],[],[]]
     for i in range(9):
         for n in range(9):
+            # the logic is that i tried it and retried until it looked good and
+            # seemed to work
             coords[i].append(tuple((x*(i+2)-4,y+(40*(n+1))-5)))
     return coords
 
@@ -279,7 +278,6 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
         thisx=adit_coords[n][0]
         thisy=adit_coords[n][1]
         d.append(draw.Text(adityas[n],font_size=5,x=coords[thisx][thisy][0]+5,y=coords[thisx][thisy][1]+25))
-
 
     # draw tithi names and vara names {{{1
         # nanda, ravivara, mangalavara

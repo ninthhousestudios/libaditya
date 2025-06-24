@@ -20,11 +20,24 @@ def main():
     args = get_args()
     d = draw.Drawing(500, 500)
 
+    # config is all of the values that are used to produce a chart
+    # including birth data and transit info
+    # first, we try to read that from a .sbc file. we just read as many of the
+    # fields as are there, and then fill in all of the other ones from
+    # sbc-config/charts/chart-base.sbc. put any .sbc files in $(path to your
+    # pyphemeris dir)sbc-config/charts/, and then call "sbc" with -i
+    # your-chart.sbc
     if args.input_file:
         config = sconf.init_chart(file=sc.chartspath+args.input_file)
+    elif args.file:
+        config = sconf.init_chart(file=sc.chartspath+args.file)
     else:
         config = sconf.init_chart(file=sc.default_chart)
-
+    
+    # soon to implement
+    # call sbc with -D "field:value,field:value,..."
+    # call sbc with -T which is a transfit file
+    # or a string "field:value,etc.", filled in with defaults
     
     name = config["name"]
     bmonth, bday, byear = putil.intize_date(config["date"])
@@ -139,9 +152,31 @@ def main():
 
     # display panchangas
     # birth panchanga
-    birth_panchanga = panchanga_string(Panchanga(bephtime))
+    bpanch = Panchanga(bephtime)
+    birth_panchanga = panchanga_string(bpanch)
     d.append(draw.Rectangle(395, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
     d.append(draw.Text(birth_panchanga,font_size=7.5,x=400,y=450))
+
+    # draw tithi number in the appropriate box for the tithi type, in the center
+    # [(self.tithi() - 1) % 5]
+    # we need the tithi coordinates
+    # nanda, bhddra, jaya, rikta, purna
+    tcoords = [(4,3),(5,4),(4,5),(3,4),(4,4)]
+    btithi = bpanch.tithi()
+    ttype = ((btithi-1)%5)
+    # kind of pointless since i ended up testing them individually
+    thisx = tcoords[ttype][0]
+    thisy = tcoords[ttype][1]
+    if ttype == 0:
+        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[4][3][0]+10,y=coords[4][3][1]+14))
+    if ttype == 1:
+        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[thisx][thisy][0]+10,y=coords[thisx][thisy][1]+14))
+    if ttype == 2:
+        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[thisx][thisy][0]+10,y=coords[thisx][thisy][1]+17))
+    if ttype == 3:
+        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[3][4][0]+10,y=coords[3][4][1]+17))
+    if ttype == 4:
+        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[4][4][0]+10,y=coords[4][4][1]+17,fill="white"))
 
     # transit panchanga
     transit_panchanga = panchanga_string(Panchanga(transit_ephtime))
@@ -434,6 +469,7 @@ def get_args():
         action="store_true",
         help="display kyoto-harvard letters in addition to sanskrit letters",
     )
+    parser.add_argument("file",help=".sbc file to use")
   
 
     args = parser.parse_args()
