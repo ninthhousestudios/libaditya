@@ -54,9 +54,11 @@ def main():
                     line = clean_line(line).split(":")
                     if(len(line)==1):
                         h = int(line[0])
+                        m = s = 0
                     elif(len(line)==2):
                         h = int(line[0])
                         m = int(line[1])
+                        s = 0
                     else:
                         h = int(line[0])
                         m = int(line[1])
@@ -116,25 +118,12 @@ def long_to_float(lat):
     change kalas long representation into a float
     """
     # string is usually like this 030E44'00
-    # at least once I have seen it without leading 0
-    # so the first check is for that
-    if(lat[2:3] == 'E'):
-        degs = int(lat[:2])
-        mins = int(lat[3:5])
-        secs = int(lat[6:8])
-    elif(lat[2:3] == 'W'):
-        degs = -int(lat[:2])
-        mins = int(lat[3:5])
-        secs = int(lat[6:8])
-    # string is like this 030E44'00
-    elif(lat[3:4] == 'E'):
+    if(lat[3:4] == 'e'):
         degs = int(lat[:3])
-        mins = int(lat[4:6])
-        secs = int(lat[7:9])
     else:
         degs = -int(lat[:3])
-        mins = int(lat[4:6])
-        secs = int(lat[7:9])
+    mins = int(lat[4:6])
+    secs = int(lat[7:9])
     return degs + (mins / 60) + (secs / 3600)
 
 def intize_line(line):
