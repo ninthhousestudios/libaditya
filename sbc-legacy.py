@@ -1,5 +1,10 @@
 #!/usr/bin/python
-
+"""
+this file contains and early version of drawing the chakra
+below that it contains comments and test code from all the other files
+i wanted to clean up those files but keep the comments and examples, so they are
+all stored here
+"""
 import drawsvg as draw
 import argparse
 import sbcnames
@@ -167,4 +172,149 @@ def get_args():
     args = parser.parse_args()
     return args
 
- 
+ # sbc.py
+# original parsing of arguments
+#    langfile=sc.langfile # default
+#    themefile = sc.default_theme
+#    zodiac = False
+#
+#        # read birth data and transit data from file 
+#    if args.input_file:
+#        input = open(sc.chartspath+args.input_file, "r")
+#    else:
+#        input = open(sc.default_input, "r")
+#    for line in input:
+#        if not "=" in line:
+#            continue
+#        field, value = line.split("=")
+#        field = field.strip()
+#        value = value.strip()
+#        # get birth data
+#        if field.startswith("Na") or field.startswith("na"):
+#            name = value
+#        if field.startswith("Da") or field.startswith("da"):
+#            bmonth, bday, byear = putil.intize_date(value)
+#        if field.startswith("Pla") or field.startswith("pla"):
+#            bplace = value
+#        if field.startswith("Ti") or field.startswith("ti"):
+#            ephclock = putil.intize_time(value)
+#        if field.startswith("La") or field.startswith("la"):
+#            blat = float(value)
+#        if field.startswith("Lo") or field.startswith("lo"):
+#            blong = float(value)
+#        # get transit data; time and lat and long
+#        if field.startswith("TDa") or field.startswith("tda"):
+#            if value == "now":
+#                nowtime = time.gmtime()
+#                tyear = nowtime[0]
+#                tmonth = nowtime[1] 
+#                tday = nowtime[2]
+#            else:
+#                tmonth, tday, tyear = putil.intize_date(value)
+#        if field.startswith("TPla") or field.startswith("tpla"):
+#            tplace = value
+#        if field.startswith("TTi") or field.startswith("tti"):
+#            if value == "now":
+#                nowtime = time.gmtime()
+#                transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+#            else:
+#                transit_ephclock = putil.intize_time(value)
+#        if field.startswith("TLa") or field.startswith("tla"):
+#            tlat = float(value)
+#        if field.startswith("TLo") or field.startswith("tlo"):
+#            tlong = float(value)
+#    bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
+#    transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
+#    input.close()
+
+#   sbc.py
+#    this was to test where glyphs were placed
+#    nakcount[27]=0
+#    for i in range(8):
+#        num = 8
+#        ny,nx = sc.nak_coords[27]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[27]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[27]][1])))
+#        nakcount[27]+=1
+
+# sbc.py
+# this was used to test positions of nakshatras
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 24 
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffleft[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffleft[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 14 
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffbot[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffbot[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 9
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffright[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffright[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
+#    for i in range(8):
+#        num = 8
+#        wnak = 3
+#        ny,nx = sc.nak_coords[wnak]
+#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffup[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffup[num][nakcount[wnak]][1])))
+#        nakcount[wnak]+=1
+
+
+# sbc_constants.py; drawing parts of the chakra itself
+#    ## first seven{{{2
+#    for y in range(1,8):
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0],y=coords[y][0][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0]+10,y=coords[y][0][1]+25))
+#        nak+=1
+#
+#    ## second seven, along the side{{{2
+#    for y in range(1,8):
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0],y=coords[8][y][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0]+10,y=coords[8][y][1]+25))
+#        nak+=1
+#
+#    ## third seven, along the bottom, need to count backwards this time{{{2
+#    for y in range(1,8).__reversed__():
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0],y=coords[y][8][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0]+10,y=coords[y][8][1]+25))
+#        nak+=1
+#
+#    ## fourth seven, along the left, need to count backwards this time{{{2
+#    for y in range(1,8).__reversed__():
+#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
+#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
+#        # first row
+#        if(len(nakshatra[nak]) > 9):
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0],y=coords[0][y][1]+25))
+#        else:
+#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0]+10,y=coords[0][y][1]+25))
+#        nak+=1
+#
+#                                                                         #}}}
+#                                                                          #}}}
+                                      #}}}
+
+

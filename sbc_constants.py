@@ -82,11 +82,20 @@ def get_colors(file=themepath+theme):
             nak_color = value
         if field.startswith("ti"):
             vals = value.split(",") # if two values given, the second is for purna tithi
-            if len(vals) == 2:
+            print(f"vals = {vals}")
+            if len(vals) == 3:
+                print(f"assigning colors from file")
+                tithi_color = vals[0].strip()
+                purna_color = vals[1].strip()
+                purna_text_color = vals[2].strip()
+            elif len(vals) == 2:
                 tithi_color = vals[0].strip()
                 purna_color = vals[1].strip()
             else:
-                tithi_color = purna_color = value
+                print(f"assigning colors from default")
+                tithi_color = "red"
+                purna_color = "black"
+                purna_text_color = "white"
         if field.startswith("ra"):
             rashi_color = value
         if field.startswith("ou"):
@@ -95,11 +104,11 @@ def get_colors(file=themepath+theme):
             diagonal_color = value
         if field.startswith("ci"):
             circle_color = value
-    return [nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color,circle_color]
+    return [nak_color,tithi_color,purna_color,purna_text_color,rashi_color,outer_letters_color,diagonal_color,circle_color]
  
 # pass in the drawsvg.drawing.Drawing object; return it too
 def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
-    nak_color,tithi_color,purna_color,rashi_color,outer_letters_color,diagonal_color,circle_color = get_colors(themefile)
+    nak_color,tithi_color,purna_color,purna_text_color,rashi_color,outer_letters_color,diagonal_color,circle_color = get_colors(themefile)
 
     if circle_color.startswith("va"): # varied, make circle art
         d.append(draw.Circle(250,250,250,fill='yellow'))
@@ -168,54 +177,6 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
         thiscol = nak_coords[n][0]
         thisrow = nak_coords[n][1]
         d.append(draw.Text(nakshatra[n],font_size=5,x=coords[thiscol][thisrow][0]+5,y=coords[thiscol][thisrow][1]+25))
-
-#    ## first seven{{{2
-#    for y in range(1,8):
-#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-#        # first row
-#        if(len(nakshatra[nak]) > 9):
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0],y=coords[y][0][1]+25))
-#        else:
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][0][0]+10,y=coords[y][0][1]+25))
-#        nak+=1
-#
-#    ## second seven, along the side{{{2
-#    for y in range(1,8):
-#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-#        # first row
-#        if(len(nakshatra[nak]) > 9):
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0],y=coords[8][y][1]+25))
-#        else:
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[8][y][0]+10,y=coords[8][y][1]+25))
-#        nak+=1
-#
-#    ## third seven, along the bottom, need to count backwards this time{{{2
-#    for y in range(1,8).__reversed__():
-#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-#        # first row
-#        if(len(nakshatra[nak]) > 9):
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0],y=coords[y][8][1]+25))
-#        else:
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[y][8][0]+10,y=coords[y][8][1]+25))
-#        nak+=1
-#
-#    ## fourth seven, along the left, need to count backwards this time{{{2
-#    for y in range(1,8).__reversed__():
-#        # first row is coords[0][1],coords[0][2], etc. for the 2-8 boxes in the
-#        # coords[x][y] is a tuple (a,b), so need to do coords[x][y][a]
-#        # first row
-#        if(len(nakshatra[nak]) > 9):
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0],y=coords[0][y][1]+25))
-#        else:
-#            d.append(draw.Text(nakshatra[nak],font_size=5,x=coords[0][y][0]+10,y=coords[0][y][1]+25))
-#        nak+=1
-#
-#                                                                         #}}}
-#                                                                          #}}}
-                                      #}}}
 
     # draw sanskrit letters {{{1
 
@@ -295,7 +256,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
         d.append(draw.Text(tithi[3],font_size=5,x=coords[3][4][0]+11,y=coords[3][4][1]+5))
         d.append(draw.Text(vara[5],font_size=5,x=coords[3][4][0]+6,y=coords[3][4][1]+25))
         # purna, shanivara
-        d.append(draw.Text(tithi[4],font_size=5,x=coords[4][4][0]+9,y=coords[4][4][1]+5,fill="white"))
-        d.append(draw.Text(vara[6],font_size=5,x=coords[4][4][0]+7,y=coords[4][4][1]+25,fill="white"))
+        d.append(draw.Text(tithi[4],font_size=5,x=coords[4][4][0]+9,y=coords[4][4][1]+5,fill=purna_text_color))
+        d.append(draw.Text(vara[6],font_size=5,x=coords[4][4][0]+7,y=coords[4][4][1]+25,fill=purna_text_color))
     #}}}                      
     return d

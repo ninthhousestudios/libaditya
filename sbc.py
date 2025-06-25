@@ -28,17 +28,21 @@ def main():
     # sbc-config/charts/chart-base.sbc. put any .sbc files in $(path to your
     # pyphemeris dir)sbc-config/charts/, and then call "sbc" with -i
     # your-chart.sbc
-    if args.input_file:
+    if args.file:
         # checks if it is in the sbc-config/charts/ directory
+        if os.path.exists(sc.chartspath+args.file):
+            config = sconf.init_chart(file=sc.chartspath+args.file)
+        else: # assume it is in the current directory
+            config = sconf.init_chart(file=args.file)
+        # if not, assume the path is proper
+    elif args.input_file:
+        # check if it is in sbc-config/charts/
         if os.path.exists(sc.chartspath+args.input_file):
             config = sconf.init_chart(file=sc.chartspath+args.input_file)
-        # if not, assume the path is proper
-        else:
+        else: # if not, assume it is in the current directory
             config = sconf.init_chart(file=args.input_file)
-    else: # args.file either has the positional argument, if not, default
-        config = sconf.init_chart(file=args.file)
-    #else:
-     #   config = sconf.init_chart(file=sc.default_chart)
+    else: # use default chart
+        config = sconf.init_chart(file=sc.default_chart)
     
     # soon to implement
     # call sbc with -D "field:value,field:value,..."
@@ -102,66 +106,15 @@ def main():
     if english_letters:
        d = draw_english_letters(d)
 
-# original parsing of arguments
-#    langfile=sc.langfile # default
-#    themefile = sc.default_theme
-#    zodiac = False
-#
-#        # read birth data and transit data from file 
-#    if args.input_file:
-#        input = open(sc.chartspath+args.input_file, "r")
-#    else:
-#        input = open(sc.default_input, "r")
-#    for line in input:
-#        if not "=" in line:
-#            continue
-#        field, value = line.split("=")
-#        field = field.strip()
-#        value = value.strip()
-#        # get birth data
-#        if field.startswith("Na") or field.startswith("na"):
-#            name = value
-#        if field.startswith("Da") or field.startswith("da"):
-#            bmonth, bday, byear = putil.intize_date(value)
-#        if field.startswith("Pla") or field.startswith("pla"):
-#            bplace = value
-#        if field.startswith("Ti") or field.startswith("ti"):
-#            ephclock = putil.intize_time(value)
-#        if field.startswith("La") or field.startswith("la"):
-#            blat = float(value)
-#        if field.startswith("Lo") or field.startswith("lo"):
-#            blong = float(value)
-#        # get transit data; time and lat and long
-#        if field.startswith("TDa") or field.startswith("tda"):
-#            if value == "now":
-#                nowtime = time.gmtime()
-#                tyear = nowtime[0]
-#                tmonth = nowtime[1] 
-#                tday = nowtime[2]
-#            else:
-#                tmonth, tday, tyear = putil.intize_date(value)
-#        if field.startswith("TPla") or field.startswith("tpla"):
-#            tplace = value
-#        if field.startswith("TTi") or field.startswith("tti"):
-#            if value == "now":
-#                nowtime = time.gmtime()
-#                transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-#            else:
-#                transit_ephclock = putil.intize_time(value)
-#        if field.startswith("TLa") or field.startswith("tla"):
-#            tlat = float(value)
-#        if field.startswith("TLo") or field.startswith("tlo"):
-#            tlong = float(value)
-#    bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
-#    transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
-#    input.close()
-
     # display panchangas
     # birth panchanga
     bpanch = Panchanga(bephtime)
     birth_panchanga = panchanga_string(bpanch)
     d.append(draw.Rectangle(395, 450, 70, 45, rx='1', ry='1', stroke='black', fill='yellow'))
     d.append(draw.Text(birth_panchanga,font_size=7.5,x=400,y=450))
+    colors = sc.get_colors(themefile)
+    purna_text_color = colors[3]
+    #print(f"purna_text_color = {purna_text_color}")
 
     # draw tithi number in the appropriate box for the tithi type, in the center
     # [(self.tithi() - 1) % 5]
@@ -182,7 +135,7 @@ def main():
     if ttype == 3:
         d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[3][4][0]+10,y=coords[3][4][1]+17))
     if ttype == 4:
-        d.append(draw.Text(str((btithi-15)%15),font_size=10,x=coords[4][4][0]+10,y=coords[4][4][1]+17,fill="white"))
+        d.append(draw.Text('15' if (btithi-15)%15==0 else str((btithi-15)%15),font_size=10,x=coords[4][4][0]+10,y=coords[4][4][1]+17,fill=purna_text_color))
 
     # transit panchanga
     transit_panchanga = panchanga_string(Panchanga(transit_ephtime))
@@ -246,14 +199,6 @@ def main():
         d.append(draw.Text(sc.pglyphs[n],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[bnaks[n]]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[bnaks[n]]][1])))
         nakcount[bnaks[n]]+=1
 
-#    this was to test where glyphs were placed
-#    nakcount[27]=0
-#    for i in range(8):
-#        num = 8
-#        ny,nx = sc.nak_coords[27]
-#        d.append(draw.Text(sc.pglyphs[i],font_size=poffsets[num][0],x=coords[ny][nx][0]+(poffsets[num][1][nakcount[27]][0]),y=coords[ny][nx][1]+(poffsets[num][1][nakcount[27]][1])))
-#        nakcount[27]+=1
-
     # display transit planets
     tplanets = init_Planets(transit_ephtime)
     tcusps = Cusps(sc.hsys,Location(lat=tlat,long=tlong,placename=tplace),transit_ephtime)
@@ -300,37 +245,6 @@ def main():
         if ncol == 8: # the rightmost column of nakshatras
             d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffright[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffright[num][nakcount[tnaks[n]]][1])))
         nakcount[tnaks[n]]+=1
-
-# this was used to test positions of nakshatras
-#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
-#    for i in range(8):
-#        num = 8
-#        wnak = 24 
-#        ny,nx = sc.nak_coords[wnak]
-#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffleft[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffleft[num][nakcount[wnak]][1])))
-#        nakcount[wnak]+=1
-#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
-#    for i in range(8):
-#        num = 8
-#        wnak = 14 
-#        ny,nx = sc.nak_coords[wnak]
-#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffbot[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffbot[num][nakcount[wnak]][1])))
-#        nakcount[wnak]+=1
-#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
-#    for i in range(8):
-#        num = 8
-#        wnak = 9
-#        ny,nx = sc.nak_coords[wnak]
-#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffright[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffright[num][nakcount[wnak]][1])))
-#        nakcount[wnak]+=1
-#    nakcount = [0 for i in range(28)] # count how many planets in each nakshatra
-#    for i in range(8):
-#        num = 8
-#        wnak = 3
-#        ny,nx = sc.nak_coords[wnak]
-#        d.append(draw.Text(sc.pglyphs[i],font_size=15,x=coords[ny][nx][0]+(toffup[num][nakcount[wnak]][0]),y=coords[ny][nx][1]+(toffup[num][nakcount[wnak]][1])))
-#        nakcount[wnak]+=1
-
 
 
     # display to the correct output file 
