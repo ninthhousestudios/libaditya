@@ -8,75 +8,94 @@ import codecs
 def main():
     args = get_args()
     
-    n=0
-    fsize = os.path.getsize(args.file)
-    foutname = args.file.split('.')[0].strip().replace(' ','-').lower()
-    input = open(args.file, "rb")
-    lines = input.readlines()
-    for line in lines:
-        #print(f"{n}: {line.decode(errors='ignore')}")
-        match n:
-            case 0:
-                name = clean_line(line)
-            case 1:
-                year = intize_line(codecs.decode(line))
-            case 2:
-                month = intize_line(codecs.decode(line))
-            case 3:
-                day = intize_line(codecs.decode(line))
-            case 4:
-                hour = intize_line(codecs.decode(line))
-            case 5:
-                min = intize_line(codecs.decode(line))
-            case 6:
-                sec = intize_line(codecs.decode(line))
-            case 7:
-                sex = intize_line(codecs.decode(line))
-            case 8:
-                country = clean_line(line)
-            case 9:
-                city = clean_line(line)
-            case 10:
-                long = long_to_float(clean_line(line))
-            case 11:
-                lat = lat_to_float(clean_line(line))
-            case 12:
-                h,m,s = clean_line(line).split(":")
-                utcoff = int(h)+(int(m)/60) + (int(s)/3600)
-        n+=1
-    input.close() 
-#    print(name)
-#    print(f"{month:02d}/{day:02d}/{year}")
-#    print(f"{hour:02d}:{min:02d}:{sec:02d}")
-#    print(f"{"male" if sex==1 else "female"}")
-#    print(country)
-#    print(city)
-#    print(f"(lat,long): ({lat},{long})")
-#    print(utcoff)
+    for file in args.file:
+        if(len(file.split('.')) == 1):
+            # not a chtk file
+            continue
+        if file.split('.')[1].strip().lower() != "chtk":
+            # not a chtk file
+            continue
+        n=0
+        foutname = file.split('.')[0].strip().replace(' ','-').lower()
+        input = open(file, "rb")
+        print(f"converting {file}")
+        lines = input.readlines()
+        for line in lines:
+            #print(f"{n}: {line.decode(errors='ignore')}")
+            match n:
+                case 0:
+                    name = clean_line(line)
+                case 1:
+                    year = intize_line(codecs.decode(line))
+                case 2:
+                    month = intize_line(codecs.decode(line))
+                case 3:
+                    day = intize_line(codecs.decode(line))
+                case 4:
+                    hour = intize_line(codecs.decode(line))
+                case 5:
+                    min = intize_line(codecs.decode(line))
+                case 6:
+                    sec = intize_line(codecs.decode(line))
+                case 7:
+                    sex = intize_line(codecs.decode(line))
+                case 8:
+                    country = clean_line(line)
+                case 9:
+                    city = clean_line(line)
+                case 10:
+                    long = long_to_float(clean_line(line))
+                case 11:
+                    lat = lat_to_float(clean_line(line))
+                case 12:
+                    # usually this line is HH:MM:SS
+                    # someimtes it is just HH:MM
+                    # sometimes it is just H, so deal with all of those
+                    line = clean_line(line).split(":")
+                    if(len(line)==1):
+                        h = int(line[0])
+                    elif(len(line)==2):
+                        h = int(line[0])
+                        m = int(line[1])
+                    else:
+                        h = int(line[0])
+                        m = int(line[1])
+                        s = int(line[2])
+                    utcoff = int(h)+(int(m)/60) + (int(s)/3600)
+            n+=1
+        input.close() 
+    #    print(name)
+    #    print(f"{month:02d}/{day:02d}/{year}")
+    #    print(f"{hour:02d}:{min:02d}:{sec:02d}")
+    #    print(f"{"male" if sex==1 else "female"}")
+    #    print(country)
+    #    print(city)
+    #    print(f"(lat,long): ({lat},{long})")
+    #    print(utcoff)
 
-    # time for config needs to be utc
-    # so we take the time here and add utcoffset
-    time = dms2dec((int(hour),int(min),int(sec))) # turn into float
-    time += utcoff # utcoff is already a float
-    time = dec2dms(time) # return the float as a string HH:MM:SS
-#    print(time)
+        # time for config needs to be utc
+        # so we take the time here and add utcoffset
+        time = dms2dec((int(hour),int(min),int(sec))) # turn into float
+        time += utcoff # utcoff is already a float
+        time = dec2dms(time) # return the float as a string HH:MM:SS
+    #    print(time)
 
-    out = []
-    out.append(f"Name = {name}\n")
-    out.append(f"Date = {month:02d}/{day:02d}/{year}\n")
-    out.append(f"Time = {time}\n")
-    out.append(f"Place = {city}, {country}\n")
-    out.append(f"Lat = {lat}\n")
-    out.append(f"Long = {long}\n")
-    out.append(f"\nTPlace = {city}, {country}\n")
-    out.append(f"TDate = now\n")
-    out.append(f"TTime = now\n")
-    out.append(f"TLat = {lat}\n")
-    out.append(f"TLong = {long}\n")
-    out.append(f"\noutput = {name}.svg\n")
-    fout = open(foutname+".sbc","w")
-    fout.writelines(out)
-    fout.close()
+        out = []
+        out.append(f"Name = {name}\n")
+        out.append(f"Date = {month:02d}/{day:02d}/{year}\n")
+        out.append(f"Time = {time}\n")
+        out.append(f"Place = {city}, {country}\n")
+        out.append(f"Lat = {lat}\n")
+        out.append(f"Long = {long}\n")
+        out.append(f"\nTPlace = {city}, {country}\n")
+        out.append(f"TDate = now\n")
+        out.append(f"TTime = now\n")
+        out.append(f"TLat = {lat}\n")
+        out.append(f"TLong = {long}\n")
+        out.append(f"\noutput = {name}.svg\n")
+        fout = open(foutname+".sbc","w")
+        fout.writelines(out)
+        fout.close()
 
 
 def lat_to_float(lat):
@@ -96,13 +115,26 @@ def long_to_float(lat):
     """
     change kalas long representation into a float
     """
+    # string is usually like this 030E44'00
+    # at least once I have seen it without leading 0
+    # so the first check is for that
+    if(lat[2:3] == 'E'):
+        degs = int(lat[:2])
+        mins = int(lat[3:5])
+        secs = int(lat[6:8])
+    elif(lat[2:3] == 'W'):
+        degs = -int(lat[:2])
+        mins = int(lat[3:5])
+        secs = int(lat[6:8])
     # string is like this 030E44'00
-    if(lat[3:4] == 'E'):
+    elif(lat[3:4] == 'E'):
         degs = int(lat[:3])
+        mins = int(lat[4:6])
+        secs = int(lat[7:9])
     else:
         degs = -int(lat[:3])
-    mins = int(lat[4:6])
-    secs = int(lat[7:9])
+        mins = int(lat[4:6])
+        secs = int(lat[7:9])
     return degs + (mins / 60) + (secs / 3600)
 
 def intize_line(line):
@@ -165,7 +197,7 @@ def get_args():
         usage="%(prog)s [options]", 
         description=f"convert .chtk file .sbc format",
     )
-    parser.add_argument("file", help=".chtk file to convert") 
+    parser.add_argument("file", nargs='*', help=".chtk file(s) to convert") 
     args = parser.parse_args()
     return args
 

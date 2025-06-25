@@ -3,6 +3,7 @@
 import swisseph as swe
 import argparse
 import time
+import os
 import drawsvg as draw
 import pyphglobals as pglob
 import pyphutils as putil
@@ -28,7 +29,12 @@ def main():
     # pyphemeris dir)sbc-config/charts/, and then call "sbc" with -i
     # your-chart.sbc
     if args.input_file:
-        config = sconf.init_chart(file=sc.chartspath+args.input_file)
+        # checks if it is in the sbc-config/charts/ directory
+        if os.path.exists(sc.chartspath+args.input_file):
+            config = sconf.init_chart(file=sc.chartspath+args.input_file)
+        # if not, assume the path is proper
+        else:
+            config = sconf.init_chart(file=args.input_file)
     else: # args.file either has the positional argument, if not, default
         config = sconf.init_chart(file=args.file)
     #else:
