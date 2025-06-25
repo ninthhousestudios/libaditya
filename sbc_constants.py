@@ -82,9 +82,7 @@ def get_colors(file=themepath+theme):
             nak_color = value
         if field.startswith("ti"):
             vals = value.split(",") # if two values given, the second is for purna tithi
-            print(f"vals = {vals}")
             if len(vals) == 3:
-                print(f"assigning colors from file")
                 tithi_color = vals[0].strip()
                 purna_color = vals[1].strip()
                 purna_text_color = vals[2].strip()
@@ -92,7 +90,6 @@ def get_colors(file=themepath+theme):
                 tithi_color = vals[0].strip()
                 purna_color = vals[1].strip()
             else:
-                print(f"assigning colors from default")
                 tithi_color = "red"
                 purna_color = "black"
                 purna_text_color = "white"
