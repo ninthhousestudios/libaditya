@@ -3,8 +3,8 @@ __pycache__/
 pyphdraw.png
 chart-ex.pyph
 example*
-*.pdf
-*.chtk
-test.svg
 *.chtk
 *.svg
+*.png
+*.pdf
+

@@ -5,10 +5,10 @@ default_input="sbc-config/charts/chart-ex.sbc"
 
 sbcpath = "/home/josh/w/astro/soft/pyphemeris/"
 dictpath = "/home/josh/w/astro/soft/pyphemeris/sbc-config/dicts/"
-eng = dictpath + "dict.eng.sbc"
-iast = dictpath + "dict.iast.sbc"
-deva = dictpath + "dict.deva.sbc"
-mixed = dictpath + "dict.mixed.sbc"
+eng = dictpath + "dict.eng"
+iast = dictpath + "dict.iast"
+deva = dictpath + "dict.deva"
+mixed = dictpath + "dict.mixed"
 langfile = deva
 
 themepath = sbcpath + "sbc-config/themes/"
@@ -47,6 +47,7 @@ def make_coords(x=40,y=40):
 
 def make_nak_coords():
     # nakshatra names have to be drawn in order
+    # so these are the coordinates for the nakshatra boxes in order
     nak_coords=[]
     for y in range(1,8):
         nak_coords.append((y,0))
@@ -166,7 +167,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
     # initalize all the names to write
-    nakshatra,adityas,tithi,vara,zsigns = sbcnames.init_sbc_names(langfile)
+    nakshatraeq,nakshatra,adityas,tithi,vara,zsigns = sbcnames.init_sbc_names(langfile)
 
     # draw names of nakshatras {{{1 }}}
     # init names
@@ -176,7 +177,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     for n in range(28):
         thiscol = nak_coords[n][0]
         thisrow = nak_coords[n][1]
-        d.append(draw.Text(nakshatra[n],font_size=5,x=coords[thiscol][thisrow][0]+5,y=coords[thiscol][thisrow][1]+25))
+        d.append(draw.Text(nakshatraeq[n],font_size=5,x=coords[thiscol][thisrow][0]+5,y=coords[thiscol][thisrow][1]+25))
 
     # draw sanskrit letters {{{1
 

@@ -250,6 +250,11 @@ class Planet:
             return self.init_dhruvequ()
         if ayanamsa == 99:
             return self.init_dhruvecl()
+        if ayanamsa == 100:
+            #print(f"returning {self.longitude(), int((self.longitude()/(360/28))%28)}")
+            # second arg indexes into 28 equal tropical nakshatras, krittika at
+            # ascending equinox
+            return [self.longitude(), int((self.longitude()/(360/28))%28)]
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         if self.planet_name == "Ketu":
@@ -281,7 +286,10 @@ class Planet:
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
         sidlong, nindex = self.init_nakshatra(ayanamsa)
         pname = self.planet_name
-        nname = pglob.nakshatra[nindex]
+        if ayanamsa == 100:
+            nname = pglob.nakshatraeq[nindex]
+        else:
+            nname = pglob.nakshatra[nindex]
         if ayanamsa == 99:
             in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries()[nindex], 1)
             this_nak_length = (
@@ -296,8 +304,11 @@ class Planet:
         return list((pname, nname, elapsed))
 
     def nakshatra(self, ayanamsa=pglob.ayanamsa):
-        sidlong, nindex = self.init_nakshatra(ayanamsa)
-        return pglob.nakshatra[nindex]
+        if ayanamsa == 100:
+            return self.init_nakshatra(ayanamsa)
+        else:
+            sidlong, nindex = self.init_nakshatra(ayanamsa)
+            return pglob.nakshatra[nindex]
 
     def table_list(self, sysflg=pglob.ECL):
         """

@@ -69,6 +69,7 @@ rasis = []
 tithi = []
 karana = []
 nakshatra = []
+nakshatraeq = []
 vara = []
 yogas = []
 adityas = []
@@ -84,6 +85,7 @@ def init_names(langfile=mixed):
     global tithi
     global karana
     global nakshatra
+    global nakshatraeq
     global vara
     global yogas
     global adityas
@@ -95,6 +97,7 @@ def init_names(langfile=mixed):
     tithi = []
     karana = []
     nakshatra = []
+    nakshatraeq = []
     vara = []
     yogas = []
     adityas = []
@@ -112,6 +115,7 @@ def init_names(langfile=mixed):
     tnames = names["TITHI"]
     knames = names["KARANA"]
     nnames = names["NAKSHATRA"]
+    neqnames = names["NAKSHATRAEQ"]
     vnames = names["VARA"]
     ynames = names["YOGAS"]
     anames = names["ADITYAS"]
@@ -242,6 +246,36 @@ def init_names(langfile=mixed):
     adityas.append(anames["Dhata"])
 
     signs = rasis
+
+    nakshatraeq.append(neqnames["Krittika"])
+    nakshatraeq.append(neqnames["Rohini"])
+    nakshatraeq.append(neqnames["Mrigashira"])
+    nakshatraeq.append(neqnames["Ardra"])
+    nakshatraeq.append(neqnames["Punarvasu"])
+    nakshatraeq.append(neqnames["Pushya"])
+    nakshatraeq.append(neqnames["Ashlesha"])
+    nakshatraeq.append(neqnames["Magha"])
+    nakshatraeq.append(neqnames["Purva Phalguni"])
+    nakshatraeq.append(neqnames["Uttara Phalguni"])
+    nakshatraeq.append(neqnames["Hasta"])
+    nakshatraeq.append(neqnames["Chitra"])
+    nakshatraeq.append(neqnames["Svati"])
+    nakshatraeq.append(neqnames["Vishakha"])
+    nakshatraeq.append(neqnames["Anuradha"])
+    nakshatraeq.append(neqnames["Jyeshtha"])
+    nakshatraeq.append(neqnames["Mula"])
+    nakshatraeq.append(neqnames["Purva Ashadha"])
+    nakshatraeq.append(neqnames["Uttara Ashadha"])
+    nakshatraeq.append(neqnames["Abhijit"])
+    nakshatraeq.append(neqnames["Shravana"])
+    nakshatraeq.append(neqnames["Danishtha"])
+    nakshatraeq.append(neqnames["Shatabhisha"])
+    nakshatraeq.append(neqnames["Purva Bhadrapada"])
+    nakshatraeq.append(neqnames["Uttara Bhadrapada"])
+    nakshatraeq.append(neqnames["Revati"])
+    nakshatraeq.append(neqnames["Ashvini"])
+    nakshatraeq.append(neqnames["Bharani"])
+
 
 
 # there are 11 karanas
