@@ -107,6 +107,9 @@ def get_colors(file=themepath+theme):
 def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
     nak_color,tithi_color,purna_color,purna_text_color,rashi_color,outer_letters_color,diagonal_color,circle_color = get_colors(themefile)
 
+    # draw a black rectangle for a background
+    d.append(draw.Rectangle(0, 0, 500, 500, rx=None, ry=None, fill='rgb(0,0,0)'))
+
     if circle_color.startswith("va"): # varied, make circle art
         d.append(draw.Circle(250,250,250,fill='yellow'))
         d.append(draw.Circle(250,250,245,fill='black'))
