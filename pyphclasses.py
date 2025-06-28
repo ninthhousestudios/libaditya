@@ -254,7 +254,7 @@ class Planet:
             #print(f"returning {self.longitude(), int((self.longitude()/(360/28))%28)}")
             # second arg indexes into 28 equal tropical nakshatras, krittika at
             # ascending equinox
-            return [self.longitude(), int((self.longitude()/(360/28))%28)]
+            return [self.longitude(), putil.nakshatra_tropkrt28_index(self.longitude())]
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         if self.planet_name == "Ketu":
@@ -374,9 +374,14 @@ class Cusps:
         for sidcusp in sidcusps:
             if ayanamsa == 99:
                 nindex = putil.dhruvecl_index(sidcusp, self.julianday.year())
+            elif ayanamsa == 100:
+                nindex = putil.nakshatra_tropkrt28_index(sidcusp)
             else:
                 nindex = putil.nakshatra_index(sidcusp)
-            cusps_nakshatras.append(pglob.nakshatra[nindex])
+            if ayanamsa == 100:
+                cusps_nakshatras.append(pglob.nakshatraeq[nindex])
+            else:
+                cusps_nakshatras.append(pglob.nakshatra[nindex])
         return cusps_nakshatras
 
     def cusps_dhruvequ(self):

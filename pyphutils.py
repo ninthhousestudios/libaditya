@@ -22,6 +22,9 @@ def nakshatra_index(sidlong, n=0):
     else:
         return nakshatra_index(sidlong, n + 1)
 
+def nakshatra_tropkrt28_index(long):
+    return int((long/(360/28))%28)
+
 
 def dhruvecl_index(sidlong, year=2025, n=0):
     """

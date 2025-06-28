@@ -120,6 +120,8 @@ def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDa
         print("using Dhruva GC mid-Mula equatorial ayanamsa")
     elif pglob.ayanamsa == 99:
         print("using Dhruva GC mid-Mula ecliptic coordinates ayanamsa")
+    elif pglob.ayanamsa == 100:
+        print("using tropical krittika at ascedening equinx with 28 equal nakshatras")
     else:
         print(f"using {swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(f"Location: {loc.place()}")
