@@ -81,7 +81,7 @@ def main():
     bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
     transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
 
-    langfile=f"{sc.dictpath}dict.{config["dict"]}.sbc"
+    langfile=f"{sc.sbcpath}dict.{config["dict"]}"
     themefile=f"{sc.themepath}{config["theme"]}.sbc"
     zodiac = False if config["zodiac"] == "false" else True
     english_letters = False if config["english letters"] == "false" else True
@@ -89,7 +89,7 @@ def main():
 
     # i want cmdline args to override these values if they are given
     if args.lang:
-        langfile=f"{sc.dictpath}dict.{args.lang}.sbc"
+        langfile=f"./{args.lang}"
     if args.theme:
         themefile=f"{sc.themepath}{args.theme}.sbc"
     if args.zodiac:

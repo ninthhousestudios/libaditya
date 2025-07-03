@@ -5,10 +5,10 @@ default_input="sbc-config/charts/chart-ex.sbc"
 
 sbcpath = "/home/josh/w/astro/soft/pyphemeris/"
 dictpath = "/home/josh/w/astro/soft/pyphemeris/sbc-config/dicts/"
-eng = dictpath + "dict.eng"
-iast = dictpath + "dict.iast"
-deva = dictpath + "dict.deva"
-mixed = dictpath + "dict.mixed"
+eng = sbcpath + "dict.eng"
+iast = sbcpath + "dict.iast"
+deva = sbcpath + "dict.deva"
+mixed = sbcpath + "dict.mixed"
 langfile = deva
 
 themepath = sbcpath + "sbc-config/themes/"
