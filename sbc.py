@@ -89,7 +89,7 @@ def main():
 
     # i want cmdline args to override these values if they are given
     if args.lang:
-        langfile=f"./{args.lang}"
+        langfile=f"{sc.sbcpath}{args.lang}"
     if args.theme:
         themefile=f"{sc.themepath}{args.theme}.sbc"
     if args.zodiac:
