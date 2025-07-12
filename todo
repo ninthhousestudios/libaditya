@@ -1,0 +1,8 @@
+move panchanga boxes square to sides, adjust size, adjust text placement
+
+for any transit with a placename, have chtk2sbc write that to a complete list of
+transit placenames and information; i.e., build a database of places from the
+files converted
+
+add command line options for defaults and transits to sbc and chtk2sbc
+
