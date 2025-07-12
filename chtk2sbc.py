@@ -15,14 +15,14 @@ def main():
         if file.split('.')[1].strip().lower() != "chtk":
             # not a chtk file
             continue
-        n=0
+        linenum=0
         foutname = file.split('.')[0].strip().replace(' ','-').lower()
         input = open(file, "rb")
         print(f"converting {file}")
         lines = input.readlines()
         for line in lines:
             #print(f"{n}: {line.decode(errors='ignore')}")
-            match n:
+            match linenum:
                 case 0:
                     name = clean_line(line)
                 case 1:
@@ -64,7 +64,7 @@ def main():
                         m = int(line[1])
                         s = int(line[2])
                     utcoff = int(h)+(int(m)/60) + (int(s)/3600)
-            n+=1
+            linenum+=1
         input.close() 
     #    print(name)
     #    print(f"{month:02d}/{day:02d}/{year}")
@@ -147,7 +147,7 @@ def intize_line(line):
 def clean_line(line):
     """
     line is a line of bytes
-    we remove all the space, carriage return, and newlinecharacters, then
+    we remove all the space, carriage return, and newline characters, then
     can return the string as only a string
     """
     line=line.decode(errors='ignore')
