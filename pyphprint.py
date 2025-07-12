@@ -165,9 +165,9 @@ def print_panchanga(panch=Panchanga()):
     print(panch)
 
     print(f"\nAbsolute tithi: {panch.tithi()}")
-    print(f"Type: {panch.tithi_type()}")
     if panch.tithi() > 15:
         print(f"Relative tithi: {panch.tithi() - 15}")
+    print(f"Type: {panch.tithi_type()}")
 
     print(f"Karana: {panch.karana()}")
     print(f"Vara: {panch.vara()}")
@@ -209,7 +209,7 @@ def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     hrsnxtvara = ((panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd) % 24
     nxtvara = panch.shift("f", "hour", hrsnxtvara)
     print(
-        f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from now\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
+        f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from panchanga time\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
     )
 
     # give moonrise for three days, the one before, this one, and the one after
