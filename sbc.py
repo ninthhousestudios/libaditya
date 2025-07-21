@@ -31,18 +31,18 @@ def main():
     if args.file:
         # checks if it is in the sbc-config/charts/ directory
         if os.path.exists(sc.chartspath+args.file):
-            config = sconf.init_chart(file=sc.chartspath+args.file)
+            config = sconf.init_chart_config(file=sc.chartspath+args.file)
         else: # assume it is in the current directory
-            config = sconf.init_chart(file=args.file)
+            config = sconf.init_chart_config(file=args.file)
         # if not, assume the path is proper
     elif args.input_file:
         # check if it is in sbc-config/charts/
         if os.path.exists(sc.chartspath+args.input_file):
-            config = sconf.init_chart(file=sc.chartspath+args.input_file)
+            config = sconf.init_chart_config(file=sc.chartspath+args.input_file)
         else: # if not, assume it is in the current directory
-            config = sconf.init_chart(file=args.input_file)
+            config = sconf.init_chart_config(file=args.input_file)
     else: # use default chart
-        config = sconf.init_chart(file=sc.default_chart)
+        config = sconf.init_chart_config(file=sc.default_chart)
     
     # soon to implement
     # call sbc with -D "field:value,field:value,..."

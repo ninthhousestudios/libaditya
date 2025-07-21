@@ -28,7 +28,7 @@ def init_config(file=sc.config_base):
     input.close()
     return config
 
-def init_chart(file=sc.config_base):
+def init_chart_config(file=sc.config_base):
     """
     initialize the dictionary for a chart
     includes birth info, transit info, theme and other options
