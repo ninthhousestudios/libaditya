@@ -6,3 +6,11 @@ files converted
 
 add command line options for defaults and transits to sbc and chtk2sbc
 
+have a default output directory just like there is a default input file
+directory; if there is a slash in the input/output file directory name, treat it
+is a relative, then absolute path
+
+make an option where the output file has each option field setting indicated in
+the output file name
+
+
