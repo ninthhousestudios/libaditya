@@ -7,4 +7,6 @@ example*
 *.svg
 *.png
 *.pdf
+*.txt
+debnds.py
 

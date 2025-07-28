@@ -26,7 +26,7 @@ def nakshatra_tropkrt28_index(long):
     return int((long/(360/28))%28)
 
 
-def dhruvecl_index(sidlong, year=2025, n=0):
+def dhruvecl_index(sidlong, jd, n=0):
     """
     generate the nakshatra index for dhruva ecliptic
     with dhruva eclitpic, the nakshatra boundaries have been projected
@@ -35,18 +35,18 @@ def dhruvecl_index(sidlong, year=2025, n=0):
     we need to actually build the index of where the nakshatras are,
     then we can find the right index
     """
-    ecl_points = build_dhruvecl_boundaries(year)
-    return dindex(sidlong, ecl_points, year, 0)
+    ecl_points = build_dhruvecl_boundaries(jd)
+    return dindex(sidlong, ecl_points, 0)
 
 
-def dindex(sidlong, ecl_points, year=2025, n=0):
+def dindex(sidlong, ecl_points, n=0):
     # print(f"dindex n={n}")
     # print(f"sidlong = {sidlong}")
     # print(f"{ecl_points[n]} <= {sidlong} <= {ecl_points[n + 1]}")
     if ecl_points[n] <= sidlong and sidlong <= ecl_points[n + 1]:
         return n
     else:
-        return dindex(sidlong, ecl_points, year, n + 1)
+        return dindex(sidlong, ecl_points, n + 1)
 
 def dhruvecl_naksize(ecl_points):
     """
@@ -58,8 +58,8 @@ def dhruvecl_naksize(ecl_points):
     return sizes
 
 
-def build_dhruvecl_boundaries(year=2025):
-    eo = ecliptic_obliquity(year)
+def build_dhruvecl_boundaries(jd):
+    eo = ecliptic_obliquity(jd)
     nak = pglob.nak
     ecl_points = []
     for i in range(27):
@@ -75,8 +75,8 @@ def ketuize(long):
     return (long - 180) % 360
 
 
-def ecliptic_obliquity(year):
-    return dms2dec((23, 27, 8.26)) - 0.4684 * (year - 1900)
+def ecliptic_obliquity(jd):
+    return swe.calc(jd,swe.ECL_NUT)[0][0]
 
 
 def yessignize(long):
@@ -175,3 +175,18 @@ def date2str(date):
 def time2str(time):
     """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
     return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"
+
+def dhruvecl_boundaries_longtime():
+    for yr in range(-2100,2101):
+        yrjd = swe.julday(yr,1,1,0)
+        yreo = ecliptic_obliquity(yrjd)
+        yrbnd = build_dhruvecl_boundaries(yrjd)
+        yrbnd = [round(x,3) for x in yrbnd]
+        yrnak = dhruvecl_naksize(yrbnd)
+        yrnak = [round(x,3) for x in yrnak]
+        print(f"\nFor January 1, {yr} at midnight:")
+        print(f"ecliptic obliquity: {yreo}")
+        print(f"nakshatra boundaries:")
+        print(yrbnd)
+        print(f"nakshatra sizes:")
+        print(yrnak)

@@ -277,11 +277,11 @@ class Planet:
         sidlong = (equlong - aval) % 360
         # now transform this equatorial (sidereal) longitude into ecliptic longitude
         eclsidlong = swe.cotrans(
-            (sidlong, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
+            (sidlong, 0, 1), putil.ecliptic_obliquity(self.jd)
         )[0]
         if self.planet_name == "Ketu":
             eclsidlong = (eclsidlong - 180) % 360
-        return eclsidlong, putil.dhruvecl_index(eclsidlong)
+        return eclsidlong, putil.dhruvecl_index(eclsidlong,self.jd)
 
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
         sidlong, nindex = self.init_nakshatra(ayanamsa)
@@ -291,10 +291,10 @@ class Planet:
         else:
             nname = pglob.nakshatra[nindex]
         if ayanamsa == 99:
-            in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries()[nindex], 1)
+            in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries(self.jd)[nindex], 1)
             this_nak_length = (
-                putil.build_dhruvecl_boundaries()[nindex + 1]
-                - putil.build_dhruvecl_boundaries()[nindex]
+                putil.build_dhruvecl_boundaries(self.jd)[nindex + 1]
+                - putil.build_dhruvecl_boundaries(self.jd)[nindex]
             )
         else:
             in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
@@ -377,7 +377,7 @@ class Cusps:
         cusps_nakshatras = []
         for sidcusp in sidcusps:
             if ayanamsa == 99:
-                nindex = putil.dhruvecl_index(sidcusp, self.julianday.year())
+                nindex = putil.dhruvecl_index(sidcusp, self.jd)
             elif ayanamsa == 100:
                 nindex = putil.nakshatra_tropkrt28_index(sidcusp)
             else:
@@ -395,7 +395,7 @@ class Cusps:
         for cusp in self.cusps:
             equcusps.append(
                 swe.cotrans(
-                    (cusp, 0, 1), putil.ecliptic_obliquity(self.julianday.year())
+                    (cusp, 0, 1), putil.ecliptic_obliquity(self.jd)
                 )[0]
             )
         sidcusps = []  # longitude of cusps that will be passed to nakshatra_index
