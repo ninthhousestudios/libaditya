@@ -48,6 +48,15 @@ def dindex(sidlong, ecl_points, year=2025, n=0):
     else:
         return dindex(sidlong, ecl_points, year, n + 1)
 
+def dhruvecl_naksize(ecl_points):
+    """
+    find the size of dhruva ecliptic nakshatras with boundaries given by ecl_points
+    """
+    sizes=[]
+    for n in range(len(ecl_points)-1):
+        sizes.append(ecl_points[n+1]-ecl_points[n])
+    return sizes
+
 
 def build_dhruvecl_boundaries(year=2025):
     eo = ecliptic_obliquity(year)
