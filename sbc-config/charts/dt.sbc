@@ -7,15 +7,15 @@ Lat = 40.69
 Long = -73.81
 
 TPlace = Washington, DC
-TDate = now
-TTime = now
+TDate = 01/20/2025
+TTime = 16:00:00
 TLat = 39.89
 TLong = -77.04
 
 # if one of these options is not included, default is used
 # if flag is passed on command, it overrides the options here
 
-dict = eng
+dict = deva
 rashis = false
-english letters = true
+english letters = false
 output = dt-sbc.svg

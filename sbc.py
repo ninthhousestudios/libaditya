@@ -361,7 +361,7 @@ def get_args():
     parser.add_argument(
         "-i",
         "--input-file",
-        help="input file with birth data and transit time and place data",
+        help="input file with birth data and transit time and place data. will first look for this file in sbc-config/charts, then in the current directory",
     )
     parser.add_argument(
         "-Z",
@@ -369,7 +369,7 @@ def get_args():
         action="store_true",
         help="use zodiac signs on the sbc. default is adityas",
     )
-    parser.add_argument("-l", "--lang", help="language file; default is ./dict.eng")
+    parser.add_argument("-l", "--lang", help="language file; options: dict.eng, dict.iast, dict.deva, dict.mixed")
     parser.add_argument(
         "-o",
         "--output-file",
@@ -387,8 +387,6 @@ def get_args():
         help="display kyoto-harvard letters in addition to sanskrit letters",
     )
     parser.add_argument("file",nargs='?',default=sc.default_chart,help=".sbc file to use")
-  
-
     args = parser.parse_args()
     return args
 
