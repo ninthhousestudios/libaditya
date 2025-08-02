@@ -94,7 +94,7 @@ def main():
         out.append(f"TTime = now\n")
         out.append(f"TLat = {lat}\n")
         out.append(f"TLong = {long}\n")
-        out.append(f"\noutput = {name}.svg\n")
+        out.append(f"\noutput = {name.replace(' ','-').lower()}.svg\n")
         fout = open(foutname+".sbc","w")
         fout.writelines(out)
         fout.close()
