@@ -154,7 +154,7 @@ def get_args():
     parser.add_argument("-j", "--julian", help="time specificed as the julian day")
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files")
     parser.add_argument(
-        "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa"
+        "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa; 98 for dhruva gc mid-mula equatorial; 99 for dhruva gc mid-mula ecliptic; 100 for 28 equal nakshatras with Krittika on the ascending equinox"
     )
     parser.add_argument(
         "-u",
@@ -221,7 +221,7 @@ def get_args():
         action="store_true",
         help="toggle topocentric positions of planets; use -p to specify lat/long",
     )
-    parser.add_argument("-l", "--lang", help="language file; default is ./dict.eng")
+    parser.add_argument("-l", "--lang", help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed")
     parser.add_argument(
         "-z", "--timezone", help="a string showing the timezone; e.g., CDT"
     )
