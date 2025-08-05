@@ -1,6 +1,10 @@
 from drawlib.apis import *
 import pyphglobals as pglob
 
+"""
+pyphconstants.py is for pyphdraw.py only
+"""
+
 image_dir = "/home/josh/w/astro/soft/pyphemeris/images/"
 
 planet_glyphs = [
