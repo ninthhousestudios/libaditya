@@ -288,15 +288,16 @@ class Planet:
         pname = self.planet_name
         if ayanamsa == 100:
             nname = pglob.nakshatraeq[nindex]
-        else:
-            nname = pglob.nakshatra[nindex]
-        if ayanamsa == 99:
+            this_nak_length = 360/28
+            in_nak_long = round(sidlong - (nindex * this_nak_length),1)
+        elif ayanamsa == 99:
             in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries(self.jd)[nindex], 1)
             this_nak_length = (
                 putil.build_dhruvecl_boundaries(self.jd)[nindex + 1]
                 - putil.build_dhruvecl_boundaries(self.jd)[nindex]
             )
         else:
+            nname = pglob.nakshatra[nindex]
             in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
             this_nak_length = pglob.nak
         percent_elapsed = round((in_nak_long / this_nak_length) * 100, 2)
