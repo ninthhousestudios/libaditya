@@ -373,12 +373,12 @@ def get_args():
     parser.add_argument(
         "-o",
         "--output-file",
-        help="name of output file; default is images/sbc.svg, images/sbc-zodiac.svg if -Z is selected",
+        help="name of output file",
     )
     parser.add_argument(
         "-t",
         "--theme",
-        help="theme file to use. default directory is $pyphpath/images/sbc-themes",
+        help="theme file to use. default directory is $pyphpath/sbc-config/sbc-themes",
     )
     parser.add_argument(
         "-e",
