@@ -3,6 +3,7 @@
 import swisseph as swe
 import argparse
 import time
+import codecs
 import pyphglobals as pglob
 import pyphutils as putil
 from pyphprint import *
@@ -46,26 +47,37 @@ def main():
         # user entered a julian day
         ephtime = JulianDay(float(args.julian))
 
-    if args.date:
-        month, day, year = putil.intize_date(args.date)
-    if args.time:
-        ephclock = putil.intize_time(args.time)
-    if args.date:
-        if args.time:
-            ephtime = JulianDay(swe.julday(year, month, day, ephclock))
+    if args.input: # user passed a .pyph or .chtk file
+        if ".pyph" in args.input:
+            name, placename, month, day, year, ephclock, lat, long = read_pyph(args.input)
+        elif ".chtk" in args.input:
+            name, placename, month, day, year, ephclock, lat, long = read_chtk(args.input)
         else:
-            nowtime = time.gmtime()
-            ephtime = JulianDay(
-                swe.julday(
-                    year, month, day, nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-                )
-            )
+            print("invalid file type")
+            exit
+        ephtime = JulianDay(swe.julday(year, month, day, ephclock))
+        print(f"Ephemeris for {name}")
     else:
+        if args.date:
+            month, day, year = putil.intize_date(args.date)
         if args.time:
-            nowtime = time.gmtime()
-            ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
+            ephclock = putil.intize_time(args.time)
+        if args.date:
+            if args.time:
+                ephtime = JulianDay(swe.julday(year, month, day, ephclock))
+            else:
+                nowtime = time.gmtime()
+                ephtime = JulianDay(
+                    swe.julday(
+                        year, month, day, nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+                    )
+                )
         else:
-            ephtime = JulianDay()
+            if args.time:
+                nowtime = time.gmtime()
+                ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
+            else:
+                ephtime = JulianDay()
 
     if args.equatorial:
         pglob.show_equ = not (pglob.show_equ)
@@ -105,6 +117,10 @@ def main():
             pglob.lat = float(lat)
             pglob.long = long = float(long)
             pglob.placename = ""
+        if args.input:
+            pglob.lat = lat
+            pglob.long = long
+            pglob.placename = placename
         if args.house:
             pglob.hsys = args.house
         print_Cusps(
@@ -134,6 +150,145 @@ def main():
     print_next_new_moon(panch)
     print_next_full_moon(panch)
 
+def read_pyph(infile):
+    input = open(infile, "r")
+    for line in input:
+        if not "=" in line:
+            continue
+        field, value = line.split("=")
+        field = field.strip()
+        value = value.strip()
+        if field.startswith("Na") or field.startswith("na"):
+            name = value
+        if field.startswith("Pla") or field.startswith("pla"):
+            placename = value
+        if field.startswith("Da") or field.startswith("da"):
+            month, day, year = putil.intize_date(value)
+        if field.startswith("Ti") or field.startswith("ti"):
+            ephclock = putil.intize_time(value)
+        if field.startswith("La") or field.startswith("la"):
+            lat = float(value)
+        if field.startswith("Lo") or field.startswith("lo"):
+            long = float(value)
+    return name, placename, month, day, year, ephclock, lat, long 
+
+def read_chtk(infile):
+    input = open(infile, "rb")
+    lines = input.readlines()
+    linenum = 0
+    for line in lines:
+        #print(f"{n}: {line.decode(errors='ignore')}")
+        match linenum:
+            case 0: # the functions used on the lines are all in chtk2pyph
+                    # which i *-imported because im lazy
+                name = clean_line(line)
+            case 1:
+                year = intize_line(codecs.decode(line))
+            case 2:
+                month = intize_line(codecs.decode(line))
+            case 3:
+                day = intize_line(codecs.decode(line))
+            case 4:
+                hour = intize_line(codecs.decode(line))
+            case 5:
+                min = intize_line(codecs.decode(line))
+            case 6:
+                sec = intize_line(codecs.decode(line))
+            case 7:
+                sex = intize_line(codecs.decode(line))
+            case 8:
+                country = clean_line(line)
+            case 9:
+                city = clean_line(line)
+            case 10:
+                long = long_to_float(clean_line(line))
+            case 11:
+                lat = lat_to_float(clean_line(line))
+            case 12:
+                # usually this line is HH:MM:SS
+                # someimtes it is just HH:MM
+                # sometimes it is just H, so deal with all of those
+                line = clean_line(line).split(":")
+                if(len(line)==1):
+                    h = int(line[0])
+                    m = s = 0
+                elif(len(line)==2):
+                    h = int(line[0])
+                    m = int(line[1])
+                    s = 0
+                else:
+                    h = int(line[0])
+                    m = int(line[1])
+                    s = int(line[2])
+                utcoff = int(h)+(int(m)/60) + (int(s)/3600)
+        linenum+=1
+    input.close() 
+    placename = city + " " + country
+    ephclock = hour + min/60 + sec/3600
+    return name, placename, month, day, year, ephclock+utcoff, lat, long 
+
+def lat_to_float(lat):
+    """
+    change kalas lat representation into a float
+    """
+    # string is like this 030E44'00
+    if(lat[2:3] == 'N'):
+        degs = int(lat[:2])
+    else:
+        degs = -int(lat[:2])
+    mins = int(lat[3:5])
+    secs = int(lat[6:8])
+    return degs + (mins / 60) + (secs / 3600)
+
+def long_to_float(lat):
+    """
+    change kalas long representation into a float
+    """
+    # string is usually like this 030E44'00
+    if(lat[3:4] == 'e'):
+        degs = int(lat[:3])
+    else:
+        degs = -int(lat[:3])
+    mins = int(lat[4:6])
+    secs = int(lat[7:9])
+    return degs + (mins / 60) + (secs / 3600)
+
+def intize_line(line):
+    """
+    line is a string (of decoded bytes)
+    we remove all the space, etc. characters, then
+    can return the integer of the string
+    """
+    nochars = ["\x00","\r","\n"]
+    count = 0
+    line=list(line)
+    while count < len(line):
+        if(line[count] in nochars):
+            del line[count]
+            continue
+        count+=1
+    retval = int(''.join(line))
+#    print(retval)
+    return retval
+
+def clean_line(line):
+    """
+    line is a line of bytes
+    we remove all the space, carriage return, and newline characters, then
+    can return the string as only a string
+    """
+    line=line.decode(errors='ignore')
+    nochars = ["\x00","\r","\n"]
+    count = 0
+    line=list(line)
+    while count < len(line):
+        if(line[count] in nochars):
+            del line[count]
+            continue
+        count+=1
+    retval = ''.join(line)
+#    print(retval)
+    return retval
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -152,6 +307,9 @@ def get_args():
         help="time specified as HH:MM:SS, (utc); if not present will use midnight utc",
     )
     parser.add_argument("-j", "--julian", help="time specificed as the julian day")
+    parser.add_argument(
+        "-i", "--input", help="use date, time and position in input file; can be a .pyph or .chtk file"
+    )
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files")
     parser.add_argument(
         "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa; 98 for dhruva gc mid-mula equatorial; 99 for dhruva gc mid-mula ecliptic; 100 for 28 equal nakshatras with Krittika on the ascending equinox"
