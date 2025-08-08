@@ -308,10 +308,12 @@ class Planet:
             this_nak_length = 360/28
             in_nak_long = round(sidlong - (nindex * this_nak_length),1)
         elif ayanamsa == 99:
-            in_nak_long = round(sidlong - putil.build_dhruvecl_boundaries(self.jd)[nindex], 1)
+            eclbnds = putil.build_dhruvecl_boundaries(self.jd)
+            nname = pglob.nakshatra[nindex]
+            in_nak_long = round(sidlong - eclbnds[nindex], 1)
             this_nak_length = (
-                putil.build_dhruvecl_boundaries(self.jd)[nindex + 1]
-                - putil.build_dhruvecl_boundaries(self.jd)[nindex]
+                eclbnds[nindex + 1]
+                - eclbnds[nindex]
             )
         else:
             nname = pglob.nakshatra[nindex]

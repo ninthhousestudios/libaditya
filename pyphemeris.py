@@ -238,11 +238,13 @@ def read_chtk(infile):
                     m = int(line[1])
                     s = int(line[2])
                 utcoff = int(h)+(int(m)/60) + (int(s)/3600)
+            case 13: # dst value
+                dst = intize_line(codecs.decode(line))
         linenum+=1
     input.close() 
     placename = city + " " + country
     ephclock = hour + min/60 + sec/3600
-    return name, placename, month, day, year, ephclock+utcoff, lat, long 
+    return name, placename, month, day, year, ephclock+utcoff-dst, lat, long 
 
 def lat_to_float(lat):
     """
@@ -262,7 +264,7 @@ def long_to_float(lat):
     change kalas long representation into a float
     """
     # string is usually like this 030E44'00
-    if(lat[3:4] == 'e'):
+    if(lat[3:4] == 'E'):
         degs = int(lat[:3])
     else:
         degs = -int(lat[:3])

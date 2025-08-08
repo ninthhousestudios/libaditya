@@ -81,6 +81,8 @@ def main():
                         m = int(line[1])
                         s = int(line[2])
                     utcoff = int(h)+(int(m)/60) + (int(s)/3600)
+                case 13: # dst value
+                    dst = intize_line(codecs.decode(line))
             linenum+=1
         input.close() 
     #    print(name)
@@ -95,7 +97,7 @@ def main():
         # time for config needs to be utc
         # so we take the time here and add utcoffset
         time = dms2dec((int(hour),int(min),int(sec))) # turn into float
-        time += utcoff # utcoff is already a float
+        time += utcoff - dst# utcoff is already a float
         time = dec2dms(time) # return the float as a string HH:MM:SS
     #    print(time)
 
@@ -129,7 +131,7 @@ def long_to_float(lat):
     change kalas long representation into a float
     """
     # string is usually like this 030E44'00
-    if(lat[3:4] == 'e'):
+    if(lat[3:4] == 'E'):
         degs = int(lat[:3])
     else:
         degs = -int(lat[:3])

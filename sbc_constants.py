@@ -16,7 +16,7 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import drawsvg as draw
-import sbcnames
+import sbc_names
 
 default_input="sbc-config/charts/chart-ex.sbc"
 
@@ -184,7 +184,7 @@ def draw_chakra(d,zodiac=False,langfile=mixed,themefile=themepath+theme):
                 d.append(draw.Rectangle(coords[i][n][0], coords[i][n][1], 30, 30, rx='1', ry='1', stroke='black', fill='yellow'))
 
     # initalize all the names to write
-    nakshatraeq,nakshatra,adityas,tithi,vara,zsigns = sbcnames.init_sbc_names(langfile)
+    nakshatraeq,nakshatra,adityas,tithi,vara,zsigns = sbc_names.init_sbc_names(langfile)
 
     # draw names of nakshatras {{{1 }}}
     # init names
