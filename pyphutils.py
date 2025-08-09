@@ -163,6 +163,8 @@ def dms2dec(dms):
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
+def ra2dec(ra):
+    return dms2dec(ra)*15
 
 def intize_date(date):
     """

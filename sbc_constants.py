@@ -18,10 +18,12 @@
 import drawsvg as draw
 import sbc_names
 
-default_input="sbc-config/charts/chart-ex.sbc"
+# set path to ephemeris files
+# by setting to "", swisseph will use the built-in moshier ephemeris
+ephepath = "/home/josh/dev/swisseph/ephe/"
 
+default_input="sbc-config/charts/chart-ex.sbc"
 sbcpath = "/home/josh/w/astro/soft/pyphemeris/"
-dictpath = "/home/josh/w/astro/soft/pyphemeris/sbc-config/dicts/"
 eng = sbcpath + "dict.eng"
 iast = sbcpath + "dict.iast"
 deva = sbcpath + "dict.deva"

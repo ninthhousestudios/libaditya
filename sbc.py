@@ -35,6 +35,10 @@ from pyphobjs import *
 coords = sc.make_coords()
 
 def main():
+    # set path to ephemeris file
+    # set in sbc_constants
+    swe.set_ephe_path(sc.ephepath)
+
     args = get_args()
     d = draw.Drawing(500, 500)
 
