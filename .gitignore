@@ -9,6 +9,7 @@ example*
 *.pdf
 *.txt
 *.sbc
+*.pyph
 debnds.py
 copyright
 
