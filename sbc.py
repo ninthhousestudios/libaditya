@@ -77,8 +77,8 @@ def main():
     blat = float(config["lat"])
     blong = float(config["long"])
     tplace = config["tplace"]
+    nowtime = time.gmtime()
     if config["tdate"] == "now": # transit date to current day
-        nowtime = time.gmtime()
         tyear = nowtime[0]
         tmonth = nowtime[1] 
         tday = nowtime[2]
@@ -90,7 +90,6 @@ def main():
         print(f"config[tdate]={config["tdate"]}")
         tmonth, tday, tyear = putil.intize_date(config["tdate"])
     if config["ttime"] == "now":
-        nowtime = time.gmtime()
         transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
     elif config["ttime"] == "birth":
         transit_ephclock = ephclock
@@ -98,6 +97,29 @@ def main():
         transit_ephclock = putil.intize_time(config["ttime"])
     tlat = float(config["tlat"])
     tlong = float(config["tlong"])
+
+    # a user can pass a different transit, which will override the file transit
+    if args.transit:
+        print(f"got transit arg: {args.transit}")
+        transit = [element.strip() for element in args.transit.split(';')]
+        if transit[0] == "now": # transit date to current day
+            tyear = nowtime[0]
+            tmonth = nowtime[1] 
+            tday = nowtime[2]
+        else:
+            tmonth, tday, tyear = putil.intize_date(transit[0])
+        if transit[1] == "now":
+            transit_ephclock = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+        else:
+            transit_ephclock = putil.intize_time(transit[1])
+        if transit[2] == "birth":
+            tlat=blat
+            tlong=blong
+            tplace=bplace
+        else:
+            tlat = float(transit[2])
+            tlong = float(transit[3])
+            tplace = transit[4]
 
     bephtime = JulianDay(swe.julday(byear, bmonth, bday, ephclock))
     transit_ephtime = JulianDay(swe.julday(tyear, tmonth, tday, transit_ephclock))
@@ -382,7 +404,12 @@ def get_args():
     parser.add_argument(
         "-i",
         "--input-file",
-        help="input file with birth data and transit time and place data. will first look for this file in sbc-config/charts, then in the current directory",
+        help="input file with birth data and transit time and place data. will first look for this file in sbc-config/charts, then in the current directory; file maybe a .sbc file, or a .chtk file; if .chtk, the transit will default to the native birthplace and program runtime",
+    )
+    parser.add_argument(
+        "-T",
+        "--transit",
+        help="change transit; format: \"MM/DD/YYYY; HH:MM:SS; lat; long; placename\"; either or both of date and time can be \"now\"; N and E are positive; placename is optional; 3rd,4th, and 5th options can be replace by \"birth\" to use the natives birth place",
     )
     parser.add_argument(
         "-Z",

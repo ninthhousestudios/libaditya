@@ -81,5 +81,6 @@ def init_chtk_config(file):
     config["ttime"]="now"
     config["tlat"]=lat
     config["tlong"]=long
+    config["output"]=f"{name.strip().replace(' ','-').replace(',','').lower()}.svg"
 
     return config
