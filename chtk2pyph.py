@@ -20,6 +20,7 @@
 import argparse
 import os
 import codecs
+from pyphread import *
 
 
 def main():
@@ -111,86 +112,6 @@ def main():
         fout = open(foutname+".pyph","w")
         fout.writelines(out)
         fout.close()
-
-
-def lat_to_float(lat):
-    """
-    change kalas lat representation into a float
-    """
-    # string is like this 030E44'00
-    if(lat[2:3] == 'N'):
-        degs = int(lat[:2])
-    else:
-        degs = -int(lat[:2])
-    mins = int(lat[3:5])
-    secs = int(lat[6:8])
-    return degs + (mins / 60) + (secs / 3600)
-
-def long_to_float(lat):
-    """
-    change kalas long representation into a float
-    """
-    # string is usually like this 030E44'00
-    if(lat[3:4] == 'E'):
-        degs = int(lat[:3])
-    else:
-        degs = -int(lat[:3])
-    mins = int(lat[4:6])
-    secs = int(lat[7:9])
-    return degs + (mins / 60) + (secs / 3600)
-
-def intize_line(line):
-    """
-    line is a string (of decoded bytes)
-    we remove all the space, etc. characters, then
-    can return the integer of the string
-    """
-    nochars = ["\x00","\r","\n"]
-    count = 0
-    line=list(line)
-    while count < len(line):
-        if(line[count] in nochars):
-            del line[count]
-            continue
-        count+=1
-    retval = int(''.join(line))
-#    print(retval)
-    return retval
-
-def clean_line(line):
-    """
-    line is a line of bytes
-    we remove all the space, carriage return, and newline characters, then
-    can return the string as only a string
-    """
-    line=line.decode(errors='ignore')
-    nochars = ["\x00","\r","\n"]
-    count = 0
-    line=list(line)
-    while count < len(line):
-        if(line[count] in nochars):
-            del line[count]
-            continue
-        count+=1
-    retval = ''.join(line)
-#    print(retval)
-    return retval
-
-def dec2dms(dd):
-    """
-    take a decimal dd and return the equivalent DD:MM:SS as a string
-    """
-    dd = abs(dd)
-    minutes, seconds = divmod(dd * 3600, 60)
-    degrees, minutes = divmod(minutes, 60)
-    return f"{round(degrees):02d}:{round(minutes):02d}:{round(seconds):02d}"
-
-
-def dms2dec(dms):
-    """
-    dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
-    """
-    return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
 
 def get_args():

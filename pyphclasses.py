@@ -189,7 +189,7 @@ class Location:
         return f"{self.placename} at ({self.lat},{self.long})\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def place(self):
-        return f"{self.placename} ({self.lat},{self.long})"
+        return f"{self.placename} ({pglob.round_func(self.lat)},{pglob.round_func(self.long)})"
 
     def risetrans_location(self):
         return (self.long, self.lat, self.alt)
