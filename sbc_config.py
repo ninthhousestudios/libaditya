@@ -28,6 +28,7 @@ then write a config
 """
 
 import sbc_constants as sc
+import pyphread as pread
 
 def init_config(file=sc.config_base):
     input = open(file,'r')
@@ -44,7 +45,7 @@ def init_config(file=sc.config_base):
     input.close()
     return config
 
-def init_chart_config(file=sc.config_base):
+def init_chart_config(file):
     """
     initialize the dictionary for a chart
     includes birth info, transit info, theme and other options
@@ -61,4 +62,24 @@ def init_chart_config(file=sc.config_base):
        value = value.strip()
        config[field]=value 
     input.close()
+    return config
+
+# user passed a chtk file, so deal with it
+def init_chtk_config(file):
+    name, placename, month, day, year, ephclock, lat, long = pread.read_chtk(file)
+
+    config = init_config()
+
+    config["name"]=name
+    config["date"]=f"{month:02d}/{day:02d}/{year:04d}"
+    config["place"]=placename
+    config["time"]=pread.dec2dms(ephclock)
+    config["lat"]=lat
+    config["long"]=long
+    config["tplace"]=placename
+    config["tdate"]="now"
+    config["ttime"]="now"
+    config["tlat"]=lat
+    config["tlong"]=long
+
     return config

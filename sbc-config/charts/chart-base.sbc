@@ -18,7 +18,8 @@ TLat = -86
 TLong = 40
 
 # if one of these options is not included, default is used
-# if flag is passed on command line, it overrides the options here
+# if flag is passed on command line, it overrides these defaults
+# and any of these options passed in the relevant .sbc file
 
 theme = joshs-theme
 dict = deva

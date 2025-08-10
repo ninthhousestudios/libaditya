@@ -49,20 +49,20 @@ def main():
     # sbc-config/charts/chart-base.sbc. put any .sbc files in $(path to your
     # pyphemeris dir)sbc-config/charts/, and then call "sbc" with -i
     # your-chart.sbc
-    if args.file:
+
+    if args.input_file: # user passed a file
         # checks if it is in the sbc-config/charts/ directory
-        if os.path.exists(sc.chartspath+args.file):
-            config = sconf.init_chart_config(file=sc.chartspath+args.file)
-        else: # assume it is in the current directory
-            config = sconf.init_chart_config(file=args.file)
-        # if not, assume the path is proper
-    elif args.input_file:
-        # check if it is in sbc-config/charts/
-        if os.path.exists(sc.chartspath+args.input_file):
-            config = sconf.init_chart_config(file=sc.chartspath+args.input_file)
-        else: # if not, assume it is in the current directory
-            config = sconf.init_chart_config(file=args.input_file)
-    else: # use default chart
+        if ".sbc" in args.input_file: # working with an sbc file
+            if os.path.exists(sc.chartspath+args.input_file):
+                config = sconf.init_chart_config(file=sc.chartspath+args.input_file)
+            else: # assume it is in the current directory
+                config = sconf.init_chart_config(file=args.input_file)
+        elif ".chtk" in args.input_file: # working with a chtk file
+            config = sconf.init_chtk_config(args.input_file)
+        else:
+            print("unrecognized input file type; input a .chtk or .sbc file")
+            exit()
+    else:
         config = sconf.init_chart_config(file=sc.default_chart)
     
     # soon to implement
@@ -407,7 +407,6 @@ def get_args():
         action="store_true",
         help="display kyoto-harvard letters in addition to sanskrit letters",
     )
-    parser.add_argument("file",nargs='?',default=sc.default_chart,help=".sbc file to use")
     args = parser.parse_args()
     return args
 

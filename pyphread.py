@@ -1,5 +1,4 @@
 import codecs
-import pyphutils as putil
 
 def read_pyph(infile):
     input = open(infile, "r")
@@ -14,9 +13,9 @@ def read_pyph(infile):
         if field.startswith("Pla") or field.startswith("pla"):
             placename = value
         if field.startswith("Da") or field.startswith("da"):
-            month, day, year = putil.intize_date(value)
+            month, day, year = intize_date(value)
         if field.startswith("Ti") or field.startswith("ti"):
-            ephclock = putil.intize_time(value)
+            ephclock = intize_time(value)
         if field.startswith("La") or field.startswith("la"):
             lat = float(value)
         if field.startswith("Lo") or field.startswith("lo"):
@@ -159,4 +158,23 @@ def dms2dec(dms):
     dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
+
+def intize_date(date):
+    """
+    take a string 'MM/DD/YYYY'
+    and return a tuple of int (mm,dd,yyyy)
+    """
+    year = int(date[6:10])
+    month = int(date[0:2])
+    day = int(date[3:5])
+
+    return (month, day, year)
+
+
+def intize_time(time):
+    """
+    take a string 'HH:MM:SS'
+    and return a float of that time
+    """
+    return int(time[0:2]) + int(time[3:5]) / 60 + int(time[6:8]) / 3600
 
