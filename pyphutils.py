@@ -171,9 +171,10 @@ def intize_date(date):
     take a string 'MM/DD/YYYY'
     and return a tuple of int (mm,dd,yyyy)
     """
-    year = int(date[6:11]) # 6:11 allow space for a negative sign; python allows me to write, e.g., [6:100] even if the list only has 9 elements, just returns the rest; very helpful
-    month = int(date[0:2])
-    day = int(date[3:5])
+    date = date.split('/')
+    year = int(date[2]) 
+    month = int(date[0])
+    day = int(date[1])
 
     return (month, day, year)
 
@@ -183,7 +184,8 @@ def intize_time(time):
     take a string 'HH:MM:SS'
     and return a float of that time
     """
-    return int(time[0:2]) + int(time[3:5]) / 60 + int(time[6:8]) / 3600
+    time= time.split(':')
+    return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
 
 
 def date2str(date):
