@@ -99,7 +99,7 @@ class JulianDay:
         shift the julianday in 'dir'ection 'f'orward or 'b'ackward
         by number units, 'second','minute','hour','day','month','year'
         """
-        sf = 1
+        sf = 1 # scale factor
         if dir.startswith("b"):
             sf = -1
         elif unit.startswith("s"):

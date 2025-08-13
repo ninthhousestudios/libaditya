@@ -61,9 +61,6 @@ def main():
     else:
         pglob.round_func = putil.noround
 
-    if args.julian:
-        # user entered a julian day
-        ephtime = JulianDay(float(args.julian))
 
     if args.input: # user passed a .pyph or .chtk file
         if ".pyph" in args.input:
@@ -96,6 +93,10 @@ def main():
                 ephtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], ephclock))
             else:
                 ephtime = JulianDay()
+
+    if args.julian:
+        # user entered a julian day
+        ephtime = JulianDay(float(args.julian))
 
     if args.equatorial:
         pglob.show_equ = not (pglob.show_equ)
@@ -161,11 +162,11 @@ def main():
         else:
             placename = ""
         print_panchanga_addendum(
-            panch, Location(lat=lat, long=long, placename=placename)
+            panch, Location(lat=lat, long=long, placename=pglob.placename)
         )
     else:
         print_panchanga_addendum(
-            panch, Location(lat=pglob.lat, long=pglob.long, placename=placename)
+            panch, Location(lat=pglob.lat, long=pglob.long, placename=pglob.placename)
         )
     print_next_new_moon(panch)
     print_next_full_moon(panch)

@@ -17,7 +17,7 @@
 
 import swisseph as swe
 import time
-import datetime
+import calendar
 import pyphglobals as pglob
 import pyphutils as putil
 from pyphclasses import *
@@ -108,16 +108,27 @@ class Panchanga(JulianDay):
         return pglob.karana[self.karana_index[0]][self.karana_index[1]]
 
     def vara(self):
-        weekday = datetime.date(
+        weekday = calendar.weekday(
             self.julianday.datetime[0],
             self.julianday.datetime[1],
             self.julianday.datetime[2],
-        ).isoweekday()  # 1 is Monday
+        ) # 0 is Monday
         sunriseyk = self.sun.sunrise_yamakoti()
         if sunriseyk < self.julianday:
-            return pglob.vara[(weekday + 1) % 7]
+            return pglob.vara[(weekday) % 7]
         else:
             return pglob.vara[weekday % 7]
+#    def vara(self):
+#        weekday = datetime.date(
+#            self.julianday.datetime[0],
+#            self.julianday.datetime[1],
+#            self.julianday.datetime[2],
+#        ).isoweekday()  # 1 is Monday
+#        sunriseyk = self.sun.sunrise_yamakoti()
+#        if sunriseyk < self.julianday:
+#            return pglob.vara[(weekday + 1) % 7]
+#        else:
+#            return pglob.vara[weekday % 7]
 
     def nakshatra(self):
         return self.moon.nakshatra(self.ayanamsa)
