@@ -184,7 +184,7 @@ def intize_time(time):
     take a string 'HH:MM:SS'
     and return a float of that time
     """
-    time= time.split(':')
+    time = time.split(':')
     return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
 
 
