@@ -182,25 +182,25 @@ def get_args():
     parser.add_argument(
         "-d",
         "--date",
-        help="date specified as MM/DD/YYYY; if not present will give the current day",
+        help="date specified as MM/DD/YYYY; if not present will use day at runtime",
     )
     parser.add_argument(
         "-t",
         "--time",
-        help="time specified as HH:MM:SS, (utc); if not present will use midnight utc",
+        help="time specified as HH:MM:SS, (utc); if not present will use time at runtime",
     )
-    parser.add_argument("-j", "--julian", help="time specificed as the julian day")
+    parser.add_argument("-j", "--julian", help="time specificed as a julian day")
     parser.add_argument(
-        "-i", "--input", help="use date, time and position in input file; can be a .pyph or .chtk file"
+        "-i", "--input", help="use date, time and position from input file; can be a .pyph or .chtk file"
     )
-    parser.add_argument("-e", "--edir", help="path to swiss ephemeris files")
+    parser.add_argument("-e", "--edir", help="path to swiss ephemeris files; default can be set in pyphglobals.py")
     parser.add_argument(
         "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa; 98 for dhruva gc mid-mula equatorial; 99 for dhruva gc mid-mula ecliptic; 100 for 28 equal nakshatras with Krittika on the ascending equinox"
     )
     parser.add_argument(
         "-u",
         "--utcoffset",
-        help="utc offset in hours, positive is east; default is currently -4 (EDT)",
+        help="utc offset in hours, positive is east; note: this is only for printing purposes; for computing the ephemeris pyphemeris only understands time in UTC or julian days; default set in pyphglobals.py",
     )
     parser.add_argument(
         "-H",

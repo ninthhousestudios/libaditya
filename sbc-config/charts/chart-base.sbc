@@ -26,3 +26,4 @@ dict = deva
 zodiac = false
 english letters = false
 output = chart-base-output.svg
+planet info = false

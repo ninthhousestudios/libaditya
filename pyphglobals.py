@@ -20,6 +20,7 @@ import swisseph as swe
 import pyphutils as putil
 
 # defaults
+edir = "/home/josh/dev/swisseph/ephe/"
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
 ayanamsa = 98  # new code for dhruva equatorial
 show_helios = 0
@@ -35,7 +36,6 @@ alt = 252  # swe requires meters
 placename = ""
 hsys = "C"
 show_houses = 1
-edir = "/home/josh/dev/swisseph/ephe/"
 lang = "eng"
 signs = []
 sign_long = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn

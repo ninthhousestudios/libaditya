@@ -24,6 +24,7 @@ import os
 import drawsvg as draw
 import pyphglobals as pglob
 import pyphutils as putil
+import pyphprint as pprint
 import sbc_constants as sc
 import sbc_config as sconf
 from pyphclasses import *
@@ -128,6 +129,7 @@ def main():
     themefile=f"{sc.themepath}{config["theme"]}.sbc"
     zodiac = False if config["zodiac"] == "false" else True
     english_letters = False if config["english letters"] == "false" else True
+    planet_info = False if config["planet info"] == "false" else True
     output_file = config["output"]
 
     # i want cmdline args to override these values if they are given
@@ -141,6 +143,8 @@ def main():
         english_letters = True
     if args.output_file:
         output_file = args.output_file
+    if args.planet_info:
+        planet_info = True
     output_file = output_file.replace(' ','-').lower() 
 
 
@@ -289,6 +293,19 @@ def main():
             d.append(draw.Text(sc.pglyphs[n],font_size=15,x=coords[ncol][nrow][0]+(toffright[num][nakcount[tnaks[n]]][0]),y=coords[ncol][nrow][1]+(toffright[num][nakcount[tnaks[n]]][1])))
         nakcount[tnaks[n]]+=1
 
+    if planet_info:
+        if not zodiac:
+            pglob.signs = pglob.adityas
+        # print planet and cusp information to stdout
+        print(f"Birth planets:")
+        pprint.print_planets(bephtime)
+        pprint.print_planets_nakshatras(bephtime, ayanamsa=100)
+        pprint.print_Cusps(loc=Location(lat=blat,long=blong,placename=bplace), tjd=bephtime)
+
+        print(f"Transit planets:")
+        pprint.print_planets(transit_ephtime)
+        pprint.print_planets_nakshatras(transit_ephtime, ayanamsa=100)
+        pprint.print_Cusps(loc=Location(lat=tlat,long=tlong,placename=tplace), tjd=transit_ephtime)
 
     # display to the correct output file 
     d.set_pixel_scale(2)
@@ -433,6 +450,12 @@ def get_args():
         "--english-letters",
         action="store_true",
         help="display kyoto-harvard letters in addition to sanskrit letters",
+    )
+    parser.add_argument(
+        "-p",
+        "--planet-info",
+        action="store_true",
+        help="print planet information to stdout",
     )
     args = parser.parse_args()
     return args
