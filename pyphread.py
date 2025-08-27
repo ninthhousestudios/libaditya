@@ -75,7 +75,7 @@ def read_chtk(infile):
                 dst = intize_line(codecs.decode(line))
         linenum+=1
     input.close() 
-    placename = city + " " + country
+    placename = city + ", " + country
     ephclock = hour + min/60 + sec/3600
     return name, placename, month, day, year, ephclock+utcoff-dst, lat, long 
 
