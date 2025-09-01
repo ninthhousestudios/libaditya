@@ -29,8 +29,7 @@ def read_chtk(infile):
     for line in lines:
         #print(f"{n}: {line.decode(errors='ignore')}")
         match linenum:
-            case 0: # the functions used on the lines are all in chtk2pyph
-                    # which i *-imported because im lazy
+            case 0: 
                 name = clean_line(line)
             case 1:
                 year = intize_line(codecs.decode(line))
@@ -55,6 +54,7 @@ def read_chtk(infile):
             case 11:
                 lat = lat_to_float(clean_line(line))
             case 12:
+                # this is the utc offset
                 # usually this line is HH:MM:SS
                 # someimtes it is just HH:MM
                 # sometimes it is just H, so deal with all of those

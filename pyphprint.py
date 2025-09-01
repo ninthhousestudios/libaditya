@@ -77,6 +77,7 @@ def planets_str(tjd=JulianDay(), sysflg=0):
     output.align["Longitude"] = "l"
     output.align["Latitude"] = "r"
     output.align["Speed"] = "r"
+    output.align["Latitude Speed"] = "r"
     # doing it this way so I can add Earth after Venus for helio and bary coords
     # get coordinates for Sun through Pluto, 10 planets
     for i in range(10):
@@ -99,7 +100,7 @@ def planets_str(tjd=JulianDay(), sysflg=0):
     if sysflg == pglob.HELIO or sysflg == pglob.BARY:
         output.add_row(Planets[pglob.earth].table_list(sysflg))
 
-    ret = output.get_string(fields=["Planet", "Longitude", "Latitude", "Speed"])
+    ret = output.get_string(fields=["Planet", "Longitude", "Latitude", "Speed", "Latitude Speed"])
 
     return ret
 
