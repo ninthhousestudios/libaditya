@@ -1,23 +1,37 @@
 # this is a template for a person filling out the chart
-Name = (optional)
-Date = MM/DD/YYYY
-Place = (optional)
+# (optional)
+Name = 
+# MM/DD/YYYY
+Date = 
+# (optional)
+Place =
 
-Time = HH:MM:SS
-Lat = (N and E are positive)
-Long = (N and E are positive)
+# HH:MM:SS
+Time = 
+# (N and E are positive)
+Lat = 
+Long = 
 
-TPlace = (optional)
-TDate = MM/DD/YYYY
-TTime = HH:MM:SS
-TLat = (N and E are positive)
-TLong = (N and E are positive)
+# (optional)
+TPlace = 
+# MM/DD/YYYY
+TDate = 
+# HH:MM:SS
+TTime =
+# (N and E are positive)
+TLat =
+TLong =
 
 # if one of these options is not included, default is used
 # if flag is passed on command, it overrides the options here
 
-theme = theme (must be in sbc-config/themes/)
-dict = eng/iast/deva/mixed (must be in sbc-config/dicts/)
-zodiac = true to use signs; false to use adityas
-english letters = true or false (print english letters on sanskrit letter boxes)
-output = (name of output file)
+# theme (must be in sbc-config/themes/); dont include .sbc extension
+theme = 
+# eng/iast/deva/mixed 
+dict = 
+# true to use signs; false to use adityas
+zodiac = 
+# true or false (print english letters on sanskrit letter boxes)
+english letters = 
+# (name of output file)
+output = 
