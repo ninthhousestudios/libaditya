@@ -156,6 +156,8 @@ def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
         print("Dhruva GC mid-Mula ecliptic coordinates ayanamsa")
     elif ayanamsa == 100:
         print("Tropical Krittika at ascending equinox; 28 equal nakshatras")
+    elif ayanamsa == 101:
+        print("My Dhruva GC mid-Mula equatorial coordinates non-ayanamsa")
     else:
         print(f"{swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(pnakshatra_str(tjd, ayanamsa))

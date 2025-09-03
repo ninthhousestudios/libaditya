@@ -272,6 +272,8 @@ class Planet:
             # second arg indexes into 28 equal tropical nakshatras, krittika at
             # ascending equinox
             return [self.longitude(), putil.nakshatra_tropkrt28_index(self.longitude())]
+        if ayanamsa == 101:
+            return self.init_my_dhruvequ()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         if self.planet_name == "Ketu":
@@ -286,6 +288,12 @@ class Planet:
         if self.planet_name == "Ketu":
             sidlong = (sidlong - 180) % 360
         return sidlong, putil.nakshatra_index(sidlong)
+
+    def init_my_dhruvequ(self):
+        gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        return equlong, (18-int((gcequ-equlong)/pglob.nak))
+
 
     def init_dhruvecl(self):
         swe.set_sid_mode(36)

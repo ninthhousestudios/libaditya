@@ -84,6 +84,12 @@ def build_dhruvecl_boundaries(jd):
     ecl_points.append(360)
     return ecl_points
 
+def build_my_dhruvequ_bounds(gcequ):
+    """
+    take the equatorial longitude of the galactic center
+    and find the nakshatra boundaries along the equator
+    """
+
 
 def ketuize(long):
     """
