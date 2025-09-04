@@ -195,7 +195,7 @@ def get_args():
     )
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files; default can be set in pyphglobals.py")
     parser.add_argument(
-        "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa; 98 for dhruva gc mid-mula equatorial; 99 for dhruva gc mid-mula ecliptic; 100 for 28 equal nakshatras with Krittika on the ascending equinox"
+        "-a", "--ayanamsa", help="pass swisseph value for desired ayanamsa; 101 for dhruva gc mid-mula equatorial; 98 for dhruva gc mid-mula equatorial (NOT A CORRECT IMPLEMENTATION); 99 for dhruva gc mid-mula ecliptic (based on 98, so NOT A CORRECT IMPLEMENTATION); 100 for 28 equal nakshatras with Krittika on the ascending equinox"
     )
     parser.add_argument(
         "-u",

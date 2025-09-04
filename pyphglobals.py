@@ -22,7 +22,7 @@ import pyphutils as putil
 # defaults
 edir = "/home/josh/dev/swisseph/ephe/"
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
-ayanamsa = 98  # new code for dhruva equatorial
+ayanamsa = 101  # new code for dhruva equatorial
 show_helios = 0
 show_baryos = 1
 show_topo = 0

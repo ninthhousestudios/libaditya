@@ -291,8 +291,15 @@ class Planet:
 
     def init_my_dhruvequ(self):
         gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
+        mula=gcequ-(pglob.nak/2)
+        ashvini=mula-(18*pglob.nak)
         equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
-        return equlong, (18-int((gcequ-equlong)/pglob.nak))
+        if self.planet_name == "Ketu":
+            equlong = (equlong - 180) % 360
+        if equlong < ashvini:
+            equlong+=360
+        nindex=int((equlong-ashvini)/pglob.nak)
+        return equlong-ashvini, nindex
 
 
     def init_dhruvecl(self):
