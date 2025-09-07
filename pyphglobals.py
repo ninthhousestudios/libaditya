@@ -30,6 +30,7 @@ show_adityas = 1
 show_equ = 0
 utcoffset = -4
 timezone = "EDT"
+# N and E are positive
 lat = round(putil.dms2dec((39, 57, 22)), 3)
 long = -round((putil.dms2dec((86, 0, 46))))
 alt = 252  # swe requires meters

@@ -102,7 +102,7 @@ class JulianDay:
         sf = 1 # scale factor
         if dir.startswith("b"):
             sf = -1
-        elif unit.startswith("s"):
+        if unit.startswith("s"):
             sf = sf * pglob.onesecjd
         elif unit.startswith("m"):
             sf = sf * pglob.oneminjd
