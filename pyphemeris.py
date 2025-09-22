@@ -281,5 +281,5 @@ def get_args():
     args = parser.parse_args()
     return args
 
-
-main()
+if __name__ == "__main__":
+    main()
