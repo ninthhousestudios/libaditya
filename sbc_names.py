@@ -128,7 +128,6 @@ def init_sbc_names(langfile=mixed):
     vara.append(vnames["Shukravara"])
     vara.append(vnames["Shanivara"])
 
-    rasis.append(rnames["Aries"])
     rasis.append(rnames["Taurus"])
     rasis.append(rnames["Gemini"])
     rasis.append(rnames["Cancer"])
@@ -140,6 +139,7 @@ def init_sbc_names(langfile=mixed):
     rasis.append(rnames["Capricorn"])
     rasis.append(rnames["Aquarius"])
     rasis.append(rnames["Pisces"])
+    rasis.append(rnames["Aries"])
 
     return [nakshatraeq,nakshatra,adityas,tithi,vara,rasis]
 

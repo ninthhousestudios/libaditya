@@ -132,7 +132,7 @@ def main():
     planet_info = False if config["planet info"] == "false" else True
     output_file = config["output"]
 
-    # i want cmdline args to override these values if they are given
+    # cmdline args override these values if they are given
     if args.lang:
         langfile=f"{sc.sbcpath}{args.lang}"
     if args.theme:
