@@ -29,6 +29,7 @@ then write a config
 
 import sbc_constants as sc
 import pyphread as pread
+import pyphutils as putil
 
 def init_config(file=sc.config_base):
     input = open(file,'r')
@@ -60,6 +61,15 @@ def init_chart_config(file):
        field, value = line.split("=")
        field = field.strip().lower()
        value = value.strip()
+       if "lat" in field or "long" in field:
+           if ":" in value: # user passed lat/long as DD:MM:SS
+               v=value.split(":")
+               if len(v) == 3:
+                   value = putil.dms2dec((int(v[0]),int(v[1]),int(v[2])))
+               elif len(v) == 2:
+                   value = putil.dms2dec((int(v[0]),int(v[1]),0))
+               else:
+                   value = int(v[0])
        config[field]=value 
     input.close()
     return config
