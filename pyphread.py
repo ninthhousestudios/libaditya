@@ -93,18 +93,40 @@ def lat_to_float(lat):
     secs = int(lat[6:8])
     return degs + (mins / 60) + (secs / 3600)
 
-def long_to_float(lat):
+def float_to_lat(lat):
+    if lat >= 0:
+        dir = 'N'
+    else:
+        dir = 'S'
+
+    latstr = dec2dms(lat)
+    d,m,s = latstr.split(":")
+
+    return d+dir+m+"'"+s
+
+def long_to_float(long):
     """
     change kalas long representation into a float
     """
     # string is usually like this 030E44'00
-    if(lat[3:4] == 'E'):
-        degs = int(lat[:3])
+    if(long[3:4] == 'E'):
+        degs = int(long[:3])
     else:
-        degs = -int(lat[:3])
-    mins = int(lat[4:6])
-    secs = int(lat[7:9])
+        degs = -int(long[:3])
+    mins = int(long[4:6])
+    secs = int(long[7:9])
     return degs + (mins / 60) + (secs / 3600)
+
+def float_to_long(long):
+    if long >= 0:
+        dir = 'E'
+    else:
+        dir = 'W'
+
+    longstr = dec2dms(long)
+    d,m,s = longstr.split(":")
+
+    return "0"+d+dir+m+"'"+s
 
 def intize_line(line):
     """
