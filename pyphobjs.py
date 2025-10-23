@@ -206,30 +206,83 @@ class Panchanga(JulianDay):
             return Panchanga(self.shift("f", "second", 1)).next_new_moon()
 
     def next_full_moon(self):
-        if self.tithi() != 15:  # if the tithi is not 15 it cant be a full moon
-            return Panchanga(self.shift("f", "hours", 12)).next_full_moon()
-        # now tithi = 15, so we can possibly be at the full moon
+        test = self
+        n=0
+        while True:
+            n+=1
+            print(f"loop {n}")
+            print(f"tithi = {test.tithi()}")
+            target = (test.sun.longitude() + 180) % 360
+            # full moon is at the end of the 15th tithi
+            if test.tithi() != 15:
+                test = Panchanga(test.shift("f", "hours", 8))
+                continue
+            if target == round(test.moon.longitude(),3):
+                return test
+            diff = abs(test.moon.longitude() - target)
+            if diff > 16:
+                test = Panchanga(test.shift("f", "day", 1))
+                continue
+            elif diff > 5 and diff <= 16:
+                test = Panchanga(test.shift("f", "hours", 4))
+                continue
+            elif diff > 1 and diff <= 5:
+                test = Panchanga(test.shift("f", "hours", 1))
+                continue
+            elif diff > .5 and diff <= 1:
+                test = Panchanga(test.shift("f", "hours", 1/2))
+                continue
+            elif diff > .25 and diff <= .5:
+                test = Panchanga(test.shift("f", "hours", 1/8))
+                continue
+            elif diff > .1 and diff <= .25:
+                test = Panchanga(test.shift("f", "mins", 5))
+                continue
+            elif diff > .01 and diff <= .1:
+                test = Panchanga(test.shift("f", "mins", 1/4))
+                continue
+            elif diff > .001 and diff <= .01:
+                test = Panchanga(test.shift("f", "secs", 1/2))
+                continue
+            elif diff <= .0001:
+                return test
+            else:
+                test = Panchanga(test.shift("f", "secs", 1/8))
+                continue
         # full moon is when (lsun+180)%360==lmoon
-        test = (round(self.sun.longitude(), 3) - 180) % 360
-        if test == round(self.moon.longitude(), 3):
-            return self
-        remainder = abs(self.moon.longitude() - test)
-        if remainder > 6:  # at least six more degrees until a full moon
-            # moon moves about 1 degree/2 hours, so lets move it 5 degrees forward => 10 hours
-            return Panchanga(self.shift("f", "hours", 4)).next_full_moon()
-        elif remainder > 3:
-            # so moon is between 3 and 6 degrees from full, so lets move it 2 degrees
-            return Panchanga(self.shift("f", "hours", 1)).next_full_moon()
-        elif remainder > 1:
-            # moon is between 1 and 3 degrees from full, so move forward 1 degree
-            return Panchanga(self.shift("f", "hours", 0.5)).next_full_moon()
-        elif remainder > 0.1:
-            # moon is between .1 and  1 degree from full, so move foward about .1 degrees
-            return Panchanga(self.shift("f", "minutes", 1)).next_full_moon()
-        elif remainder > 0.01:
-            # moon is between .01 and .1 degree from full, so move forward about .01 degrees
-            return Panchanga(self.shift("f", "seconds", 5)).next_full_moon()
-        elif remainder > 0.001:
-            return Panchanga(self.shift("f", "seconds", 1 / 2)).next_full_moon()
-        else:
-            return Panchanga(self.shift("f", "seconds", 1)).next_full_moon()
+        #test = (round(self.sun.longitude(), 5) + 180) % 360
+#        print("finding next full moon")
+#        if (self.sun.longitude() - self.moon.longitude())%360 == 180:
+#            print("found the next full moon")
+#            print(f"sun / moon = {self.sun.longitude()} / {self.moon.longitude()}")
+#            return self
+#        remainder = abs(180 - (self.sun.longitude() - self.moon.longitude()))
+#        if remainder > 16:  # at least six more degrees until a full moon
+#            # moon moves about 1 degree/2 hours, so lets move it 5 degrees forward => 10 hours
+#            print("going forward by 1 day")
+#            return Panchanga(self.shift("f", "days", 1)).next_full_moon()
+#        elif remainder > 5 and remainder <= 16:
+#            print("going forward by 4 hours")
+#            return Panchanga(self.shift("f", "hours", 4)).next_full_moon()
+#        elif remainder > 3 and remainder <= 5:
+#            #  moon is between 3 and 6 degrees from full, so lets move it 2 degrees
+#            print("going forward by 1 hour")
+#            return Panchanga(self.shift("f", "hours", 1)).next_full_moon()
+#        elif remainder > 1 and remainder <= 3:
+#            # moon is between 1 and 3 degrees from full, so move forward 1 degree
+#            print("going forward by .5 hour")
+#            return Panchanga(self.shift("f", "hours", 0.5)).next_full_moon()
+#        elif remainder > 0.1 and remainder <= 1:
+#            # moon is between .1 and  1 degree from full, so move foward about .1 degrees
+#            print("going forward by 1 minute")
+#            return Panchanga(self.shift("f", "minutes", 1)).next_full_moon()
+#        elif remainder > 0.01 and remainder <= 0.1:
+#            # moon is between .01 and .1 degree from full, so move forward about .01 degrees
+#            print("going forward by 5 seconds")
+#            return Panchanga(self.shift("f", "seconds", 5)).next_full_moon()
+#        elif remainder > 0.001 and remainder <= 0.01:
+#            print("going forward by 1/2 seconds")
+#            return Panchanga(self.shift("f", "seconds", 1 / 2)).next_full_moon()
+#        else:
+#            print("going forward by 1/4 seconds")
+#            return Panchanga(self.shift("f", "seconds", 1/4)).next_full_moon()

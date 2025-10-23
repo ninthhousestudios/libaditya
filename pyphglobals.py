@@ -24,7 +24,7 @@ edir = "/home/josh/dev/swisseph/ephe/"
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
 ayanamsa = 101  # new code for dhruva equatorial
 show_helios = 0
-show_baryos = 1
+show_baryos = 0
 show_topo = 0
 show_adityas = 1
 show_equ = 0
@@ -32,7 +32,7 @@ utcoffset = -4
 timezone = "EDT"
 # N and E are positive
 lat = round(putil.dms2dec((39, 57, 22)), 3)
-long = -round((putil.dms2dec((86, 0, 46))))
+long = -round(putil.dms2dec((86, 0, 46)),3)
 alt = 252  # swe requires meters
 placename = ""
 hsys = "C"
