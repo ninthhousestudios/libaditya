@@ -352,6 +352,9 @@ class Planet:
         """
         coord_list = list(self.get_coords(sysflg))
         coord_list[0] = pglob.sign_func(coord_list[0])  # signize longitude if desired
+        # added an indication to the planet name for retrograde
+        if coord_list[3] < 0:
+            self.planet_name += " (R)"
         # round other values if desired
         for i in range(5):
             coord_list[i + 1] = pglob.round_func(float(coord_list[i + 1]))
