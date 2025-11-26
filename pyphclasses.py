@@ -339,10 +339,10 @@ class Planet:
         return list((pname, nname, elapsed))
 
     def nakshatra(self, ayanamsa=pglob.ayanamsa):
+        sidlong, nindex = self.init_nakshatra(ayanamsa)
         if ayanamsa == 100:
-            return self.init_nakshatra(ayanamsa)
+            return pglob.nakshatraeq[nindex]
         else:
-            sidlong, nindex = self.init_nakshatra(ayanamsa)
             return pglob.nakshatra[nindex]
 
     def table_list(self, sysflg=pglob.ECL):

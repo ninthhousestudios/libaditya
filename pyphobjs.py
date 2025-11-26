@@ -76,7 +76,7 @@ class Ketu(Planet):
 
 
 class Panchanga(JulianDay):
-    def __init__(self, julianday=JulianDay(), ayanamsa=98):
+    def __init__(self, julianday=JulianDay(), ayanamsa=pglob.ayanamsa):
         super().__init__(julianday.jd)
         self.julianday = julianday
         self.jd = self.julianday.jd
@@ -167,6 +167,10 @@ class Panchanga(JulianDay):
             return "Dhruva GC mid-Mula equatorial coordinates"
         if self.ayanamsa == 99:
             return "Dhruva GC mid-Mula eclitpic coordinates"
+        if self.ayanamsa == 100:
+            return "Tropical Krittika 28 equal nakshatras"
+        if self.ayanamsa == 101:
+            return "My Dhruva GC equatorial non-ayanamsha"
         return swe.get_ayanamsa_name(self.ayanamsa)
 
     # next next moon and next full moon
@@ -288,4 +292,4 @@ class Panchanga(JulianDay):
             #print("going forward by 1/4 seconds")
             return Panchanga(self.shift("f", "seconds", 1/8)).next_full_moon()
 
-    next_full_moon = next_full_moon_recursive
+    next_full_moon = next_full_moon_loop
