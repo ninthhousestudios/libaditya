@@ -152,6 +152,13 @@ def dec2dms(dd):
     degrees, minutes = divmod(minutes, 60)
     return (degrees, minutes, seconds)
 
+def dec2dmsstr(dd):
+    """dd is a float that wants to be turned into degs,mins,secs; returns (deg,min,sec)"""
+    dd = abs(dd)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
+    return f"{int(degrees):02d}:{int(minutes):02d}:{int(seconds):02d}"
+
 
 def dec2deg(dd):
     """

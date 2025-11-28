@@ -263,7 +263,7 @@ def init_names(langfile=mixed):
     adityas.append(anames["Parjanya"])
     adityas.append(anames["Dhata"])
 
-    signs = rasis
+    signs = adityas
 
     nakshatraeq.append(neqnames["Krittika"])
     nakshatraeq.append(neqnames["Rohini"])

@@ -94,6 +94,9 @@ class JulianDay:
         """return the jd that is at midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
 
+    def ecliptic_obliquity(self):
+        return swe.calc(self.jd,swe.ECL_NUT)[0][0]
+
     def shift(self, dir, unit, number):
         """
         shift the julianday in 'dir'ection 'f'orward or 'b'ackward
