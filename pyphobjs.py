@@ -80,6 +80,7 @@ class Panchanga(JulianDay):
         super().__init__(julianday.jd)
         self.julianday = julianday
         self.jd = self.julianday.jd
+        self.ayanamsa = ayanamsa
         self.sun = Sun(
             self
         )  # since Panchanga is a kind of Julian Day, we can pass it to Sun
@@ -93,7 +94,6 @@ class Panchanga(JulianDay):
         )
         self.yoga_raw, self.yelapsed, self.yremaining = self.init_yoga()
         self.yoga_int = int(self.yoga_raw + 1)
-        self.ayanamsa = ayanamsa
 
     def init_tithi(self):
         traw = ((self.moon.longitude() - self.sun.longitude()) % 360) / 12
@@ -135,7 +135,22 @@ class Panchanga(JulianDay):
         return self.moon.nakshatra(self.ayanamsa)
 
     def init_yoga(self):
-        yraw = ((self.moon.longitude() + self.sun.longitude()) % 360) / (13 + (20 / 60))
+        sunlong=self.sun.longitude()
+        moonlong=self.moon.longitude()
+        if self.ayanamsa < 98:
+            swe.set_sid_mode(self.ayanamsa)
+            offset = swe.get_ayanamsa(self.jd)
+        elif self.ayanamsa == 101:
+            # get ayanamsa value for my dhurva gc mid-mula
+            gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
+            mula=gcequ-(pglob.nak/2)
+            # offset is the start of ashvini, which is essentially the ayanamsa value
+            offset=mula-(18*pglob.nak)
+            sunlong=swe.calc_ut(self.jd,swe.SUN,swe.FLG_EQUATORIAL)[0][0]
+            moonlong=swe.calc_ut(self.jd,swe.MOON,swe.FLG_EQUATORIAL)[0][0]
+        else:
+            offset=0
+        yraw = ((moonlong-offset + sunlong-offset) % 360) / (13 + (20 / 60))
         remainder = yraw % 1  # remainder shows how much has elapsed
         elapsed = remainder * 12  # degrees elapsed
         remaining = 12 - elapsed  # degrees remaining
