@@ -186,28 +186,28 @@ class Panchanga(JulianDay):
         if (
             self.tithi() != 30
         ):  # if the tithi isnt 30, it cant be a new moon, so go forward 8 hours
-            return Panchanga(self.shift("f", "hour", 8)).next_new_moon()
+            return Panchanga(self.shift("f", "hour", 8),ayanamsa=self.ayanamsa).next_new_moon()
         if abs(round(self.sun.longitude() - self.moon.longitude(), 4)) <= 0.0001:
             return self
         elapsed = self.tithi_degrees_elapsed()
         remaining = self.tithi_degrees_remaining()
         # if there are more than x degrees remaining, check a time y forward
         if remaining > 6:
-            return Panchanga(self.shift("f", "hour", 8)).next_new_moon()
+            return Panchanga(self.shift("f", "hour", 8),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining > 3:
-            return Panchanga(self.shift("f", "hour", 4)).next_new_moon()
+            return Panchanga(self.shift("f", "hour", 4),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining > 1:
-            return Panchanga(self.shift("f", "minute", 30)).next_new_moon()
+            return Panchanga(self.shift("f", "minute", 30),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining > 0.5:
-            return Panchanga(self.shift("f", "minute", 15)).next_new_moon()
+            return Panchanga(self.shift("f", "minute", 15),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining > 0.1:
-            return Panchanga(self.shift("f", "minute", 1)).next_new_moon()
+            return Panchanga(self.shift("f", "minute", 1),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining > 0.01:
-            return Panchanga(self.shift("f", "second", 1)).next_new_moon()
+            return Panchanga(self.shift("f", "second", 1),ayanamsa=self.ayanamsa).next_new_moon()
         elif remaining < 0.001:
-            return Panchanga(self.shift("f", "second", 1 / 4)).next_new_moon()
+            return Panchanga(self.shift("f", "second", 1 / 4),ayanamsa=self.ayanamsa).next_new_moon()
         else:
-            return Panchanga(self.shift("f", "second", 1)).next_new_moon()
+            return Panchanga(self.shift("f", "second", 1),ayanamsa=self.ayanamsa).next_new_moon()
 
     def next_full_moon_loop(self):
         test = self

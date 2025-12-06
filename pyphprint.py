@@ -278,7 +278,7 @@ def print_next_new_moon(panch=Panchanga()):
     print("\nNext new moon at:")
     print(next)
     print(f"At: {next.moon.signize()}")
-    print(f"Nakshatra: {next.moon.nakshatra()}")
+    print(f"Nakshatra: {next.moon.nakshatra(ayanamsa=panch.ayanamsa)}")
 
 
 def print_next_full_moon(panch=Panchanga()):
@@ -286,7 +286,7 @@ def print_next_full_moon(panch=Panchanga()):
     print("\nNext full moon at:")
     print(next)
     print(f"At: {next.moon.signize()}")
-    print(f"Nakshatra: {next.moon.nakshatra()}")
+    print(f"Nakshatra: {next.moon.nakshatra(ayanamsa=panch.ayanamsa)}")
 
 
 def print_dhruva_equ_ecl():
