@@ -311,13 +311,14 @@ class Planet:
         dhanishta begins at the winter solstice, i.e., 270 degrees ecliptic longitude
         this puts ashivini to start at 336+2/3 ecliptic longitude
         so our "ayanamsa" is 23+1/3, in order to line up with our nakshatra list
+        but we have to added this; so that ashvini+ayanamsa=0
         """
         aval = 23+1/3
         long = swe.calc_ut(self.jd, self.pnumber)[0][0]
         if self.planet_name == "Ketu":
             long = (long - 180) % 360
         nindex = int(((long+aval)%360)/pglob.nak)
-        return long+aval, nindex
+        return (long+aval)%360, nindex
 
     def init_dhruvecl(self):
         swe.set_sid_mode(36)
