@@ -124,14 +124,33 @@ def print_Cusps(loc=Location(), tjd=JulianDay()):
 def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDay()):
     theCusps = Cusps(pglob.hsys, loc, tjd)
     theCusps.init_cusps()
-    output = PrettyTable(["Cusp", "Nakshatra"])
+    output = PrettyTable(["Cusp", "Nakshatra", "Percent Elapsed"])
     output.align["Cusp"] = "r"
     output.align["Nakshatra"] = "l"
+    output.align["Percent Elapsed"] = "r"
 
-    cusps_nakshatras = theCusps.cusps_nakshatras(ayanamsa)
+    cusplongs, cusps_nakshatras = theCusps.cusps_nakshatras(ayanamsa)
 
     for i in range(12):
-        output.add_row([i + 1, cusps_nakshatras[i]])
+        if ayanamsa == 100:
+            this_nak_length = 360/28
+            nindex = pglob.nakshatraeq.index(cusps_nakshatras[i])
+            in_nak_long = round(cusplongs[i] - (nindex * this_nak_length),1)
+        elif ayanamsa == 99:
+            eclbnds = putil.build_dhruvecl_boundaries(self.jd)
+            nindex = pglob.nakshatra.index(cusps_nakshatras[i])
+            in_nak_long = round(cusplongs[i] - eclbnds[nindex], 1)
+            this_nak_length = (
+                eclbnds[nindex + 1]
+                - eclbnds[nindex]
+            )
+        else:
+            nindex = pglob.nakshatra.index(cusps_nakshatras[i])
+            in_nak_long = round(cusplongs[i] - (nindex * pglob.nak), 1)
+            this_nak_length = pglob.nak
+        percent_elapsed = round((in_nak_long / this_nak_length) * 100, 2)
+        elapsed = f"{in_nak_long} deg ({percent_elapsed} %)"
+        output.add_row([i + 1, cusps_nakshatras[i], elapsed])
 
     print(f"\nHouse Cusps nakshatras\nwith house system {theCusps.house_name()}")
     if pglob.ayanamsa == 98:

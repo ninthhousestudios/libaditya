@@ -466,7 +466,7 @@ class Cusps:
                 cusps_nakshatras.append(pglob.nakshatraeq[nindex])
             else:
                 cusps_nakshatras.append(pglob.nakshatra[nindex])
-        return cusps_nakshatras
+        return sidcusps, cusps_nakshatras
 
     def vedanga_jyotisha_ecliptic_cusps(self):
         """
@@ -476,10 +476,13 @@ class Cusps:
         """
         aval = 23+1/3
         cusps_nakshatras = []
+        # cusp values to return in order to find in-cusp longitude
+        retcusps = []
         for cusp in self.cusps:
             nindex = int(((cusp+aval)%360)/pglob.nak)
             cusps_nakshatras.append(pglob.nakshatra[nindex])
-        return cusps_nakshatras
+            retcusps.append((cusp+aval)%360)
+        return retcusps, cusps_nakshatras
 
     def vedanga_jyotisha_equatorial_cusps(self):
         """
@@ -491,12 +494,14 @@ class Cusps:
         solequ = swe.cotrans((270,0,1),-self.julianday.ecliptic_obliquity())[0]
         aval = 23+1/3
         cusps_nakshatras = []
+        retcusps = []
         for cusp in self.cusps:
             # equatorial longitude of this cusp
             equlong = swe.cotrans((cusp, 0, 1), -self.julianday.ecliptic_obliquity())[0]
             nindex = int(((cusp+aval)%360)/pglob.nak)
             cusps_nakshatras.append(pglob.nakshatra[nindex])
-        return cusps_nakshatras
+            retcusps.append((cusp+aval)%360)
+        return retcusps, cusps_nakshatras
 
     def my_dhruvequ_cusps(self):
         gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
@@ -514,7 +519,7 @@ class Cusps:
             if cusp < ashvini:
                 cusp+=360
             cusps_nakshatras.append(pglob.nakshatra[int((cusp-ashvini)/pglob.nak)])
-        return cusps_nakshatras
+        return equcusps, cusps_nakshatras
 
     def cusps_dhruvequ(self):
         swe.set_sid_mode(36)
@@ -523,7 +528,7 @@ class Cusps:
         for cusp in self.cusps:
             equcusps.append(
                 swe.cotrans(
-                    (cusp, 0, 1), putil.ecliptic_obliquity(self.jd)
+                    (cusp, 0, 1), -putil.ecliptic_obliquity(self.jd)
                 )[0]
             )
         sidcusps = []  # longitude of cusps that will be passed to nakshatra_index
