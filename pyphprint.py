@@ -240,6 +240,23 @@ def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     print(
         f"Ending time of current tithi: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
     )
+    
+    # karana
+    kelapsed = round(panch.karana_degrees_elapsed(), 2)
+    kremaining = round(panch.karana_degrees_remaining(), 2)
+
+    print(f"\nKarana: {panch.karana()}")
+    print("Elapsed: ", kelapsed, " degrees (", round((kelapsed / 12) * 100, 2), "%)")
+    print(
+        "Remaining: ", kremaining, " degree (", round((kremaining / 12) * 100, 2), "%)"
+    )
+
+    hours_left = ((kremaining) / (dmmoon - dmsun)) * 24
+    end_time = panch.shift("f", "hour", hours_left)
+
+    print(
+        f"Ending time of current karana: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
+    )
 
     # vara
 

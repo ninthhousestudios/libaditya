@@ -92,6 +92,7 @@ class Panchanga(JulianDay):
             if (self.tremaining > 6)
             else (self.tithi_int - 1, 1)
         )
+        self.karana_raw, self.kelapsed, self.kremaining = self.init_karana()
         self.yoga_raw, self.yelapsed, self.yremaining = self.init_yoga()
         self.yoga_int = int(self.yoga_raw + 1)
 
@@ -104,6 +105,13 @@ class Panchanga(JulianDay):
 
     def tithi(self):
         return self.tithi_int
+    
+    def init_karana(self):
+        kraw = ((self.moon.longitude() - self.sun.longitude()) % 360) / 24
+        remainder = kraw % 1  # remainder shows how much has elapsed
+        elapsed = remainder * 6  # degrees elapsed
+        remaining = 6 - elapsed  # degrees remaining
+        return (kraw, elapsed, remaining)
 
     def karana(self):
         return pglob.karana[self.karana_index[0]][self.karana_index[1]]
@@ -170,6 +178,12 @@ class Panchanga(JulianDay):
 
     def tithi_degrees_remaining(self):
         return self.tremaining
+
+    def karana_degrees_elapsed(self):
+        return self.kelapsed
+
+    def karana_degrees_remaining(self):
+        return self.kremaining
 
     def yoga_degrees_elapsed(self):
         return self.yelapsed
