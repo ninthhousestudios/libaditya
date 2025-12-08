@@ -250,11 +250,11 @@ def parse_position_argument(position):
             if "S" in lat:
                 latsign = -1
                 lattmp = lat.split("S")
-            if len(lattmp) == 2:
-                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
-            else:
+            if "'" in lattmp[1]:
                 min, sec = lattmp[1].split("'")
                 lat = latsign*(int(lattmp[0]) + int(min) / 60 + int(sec) / 3600)
+            else:
+                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
 
     if not isinstance(long,float):
         if "E" in long or "W" in long:
@@ -264,11 +264,11 @@ def parse_position_argument(position):
             if "W" in long:
                 longsign = -1
                 longtmp = long.split("W")
-            if len(longtmp) == 2:
-                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
-            else:
+            if "'" in longtmp[1]:
                 min, sec = longtmp[1].split("'")
                 long = longsign*(int(longtmp[0]) + (int(min) / 60) + (int(sec) / 3600))
+            else:
+                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
 
     return lat, long
 
