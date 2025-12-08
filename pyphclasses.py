@@ -519,6 +519,7 @@ class Cusps:
             if cusp < ashvini:
                 cusp+=360
             cusps_nakshatras.append(pglob.nakshatra[int((cusp-ashvini)/pglob.nak)])
+        equcusps = [(cusp-ashvini)%360 for cusp in equcusps]
         return equcusps, cusps_nakshatras
 
     def cusps_dhruvequ(self):
