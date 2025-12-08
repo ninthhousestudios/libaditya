@@ -129,17 +129,26 @@ def main():
     print_planets_nakshatras(ephtime, pglob.ayanamsa)
 
     # houses
-
-    if pglob.show_houses:
-        if args.position:
-            lat, long = args.position.split(",")
+    if args.input:
+        pglob.lat = lat
+        pglob.long = long
+        pglob.placename = placename
+    if args.position:
+        if ".chtk" in args.position:
+            _, placename, _, _, _, _, lat, long = pread.read_chtk(args.position)
             pglob.lat = float(lat)
             pglob.long = long = float(long)
-            pglob.placename = ""
-        if args.input:
+            pglob.placename = placename
+        else:
+            lat, long = putil.parse_position_argument(args.position)
             pglob.lat = lat
             pglob.long = long
-            pglob.placename = placename
+            if args.placename:
+                pglob.placename = args.placename
+            else:
+                pglob.placename = ""
+
+    if pglob.show_houses:
         if args.house:
             pglob.hsys = args.house
         print_Cusps(
@@ -153,21 +162,9 @@ def main():
 
     panch = Panchanga(ephtime, pglob.ayanamsa)
     print_panchanga(panch)
-    if args.position:
-        lat, long = args.position.split(",")
-        lat = float(lat)
-        long = float(long)
-        if args.placename:
-            placename = args.placename
-        else:
-            placename = ""
-        print_panchanga_addendum(
-            panch, Location(lat=lat, long=long, placename=pglob.placename)
-        )
-    else:
-        print_panchanga_addendum(
-            panch, Location(lat=pglob.lat, long=pglob.long, placename=pglob.placename)
-        )
+    print_panchanga_addendum(
+        panch, Location(lat=pglob.lat, long=pglob.long, placename=pglob.placename)
+    )
     print_next_new_moon(panch)
     print_next_full_moon(panch)
 

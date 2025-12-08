@@ -207,6 +207,23 @@ def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     dmsun = panch.sun.daily_motion()
     dmmoon = panch.moon.daily_motion()
 
+    print(
+        f"\nSunrise {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE, loc)}\n"
+    )
+    print(
+        f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET, loc)}\n"
+    )
+
+    # give moonrise for three days, the one before, this one, and the one after
+    # yesterpanch = Panchanga(panch.shift("b", "day", 1))
+    # morrowpanch = Panchanga(panch.shift("f", "day", 1))
+    print(
+        f"Moonrise {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_RISE, loc)}"
+    )
+    print(
+        f"\nMoonset {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_SET, loc)}"
+    )
+
     # tithi
     telapsed = round(panch.tithi_degrees_elapsed(), 2)
     tremaining = round(panch.tithi_degrees_remaining(), 2)
@@ -225,28 +242,13 @@ def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     )
 
     # vara
-    print(
-        f"\nSunrise {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_RISE, loc)}\n"
-    )
-    print(
-        f"Sunset {panch.date()} at {loc.place()}:\n{panch.sun.riseset(swe.CALC_SET, loc)}\n"
-    )
 
     hrsnxtvara = ((panch.sun.sunrise_yamakoti().jd - panch.jd) / pglob.onehrjd) % 24
     nxtvara = panch.shift("f", "hour", hrsnxtvara)
     print(
-        f"Next vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from panchanga time\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
+        f"\nNext vara begins: {putil.time2str(putil.dec2dms(hrsnxtvara))} hours from panchanga time\nat {nxtvara.timedate()}\n   {nxtvara.usrtimedate()}"
     )
 
-    # give moonrise for three days, the one before, this one, and the one after
-    # yesterpanch = Panchanga(panch.shift("b", "day", 1))
-    # morrowpanch = Panchanga(panch.shift("f", "day", 1))
-    print(
-        f"\nMoonrise {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_RISE, loc)}"
-    )
-    print(
-        f"\nMoonset {panch.date()} at {loc.place()}: \n{panch.moon.riseset(swe.CALC_SET, loc)}"
-    )
     # nakshatra
     ninfo = panch.moon.nakshatra_table_list(pglob.ayanamsa)
     print(f"\nNakshatra: {ninfo[1]}")

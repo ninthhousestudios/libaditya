@@ -200,6 +200,78 @@ def intize_time(time):
     time = time.split(':')
     return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
 
+def parse_position_argument(position):
+    """
+    parse command line position argument
+    form is "latitude,longitude"
+    either can be:
+        float
+        DD:MM(:SS)
+        DD(N/E/S/W)MM('SS)
+    return a float
+    N and E are positive
+    S and W are negative
+    """
+    lat, long = position.split(",")
+
+    # given as a decimal
+    if "." in lat:
+        lat = float(lat)
+    if "." in long:
+        long = float(long)
+
+    # given in the form DD:MM(:SS)
+    if not isinstance(lat,float):
+        if ":" in lat:
+            latsign = -1 if "-" in lat else 1
+            lattmp = lat.split(':')
+            # if len == 2, HH:MM, otherwise, HH:MM:SS
+            if len(lattmp) == 2:
+                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
+            else:
+                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60 + int(lattmp[2]) / 3600)
+
+    if not isinstance(long,float):
+        if ":" in long:
+            longsign = -1 if "-" in long else 1
+            longtmp = long.split(':')
+            # if len == 2, HH:MM, otherwise, HH:MM:SS
+            if len(longtmp) == 2:
+                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
+            else:
+                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60 + int(longtmp[2]) / 3600)
+
+    # given in Kala format DD(DIR)MM('SS)
+    if not isinstance(lat,float):
+        if "N" in lat or "S" in lat:
+            if "N" in lat:
+                latsign = 1
+                lattmp = lat.split("N")
+            if "S" in lat:
+                latsign = -1
+                lattmp = lat.split("S")
+            if len(lattmp) == 2:
+                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
+            else:
+                min, sec = lattmp[1].split("'")
+                lat = latsign*(int(lattmp[0]) + int(min) / 60 + int(sec) / 3600)
+
+    if not isinstance(long,float):
+        if "E" in long or "W" in long:
+            if "E" in long:
+                longsign = 1
+                longtmp = long.split("E")
+            if "W" in long:
+                longsign = -1
+                longtmp = long.split("W")
+            if len(longtmp) == 2:
+                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
+            else:
+                min, sec = longtmp[1].split("'")
+                long = longsign*(int(longtmp[0]) + (int(min) / 60) + (int(sec) / 3600))
+
+    return lat, long
+
 
 def date2str(date):
     """date is a revjul-tuple (year,month,day,hour); return a string 'month/day/year'"""
