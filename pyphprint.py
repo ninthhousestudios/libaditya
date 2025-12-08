@@ -144,6 +144,8 @@ def print_Cusps_nakshatras(ayanamsa=pglob.ayanamsa, loc=Location(), tjd=JulianDa
         print("using My Dhruva GC mid-Mula equatorial coordinates non-ayanamsa")
     elif pglob.ayanamsa == 102:
         print("using ecliptic Vedanga Jyotisha ayanamsa")
+    elif pglob.ayanamsa == 103:
+        print("using equatorial Vedanga Jyotisha ayanamsa")
     else:
         print(f"using {swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(f"Location: {loc.place()}")
@@ -164,6 +166,8 @@ def print_planets_nakshatras(tjd=JulianDay(), ayanamsa=pglob.ayanamsa):
         print("My Dhruva GC mid-Mula equatorial coordinates non-ayanamsa")
     elif pglob.ayanamsa == 102:
         print("using ecliptic Vedanga Jyotisha ayanamsa")
+    elif pglob.ayanamsa == 103:
+        print("using equatorial Vedanga Jyotisha ayanamsa")
     else:
         print(f"{swe.get_ayanamsa_name(ayanamsa)} ayanamsa")
     print(pnakshatra_str(tjd, ayanamsa))

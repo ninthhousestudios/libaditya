@@ -279,6 +279,8 @@ class Planet:
             return self.init_my_dhruvequ()
         if ayanamsa == 102:
             return self.init_vedanga_jyotisha_ecliptic()
+        if ayanamsa == 103:
+            return self.init_vedanga_jyotisha_equatorial()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         if self.planet_name == "Ketu":
@@ -319,6 +321,22 @@ class Planet:
             long = (long - 180) % 360
         nindex = int(((long+aval)%360)/pglob.nak)
         return (long+aval)%360, nindex
+
+    def init_vedanga_jyotisha_equatorial(self):
+        """
+        dhanishta at the winter solstice, but equatorial nakshatras
+        so find the equatorial longitude of the solstice, then
+        determine nakshatras from there with equatorial planet longitudes
+        """
+        # equatorial longitude of the winter solstice
+        solequ = swe.cotrans((270,0,1),-self.julianday.ecliptic_obliquity())[0]
+        # equatorial longitude of this planet
+        equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
+        aval = 23+1/3
+        if self.planet_name == "Ketu":
+            equlong = (equlong - 180) % 360
+        nindex = int(((equlong+aval)%360)/pglob.nak)
+        return (equlong+aval)%360, nindex
 
     def init_dhruvecl(self):
         swe.set_sid_mode(36)
@@ -429,6 +447,8 @@ class Cusps:
             return self.my_dhruvequ_cusps()
         if ayanamsa == 102:
             return self.vedanga_jyotisha_ecliptic_cusps()
+        if ayanamsa == 103:
+            return self.vedanga_jyotisha_equatorial_cusps()
         swe.set_sid_mode(ayanamsa)
         aval = swe.get_ayanamsa(self.jd)
         sidcusps = []
@@ -461,6 +481,23 @@ class Cusps:
             cusps_nakshatras.append(pglob.nakshatra[nindex])
         return cusps_nakshatras
 
+    def vedanga_jyotisha_equatorial_cusps(self):
+        """
+        dhanishta begins at the winter solstice, i.e., 270 degrees ecliptic longitude
+        this puts ashivini to start at 336+2/3 ecliptic longitude
+        so our "ayanamsa" is 23+1/3, in order to line up with our nakshatra list
+        """
+        # equatorial longitude of the winter solstice
+        solequ = swe.cotrans((270,0,1),-self.julianday.ecliptic_obliquity())[0]
+        aval = 23+1/3
+        cusps_nakshatras = []
+        for cusp in self.cusps:
+            # equatorial longitude of this cusp
+            equlong = swe.cotrans((cusp, 0, 1), -self.julianday.ecliptic_obliquity())[0]
+            nindex = int(((cusp+aval)%360)/pglob.nak)
+            cusps_nakshatras.append(pglob.nakshatra[nindex])
+        return cusps_nakshatras
+
     def my_dhruvequ_cusps(self):
         gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
         mula=gcequ-(pglob.nak/2)
@@ -469,7 +506,7 @@ class Cusps:
         for cusp in self.cusps:
             equcusps.append(
                 swe.cotrans(
-                    (cusp, 0, 1), putil.ecliptic_obliquity(self.jd)
+                    (cusp, 0, 1), -putil.ecliptic_obliquity(self.jd)
                 )[0]
             )
         cusps_nakshatras = []
