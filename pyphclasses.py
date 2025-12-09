@@ -315,7 +315,9 @@ class Planet:
         so our "ayanamsa" is 23+1/3, in order to line up with our nakshatra list
         but we have to added this; so that ashvini+ayanamsa=0
         """
-        aval = 23+1/3
+        # aval = 23+1/3
+        # this is how it is calculated
+        aval = 360 - (270+5*pglob.nak)
         long = swe.calc_ut(self.jd, self.pnumber)[0][0]
         if self.planet_name == "Ketu":
             long = (long - 180) % 360
@@ -328,11 +330,11 @@ class Planet:
         so find the equatorial longitude of the solstice, then
         determine nakshatras from there with equatorial planet longitudes
         """
-        # equatorial longitude of the winter solstice
+        # equatorial longitude of the winter solstice, which i think will always be 270; do it anyway
         solequ = swe.cotrans((270,0,1),-self.julianday.ecliptic_obliquity())[0]
+        aval = 360 - (solequ+5*pglob.nak)
         # equatorial longitude of this planet
         equlong = swe.calc_ut(self.jd, self.pnumber, swe.FLG_EQUATORIAL)[0][0]
-        aval = 23+1/3
         if self.planet_name == "Ketu":
             equlong = (equlong - 180) % 360
         nindex = int(((equlong+aval)%360)/pglob.nak)
@@ -498,9 +500,9 @@ class Cusps:
         for cusp in self.cusps:
             # equatorial longitude of this cusp
             equlong = swe.cotrans((cusp, 0, 1), -self.julianday.ecliptic_obliquity())[0]
-            nindex = int(((cusp+aval)%360)/pglob.nak)
+            nindex = int(((equlong+aval)%360)/pglob.nak)
             cusps_nakshatras.append(pglob.nakshatra[nindex])
-            retcusps.append((cusp+aval)%360)
+            retcusps.append((equlong+aval)%360)
         return retcusps, cusps_nakshatras
 
     def my_dhruvequ_cusps(self):
