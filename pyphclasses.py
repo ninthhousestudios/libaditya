@@ -70,10 +70,10 @@ class JulianDay:
         return f"{putil.date2str(self.datetime)}"
 
     def time(self):
-        return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} utc"
+        return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} UTC"
 
     def timedate(self):
-        return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} utc on {putil.date2str(self.datetime)}"
+        return f"{putil.time2str(putil.dec2dms(self.datetime[3]))} UTC on {putil.date2str(self.datetime)}"
 
     def year(self):
         return int(self.datetime[0])

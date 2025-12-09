@@ -79,6 +79,66 @@ def read_chtk(infile):
     ephclock = hour + min/60 + sec/3600
     return name, placename, month, day, year, ephclock+utcoff-dst, lat, long 
 
+def read_chtk_location(infile):
+    input = open(infile, "rb")
+    lines = input.readlines()
+    linenum = 0
+    for line in lines:
+        #print(f"{n}: {line.decode(errors='ignore')}")
+        match linenum:
+            case 0: 
+                name = clean_line(line)
+            case 1:
+                year = intize_line(codecs.decode(line))
+            case 2:
+                month = intize_line(codecs.decode(line))
+            case 3:
+                day = intize_line(codecs.decode(line))
+            case 4:
+                hour = intize_line(codecs.decode(line))
+            case 5:
+                min = intize_line(codecs.decode(line))
+            case 6:
+                sec = intize_line(codecs.decode(line))
+            case 7:
+                sex = intize_line(codecs.decode(line))
+            case 8:
+                country = clean_line(line)
+            case 9:
+                city = clean_line(line)
+            case 10:
+                long = long_to_float(clean_line(line))
+            case 11:
+                lat = lat_to_float(clean_line(line))
+            case 12:
+                # this is the utc offset
+                # usually this line is HH:MM:SS
+                # someimtes it is just HH:MM
+                # sometimes it is just H, so deal with all of those
+                line = clean_line(line).split(":")
+                if(len(line)==1):
+                    h = int(line[0])
+                    m = s = 0
+                elif(len(line)==2):
+                    h = int(line[0])
+                    m = int(line[1])
+                    s = 0
+                else:
+                    h = int(line[0])
+                    m = int(line[1])
+                    s = int(line[2])
+                utcoff = int(h)+(int(m)/60) + (int(s)/3600)
+            case 13: # dst value
+                dst = intize_line(codecs.decode(line))
+        linenum+=1
+    input.close() 
+    placename = city + ", " + country
+    ephclock = hour + min/60 + sec/3600
+    # Kala has the UTC offset "backwards"
+    # if it is west of UTC the number is positive, East it is negative
+    # between five hours west of UTC is utc-5, so we multiply by -1
+    return placename, lat, long, -1*(utcoff-dst)
+
 
 def lat_to_float(lat):
     """

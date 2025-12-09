@@ -14,3 +14,5 @@ make an option where the output file has each option field setting indicated in
 the output file name
 
 
+check out the timing on this, the change and name of karana
+pyphemeris -p lara-hlopec.chtk -a 27 -d 08/15/1992 -t 02:02:00

@@ -67,6 +67,11 @@ def main():
             name, placename, month, day, year, ephclock, lat, long = pread.read_pyph(args.input)
         elif ".chtk" in args.input:
             name, placename, month, day, year, ephclock, lat, long = pread.read_chtk(args.input)
+            pglob.placename, pglob.lat, pglob.long, pglob.utcoffset = pread.read_chtk_location(args.input)
+            sign = ""
+            if pglob.utcoffset > 0:
+                sign = "+"
+            pglob.timezone = "UTC" + sign + str(pglob.utcoffset)
         else:
             print("invalid file type")
             exit
@@ -107,9 +112,6 @@ def main():
     if args.adityas:
         pglob.show_adityas = not (pglob.show_adityas)
 
-    # always print with signs first
-    # later we will check adityas and go through again if wanted
-    pglob.signs = pglob.rasis
 
     print(f"\nDate: {ephtime.date()}\t{ephtime.usrdate()}")
     print(f"Time: {ephtime.time()}\t{ephtime.usrtime()}")
@@ -129,16 +131,13 @@ def main():
     print_planets_nakshatras(ephtime, pglob.ayanamsa)
 
     # houses
-    if args.input:
-        pglob.lat = lat
-        pglob.long = long
-        pglob.placename = placename
     if args.position:
         if ".chtk" in args.position:
-            _, placename, _, _, _, _, lat, long = pread.read_chtk(args.position)
-            pglob.lat = float(lat)
-            pglob.long = long = float(long)
-            pglob.placename = placename
+            pglob.placename, pglob.lat, pglob.long, pglob.utcoffset = pread.read_chtk_location(args.position)
+            sign = ""
+            if pglob.utcoffset > 0:
+                sign = "+"
+            pglob.timezone = "UTC" + sign + str(pglob.utcoffset)
         else:
             lat, long = putil.parse_position_argument(args.position)
             pglob.lat = lat

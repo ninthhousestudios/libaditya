@@ -269,9 +269,9 @@ def print_panchanga_addendum(panch=Panchanga(), loc=Location()):
     kremaining = round(panch.karana_degrees_remaining(), 2)
 
     print(f"\nKarana: {panch.karana()}")
-    print("Elapsed: ", kelapsed, " degrees (", round((kelapsed / 12) * 100, 2), "%)")
+    print("Elapsed: ", kelapsed, " degrees (", round((kelapsed / 6) * 100, 2), "%)")
     print(
-        "Remaining: ", kremaining, " degree (", round((kremaining / 12) * 100, 2), "%)"
+        "Remaining: ", kremaining, " degree (", round((kremaining / 6) * 100, 2), "%)"
     )
 
     hours_left = ((kremaining) / (dmmoon - dmsun)) * 24
