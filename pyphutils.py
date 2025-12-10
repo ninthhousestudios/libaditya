@@ -57,13 +57,14 @@ def dhruvecl_index(sidlong, jd, n=0):
 
 
 def dindex(sidlong, ecl_points, n=0):
-    # print(f"dindex n={n}")
-    # print(f"sidlong = {sidlong}")
-    # print(f"{ecl_points[n]} <= {sidlong} <= {ecl_points[n + 1]}")
-    if ecl_points[n] <= sidlong and sidlong <= ecl_points[n + 1]:
-        return n
+    #print(f"{n=} {sidlong=} {ecl_points[n]=}")
+    if ecl_points[(n+1)%27] < ecl_points[n]:
+        if ecl_points[n] <= sidlong and sidlong <= ecl_points[(n+1)%27]+360:
+            return n
     else:
-        return dindex(sidlong, ecl_points, n + 1)
+        if ecl_points[n] <= sidlong and sidlong <= ecl_points[(n+1)%27]:
+            return n
+    return dindex(sidlong, ecl_points, n + 1)
 
 def dhruvecl_naksize(ecl_points):
     """
@@ -71,7 +72,7 @@ def dhruvecl_naksize(ecl_points):
     """
     sizes=[]
     for n in range(len(ecl_points)-1):
-        sizes.append(ecl_points[n+1]-ecl_points[n])
+        sizes.append((ecl_points[n+1]-ecl_points[n])%360)
     return sizes
 
 
@@ -88,7 +89,20 @@ def build_my_dhruvequ_bounds(gcequ):
     """
     take the equatorial longitude of the galactic center
     and find the nakshatra boundaries along the equator
+    list starts with ashvini
     """
+    mula=gcequ-(pglob.nak/2)
+    ashvini=mula-(18*pglob.nak)
+    bounds = []
+    for i in range(0,27):
+        bounds.append((ashvini+i*pglob.nak)%360)
+    return bounds
+
+def build_my_dhruvecl_bounds(equbounds,eo):
+    eclbounds = []
+    for bound in equbounds:
+        eclbounds.append(swe.cotrans((bound, 0, 1), eo)[0])
+    return eclbounds
 
 
 def ketuize(long):
@@ -282,11 +296,12 @@ def time2str(time):
     """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
     return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"
 
-def dhruvecl_boundaries_longtime():
-    for yr in range(-2100,2101):
+def dhruvecl_boundaries_longtime(firstyear,lastyear):
+    for yr in range(firstyear,lastyear+1):
         yrjd = swe.julday(yr,1,1,0)
         yreo = ecliptic_obliquity(yrjd)
-        yrbnd = build_dhruvecl_boundaries(yrjd)
+        gcequ=swe.fixstar(",SgrA*",yrjd, swe.FLG_EQUATORIAL)[0][0]
+        yrbnd = build_my_dhruvecl_bounds(build_my_dhruvequ_bounds(gcequ),yreo)
         yrbnd = [round(x,3) for x in yrbnd]
         yrnak = dhruvecl_naksize(yrbnd)
         yrnak = [round(x,3) for x in yrnak]
@@ -296,3 +311,35 @@ def dhruvecl_boundaries_longtime():
         print(yrbnd)
         print(f"nakshatra sizes:")
         print(yrnak)
+        return yrnak
+
+def vedanga_jyotisha_boundaries_ecliptic():
+    dhanishta = 270
+    ashvini = dhanishta+5*pglob.nak
+    bounds = []
+    for i in range(0,27):
+        bounds.append((ashvini+i*pglob.nak)%360)
+    return bounds
+
+def vedanga_jyotisha_boundaries_equatorial(jd):
+    # equatorial longitude of the winter solstice, which i think will always be 270; do it anyway
+    dhanishta = swe.cotrans((270,0,1),jd.ecliptic_obliquity())[0]
+    ashvini = dhanishta+5*pglob.nak
+    print(f"{dhanishta=} {ashvini=}")
+    bounds = []
+    for i in range(0,27):
+        bounds.append((ashvini+i*pglob.nak)%360)
+    return bounds
+
+def vedanga_jyotisha_boundaries_dhruva_ecliptic(jd):
+    # equatorial longitude of the winter solstice, which i think will always be 270; do it anyway
+    dhanishta = swe.cotrans((270,0,1),jd.ecliptic_obliquity())[0]
+    ashvini = dhanishta+5*pglob.nak
+    print(f"{dhanishta=} {ashvini=}")
+    bounds = []
+    for i in range(0,27):
+        bounds.append((ashvini+i*pglob.nak)%360)
+    eclbounds = []
+    for bound in bounds:
+        eclbounds.append(swe.cotrans((bound,0,1),jd.ecliptic_obliquity())[0])
+    return eclbounds

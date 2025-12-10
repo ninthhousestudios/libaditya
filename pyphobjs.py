@@ -107,7 +107,7 @@ class Panchanga(JulianDay):
         return self.tithi_int
     
     def init_karana(self):
-        kraw = ((self.moon.longitude() - self.sun.longitude()) % 360) / 24
+        kraw = ((self.moon.longitude() - self.sun.longitude()) % 360) / 6
         remainder = kraw % 1  # remainder shows how much has elapsed
         elapsed = remainder * 6  # degrees elapsed
         remaining = 6 - elapsed  # degrees remaining
@@ -143,12 +143,17 @@ class Panchanga(JulianDay):
         return self.moon.nakshatra(self.ayanamsa)
 
     def init_yoga(self):
+        """
+        sun and moon longitude should be taken from the beginning of the first yoga, which
+        is equivalent to the beginning of ashvini, thus we need to add (or subtract) the ayanamsa value
+        to the longitudes
+        """
         sunlong=self.sun.longitude()
         moonlong=self.moon.longitude()
         if self.ayanamsa < 98:
             swe.set_sid_mode(self.ayanamsa)
             offset = swe.get_ayanamsa(self.jd)
-        elif self.ayanamsa == 101:
+        elif self.ayanamsa == 101 or self.ayanamsa == 104:
             # get ayanamsa value for my dhurva gc mid-mula
             gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
             mula=gcequ-(pglob.nak/2)
@@ -156,6 +161,9 @@ class Panchanga(JulianDay):
             offset=mula-(18*pglob.nak)
             sunlong=swe.calc_ut(self.jd,swe.SUN,swe.FLG_EQUATORIAL)[0][0]
             moonlong=swe.calc_ut(self.jd,swe.MOON,swe.FLG_EQUATORIAL)[0][0]
+        elif self.ayanamsa == 102 or self.ayanamsa == 103:
+            # for vedanga jyotisha
+            offset = -(23+(1/3))
         else:
             offset=0
         yraw = ((moonlong-offset + sunlong-offset) % 360) / (13 + (20 / 60))

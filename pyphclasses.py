@@ -281,6 +281,8 @@ class Planet:
             return self.init_vedanga_jyotisha_ecliptic()
         if ayanamsa == 103:
             return self.init_vedanga_jyotisha_equatorial()
+        if ayanamsa == 104:
+            return self.init_my_dhruvecl()
         swe.set_sid_mode(ayanamsa)
         sidlong = swe.calc_ut(self.julianday.jd, self.pnumber, swe.FLG_SIDEREAL)[0][0]
         if self.planet_name == "Ketu":
@@ -307,6 +309,28 @@ class Planet:
             equlong+=360
         nindex=int((equlong-ashvini)/pglob.nak)
         return equlong-ashvini, nindex
+
+    def init_my_dhruvecl(self):
+        """
+        use dhruva ecliptic nakshatra positions
+        so find nakshatra boundaries on equator,
+        translate them onto ecliptic,
+        then index planets ecliptic longitude into that
+        """
+        gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
+        mula=gcequ-(pglob.nak/2)
+        ashvini=mula-(18*pglob.nak)
+        long = self.longitude()
+        # boundaries of nakhsatras along equator
+        equbounds = putil.build_my_dhruvequ_bounds(gcequ)
+        # translate these onto the ecliptic
+        eo = self.julianday.ecliptic_obliquity()
+        eclbounds = []
+        for bound in equbounds:
+            eclbounds.append(swe.cotrans((bound, 0, 1), eo)[0])
+        # now index planets ecliptic longitude into this
+        nindex = putil.dindex(long, eclbounds)
+        return long, nindex
 
     def init_vedanga_jyotisha_ecliptic(self):
         """
@@ -340,6 +364,7 @@ class Planet:
         nindex = int(((equlong+aval)%360)/pglob.nak)
         return (equlong+aval)%360, nindex
 
+
     def init_dhruvecl(self):
         swe.set_sid_mode(36)
         aval = swe.get_ayanamsa(self.jd)
@@ -352,6 +377,8 @@ class Planet:
         if self.planet_name == "Ketu":
             eclsidlong = (eclsidlong - 180) % 360
         return eclsidlong, putil.dhruvecl_index(eclsidlong,self.jd)
+
+
 
     def nakshatra_table_list(self, ayanamsa=pglob.ayanamsa):
         sidlong, nindex = self.init_nakshatra(ayanamsa)
@@ -368,6 +395,26 @@ class Planet:
                 eclbnds[nindex + 1]
                 - eclbnds[nindex]
             )
+        elif ayanamsa == 104:
+            gcequ=swe.fixstar(",SgrA*",self.jd, swe.FLG_EQUATORIAL)[0][0]
+            mula=gcequ-(pglob.nak/2)
+            ashvini=mula-(18*pglob.nak)
+            long = self.longitude()
+            if self.planet_name == "Ketu":
+                long = (long - 180) % 360
+            # boundaries of nakhsatras along equator
+            equbounds = putil.build_my_dhruvequ_bounds(gcequ)
+            # translate these onto the ecliptic
+            eo = self.julianday.ecliptic_obliquity()
+            eclbnds = []
+            for bound in equbounds:
+                eclbnds.append(swe.cotrans((bound, 0, 1), eo)[0])
+            nname = pglob.nakshatra[nindex]
+            in_nak_long = round(sidlong - eclbnds[nindex], 1)
+            this_nak_length = (
+                eclbnds[(nindex + 1)%27]
+                - eclbnds[nindex]
+            )%360
         else:
             nname = pglob.nakshatra[nindex]
             in_nak_long = round(sidlong - (nindex * pglob.nak), 1)
