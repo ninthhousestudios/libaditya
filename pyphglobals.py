@@ -22,14 +22,16 @@ import pyphutils as putil
 # defaults
 edir = "/home/josh/dev/swisseph/ephe/"
 pyphpath = "/home/josh/w/astro/soft/pyphemeris/"
+utcoffset = -5
+timezone = "EST"
 ayanamsa = 101  # new code for dhruva equatorial
 show_helios = 0
 show_baryos = 0
 show_topo = 0
 show_adityas = 1
 show_equ = 0
-utcoffset = -5
-timezone = "EST"
+show_vdasha = 1
+dasha_levels = 1
 # N and E are positive
 lat = round(putil.dms2dec((39, 57, 22)), 3)
 long = -round(putil.dms2dec((86, 0, 46)),3)
@@ -58,12 +60,22 @@ sysflg = ECL  # default
 
 # constant constants
 
-onesecjd = 1.157401129603386e-05
-oneminjd = onesecjd * 60
-onehrjd = oneminjd * 60
-onedayjd = onehrjd * 24
-oneyearjd = onedayjd * 365
-nak = 13.333333333333334
+#onesecjd = 1.157401129603386e-05
+#oneminjd = onesecjd * 60
+#onehrjd = oneminjd * 60
+#onedayjd = onehrjd * 24
+#oneyearjd = onedayjd * 365
+# time units in julian days
+onedayjd = 1
+oneyearjd = onedayjd * 360
+onemonthjd = onedayjd * 30
+onehrjd = onedayjd / 24
+oneminjd = onehrjd / 60
+onesecjd = oneminjd / 60
+onesaurayearjd = onedayjd * 365.2422
+# modern days in a saura year
+saura_year = 365.2422
+nak = 13+(1/3)
 true_node = 11
 rahu = 11
 ketu = 10

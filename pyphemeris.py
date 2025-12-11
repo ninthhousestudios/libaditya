@@ -111,14 +111,16 @@ def main():
         pglob.show_baryos = not (pglob.show_baryos)
     if args.adityas:
         pglob.show_adityas = not (pglob.show_adityas)
+    if args.vdasha:
+        pglob.show_vdasha = not (pglob.show_vdasha)
 
 
     print(f"\nDate: {ephtime.date()}\t{ephtime.usrdate()}")
     print(f"Time: {ephtime.time()}\t{ephtime.usrtime()}")
 
-    if pglob.show_adityas:
-        pglob.signs = pglob.adityas
-    print_planets(ephtime, 0)
+    if not pglob.show_adityas:
+        pglob.signs = pglob.rasis
+    print_planets(ephtime)
     if pglob.show_equ:
         print_planets(ephtime, pglob.EQU)
     if pglob.show_helios:
@@ -167,6 +169,14 @@ def main():
     print_next_new_moon(panch)
     print_next_full_moon(panch)
 
+    if pglob.show_vdasha:
+        # print_vimshottari_dasha takes a Panchanga
+        # since we need the Moon and the ayanamsha
+        # so all the information is there
+        if args.dasha_levels:
+            pglob.dasha_levels = args.dasha_levels
+        print_vimshottari_dasha(panch)
+
 
 
 def get_args():
@@ -207,6 +217,17 @@ def get_args():
         "-p",
         "--position",
         help="latitude and longitutde in the form NN,EE; north and east are positive; don't pass directional letters; if latitude is negative, pass argument as -p=-30,40, for example",
+    )
+    parser.add_argument(
+        "-V",
+        "--vdasha",
+        action="store_true",
+        help="toggle printing vimshottari dasha from default",
+    )
+    parser.add_argument(
+        "-L",
+        "--dasha-levels",
+        help="how many dasha levels to print; if not given uses default in pyphglobals",
     )
     parser.add_argument(
         "-P",

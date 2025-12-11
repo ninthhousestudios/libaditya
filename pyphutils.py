@@ -343,3 +343,24 @@ def vedanga_jyotisha_boundaries_dhruva_ecliptic(jd):
     for bound in bounds:
         eclbounds.append(swe.cotrans((bound,0,1),jd.ecliptic_obliquity())[0])
     return eclbounds
+
+def age2ymd(age):
+    """
+    take a floating point age and return a string
+    "x years, y months, z days"
+    the days isnt precise, since i didnt just now feel like
+    programming the details of that
+    """
+    # how many years is the integer part
+    years = int(age)
+    # get the decimal part of the float
+    rem = age % 1
+    # multiple by 12 to find numbers of months as a float
+    md = rem*12
+    # months is the decimal part
+    months = int(md)
+    rem = md % 1
+    # days are approximate, because to be precise we need to find
+    # the precise month, etc. and i dont feel like it
+    days = int(rem*31)
+    return f"{years} years, {months} months, {days} days"

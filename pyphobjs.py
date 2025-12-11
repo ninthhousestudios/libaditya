@@ -163,6 +163,7 @@ class Panchanga(JulianDay):
             moonlong=swe.calc_ut(self.jd,swe.MOON,swe.FLG_EQUATORIAL)[0][0]
         elif self.ayanamsa == 102 or self.ayanamsa == 103:
             # for vedanga jyotisha
+            # ashvini is at 336.66667, so we have to add to the tropical longitude
             offset = -(23+(1/3))
         else:
             offset=0
@@ -208,6 +209,12 @@ class Panchanga(JulianDay):
             return "Tropical Krittika 28 equal nakshatras"
         if self.ayanamsa == 101:
             return "My Dhruva GC equatorial non-ayanamsha"
+        if self.ayanamsa == 102:
+            return "Ecliptic Vedanga Jyotisha"
+        if self.ayanamsa == 103:
+            return "Equatorial Vedanga Jyotisha"
+        if self.ayanamsa == 104:
+            return "My Dhruva GC ecliptic non-ayanamsha"
         return swe.get_ayanamsa_name(self.ayanamsa)
 
     # next next moon and next full moon

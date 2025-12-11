@@ -351,3 +351,54 @@ def print_dhruva_equ_ecl():
         thisrow = []
 
     print(output)
+
+def print_vimshottari_dasha(panch=Panchanga()):
+
+    print("\n\nVimshottari Dasha\n")
+
+    # can do vimshottari with different year lengths
+    # including this variable in case i want to try other ones
+    # right now, using saura year, which is 365.2422 standard days
+    yrlen = pglob.saura_year
+
+    # list of tuples representing dasha information
+    # each nakshatra has a ruler, and that ruler has a dasha of so many years
+    # ketu rules ashvini, the 10th nakshatra and the 19th nakshatra, etc.
+    dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
+    # to make the code below more readable
+    lord = 0
+    length = 1
+
+    if panch.ayanamsa == 99 or panch.ayanamsa == 104:
+        print(f"dhruva ecliptic dashas not yet implemented, using 101, dhruva gc equatorial\n")
+        panch.ayanamsa = 101
+
+    # long is the sidereal longitude
+    # nindex is the index of the nakhsatra into pglob.nakshatra
+    long, nindex = panch.moon.init_nakshatra(ayanamsa=panch.ayanamsa)
+
+    # how far into the nakshatra the moon is
+    elapsed = long-(nindex*pglob.nak)
+    elapsedfraction = elapsed/pglob.nak
+
+    # find which dasha is the first mahadasha
+    first_dasha = nindex%9
+    years_left = dashas[first_dasha][length]-dashas[first_dasha][length]*elapsedfraction
+    years_elapsed = dashas[first_dasha][length]*elapsedfraction
+    # age when the mahadasha started, which was probably before birth
+    age = -years_elapsed
+
+    #print(f"Moon is nakshatra {pglob.nakshatra[nindex]}, at {elapsed} degrees out of 13.33")
+    #print(f"First mahadasha is of {dashas[first_dasha][0]}, {dashas[first_dasha][1]*elapsedfraction} years into the dasha")
+
+    print(f"\n{dashas[first_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
+    panch.indent_print()
+    next_dasha_starts = panch.shift('f','d', years_left*yrlen)
+    age += dashas[first_dasha%9][length]
+    for d in range(1,9):
+        this_dasha = (first_dasha+d)%9
+        print(f"\n{dashas[this_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
+        next_dasha_starts.indent_print()
+        next_dasha_starts = next_dasha_starts.shift('f','d', (dashas[(first_dasha+d)%9][length])*yrlen)
+        age += dashas[(first_dasha+d)%9][length]
+

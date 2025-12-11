@@ -66,6 +66,15 @@ class JulianDay:
     def __lt__(self, jd2):
         return self.jd < jd2.jd
 
+    def indent_print(self, n=1):
+        """
+        print like with __str__, but indenting each line n times
+        """
+        tab = ""
+        for i in range(0,n):
+            tab += "\t"
+        print(f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}")
+
     def date(self):
         return f"{putil.date2str(self.datetime)}"
 
@@ -492,29 +501,34 @@ class Cusps:
     def cusps_nakshatras(self, ayanamsa=pglob.ayanamsa):
         if ayanamsa == 98:
             return self.cusps_dhruvequ()
-        if ayanamsa == 101:
+        elif ayanamsa == 101:
             return self.my_dhruvequ_cusps()
-        if ayanamsa == 102:
+        elif ayanamsa == 102:
             return self.vedanga_jyotisha_ecliptic_cusps()
-        if ayanamsa == 103:
+        elif ayanamsa == 103:
             return self.vedanga_jyotisha_equatorial_cusps()
-        swe.set_sid_mode(ayanamsa)
-        aval = swe.get_ayanamsa(self.jd)
-        sidcusps = []
-        for cusp in self.cusps:
-            sidcusps.append((cusp - aval) % 360)
-        cusps_nakshatras = []
-        for sidcusp in sidcusps:
-            if ayanamsa == 99:
-                nindex = putil.dhruvecl_index(sidcusp, self.jd)
-            elif ayanamsa == 100:
-                nindex = putil.nakshatra_tropkrt28_index(sidcusp)
-            else:
-                nindex = putil.nakshatra_index(sidcusp)
-            if ayanamsa == 100:
-                cusps_nakshatras.append(pglob.nakshatraeq[nindex])
-            else:
-                cusps_nakshatras.append(pglob.nakshatra[nindex])
+        elif ayanamsa == 104:
+            # 104 is dhruva eclitpic, but havent implemented it yet, so use dhruva equatorial
+            pglob.ayanamsa = 101
+            return self.my_dhruvequ_cusps()
+        else:
+            swe.set_sid_mode(ayanamsa)
+            aval = swe.get_ayanamsa(self.jd)
+            sidcusps = []
+            for cusp in self.cusps:
+                sidcusps.append((cusp - aval) % 360)
+            cusps_nakshatras = []
+            for sidcusp in sidcusps:
+                if ayanamsa == 99:
+                    nindex = putil.dhruvecl_index(sidcusp, self.jd)
+                elif ayanamsa == 100:
+                    nindex = putil.nakshatra_tropkrt28_index(sidcusp)
+                else:
+                    nindex = putil.nakshatra_index(sidcusp)
+                if ayanamsa == 100:
+                    cusps_nakshatras.append(pglob.nakshatraeq[nindex])
+                else:
+                    cusps_nakshatras.append(pglob.nakshatra[nindex])
         return sidcusps, cusps_nakshatras
 
     def vedanga_jyotisha_ecliptic_cusps(self):
