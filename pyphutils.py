@@ -364,3 +364,15 @@ def age2ymd(age):
     # the precise month, etc. and i dont feel like it
     days = int(rem*31)
     return f"{years} years, {months} months, {days} days"
+
+def mktab(n):
+    tab = ""
+    for i in range(0,n):
+        tab += "\t"
+    return tab
+
+def mksub(n):
+    sub = ""
+    for i in range(0,n):
+        sub += "sub"
+    return sub

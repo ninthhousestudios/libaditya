@@ -71,6 +71,8 @@ onesaurayearjd = onedayjd * 365.2422
 # modern days in a saura year
 saura_year = 365.2422
 
+dasha_years = [("saura",365.2422),("nakshatra",359.0167),("savana",360),("sidereal",365.2564),("chandra",364.2888),("lunar",354.36708)]
+
 nak = 13+(1/3)
 true_node = 11
 rahu = 11

@@ -173,9 +173,18 @@ def main():
         # print_vimshottari_dasha takes a Panchanga
         # since we need the Moon and the ayanamsha
         # so all the information is there
+        yrlen=pglob.saura_year
         if args.dasha_levels:
-            pglob.dasha_levels = args.dasha_levels
-        print_vimshottari_dasha(panch,pglob.dasha_levels)
+            pglob.dasha_levels = int(args.dasha_levels)
+        if args.dasha_year_length:
+            for opt in pglob.dasha_years:
+                if opt[0][:3] in args.dasha_year_length.lower():
+                    yrlen = opt[1]
+            if yrlen == 0:
+                # their option was not recognized
+                print(f"year length not recognized, using saura year")
+                yrlen = pglob.saura_year
+        print_vimshottari_dasha(panch,pglob.dasha_levels,yrlen)
 
 
 
@@ -228,6 +237,11 @@ def get_args():
         "-L",
         "--dasha-levels",
         help="how many dasha levels to print; if not given uses default in pyphglobals",
+    )
+    parser.add_argument(
+        "-Y",
+        "--dasha-year-length",
+        help="which year length to use for dashas; default is Saura; options: Nakshatra = 359.0167 standard days; Savana = 360 standard days; Saura = 365.2422; Sidereal = 365.2564; Chandra = 364.2888; Lunar = 354.36708",
     )
     parser.add_argument(
         "-P",
