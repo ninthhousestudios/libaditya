@@ -352,7 +352,7 @@ def print_dhruva_equ_ecl():
 
     print(output)
 
-def print_vimshottari_dasha(panch=Panchanga()):
+def print_vimshottari_dasha(panch=Panchanga(),dlevels=1):
 
     print("\n\nVimshottari Dasha\n")
 
@@ -391,14 +391,20 @@ def print_vimshottari_dasha(panch=Panchanga()):
     #print(f"Moon is nakshatra {pglob.nakshatra[nindex]}, at {elapsed} degrees out of 13.33")
     #print(f"First mahadasha is of {dashas[first_dasha][0]}, {dashas[first_dasha][1]*elapsedfraction} years into the dasha")
 
-    print(f"\n{dashas[first_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
-    panch.indent_print()
-    next_dasha_starts = panch.shift('f','d', years_left*yrlen)
-    age += dashas[first_dasha%9][length]
-    for d in range(1,9):
+#    print(f"\n{dashas[first_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
+#    panch.indent_print(level)
+#    next_dasha_starts = panch.shift('f','d', years_left*yrlen)
+#    age += dashas[first_dasha%9][length]
+    dasha_starts = panch
+    level = 1
+    for d in range(0,9):
         this_dasha = (first_dasha+d)%9
         print(f"\n{dashas[this_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
-        next_dasha_starts.indent_print()
-        next_dasha_starts = next_dasha_starts.shift('f','d', (dashas[(first_dasha+d)%9][length])*yrlen)
+        dasha_starts.indent_print(level)
+        if level < dlevels:
+            print_next_dasha_level(this_dasha,dasha_starts,level+1)
+        if d == 0:
+            dasha_starts = dasha_starts.shift('f','d', years_left*yrlen)
+        else:
+            dasha_starts = dasha_starts.shift('f','d', (dashas[(first_dasha+d)%9][length])*yrlen)
         age += dashas[(first_dasha+d)%9][length]
-

@@ -175,7 +175,7 @@ def main():
         # so all the information is there
         if args.dasha_levels:
             pglob.dasha_levels = args.dasha_levels
-        print_vimshottari_dasha(panch)
+        print_vimshottari_dasha(panch,pglob.dasha_levels)
 
 
 

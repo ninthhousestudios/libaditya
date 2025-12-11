@@ -35,7 +35,7 @@ dasha_levels = 1
 # N and E are positive
 lat = round(putil.dms2dec((39, 57, 22)), 3)
 long = -round(putil.dms2dec((86, 0, 46)),3)
-alt = 252  # swe requires meters
+alt = 0  # swe requires meters
 placename = ""
 hsys = "C"
 show_houses = 1
@@ -60,11 +60,6 @@ sysflg = ECL  # default
 
 # constant constants
 
-#onesecjd = 1.157401129603386e-05
-#oneminjd = onesecjd * 60
-#onehrjd = oneminjd * 60
-#onedayjd = onehrjd * 24
-#oneyearjd = onedayjd * 365
 # time units in julian days
 onedayjd = 1
 oneyearjd = onedayjd * 360
@@ -75,6 +70,7 @@ onesecjd = oneminjd / 60
 onesaurayearjd = onedayjd * 365.2422
 # modern days in a saura year
 saura_year = 365.2422
+
 nak = 13+(1/3)
 true_node = 11
 rahu = 11
