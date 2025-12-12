@@ -422,11 +422,11 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
     # if dlevels is 3 and level is 3, we want to print this level, else just return
     if level <= dlevels:
         this_dasha = (dlist[level-1])%9
+        # how many tabs to indent printing, based on the level
+        tab = putil.mktab(level)
+        # how many "sub" dashas
+        sub = putil.mksub(level)
         for d in range(0,9):
-            # how many tabs to indent printing, based on the level
-            tab = putil.mktab(level)
-            # how many "sub" dashas
-            sub = putil.mksub(level)
             lordstr = mklord(dlist+[this_dasha])
             # now we figure out how long this dasha runs
             # then we shift forward to that time, so that on the next loop, we print that information first
@@ -446,6 +446,7 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
             divfac = 120**level
             #print(f"{divfac=}")
             dlen = dlen / divfac 
+            #print(f"{dlen=} {dlen*yrlen}")
             #print(f"{dlen=}")
             # this print the starts time, date, and age for the current dasha
             print(f"\n{tab}{lordstr} {sub}dasha: {putil.age2ymd(age)}")
@@ -471,3 +472,98 @@ def mklord(dlist):
         else:
             lordstr += dashas[dlist[lord]][0] + "/"
     return lordstr
+
+def calculate_vimshottari_dasha(time,dlevels=1,yrlen=pglob.saura_year):
+    """
+    calculate vimshottari dasha
+    first initilaze the base condition
+    time is a JulianDay class
+    then call calc_vdasha, which is a recursive function that does
+    the acutal calculations
+    return a list [[dasha1jd,dasha1length,subdasha],etc.,first_dasha_lord,beginning_age]
+    """
+
+    moon = Moon(time) 
+
+    # initialization
+
+    # long is the sidereal longitude
+    # nindex is the index of the nakhsatra into pglob.nakshatra
+    long, nindex = moon.init_nakshatra(ayanamsa=pglob.ayanamsa)
+
+    # how far into the nakshatra the moon is
+    elapsed = long-(nindex*pglob.nak)
+    elapsedfraction = elapsed/pglob.nak
+
+    # find which dasha is the first mahadasha
+    first_dasha = nindex%9
+    years_left = dashas[first_dasha][length]-dashas[first_dasha][length]*elapsedfraction
+    years_elapsed = dashas[first_dasha][length]*elapsedfraction
+    # age when the mahadasha started, which was probably before birth
+    age = -years_elapsed
+
+    dasha_starts_jd = time.shift('b','d',-age*yrlen)
+    level = 0
+    dlist = [first_dasha]
+    vdasha = calc_vdasha(dlist,dasha_starts_jd,level,dlevels,yrlen)
+
+    return vdasha + [first_dasha] + [age]
+
+def calc_vdasha(dlist,dasha_time,level,dlevels,yrlen):
+    this_dasha_list = []
+    next_dasha_list = []
+    # if dlevels is 3 and level is 3, we want to print this level, else just return
+    if level+1 <= dlevels:
+        this_dasha = (dlist[level])%9
+        for d in range(0,9):
+            # find the length of this (sub)dasha
+            dlen = 1
+            for lrd in range(1,len(dlist)):
+                print(f"{lrd=} {dlen=} * {dashas[dlist[lrd]][length]}")
+                print(f"{dlist=} {dlist[lrd]=}")
+                dlen = dlen * dashas[dlist[lrd]][length]
+                print(f"{dlen=}")
+            dlen = dlen * dashas[this_dasha][length]
+            print(f"{this_dasha=} {dlen=} {dashas[this_dasha][length]=}")
+            divfac = 120**level
+            dlen = dlen / divfac 
+            #print(f"{dlen=} {dlen*yrlen}")
+            # now dlen is the length of the dasha in years
+            if level+1 < dlevels:
+                next_dasha_list = calc_vdasha(dlist+[this_dasha],dasha_time,level+1,dlevels,yrlen)
+            this_dasha_list.append([dasha_time,dlen*yrlen,next_dasha_list])
+            print(f"calc_vdasha: {dlist=} {dlen=} {dlen*yrlen=}")
+            dasha_time = dasha_time.shift('f','d', dlen*yrlen)
+            this_dasha = (this_dasha+1)%9
+    return this_dasha_list
+
+def print_dasha(dasha):
+    """
+    print the dasha given in the list dasha
+    dasha has the form:
+    [[dasha1jd,dasha1length,subdasha],etc.,first_dasha_lord,beginning_age]
+    """
+    # these initialize what we need to recurse down the dasha list
+    age = dasha.pop()
+    first_dasha = dasha.pop()
+    level = 0
+
+    pd([first_dasha],dasha,level,age)
+
+def pd(dlist,dasha,level,age):
+    # how many tabs to indent printing, based on the level
+    tab = putil.mktab(level)
+    # how many "sub" dashas
+    sub = putil.mksub(level)
+
+    this_dasha = dlist[len(dlist)-1]
+
+    for d in range(0,len(dasha)):
+        lordstr = mklord(dlist[1:]+[this_dasha])
+        print(f"\n{tab}{lordstr} {sub}dasha: {putil.age2ymd(age)}")
+        print(f"{tab}Duration: {putil.age2ymd(dasha[d][1]/365.2422)}")
+        dasha[d][0].indent_print(level)
+        if dasha[d][2] != []:
+            pd(dlist+[this_dasha],dasha[d][2],level+1,age)
+        age += dasha[d][1]/365.2422
+        this_dasha = (this_dasha+1)%9

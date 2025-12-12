@@ -181,10 +181,38 @@ def main():
                 if opt[0][:3] in args.dasha_year_length.lower():
                     yrlen = opt[1]
             if yrlen == 0:
-                # their option was not recognized
+                # the option was not recognized
                 print(f"year length not recognized, using saura year")
                 yrlen = pglob.saura_year
         print_vimshottari_dasha(panch,pglob.dasha_levels,yrlen)
+
+    if args.v2dasha:
+        pglob.show_v2dasha = not pglob.show_v2dasha
+
+    if pglob.show_v2dasha:
+        # print_vimshottari_dasha takes a Panchanga
+        # since we need the Moon and the ayanamsha
+        # so all the information is there
+        yrlen=pglob.saura_year
+        if args.dasha_levels:
+            pglob.dasha_levels = int(args.dasha_levels)
+        if args.dasha_year_length:
+            for opt in pglob.dasha_years:
+                if opt[0][:3] in args.dasha_year_length.lower():
+                    yrlen = opt[1]
+            if yrlen == 0:
+                # the option was not recognized
+                print(f"year length not recognized, using saura year")
+                yrlen = pglob.saura_year
+        vdasha = calculate_vimshottari_dasha(ephtime,pglob.dasha_levels,yrlen)
+        print("\n\nVimshottari Dasha\n")
+
+        for opt in pglob.dasha_years:
+            if yrlen == opt[1]:
+                yrstr = opt[0].capitalize()
+
+        print(f"Using {yrstr} year length")
+        print_dasha(vdasha)
 
 
 
@@ -230,6 +258,12 @@ def get_args():
     parser.add_argument(
         "-V",
         "--vdasha",
+        action="store_true",
+        help="toggle printing vimshottari dasha from default",
+    )
+    parser.add_argument(
+        "-V2",
+        "--v2dasha",
         action="store_true",
         help="toggle printing vimshottari dasha from default",
     )

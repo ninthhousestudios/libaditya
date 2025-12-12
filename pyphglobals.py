@@ -30,7 +30,8 @@ show_baryos = 0
 show_topo = 0
 show_adityas = 1
 show_equ = 0
-show_vdasha = 1
+show_vdasha = 0
+show_v2dasha = 0
 dasha_levels = 1
 # N and E are positive
 lat = round(putil.dms2dec((39, 57, 22)), 3)
