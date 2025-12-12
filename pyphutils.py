@@ -291,7 +291,6 @@ def date2str(date):
     """date is a revjul-tuple (year,month,day,hour); return a string 'month/day/year'"""
     return f"{date[1]:02d}/{date[2]:02d}/{date[0]:02d}"
 
-
 def time2str(time):
     """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
     return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"

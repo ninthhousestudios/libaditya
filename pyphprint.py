@@ -518,13 +518,9 @@ def calc_vdasha(dlist,dasha_time,level,dlevels,yrlen):
         for d in range(0,9):
             # find the length of this (sub)dasha
             dlen = 1
-            for lrd in range(1,len(dlist)):
-                print(f"{lrd=} {dlen=} * {dashas[dlist[lrd]][length]}")
-                print(f"{dlist=} {dlist[lrd]=}")
-                dlen = dlen * dashas[dlist[lrd]][length]
-                print(f"{dlen=}")
+            for lord in range(1,len(dlist)):
+                dlen = dlen * dashas[dlist[lord]][length]
             dlen = dlen * dashas[this_dasha][length]
-            print(f"{this_dasha=} {dlen=} {dashas[this_dasha][length]=}")
             divfac = 120**level
             dlen = dlen / divfac 
             #print(f"{dlen=} {dlen*yrlen}")
@@ -532,7 +528,6 @@ def calc_vdasha(dlist,dasha_time,level,dlevels,yrlen):
             if level+1 < dlevels:
                 next_dasha_list = calc_vdasha(dlist+[this_dasha],dasha_time,level+1,dlevels,yrlen)
             this_dasha_list.append([dasha_time,dlen*yrlen,next_dasha_list])
-            print(f"calc_vdasha: {dlist=} {dlen=} {dlen*yrlen=}")
             dasha_time = dasha_time.shift('f','d', dlen*yrlen)
             this_dasha = (this_dasha+1)%9
     return this_dasha_list
