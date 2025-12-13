@@ -28,8 +28,6 @@ from pyphprint import *
 from pyphclasses import *
 from pyphobjs import *
 
-global ephtime  # a JulianDay that we are working on
-
 
 def main():
     global ephtime
@@ -169,21 +167,25 @@ def main():
     print_next_new_moon(panch)
     print_next_full_moon(panch)
 
+    if args.dasha_levels:
+        pglob.dasha_levels = int(args.dasha_levels)
+
+    if args.dasha_year_length:
+        for opt in pglob.dasha_years:
+            if opt[0][:3] in args.dasha_year_length.lower():
+                yrlen = opt[1]
+        if yrlen == 0:
+            # the option was not recognized
+            print(f"year length not recognized, using saura year")
+            yrlen = pglob.saura_year
+    else:
+        yrlen = pglob.saura_year
+
     if pglob.show_vdasha:
         # print_vimshottari_dasha takes a Panchanga
         # since we need the Moon and the ayanamsha
         # so all the information is there
         yrlen=pglob.saura_year
-        if args.dasha_levels:
-            pglob.dasha_levels = int(args.dasha_levels)
-        if args.dasha_year_length:
-            for opt in pglob.dasha_years:
-                if opt[0][:3] in args.dasha_year_length.lower():
-                    yrlen = opt[1]
-            if yrlen == 0:
-                # the option was not recognized
-                print(f"year length not recognized, using saura year")
-                yrlen = pglob.saura_year
         print_vimshottari_dasha(panch,pglob.dasha_levels,yrlen)
 
     if args.v2dasha:
@@ -194,16 +196,6 @@ def main():
         # since we need the Moon and the ayanamsha
         # so all the information is there
         yrlen=pglob.saura_year
-        if args.dasha_levels:
-            pglob.dasha_levels = int(args.dasha_levels)
-        if args.dasha_year_length:
-            for opt in pglob.dasha_years:
-                if opt[0][:3] in args.dasha_year_length.lower():
-                    yrlen = opt[1]
-            if yrlen == 0:
-                # the option was not recognized
-                print(f"year length not recognized, using saura year")
-                yrlen = pglob.saura_year
         vdasha = calculate_vimshottari_dasha(ephtime,pglob.dasha_levels,yrlen)
         print("\n\nVimshottari Dasha\n")
 
@@ -214,6 +206,36 @@ def main():
         print(f"Using {yrstr} year length")
         print_dasha(vdasha)
 
+    if args.current_dasha: 
+        if not args.dasha_levels:
+           # if user didnt pass a level argument, change default to 3
+           pglob.dasha_levels = 3
+
+        # what time to show current dasha for?
+        # assume user inputs a file with -i
+        # then -d and -t can be used to find dasha at time specified by -d/-t
+        if args.date:
+            month, day, year = putil.intize_date(args.date)
+        if args.time:
+            nowclock = putil.intize_time(args.time)
+        if args.date:
+            if args.time:
+                nowtime = JulianDay(swe.julday(year, month, day, nowclock))
+            else:
+                nowtime = time.gmtime()
+                nowtime = JulianDay(
+                    swe.julday(
+                        year, month, day, nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+                    )
+                )
+        else:
+            if args.time:
+                nowtime = time.gmtime()
+                nowtime = JulianDay((nowtime[0], nowtime[1], nowtime[2], nowclock))
+            else:
+                nowtime = JulianDay()
+
+        print_current_dasha(ephtime,nowtime,pglob.dasha_levels)
 
 
 def get_args():
@@ -266,6 +288,12 @@ def get_args():
         "--v2dasha",
         action="store_true",
         help="toggle printing vimshottari dasha from default",
+    )
+    parser.add_argument(
+        "-C",
+        "--current-dasha",
+        action="store_true",
+        help="print current dasha; use -L to specify how many levels; default is 3",
     )
     parser.add_argument(
         "-L",

@@ -351,6 +351,10 @@ def dec2ymd(age):
     programming the details of that
     if any of these are zero, it does not print that
     """
+    sign = ""
+    if age < 0:
+        sign = "-" 
+        age=-age
     strlist=[]
     # how many years is the integer part
     years = int(age)
@@ -385,6 +389,7 @@ def dec2ymd(age):
         seconds = int(rem*60)
         if not seconds == 0:
             strlist.append(f"{seconds} seconds")
+    strlist[0] = sign+strlist[0]
     return ", ".join(strlist)
 
 def mktab(n):

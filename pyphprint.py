@@ -410,7 +410,7 @@ def print_vimshottari_dasha(panch=Panchanga(),dlevels=1,yrlen=pglob.saura_year):
         dlist = []
         dlist.append(this_dasha)
         print(f"\n{dashas[this_dasha][lord]} mahadasha: {putil.dec2ymd(age)}")
-        print(f"Duration: {dashas[(first_dasha+d)%9][length]}")
+        print(f"Duration: {dashas[(first_dasha+d)%9][length]} years")
         dasha_starts.indent_print(level)
         if level+1 < dlevels:
             print_next_dasha_level(dlist,dasha_starts,level+1,dlevels,yrlen,age)
@@ -562,3 +562,30 @@ def pd(dlist,dasha,level,age):
             pd(dlist+[this_dasha],dasha[d][2],level+1,age)
         age += dasha[d][1]/365.2422
         this_dasha = (this_dasha+1)%9
+
+def print_current_dasha(btime,nowtime,dlevels):
+    """
+    find the dasha at nowtime for the dashas of someone born at btime down to dlevels levels
+    """
+    # first we need to find where the dashas start
+    moon = Moon(btime) 
+
+    # long is the sidereal longitude
+    # nindex is the index of the nakhsatra into pglob.nakshatra
+    long, nindex = moon.init_nakshatra(ayanamsa=pglob.ayanamsa)
+
+    # how far into the nakshatra the moon is
+    elapsed = long-(nindex*pglob.nak)
+    elapsedfraction = elapsed/pglob.nak
+
+    # find which dasha is the first mahadasha
+    first_dasha = nindex%9
+    years_elapsed = dashas[first_dasha][length]*elapsedfraction
+    # age when the mahadasha started, which was probably before birth
+    age = -years_elapsed
+
+    dasha_starts_jd = time.shift('b','d',-age*yrlen)
+
+    # we find the dasha by going forward from the start date
+    # however many days are between the start date and the date we want to find
+    days_to_go = nowtime.jd - dasha_starts_jd.jd
