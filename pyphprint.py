@@ -396,7 +396,7 @@ def print_vimshottari_dasha(panch=Panchanga(),dlevels=1,yrlen=pglob.saura_year):
     #print(f"Moon is nakshatra {pglob.nakshatra[nindex]}, at {elapsed} degrees out of 13.33")
     #print(f"First mahadasha is of {dashas[first_dasha][0]}, {dashas[first_dasha][1]*elapsedfraction} years into the dasha")
 
-#    print(f"\n{dashas[first_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
+#    print(f"\n{dashas[first_dasha][lord]} mahadasha: {putil.dec2ymd(age)}")
 #    panch.indent_print(level)
 #    next_dasha_starts = panch.shift('f','d', years_left*yrlen)
 #    age += dashas[first_dasha%9][length]
@@ -409,7 +409,7 @@ def print_vimshottari_dasha(panch=Panchanga(),dlevels=1,yrlen=pglob.saura_year):
         # in order to calculate the time in that dasha
         dlist = []
         dlist.append(this_dasha)
-        print(f"\n{dashas[this_dasha][lord]} mahadasha: {putil.age2ymd(age)}")
+        print(f"\n{dashas[this_dasha][lord]} mahadasha: {putil.dec2ymd(age)}")
         print(f"Duration: {dashas[(first_dasha+d)%9][length]}")
         dasha_starts.indent_print(level)
         if level+1 < dlevels:
@@ -449,8 +449,8 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
             #print(f"{dlen=} {dlen*yrlen}")
             #print(f"{dlen=}")
             # this print the starts time, date, and age for the current dasha
-            print(f"\n{tab}{lordstr} {sub}dasha: {putil.age2ymd(age)}")
-            print(f"{tab}Duration: {putil.age2ymd(dlen)}")
+            print(f"\n{tab}{lordstr} {sub}dasha: {putil.dec2ymd(age)}")
+            print(f"{tab}Duration: {putil.dec2ymd(dlen)}")
             dasha_time.indent_print(level)
             if level+1 < dlevels:
                 print_next_dasha_level(dlist+[this_dasha],dasha_time,level+1,dlevels,yrlen,age)
@@ -555,8 +555,8 @@ def pd(dlist,dasha,level,age):
 
     for d in range(0,len(dasha)):
         lordstr = mklord(dlist[1:]+[this_dasha])
-        print(f"\n{tab}{lordstr} {sub}dasha: {putil.age2ymd(age)}")
-        print(f"{tab}Duration: {putil.age2ymd(dasha[d][1]/365.2422)}")
+        print(f"\n{tab}{lordstr} {sub}dasha: {putil.dec2ymd(age)}")
+        print(f"{tab}Duration: {putil.dec2ymd(dasha[d][1]/365.2422)}")
         dasha[d][0].indent_print(level)
         if dasha[d][2] != []:
             pd(dlist+[this_dasha],dasha[d][2],level+1,age)

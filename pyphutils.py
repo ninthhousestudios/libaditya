@@ -343,26 +343,49 @@ def vedanga_jyotisha_boundaries_dhruva_ecliptic(jd):
         eclbounds.append(swe.cotrans((bound,0,1),jd.ecliptic_obliquity())[0])
     return eclbounds
 
-def age2ymd(age):
+def dec2ymd(age):
     """
     take a floating point age and return a string
-    "x years, y months, z days"
+    "x years, y months, z days, a hours, b minutes, c seconds"
     the days isnt precise, since i didnt just now feel like
     programming the details of that
+    if any of these are zero, it does not print that
     """
+    strlist=[]
     # how many years is the integer part
     years = int(age)
+    if not years == 0:
+        strlist.append(f"{years} years")
     # get the decimal part of the float
     rem = age % 1
     # multiple by 12 to find numbers of months as a float
     md = rem*12
     # months is the decimal part
     months = int(md)
+    if not months == 0:
+        strlist.append(f"{months} months")
     rem = md % 1
-    # days are approximate, because to be precise we need to find
-    # the precise month, etc. and i dont feel like it
+    # days are approximatebecause to be precise we need to find
+    # the precise monthetc. and i dont feel like it
+    dpart = rem*31
     days = int(rem*31)
-    return f"{years} years, {months} months, {days} days"
+    if not days == 0:
+        strlist.append(f"{days} days")
+    if years == 0 and months == 0:
+        # only compute hours and seconds if years and months are 0
+        rem = dpart%1
+        hours = int(dpart)
+        if not hours == 0:
+            strlist.append(f"{hours} hours")
+        mpart = rem*60
+        minutes = int(mpart)
+        if not minutes == 0:
+            strlist.append(f"{minutes} minutes")
+        rem = mpart%1
+        seconds = int(rem*60)
+        if not seconds == 0:
+            strlist.append(f"{seconds} seconds")
+    return ", ".join(strlist)
 
 def mktab(n):
     tab = ""
