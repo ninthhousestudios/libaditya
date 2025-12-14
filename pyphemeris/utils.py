@@ -29,14 +29,20 @@ def yessignize(long):
     long (sign), with long being in the sign
     signs contains the signs to be used, which might be adityas
     """
-    rasi = int(
+    index = int(
         (long % 360) / 30
     )  # mod 360 in case long=360...but it probably wouldnt with swe, right?
-    inlong = pglob.round_func(long - (rasi * 30), 4)
-    return f"{dec2deg(inlong)} {pglob.signs[rasi]}"
+    inlong = pglob.round_func(long - (index * 30), 4)
+    return f"{dec2deg(inlong)} {pglob.signs[index]}"
 
 def yesround(long, nd=3):
     return round(long, nd)
+
+def nosignize(long):
+    return long
+
+def noround(long, nd=3):
+    return long
 
 def intize_date(date):
     """

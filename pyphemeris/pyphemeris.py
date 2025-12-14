@@ -45,6 +45,8 @@ def main():
     else:
         lang_file = const.lang_file
 
+    planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
+
     if args.timezone:
         timezone = args.timezone
     else:
@@ -108,7 +110,7 @@ def main():
         else:
             ayanamsa = 1
 
-    context = EphContext(timeJD,sysflg,ayanamsa)
+    context = EphContext(timeJD,sysflg,ayanamsa,planet_names)
 
     planets = Planets(context)
     print("print all planets")

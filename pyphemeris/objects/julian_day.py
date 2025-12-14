@@ -17,6 +17,7 @@
 
 import swisseph as swe
 from dataclasses import dataclass
+from typing import Callable
 
 import time
 
@@ -181,3 +182,6 @@ class EphContext:
     timeJD: JulianDay
     sysflg: int
     ayanamsa: int
+    planet_names: [str]
+    round_function: Callable[[float],float] = round
+    sign_function: Callable[[float],str] = utils.yessignize

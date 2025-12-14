@@ -16,6 +16,7 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from prettytable import PrettyTable
 
 import constants as const
 
@@ -45,3 +46,29 @@ class Planets(JulianDay):
             ret.append(p(self.context))
         return ret
 
+    def __str__(self):
+        """
+        return a PrettyTable string with coordinates for all planets on julianday
+        using sysflag coordinates
+        """
+        output = PrettyTable()
+        output.field_names = [
+            "Planet",
+            "Longitude",
+            "Speed",
+            "Latitude",
+            "Latitude Speed",
+            "Distance",
+            "Distance Speed",
+        ]
+        output.align["Planet"] = "l"
+        output.align["Longitude"] = "l"
+        output.align["Speed"] = "r"
+        output.align["Latitude"] = "r"
+        output.align["Latitude Speed"] = "r"
+
+        output.add_row(Planets[pglob.earth].table_list(sysflg))
+
+        ret = output.get_string(fields=["Planet", "Longitude", "Speed", "Latitude", "Latitude Speed"])
+
+        return ret

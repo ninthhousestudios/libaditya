@@ -33,7 +33,7 @@ class Planet(JulianDay):
         self.timeJD = context.timeJD
         super().__init__(self.timeJD.jd)
         self.pnumber = pnumber
-        self.planet_name = const.pnames[self.pnumber]
+        self.planet_name = context.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
         self.sysflg = context.sysflg
@@ -70,6 +70,18 @@ class Planet(JulianDay):
     def ayanamsa(self):
         return self.ayanamsa
 
+    def retrograde(self):
+        if self.longitude_speed() < 0:
+            return True
+        else:
+            return False
+
+    def retrostr(self):
+        if self.retrograde():
+            return " (R)"
+        else:
+            return ""
+
     def riseset(self, rs, location=Location()):
         """
         :rs flag for rise, set, or one of the two meridian transits
@@ -89,90 +101,76 @@ class Sun(Planet):
 
     def __init__(self, context):
         super().__init__(swe.SUN, context)
-        self.planet_name = "Sun"
 
     def sunrise_yamakoti(self):
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
-class Ketu(Planet):
-
-    def __init__(self, context):
-        super().__init__(swe.TRUE_NODE, context)
-        self.planet_name = "Ketu"
-
-    def longitude(self):
-        return (self.long-180)%360
 
 class Moon(Planet):
 
     def __init__(self, context):
         super().__init__(swe.MOON, context)
-        self.planet_name = "Moon"
 
 
 class Mars(Planet):
 
     def __init__(self, context):
         super().__init__(swe.MARS, context)
-        self.planet_name = "Mars"
 
 
 class Mercury(Planet):
 
     def __init__(self, context):
         super().__init__(swe.MERCURY, context)
-        self.planet_name = "Mercury"
-
-    def __str__(self):
-        return f"{self.planet_name} at\n" + super().__str__()
 
 class Venus(Planet):
 
     def __init__(self, context):
         super().__init__(swe.VENUS, context)
-        self.planet_name = "Venus"
 
 
 class Jupiter(Planet):
 
     def __init__(self, context):
         super().__init__(swe.JUPITER, context)
-        self.planet_name = "Jupiter"
 
 
 class Saturn(Planet):
 
     def __init__(self, context):
         super().__init__(swe.SATURN, context)
-        self.planet_name = "Saturn"
 
 
 class Rahu(Planet):
 
     def __init__(self, context):
         super().__init__(swe.TRUE_NODE, context)
-        self.planet_name = "Rahu"
+        self.planet_name = context.planet_names[10]
+
+class Ketu(Planet):
+
+    def __init__(self, context):
+        super().__init__(swe.TRUE_NODE, context)
+
+    def longitude(self):
+        return (self.long-180)%360
 
 class Uranus(Planet):
 
     def __init__(self, context):
         super().__init__(swe.URANUS, context)
-        self.planet_name = "Uranus"
 
 class Neptune(Planet):
 
     def __init__(self, context):
         super().__init__(swe.NEPTUNE, context)
-        self.planet_name = "Neptune"
 
 class Pluto(Planet):
 
     def __init__(self, context):
         super().__init__(swe.PLUTO, context)
-        self.planet_name = "Pluto"
 
 class Earth(Planet):
 
     def __init__(self, context):
         super().__init__(swe.EARTH, context)
-        self.planet_name = "Earth"

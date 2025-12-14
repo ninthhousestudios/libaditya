@@ -16,6 +16,9 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import codecs
+import configparser
+
+import constants as const
 
 def read_pyph(infile):
     input = open(infile, "r")
@@ -349,3 +352,231 @@ def parse_position_argument(position):
                 long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
 
     return lat, long
+
+def init_names(langfile=const.mixed):
+    names = configparser.ConfigParser()
+    names.read(langfile)
+
+    # because of importing and such things
+    planets = []
+    zodiac = []
+    tithis = []
+    karanas = []
+    nakshatras = []
+    nakshatraeq = []
+    varas = []
+    yogas = []
+    adityas = []
+
+    # because of needing these names in pyphclasses i called init_names()
+    # there, which when i run the whole program thus initializes them twice
+    # which causes the karana especially to not work right
+    # so if planets is not an empty list, then we have already done the names
+    # if planets != []:
+    #    return
+
+    pnames = names["PLANETS"]
+    znames = names["RASIS"]
+    tnames = names["TITHI"]
+    knames = names["KARANA"]
+    nnames = names["NAKSHATRA"]
+    neqnames = names["NAKSHATRAEQ"]
+    vnames = names["VARA"]
+    ynames = names["YOGAS"]
+    anames = names["ADITYAS"]
+
+    planets.append(pnames["Sun"])
+    planets.append(pnames["Moon"])
+    planets.append(pnames["Mercury"])
+    planets.append(pnames["Venus"])
+    planets.append(pnames["Mars"])
+    planets.append(pnames["Jupiter"])
+    planets.append(pnames["Saturn"])
+    planets.append(pnames["Uranus"])
+    planets.append(pnames["Neptune"])
+    planets.append(pnames["Pluto"])
+    planets.append(pnames["Rahu"])  # index 10
+    planets.append(pnames["Ketu"])  # index 11
+    planets.append([])
+    planets.append([])
+    planets.append(pnames["Earth"]) # so we can use swe.EARTH
+
+    zodiac.append(znames["Aries"])
+    zodiac.append(znames["Taurus"])
+    zodiac.append(znames["Gemini"])
+    zodiac.append(znames["Cancer"])
+    zodiac.append(znames["Leo"])
+    zodiac.append(znames["Virgo"])
+    zodiac.append(znames["Libra"])
+    zodiac.append(znames["Scorpio"])
+    zodiac.append(znames["Sagittarius"])
+    zodiac.append(znames["Capricorn"])
+    zodiac.append(znames["Aquarius"])
+    zodiac.append(znames["Pisces"])
+
+    tithis.append(tnames["Nanda"])
+    tithis.append(tnames["Bhadra"])
+    tithis.append(tnames["Jaya"])
+    tithis.append(tnames["Rkta"])
+    tithis.append(tnames["Purna"])
+
+    karanas.append(knames["Kimtughna"])
+    karanas.append(knames["Bava"])
+    karanas.append(knames["Balava"])
+    karanas.append(knames["Kaulava"])
+    karanas.append(knames["Taitula"])
+    karanas.append(knames["Garija"])
+    karanas.append(knames["Vanija"])
+    karanas.append(knames["Vishti"])
+    karanas.append(knames["Shakuni"])
+    karanas.append(knames["Chatushpada"])
+    karanas.append(knames["Naga"])
+    karanas = organize_karana(karanas)
+
+    nakshatras.append(nnames["Ashvini"])
+    nakshatras.append(nnames["Bharani"])
+    nakshatras.append(nnames["Krittika"])
+    nakshatras.append(nnames["Rohini"])
+    nakshatras.append(nnames["Mrigashira"])
+    nakshatras.append(nnames["Ardra"])
+    nakshatras.append(nnames["Punarvasu"])
+    nakshatras.append(nnames["Pushya"])
+    nakshatras.append(nnames["Ashlesha"])
+    nakshatras.append(nnames["Magha"])
+    nakshatras.append(nnames["Purva Phalguni"])
+    nakshatras.append(nnames["Uttara Phalguni"])
+    nakshatras.append(nnames["Hasta"])
+    nakshatras.append(nnames["Chitra"])
+    nakshatras.append(nnames["Svati"])
+    nakshatras.append(nnames["Vishakha"])
+    nakshatras.append(nnames["Anuradha"])
+    nakshatras.append(nnames["Jyeshtha"])
+    nakshatras.append(nnames["Mula"])
+    nakshatras.append(nnames["Purva Ashadha"])
+    nakshatras.append(nnames["Uttara Ashadha"])
+    nakshatras.append(nnames["Shravana"])
+    nakshatras.append(nnames["Danishtha"])
+    nakshatras.append(nnames["Shatabhisha"])
+    nakshatras.append(nnames["Purva Bhadrapada"])
+    nakshatras.append(nnames["Uttara Bhadrapada"])
+    nakshatras.append(nnames["Revati"])
+
+    varas.append(vnames["Ravivara"])
+    varas.append(vnames["Somavara"])
+    varas.append(vnames["Mangalavara"])
+    varas.append(vnames["Budhavara"])
+    varas.append(vnames["Guruvara"])
+    varas.append(vnames["Shukravara"])
+    varas.append(vnames["Shanivara"])
+
+    yogas.append(ynames["Vishkambha"])
+    yogas.append(ynames["Priti"])
+    yogas.append(ynames["Ayushman"])
+    yogas.append(ynames["Saubhagya"])
+    yogas.append(ynames["Shobana"])
+    yogas.append(ynames["Atiganda"])
+    yogas.append(ynames["Sukarma"])
+    yogas.append(ynames["Dhriti"])
+    yogas.append(ynames["Shoola"])
+    yogas.append(ynames["Ganda"])
+    yogas.append(ynames["Vriddhi"])
+    yogas.append(ynames["Dhruva"])
+    yogas.append(ynames["Vyaghata"])
+    yogas.append(ynames["Harshana"])
+    yogas.append(ynames["Vajra"])
+    yogas.append(ynames["Siddhi"])
+    yogas.append(ynames["Vyatipata"])
+    yogas.append(ynames["Variyan"])
+    yogas.append(ynames["Parigha"])
+    yogas.append(ynames["Shiva"])
+    yogas.append(ynames["Siddha"])
+    yogas.append(ynames["Sadhya"])
+    yogas.append(ynames["Shubha"])
+    yogas.append(ynames["Shukla"])
+    yogas.append(ynames["Brahma"])
+    yogas.append(ynames["Indra"])
+    yogas.append(ynames["Vaidhriti"])
+
+    adityas.append(anames["Aryama"])
+    adityas.append(anames["Mitra"])
+    adityas.append(anames["Varuna"])
+    adityas.append(anames["Indra"])
+    adityas.append(anames["Vivasvan"])
+    adityas.append(anames["Tvashta"])
+    adityas.append(anames["Vishnu"])
+    adityas.append(anames["Amshu"])
+    adityas.append(anames["Bhaga"])
+    adityas.append(anames["Pusha"])
+    adityas.append(anames["Parjanya"])
+    adityas.append(anames["Dhata"])
+
+    nakshatraeq.append(neqnames["Krittika"])
+    nakshatraeq.append(neqnames["Rohini"])
+    nakshatraeq.append(neqnames["Mrigashira"])
+    nakshatraeq.append(neqnames["Ardra"])
+    nakshatraeq.append(neqnames["Punarvasu"])
+    nakshatraeq.append(neqnames["Pushya"])
+    nakshatraeq.append(neqnames["Ashlesha"])
+    nakshatraeq.append(neqnames["Magha"])
+    nakshatraeq.append(neqnames["Purva Phalguni"])
+    nakshatraeq.append(neqnames["Uttara Phalguni"])
+    nakshatraeq.append(neqnames["Hasta"])
+    nakshatraeq.append(neqnames["Chitra"])
+    nakshatraeq.append(neqnames["Svati"])
+    nakshatraeq.append(neqnames["Vishakha"])
+    nakshatraeq.append(neqnames["Anuradha"])
+    nakshatraeq.append(neqnames["Jyeshtha"])
+    nakshatraeq.append(neqnames["Mula"])
+    nakshatraeq.append(neqnames["Purva Ashadha"])
+    nakshatraeq.append(neqnames["Uttara Ashadha"])
+    nakshatraeq.append(neqnames["Abhijit"])
+    nakshatraeq.append(neqnames["Shravana"])
+    nakshatraeq.append(neqnames["Danishtha"])
+    nakshatraeq.append(neqnames["Shatabhisha"])
+    nakshatraeq.append(neqnames["Purva Bhadrapada"])
+    nakshatraeq.append(neqnames["Uttara Bhadrapada"])
+    nakshatraeq.append(neqnames["Revati"])
+    nakshatraeq.append(neqnames["Ashvini"])
+    nakshatraeq.append(neqnames["Bharani"])
+
+    return planets, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas
+
+
+# there are 11 karanas
+# 4 happen once a lunar month
+# the other 7 happen 8 times each a lunar month,
+# repeating in a fixed pattern
+# so the config just has 11 names
+# and the function below is to organize them as
+# as list of pairs in order that can easily be indexed when we know the tithi
+def organize_karana(karana):
+    # lets do them in order
+    ret = []  # our return list or organized karana
+    tmp = []  # build a list of two in tmp, then append to ret
+    # then the 7 repeat in order eight times
+    tmp.append(karana[0])
+    for i in range(8):
+        for n in range(7):
+            # n+1 because, e.g., bava is at [1]
+            if (
+                i % 2 == 1
+            ):  # i is odd, so we need to start a new pair first, if n is even
+                if n % 2 == 0:
+                    tmp.append(karana[n + 1])
+                else:
+                    tmp.append(karana[n + 1])
+                    ret.append(tmp)
+                    tmp = []
+            else:
+                if n % 2 == 0:  # n is even; append this karana to its first of the pair
+                    tmp.append(karana[n + 1])
+                    # this pair is done, so it can be added to ret
+                    ret.append(tmp)
+                    tmp = []
+                else:  # n is odd; start a new pair list
+                    tmp.append(karana[n + 1])
+    tmp.append(karana[8])
+    ret.append(tmp)
+    ret.append([karana[9], karana[10]])
+    return ret
+

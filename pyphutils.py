@@ -42,7 +42,6 @@ def nakshatra_index(sidlong, n=0):
 def nakshatra_tropkrt28_index(long):
     return int((long/(360/28))%28)
 
-
 def dhruvecl_index(sidlong, jd, n=0):
     """
     generate the nakshatra index for dhruva ecliptic
