@@ -26,7 +26,7 @@ pyph_path = os.path.dirname(os.path.realpath(__file__))
 edir = pyph_path + "/ephe/"
 utcoffset = -5
 timezone = "EST"
-ayanamsa = 101  # new code for dhruva equatorial
+ayanamsa = 98  # dhruva equatorial
 show_helios = 0
 show_baryos = 0
 show_topo = 0
@@ -76,6 +76,14 @@ def sysflgstr(sflg,ayanamsa=0):
         return f"degrees sidereal longitude with {ayanamsa_name(ayanamsa)} ayanamsa"
 
 def ayanamsa_name(ayanamsa):
+    if ayanamsa == 0:
+        return "Tropical"
+    if ayanamsa == 98:
+        return "Dhruva GC mid-Mula Equatorial"
+    if ayanamsa == 99:
+        return "Eclitpic Vedanga Jyotisha"
+    if ayanamsa == 100:
+        return "Equatorial Vedanga Jyotisha"
     swe.set_sid_mode(ayanamsa)
     return swe.get_ayanamsa_name(ayanamsa)
 

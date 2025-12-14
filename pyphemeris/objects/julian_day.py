@@ -16,11 +16,13 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from dataclasses import dataclass
 
 import time
 
 import constants as const
 import utils
+
 
 nowtime = time.gmtime()
 nowjdfloat = utils.tmod_to_jd(nowtime)
@@ -173,3 +175,9 @@ class JulianDay:
             usryear = self.datetime[0] - 1
 
         return (usryear, usrmonth, usrday, usrhr)
+
+@dataclass
+class EphContext:
+    timeJD: JulianDay
+    sysflg: int
+    ayanamsa: int

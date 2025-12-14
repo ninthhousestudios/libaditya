@@ -21,11 +21,13 @@ import swisseph as swe
 import argparse
 import time as tmod
 import os
+from dataclasses import dataclass
 
 import constants as const
 import utils
 import read
 from objects import *
+
 
 def main():
     args = get_args()
@@ -68,9 +70,12 @@ def main():
     else:
         name = ""
         placename = ""
+        utcoffset = const.utcoffset 
+        timezone = const.timezone
         month, day, year, timedec = parse_date_time(args.date,args.time)
 
     lat, long, position, position_utcoffset = parse_position(args.position)
+    timeJD = JulianDay((year,month,day,timedec),utcoffset,timezone)
 
 
     if args.julian:
@@ -87,6 +92,28 @@ def main():
     if args.topo:
         show_topo = not (const.show_topo)
 
+
+    ayanamsa = 0
+    sysflg = const.ECL
+    if args.equatorial:
+        sysflg = const.EQU
+    if args.helios:
+        sysflg = const.HELIO
+    if args.baryos:
+        sysflg = const.BARY
+    if args.sidereal:
+        sysflg = const.SID
+        if args.ayanamsa:
+            ayanamsa = int(args.ayanamsa)
+        else:
+            ayanamsa = 1
+
+    context = EphContext(timeJD,sysflg,ayanamsa)
+
+    planets = Planets(context)
+    print("print all planets")
+    for p in planets:
+        print(p)
 
 
 # end main function
@@ -162,6 +189,9 @@ def get_args():
         "--position",
         help="latitude and longitutde in the form NN,EE; north and east are positive; don't pass directional letters; if latitude is negative, pass argument as -p=-30,40, for example; if you pass a .chtk file, it will read and use the position in that file",
     )
+    parser.add_argument(
+        "-a", "--ayanamsa", help="integer value for desired ayanamsa; use any valid swisseph value; 98 for dhruva gc mid-mula (default); 99 for ecliptic vedanga jyotisha; 100 for equatorial vedanga jyotisha"
+    )
     parser.add_argument("-l", "--lang", help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed")
     parser.add_argument("-j", "--julian", help="time specificed as a julian day")
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files; default can be set in constants.py")
@@ -184,7 +214,7 @@ def get_args():
         help="toggle priting equatorial coordinates from default behavior",
     )
     parser.add_argument(
-        "-S", "--sidereal", help="print positions in sidereal longitude; pass an ayanamsa value; see possible values under \"ayanamsa\" option"
+        "-S", "--sidereal", action="store_true", help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 1, Lahiri"
     )
     parser.add_argument(
         "-T",
