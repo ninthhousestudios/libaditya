@@ -62,3 +62,42 @@ def intize_time(time):
     else:
         return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
 
+def tmod_to_jd(now):
+    """
+    time a struct from the time module
+    and convert it to julian day float
+    """
+    return swe.julday(
+        now.tm_year,
+        now.tm_mon,
+        now.tm_mday,
+        now.tm_hour + now.tm_min / 60 + now.tm_sec / 3600,
+    )
+
+def date2str(date):
+    """date is a revjul-tuple (year,month,day,hour); return a string 'month/day/year'"""
+    return f"{date[1]:02d}/{date[2]:02d}/{date[0]:02d}"
+
+def time2str(time):
+    """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
+    return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"
+
+def mktab(n):
+    tab = ""
+    for i in range(0,n):
+        tab += "\t"
+    return tab
+
+def dec2dms(dd):
+    """dd is a float that wants to be turned into degs,mins,secs; returns (deg,min,sec)"""
+    dd = abs(dd)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
+    return (degrees, minutes, seconds)
+
+def dec2dmsstr(dd):
+    """dd is a float that wants to be turned into degs,mins,secs; returns (deg,min,sec)"""
+    dd = abs(dd)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
+    return f"{int(degrees):02d}:{int(minutes):02d}:{int(seconds):02d}"

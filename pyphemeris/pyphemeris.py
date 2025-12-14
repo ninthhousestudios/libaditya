@@ -25,6 +25,7 @@ import os
 import constants as const
 import utils
 import read
+from objects import *
 
 def main():
     args = get_args()
@@ -38,7 +39,7 @@ def main():
         swe.set_ephe_path(ephe_path)
 
     if args.lang:
-        lang_file = args.lang
+        lang_file = const.dict_path + args.lang
     else:
         lang_file = const.lang_file
 
@@ -69,12 +70,13 @@ def main():
         placename = ""
         month, day, year, timedec = parse_date_time(args.date,args.time)
 
-    lat, long, position, utcoffset = parse_position(args.position)
+    lat, long, position, position_utcoffset = parse_position(args.position)
 
 
     if args.julian:
         # user entered a julian day
         timeJD = JulianDay(float(args.julian))
+
 
     if args.equatorial:
         show_equ = not (const.show_equ)
@@ -93,6 +95,7 @@ def parse_input_file(input):
         name, placename, month, day, year, ephclock, lat, long = read.read_pyph(input)
     elif ".chtk" in input:
         name, placename, month, day, year, ephclock, lat, long, utcoffset = read.read_chtk(input)
+        utcoffset = round(utcoffset,1)
         sign = ""
         if utcoffset > 0:
             sign = "+"
@@ -166,7 +169,7 @@ def get_args():
         "-z", "--timezone", help="a string showing the timezone; e.g., CDT"
     )
     parser.add_argument(
-        "-s", "--helios", action="store_true", help="toggle heliocentric coordinates"
+        "-H", "--helios", action="store_true", help="toggle heliocentric coordinates"
     )
     parser.add_argument(
         "-B",
@@ -181,13 +184,16 @@ def get_args():
         help="toggle priting equatorial coordinates from default behavior",
     )
     parser.add_argument(
+        "-S", "--sidereal", help="print positions in sidereal longitude; pass an ayanamsa value; see possible values under \"ayanamsa\" option"
+    )
+    parser.add_argument(
         "-T",
         "--topo",
         action="store_true",
         help="toggle topocentric positions of planets; use -p to specify lat/long",
     )
     parser.add_argument(
-        "-S",
+        "-s",
         "--signize",
         action="store_true",
         help="toggle longitude presentation; default is in-sign longitude; other option is raw longitude",

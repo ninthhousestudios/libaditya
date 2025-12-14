@@ -16,10 +16,14 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+
+import os
+
 import utils
 
 # defaults
-edir = "ephe/"
+pyph_path = os.path.dirname(os.path.realpath(__file__))
+edir = pyph_path + "/ephe/"
 utcoffset = -5
 timezone = "EST"
 ayanamsa = 101  # new code for dhruva equatorial
@@ -43,10 +47,11 @@ lang = "eng"
 signs = []
 sign_long = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
 sign_func = utils.yessignize
-eng = "dict/dict.eng"
-iast = "dict/dict.iast"
-deva = "dict/dict.deva"
-mixed = "dict/dict.mixed"
+dict_path = pyph_path + "/dict/"
+eng = dict_path + "dict.eng"
+iast = dict_path + "dict.iast"
+deva = dict_path + "dict.deva"
+mixed = dict_path + "dict.mixed"
 lang_file = mixed
 flground = 1  # 1 to round, 0 to not round, ndigs is how much to round to
 ndigs = 3
@@ -58,7 +63,36 @@ BARY = swe.FLG_BARYCTR
 SID = swe.FLG_SIDEREAL
 sysflg = ECL  # default
 
+def sysflgstr(sflg,ayanamsa=0):
+    if sflg == swe.FLG_TROPICAL:
+        return "degrees ecliptic longitude"
+    if sflg == swe.FLG_EQUATORIAL:
+        return "degrees equatorial longitude"
+    if sflg == swe.FLG_HELCTR:
+        return "degrees heliocentric longitude"
+    if sflg == swe.FLG_BARYCTR:
+        return "degrees barycentric longitude"
+    if sflg == swe.FLG_SIDEREAL:
+        return f"degrees sidereal longitude with {ayanamsa_name(ayanamsa)} ayanamsa"
+
+def ayanamsa_name(ayanamsa):
+    swe.set_sid_mode(ayanamsa)
+    return swe.get_ayanamsa_name(ayanamsa)
+
 # constant constants
+
+pnames = {swe.SUN: "Sun",
+          swe.MOON: "Moon",
+          swe.MERCURY: "Mercury",
+          swe.VENUS: "Venus",
+          swe.MARS: "Mars",
+          swe.JUPITER: "Jupiter",
+          swe.SATURN: "Saturn",
+          swe.URANUS: "Uranus",
+          swe.NEPTUNE: "Neptune",
+          swe.PLUTO: "Pluto",
+          swe.EARTH: "Earth",
+          swe.TRUE_NODE: "Rahu"}
 
 dasha_years = [("saura",365.2422),("nakshatra",359.0167),("savana",360),("sidereal",365.2564),("chandra",364.2888),("lunar",354.36708)]
 
