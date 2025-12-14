@@ -20,7 +20,6 @@
 import swisseph as swe
 import argparse
 import time
-import codecs
 import pyphglobals as pglob
 import pyphutils as putil
 import pyphread as pread
