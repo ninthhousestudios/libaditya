@@ -47,6 +47,21 @@ class Planets(JulianDay):
             ret.append(p(self.context))
         return ret
 
+    def __repr__(self):
+        """
+        the function swe.houses(time,lat,long,hsys) take lat first
+        """
+        place = f"Planets at\n"
+        time = f"{self.timeJD}\n"
+        sys = f"Using {self.sysflgstr} coordinates\n"
+        retp = ""
+        for planet in self.planets:
+            retp += f"{planet}\n"
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
+            ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        return place + time + sys + retp + ayanamsa
+
     def __str__(self):
         """
         return a PrettyTable string with coordinates for all planets on julianday

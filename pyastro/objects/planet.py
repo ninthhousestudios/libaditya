@@ -22,6 +22,7 @@ from pyastro import utils
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
+from .context import EphContext
 
 
 class Planet(JulianDay):
@@ -30,7 +31,7 @@ class Planet(JulianDay):
     each Planet takes a planet number and a JulianDay class
     """
 
-    def __init__(self, pnumber, context):
+    def __init__(self, pnumber, context=EphContext()):
         self.timeJD = context.timeJD
         super().__init__(self.timeJD.jd)
         self.context = context
@@ -42,8 +43,16 @@ class Planet(JulianDay):
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+        # so that we only need only longitude() function with all the signizing and rounding or not
+        self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
 
     def __str__(self):
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
+        return f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + super().__str__()
+
+    def __repr__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
             ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
@@ -75,6 +84,12 @@ class Planet(JulianDay):
     def longitude(self):
         if self.context.signize:
             return utils.signize(self.long,self.context.toround,self.context.sign_names)
+        else:
+            return self.raw_longitude()
+
+    def raw_longitude(self):
+        if self.context.toround[0]:
+            return round(self.long,self.context.toround[1])
         else:
             return self.long
 
@@ -140,7 +155,7 @@ class Planet(JulianDay):
 
 class Sun(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.SUN, context)
 
     def sunrise_yamakoti(self):
@@ -149,79 +164,72 @@ class Sun(Planet):
 
 class Moon(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.MOON, context)
 
 
 class Mars(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.MARS, context)
 
 
 class Mercury(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.MERCURY, context)
 
 class Venus(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.VENUS, context)
 
 
 class Jupiter(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.JUPITER, context)
 
 
 class Saturn(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.SATURN, context)
 
 
 class Rahu(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.planet_names[10]
 
 class Ketu(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
-
-    def longitude(self):
-        self.long = (self.long-180)%360
-        if self.context.signize:
-            return utils.signize(self.long,self.context.toround,self.context.sign_names)
-        else:
-            return self.long
 
 class Uranus(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.URANUS, context)
 
 class Neptune(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.NEPTUNE, context)
 
 class Pluto(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.PLUTO, context)
 
 class Earth(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         super().__init__(swe.EARTH, context)
 
 class Chiron(Planet):
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         self.planet_name = "Chiron"
         super().__init__(swe.CHIRON, context)

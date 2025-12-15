@@ -66,10 +66,9 @@ def main():
     else:
         timezone = defaults.timezone
 
+    signize = defaults.signize
     if args.signize:
         signize = not (defaults.signize)
-    else:
-        signize = defaults.signize
 
     toround = defaults.toround
     if args.round:

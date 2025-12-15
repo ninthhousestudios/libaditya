@@ -37,9 +37,12 @@ class Cusp:
         self.ayanamsa = self.context.ayanamsa
         self.long = longitude
         self.daily_speed = speed
-        self.cusp_index = number
+        self.cindex = number
         self.num = number+1
         self.cusp_name = f"Cusp {self.num}"
+
+    def __str__(self):
+        return self.cusp_name + " at " + str(self.longitude())
 
     def __repr__(self):
         return self.cusp_name + " at " + str(self.long)
@@ -51,11 +54,17 @@ class Cusp:
         return self.num
 
     def cusp_index(self):
-        return self.cusp_index
+        return self.cindex
 
     def longitude(self):
         if self.context.signize:
             return utils.signize(self.long,self.context.toround,self.context.sign_names)
+        else:
+            return self.raw_longitude()
+
+    def raw_longitude(self):
+        if self.context.toround[0]:
+            return round(self.long,self.context.toround[1])
         else:
             return self.long
 
@@ -66,7 +75,10 @@ class Cusp:
             return self.daily_speed
 
     def hourly_motion(self):
-        return round(self.speed()/24,self.context.toround[1])
+        if self.context.toround[0]:
+            return round(self.speed()/24,self.context.toround[1])
+        else:
+            return self.speed()/24
 
     def table_row(self):
         """

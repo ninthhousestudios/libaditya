@@ -84,6 +84,9 @@ class JulianDay:
             appendix = sign + f"{round(self.utcoffset,2)}"
         return timezone + appendix
 
+    def jd_number(self):
+        return self.jd
+
     def date(self):
         return f"{utils.date2str(self.datetime)}"
 
