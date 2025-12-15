@@ -21,20 +21,21 @@ from prettytable import PrettyTable
 from pyastro import constants as const
 
 from .julian_day import JulianDay
+from .context import EphContext
 from .planet import *
 
 class Planets(JulianDay):
 
     plist = [Sun,Moon,Mars,Mercury,Venus,Jupiter,Saturn,Rahu,Ketu,Uranus,Neptune,Pluto,Earth,Chiron]
 
-    def __init__(self, context):
+    def __init__(self, context=EphContext()):
         self.timeJD = context.timeJD  # the JulianDay class of this planet
         super().__init__(self.timeJD.jd)
         self.context = context
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
-        self.sysflg = context.sysflg
-        self.sysflgstr = const.sysflgstr(self.sysflg,self.ayanamsa)
+        self.system = context.sysflg
+        self.sysflgstr = const.sysflgstr(context.sysflg)
         self.planets = self.init_Planets()
 
     def __iter__(self):
@@ -66,9 +67,23 @@ class Planets(JulianDay):
         output.align["Speed"] = "r"
         output.align["Latitude"] = "r"
         output.align["Latitude Speed"] = "r"
+        output.align["Distance"] = "r"
+        output.align["Distance Speed"] = "r"
 
-        output.add_row(Planets[pglob.earth].table_list(sysflg))
+        for p in self.planets:
+            # dont print earth unless it is heliocentric or barycentric
+            if isinstance(p,Earth) and not (self.system == const.HELIO or self.system == const.BARY):
+                continue
+            # dont print rahuketu if it is heliocentric or barycentric
+            if (isinstance(p,Rahu) or isinstance(p,Ketu)) and (self.system == const.HELIO or self.system == const.BARY):
+                continue
+            output.add_row(p.table_row())
 
-        ret = output.get_string(fields=["Planet", "Longitude", "Speed", "Latitude", "Latitude Speed"])
+        ret = output.get_string(fields=["Planet", "Longitude", "Speed", "Latitude", "Latitude Speed", "Distance", "Distance Speed"])
 
-        return ret
+        header = f"{self.sysflgstr} coordinates\n"
+        if self.system == swe.FLG_SIDEREAL:
+            header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        header += f"{self.timeJD}\n"
+
+        return header + ret

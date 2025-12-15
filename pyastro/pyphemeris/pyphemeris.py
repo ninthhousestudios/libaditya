@@ -27,7 +27,7 @@ from dataclasses import dataclass
 
 from pyastro import constants as const
 from pyastro import utils
-import read
+from pyastro import read
 import defaults
 from pyastro.objects import *
 
@@ -51,6 +51,13 @@ def main():
     planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
     planet_names.append("Chiron")
 
+    if args.zodiac:
+        sign_names = zodiac
+    elif defaults.signs == "zodiac":
+        sign_names = zodiac
+    else:
+        sign_names = adityas
+
     if args.timezone:
         timezone = args.timezone
     else:
@@ -67,56 +74,74 @@ def main():
     else:
         toround = defaults.toround
 
+    ayanamsa = 98
+    if args.ayanamsa:
+        ayanamsa = int(args.ayanamsa)
+
 
     if args.input: # user passed a .pyph or .chtk file
-        name, placename, month, day, year, timedec, lat, long, utcoffset, timezone = parse_input_file(args.input)
+        name, placename, month, day, year, timedec, lat, long, utcoffset = parse_input_file(args.input)
     else:
         name = ""
         placename = ""
         utcoffset = defaults.utcoffset 
-        timezone = defaults.timezone
         month, day, year, timedec = parse_date_time(args.date,args.time)
 
-    lat, long, position, position_utcoffset = parse_position(args.position)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset,timezone)
+    lat, long, placename, position_utcoffset = parse_position(args.position)
+    timeJD = JulianDay((year,month,day,timedec),utcoffset)
 
 
     if args.julian:
         # user entered a julian day
         timeJD = JulianDay(float(args.julian))
 
-
+    toshow=[const.ECL]
     if args.equatorial:
         show_equ = not (defaults.show_equ)
+        if show_equ:
+            toshow.append(const.EQU)
     if args.helios:
         show_helios = not (defaults.show_helios)
+        if show_helios:
+            toshow.append(const.HELIO)
     if args.baryos:
         show_baryos = not (defaults.show_baryos)
+        if show_baryos:
+            toshow.append(const.BARY)
     if args.topo:
         show_topo = not (defaults.show_topo)
-
-
-    ayanamsa = 0
-    sysflg = const.ECL
-    if args.equatorial:
-        sysflg = const.EQU
-    if args.helios:
-        sysflg = const.HELIO
-    if args.baryos:
-        sysflg = const.BARY
+        if show_topo:
+            toshow.append(const.TOPO)
     if args.sidereal:
-        sysflg = const.SID
+        toshow.append(const.SID)
         if args.ayanamsa:
             ayanamsa = int(args.ayanamsa)
         else:
-            ayanamsa = 1
+            ayanamsa = 27 
 
-    context = EphContext(timeJD,sysflg,ayanamsa,planet_names,signize,toround)
 
-    planets = Planets(context)
-    print("print all planets")
-    for p in planets:
-        print(p)
+
+    # @dataclass
+    # class EphContext:
+    #     timeJD: JulianDay = JulianDay()
+    #     sysflg: int = const.ECL
+    #     ayanamsa: int = 98
+    #     signize: bool = True
+    #     toround: (bool,int) = (True,3)
+    #     planet_names: (str) = tuple(const.planet_names)
+    #     sign_names: (str) = tuple(const.adityas)
+
+    ########################################################
+    #                                                      #
+    #                                                      #
+    #         start acutally printing stuff                #
+    #                                                      #
+    #                                                      #
+    ########################################################
+    for sys in toshow:
+        context = EphContext(timeJD,sys,ayanamsa,signize,toround,planet_names,sign_names)
+        print(Planets(context))
+
 
 
 # end main function
@@ -126,14 +151,10 @@ def parse_input_file(input):
     elif ".chtk" in input:
         name, placename, month, day, year, ephclock, lat, long, utcoffset = read.read_chtk(input)
         utcoffset = round(utcoffset,1)
-        sign = ""
-        if utcoffset > 0:
-            sign = "+"
-        timezone = "UTC" + sign + str(utcoffset)
     else:
         print("invalid file type")
         exit
-    return name, placename, month, day, year, ephclock, lat, long, utcoffset, timezone
+    return name, placename, month, day, year, ephclock, lat, long, utcoffset
 
 def parse_date_time(date,time):
     nowtime = tmod.gmtime()
@@ -156,10 +177,6 @@ def parse_position(position):
         return defaults.lat, defaults.long, defaults.placename, defaults.utcoffset
     if ".chtk" in position:
         placename, lat, long, utcoffset = read.read_chtk_location(position)
-        sign = ""
-        if utcoffset > 0:
-            sign = "+"
-        timezone = "UTC" + sign + str(utcoffset)
     else:
         lat, long = read.parse_position_argument(position)
         lat = lat
@@ -217,7 +234,10 @@ def get_args():
         help="toggle priting equatorial coordinates from default behavior",
     )
     parser.add_argument(
-        "-S", "--sidereal", action="store_true", help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 1, Lahiri"
+        "-S", "--sidereal", action="store_true", help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa"
+    )
+    parser.add_argument(
+        "-Z", "--zodiac", action="store_true", help="use zodiac signs; can set default variable 'signs' in defaults.py"
     )
     parser.add_argument(
         "-T",

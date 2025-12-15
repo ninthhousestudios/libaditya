@@ -24,7 +24,7 @@ from pyastro import utils
 pyph_path = os.path.dirname(pathlib.Path(__file__).parent)
 edir = pyph_path + "/ephe/"
 dict_path = pyph_path + "/dict/"
-utcoffset = -5
+utcoffset = -5.0
 timezone = "EST"
 ayanamsa = 98  # dhruva equatorial
 show_helios = 0
@@ -36,6 +36,7 @@ show_topo = 0
 show_vdasha = 0
 show_v2dasha = 0
 dasha_levels = 1
+signs = "adityas" # adityas, or zodiac
 # N and E are positive
 lat = round(utils.dms2dec((39, 57, 22)), 3)
 long = -round(utils.dms2dec((86, 0, 46)),3)

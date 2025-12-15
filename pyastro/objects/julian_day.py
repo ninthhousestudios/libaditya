@@ -41,7 +41,7 @@ class JulianDay:
     oneminjd = onehrjd / 60
     onesecjd = oneminjd / 60
 
-    def __init__(self, jd=nowjdfloat, utcoffset=0, timezone=""):
+    def __init__(self, jd=nowjdfloat, utcoffset=0):
         """
         initialize JulianDay class
         :jd - can be a float or a tuple(year, month, day, decimal_time)
@@ -54,7 +54,7 @@ class JulianDay:
             self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3])
         self.datetime = swe.revjul(self.jd)
         self.utcoffset = utcoffset
-        self.timezone = timezone
+        self.timezone = self.mktimezone()
         self.usrdatetime = self.usrdt()
 
     def __str__(self):
@@ -69,6 +69,12 @@ class JulianDay:
         """
         tab = utils.mktab(n)
         print(f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}")
+
+    def mktimezone(self):
+        sign = ""
+        if self.utcoffset > 0:
+            sign = "+"
+        return "UTC" + sign + f"{round(self.utcoffset,2)}"
 
     def date(self):
         return f"{utils.date2str(self.datetime)}"

@@ -18,6 +18,7 @@
 import swisseph as swe
 
 from pyastro import constants as const
+from pyastro import utils
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -36,36 +37,70 @@ class Planet(JulianDay):
         self.planet_name = context.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
-        self.sysflg = context.sysflg
-        self.sysflgstr = const.sysflgstr(self.sysflg,self.ayanamsa)
+        self.system = context.sysflg
+        self.sysflg = self.system | swe.FLG_SPEED
+        self.sysflgstr = const.sysflgstr(context.sysflg)
         self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+        self.context = context
 
     def __str__(self):
-        return f"{self.planet_name} at {self.longitude()} {self.sysflgstr}\n" + super().__str__()
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
+        return f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + super().__str__()
+
+    def table_row(self):
+        return [self.name()+self.retrostr()] + [self.longitude()] + [self.longitude_speed()] + [self.latitude()] + [self.latitude_speed()] + [self.distance()] + [self.distance_speed()] 
 
     def init_coords(self):
         if self.ayanamsa != 0:
             # will need to add custom ayanamsas here
+            if self.ayanamsa == 98:
+                self.ayanamsa = 36
             swe.set_sid_mode(self.ayanamsa)
         return swe.calc_ut(self.jd,self.pnumber,self.sysflg)[0]
 
+    def name(self):
+        return self.planet_name
+
+    def system_name(self):
+        return self.sysflgstr
+
     def longitude(self):
-        return self.long
+        if self.context.signize:
+            return utils.signize(self.long,self.context.toround,self.context.sign_names)
+        else:
+            return self.long
 
     def latitude(self):
-        return self.lat
+        if self.context.toround[0]:
+            return round(self.lat,self.context.toround[1])
+        else:
+            return self.lat
     
     def distance(self):
-        return self.dist
+        if self.context.toround[0]:
+            return round(self.dist,self.context.toround[1])
+        else:
+            return self.dist
     
     def longitude_speed(self):
-        return self.long_speed
+        if self.context.toround[0]:
+            return round(self.long_speed,self.context.toround[1])
+        else:
+            return self.long_speed
 
     def latitude_speed(self):
-        return self.lat_speed
+        if self.context.toround[0]:
+            return round(self.lat_speed,self.context.toround[1])
+        else:
+            return self.lat_speed
 
     def distance_speed(self):
-        return self.dist_speed
+        if self.context.toround[0]:
+            return round(self.dist_speed,self.context.toround[1])
+        else:
+            return self.dist_speed
 
     def ayanamsa(self):
         return self.ayanamsa
@@ -153,7 +188,11 @@ class Ketu(Planet):
         super().__init__(swe.TRUE_NODE, context)
 
     def longitude(self):
-        return (self.long-180)%360
+        self.long = (self.long-180)%360
+        if self.context.signize:
+            return utils.signize(self.long,self.context.toround,self.context.sign_names)
+        else:
+            return self.long
 
 class Uranus(Planet):
 

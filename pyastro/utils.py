@@ -17,32 +17,27 @@
 
 import swisseph as swe
 
+from pyastro import constants as const
+
 def dms2dec(dms):
     """
     dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
-def yessignize(long):
+def signize(long,toround,names):
     """
     return a string with 360degree longitude long given with
     long (sign), with long being in the sign
     signs contains the signs to be used, which might be adityas
     """
-    index = int(
-        (long % 360) / 30
-    )  # mod 360 in case long=360...but it probably wouldnt with swe, right?
-    inlong = pglob.round_func(long - (index * 30), 4)
-    return f"{dec2deg(inlong)} {pglob.signs[index]}"
+    index = int((long % 360) / 30)  # mod 360 in case long=360...but it probably wouldnt with swe, right?
+    if toround[0]:
+        inlong = round(long - (index * 30), toround[1])
+    else:
+        inlong = (long - (index * 30))
+    return f"{dec2dmsstr(inlong)} {names[index]}"
 
-def yesround(long, nd=3):
-    return round(long, nd)
-
-def nosignize(long):
-    return long
-
-def noround(long, nd=3):
-    return long
 
 def intize_date(date):
     """

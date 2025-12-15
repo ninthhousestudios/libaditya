@@ -21,6 +21,8 @@ import os
 
 from pyastro import utils
 
+base_path = os.path.dirname(os.path.realpath(__file__))
+
 ECL = swe.FLG_TROPICAL
 EQU = swe.FLG_EQUATORIAL
 HELIO = swe.FLG_HELCTR
@@ -28,17 +30,17 @@ BARY = swe.FLG_BARYCTR
 SID = swe.FLG_SIDEREAL
 sysflg = ECL  # default
 
-def sysflgstr(sflg,ayanamsa=0):
+def sysflgstr(sflg):
     if sflg == swe.FLG_TROPICAL:
-        return "degrees ecliptic longitude"
+        return "Tropical"
     if sflg == swe.FLG_EQUATORIAL:
-        return "degrees equatorial longitude"
+        return "Equatorial"
     if sflg == swe.FLG_HELCTR:
-        return "degrees heliocentric longitude"
+        return "Heliocentric"
     if sflg == swe.FLG_BARYCTR:
-        return "degrees barycentric longitude"
+        return "Barycentric"
     if sflg == swe.FLG_SIDEREAL:
-        return f"degrees sidereal longitude with {ayanamsa_name(ayanamsa)} ayanamsa"
+        return "Sidereal"
 
 def ayanamsa_name(ayanamsa):
     if ayanamsa == 0:
@@ -76,3 +78,28 @@ signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎
 
 
 planet_names = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Rahu", "Ketu", [], [], "Earth","Chiron"]
+
+zodiac = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
+
+tithis = ["nanda", "bhadra", "jāya", "ṛkta", "pūrṇa"]
+
+karanas = [["kiṃtughna", "bava"], ["balava", "kaulava"], ["taitila", "garija"], ["vaṇija", "viṣṭi"], ["bava", "balava"], ["kaulava", "taitila"], ["garija", "vaṇija"], ["viṣṭi", "bava"], ["balava", "kaulava"], ["taitila", "garija"], ["vaṇija", "viṣṭi"], ["bava", "balava"], ["kaulava", "taitila"], ["garija", "vaṇija"], ["viṣṭi", "bava"], ["balava", "kaulava"], ["taitila", "garija"], ["vaṇija", "viṣṭi"], ["bava", "balava"], ["kaulava", "taitila"], ["garija", "vaṇija"], ["viṣṭi", "bava"], ["balava", "kaulava"], ["taitila", "garija"], ["vaṇija", "viṣṭi"], ["bava", "balava"], ["kaulava", "taitila"], ["garija", "vaṇija"], ["viṣṭi", "śakuni"], ["catuṣpada", "nāga"]] 
+
+nakshatras = ["aśvinī", "bharaṇī", "kṛttikā", "rohiṇī", "mṛgaśīrṣa", "ārdrā", "punarvasu", "puṣya", "āśleṣā", "maghā", "pūrvā phalgunī", "uttarā phalgunī", "hasta", "citrā", "svāti", "viśākhā", "anurādhā", "jyeṣṭhā", "mūla", "pūrvāṣāḍhā", "uttarāṣāḍhā", "śravaṇa", "dhaniṣṭhā", "śatabhiṣa", "pūrvabhādrapadā", "uttarabhādrapadā", "revatī"]
+
+varas = ["ravivāra", "somavāra", "maṅgalavāra", "budhavāra", "guruvāra", "śukravāra", "śanivāra"]
+
+yogas = ["viṣkambha", "prīti", "āyuṣmān", "saubhāgya", "śobhana", "atigaṇḍa", "sukarma", "dhṛti", "śula", "gaṇḍa", "vṛddhi", "dhruva", "vyāghāta", "harṣaṇa", "vajra", "siddhi", "vyātipata", "varīyas", "parighā", "śiva", "siddha", "sādhya", "śubha", "śukla", "brahmā", "indra", "vaidhṛti"]
+
+adityas = ["aryamā", "mitra", "varuṇa", "indra", "vivasvān", "tvaṣṭā", "viṣṇu", "aṃśu", "bhaga", "pūṣā", "parjanya", "dhātā"]
+
+
+# template comment box
+
+########################################################
+#                                                      #
+#                                                      #
+#                                                      #
+#                                                      #
+#                                                      #
+########################################################
