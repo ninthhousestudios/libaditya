@@ -35,12 +35,13 @@ class Location:
         self.timezone = timezone
 
     def __str__(self):
-        return f"{self.placename} at ({self.lat},{self.long})\nelevation {self.alt} m\ntimezone: {self.timezone}"
+        return f"{self.placename} ({self.lat} lat,{self.long} long)\nelevation {self.alt} m\ntimezone: {self.timezone}\n"
 
     def place(self):
         return f"{self.placename} {round(self.lat,3)},{round(self.long,3)})"
 
-    def risetrans_location(self):
+    def swe_location(self):
+        # swe argument order is long, lat, alt
         return (self.long, self.lat, self.alt)
 
 Yamakoti = Location(0, 165.76666666666668, 0, "Yamakoti", "ykt")

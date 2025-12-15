@@ -19,11 +19,13 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from .julian_day import JulianDay
+from .location import Location
 from pyastro import constants as const
 
 @dataclass
 class EphContext:
     timeJD: JulianDay = JulianDay()
+    location: Location = Location()
     sysflg: int = const.ECL
     ayanamsa: int = 98
     signize: bool = True

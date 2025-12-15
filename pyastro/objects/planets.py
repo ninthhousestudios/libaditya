@@ -84,6 +84,11 @@ class Planets(JulianDay):
         header = f"{self.sysflgstr} coordinates\n"
         if self.system == swe.FLG_SIDEREAL:
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        if self.system == swe.FLG_TOPOCTR:
+            header += f"{self.context.location}"
+        if self.system == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+            header += f"{self.context.location}"
+            header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         header += f"{self.timeJD}\n"
 
         return header + ret

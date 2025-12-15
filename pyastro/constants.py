@@ -28,7 +28,7 @@ EQU = swe.FLG_EQUATORIAL
 HELIO = swe.FLG_HELCTR
 BARY = swe.FLG_BARYCTR
 SID = swe.FLG_SIDEREAL
-sysflg = ECL  # default
+TOPO = swe.FLG_TOPOCTR
 
 def sysflgstr(sflg):
     if sflg == swe.FLG_TROPICAL:
@@ -41,6 +41,10 @@ def sysflgstr(sflg):
         return "Barycentric"
     if sflg == swe.FLG_SIDEREAL:
         return "Sidereal"
+    if sflg == swe.FLG_TOPOCTR:
+        return "Topocentric"
+    if sflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+        return "Sidereal Topocentric"
 
 def ayanamsa_name(ayanamsa):
     if ayanamsa == 0:

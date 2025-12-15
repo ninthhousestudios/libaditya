@@ -40,8 +40,8 @@ signs = "adityas" # adityas, or zodiac
 # N and E are positive
 lat = round(utils.dms2dec((39, 57, 22)), 3)
 long = -round(utils.dms2dec((86, 0, 46)),3)
-alt = 0  # swe requires meters
-placename = ""
+alt = 252 # swe requires meters
+placename = "Default Place"
 hsys = "C"
 show_houses = 1
 lang = "eng"

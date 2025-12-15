@@ -33,6 +33,7 @@ class Planet(JulianDay):
     def __init__(self, pnumber, context):
         self.timeJD = context.timeJD
         super().__init__(self.timeJD.jd)
+        self.context = context
         self.pnumber = pnumber
         self.planet_name = context.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
@@ -41,7 +42,6 @@ class Planet(JulianDay):
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
-        self.context = context
 
     def __str__(self):
         ayanamsa = ""
@@ -53,11 +53,17 @@ class Planet(JulianDay):
         return [self.name()+self.retrostr()] + [self.longitude()] + [self.longitude_speed()] + [self.latitude()] + [self.latitude_speed()] + [self.distance()] + [self.distance_speed()] 
 
     def init_coords(self):
-        if self.ayanamsa != 0:
+        loc = self.context.location.swe_location()
+        if self.system == const.SID:
             # will need to add custom ayanamsas here
             if self.ayanamsa == 98:
                 self.ayanamsa = 36
             swe.set_sid_mode(self.ayanamsa)
+        if self.system == const.TOPO:
+            swe.set_topo(loc[0],loc[1],loc[2])
+        if self.system == (const.SID | const.TOPO):
+            swe.set_sid_mode(self.ayanamsa)
+            swe.set_topo(loc[0],loc[1],loc[2])
         return swe.calc_ut(self.jd,self.pnumber,self.sysflg)[0]
 
     def name(self):
@@ -128,7 +134,7 @@ class Planet(JulianDay):
                 self.timeJD.midnightjd() if (rs == swe.CALC_RISE) else self.jd,
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
-                location.risetrans_location(),
+                location.swe_location(),
             )[1][0]
         )
 
