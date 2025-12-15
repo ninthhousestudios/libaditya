@@ -81,8 +81,13 @@ def main():
     if args.ayanamsa:
         ayanamsa = int(args.ayanamsa)
 
+    if args.house_system:
+        hsys = args.house_system[0]
+    else:
+        hsys = defaults.hsys
 
     timezone = "UTC"
+    name = ""
     if args.input: # user passed a .pyph or .chtk file
         name, placename, month, day, year, timedec, lat, long, utcoffset = parse_input_file(args.input)
     else:
@@ -123,13 +128,16 @@ def main():
         if show_topo:
             toshow.append(const.TOPO)
     if args.sidereal:
-        toshow.append(const.SID)
-        if show_topo:
-            toshow.append(const.SID | const.TOPO)
-        if args.ayanamsa:
-            ayanamsa = int(args.ayanamsa)
-        else:
-            ayanamsa = 27 
+        show_sidereal = not (defaults.show_sidereal)
+        if show_sidereal:
+            toshow.append(const.SID)
+            if args.topo:
+                if show_topo:
+                    toshow.append(const.SID | const.TOPO)
+            if args.ayanamsa:
+                ayanamsa = int(args.ayanamsa)
+            else:
+                ayanamsa = 27 
 
 
 
@@ -141,6 +149,7 @@ def main():
     #     ayanamsa: int = 98
     #     signize: bool = True
     #     toround: (bool,int) = (True,3)
+    #     hsys: str = 'C'
     #     planet_names: (str) = tuple(const.planet_names)
     #     sign_names: (str) = tuple(const.adityas)
 
@@ -151,11 +160,29 @@ def main():
     #                                                      #
     #                                                      #
     ########################################################
+
+
+    print(f"\nEphemeris for {name}\n")
+
+    print(f"Date: {timeJD.date()}\t{timeJD.usrdate()}")
+    print(f"Time: {timeJD.time()}\t{timeJD.usrtime()}\n")
+    
+    # print planetary positions in all coordinates and types the users wants
+
     for sys in toshow:
-        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,planet_names,sign_names)
+        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)
         print(Planets(context))
+        print("\n")
 
+    # now for house cusps
 
+    context.sysflg = const.ECL
+    print(Cusps(context))
+    print("\n")
+    if const.SID in toshow:
+        context.sysflg = const.SID
+        print(Cusps(context))
+        print("\n")
 
 # end main function
 def parse_input_file(input):
@@ -231,11 +258,16 @@ def get_args():
     parser.add_argument(
         "-P", "--placename", help="a string showing the placename; e.g., CDT"
     )
+    parser.add_argument(
+        "-H",
+        "--house-system",
+        help="house system, default: C for Campanus; try R for Regiomantus",
+    )
     parser.add_argument("-l", "--lang", help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed")
     parser.add_argument("-j", "--julian", help="time specificed as a julian day")
     parser.add_argument("-e", "--edir", help="path to swiss ephemeris files; default can be set in constants.py")
     parser.add_argument(
-        "-H", "--helios", action="store_true", help="toggle heliocentric coordinates"
+        "-helio", "--helios", action="store_true", help="toggle heliocentric coordinates"
     )
     parser.add_argument(
         "-B",

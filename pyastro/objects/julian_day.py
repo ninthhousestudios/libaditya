@@ -58,7 +58,10 @@ class JulianDay:
         self.usrdatetime = self.usrdt()
 
     def __str__(self):
-        return f"{self.date()} at {self.time()}\n{self.usrdate()} at {self.usrtime()}\n{self.jd}"
+        if self.utcoffset == 0:
+            return f"{self.date()} at {self.time()}"
+        else:
+            return f"{self.date()} at {self.time()}\n{self.usrdate()} at {self.usrtime()}\n{self.jd}"
 
     def __lt__(self, jd2):
         return self.jd < jd2.jd

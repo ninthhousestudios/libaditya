@@ -77,10 +77,17 @@ class Planets(JulianDay):
             # dont print rahuketu if it is heliocentric or barycentric
             if (isinstance(p,Rahu) or isinstance(p,Ketu)) and (self.system == const.HELIO or self.system == const.BARY):
                 continue
+            # dont print the Sun when printing heliocentric coordinates
+            if isinstance(p,Sun) and self.system == const.HELIO:
+                continue
             output.add_row(p.table_row())
 
         ret = output.get_string(fields=["Planet", "Longitude", "Speed", "Latitude", "Latitude Speed", "Distance", "Distance Speed"])
 
+
+        return self.mkheader() + ret
+
+    def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
         if self.system == swe.FLG_SIDEREAL:
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
@@ -90,5 +97,4 @@ class Planets(JulianDay):
             header += f"{self.context.location}"
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         header += f"{self.timeJD}\n"
-
-        return header + ret
+        return header

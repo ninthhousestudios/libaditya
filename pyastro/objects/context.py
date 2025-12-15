@@ -30,5 +30,6 @@ class EphContext:
     ayanamsa: int = 98
     signize: bool = True
     toround: (bool,int) = (True,3)
+    hsys: str = 'C'
     planet_names: (str) = tuple(const.planet_names)
     sign_names: (str) = tuple(const.adityas)
