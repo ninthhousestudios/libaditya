@@ -24,6 +24,57 @@ from .context import EphContext
 from pyastro import constants as const
 from pyastro import utils
 
+class Cusp:
+
+    def __init__(self, longitude, speed, number, context=EphContext()):
+        self.context = context
+        self.hsys = self.context.hsys.encode()
+        self.location = self.context.location
+        self.timeJD = self.context.timeJD
+        self.jd = self.timeJD.jd
+        self.system = self.context.sysflg # if it is sidereal or sidereal topocentric
+        self.hname = swe.house_name(self.hsys)
+        self.ayanamsa = self.context.ayanamsa
+        self.long = longitude
+        self.daily_speed = speed
+        self.cusp_index = number
+        self.num = number+1
+        self.cusp_name = f"Cusp {self.num}"
+
+    def __repr__(self):
+        return self.cusp_name + " at " + str(self.long)
+
+    def name(self):
+        return self.cusp_name
+
+    def number(self):
+        return self.num
+
+    def cusp_index(self):
+        return self.cusp_index
+
+    def longitude(self):
+        if self.context.signize:
+            return utils.signize(self.long,self.context.toround,self.context.sign_names)
+        else:
+            return self.long
+
+    def speed(self):
+        if self.context.toround[0]:
+            return round(self.daily_speed,self.context.toround[1])
+        else:
+            return self.daily_speed
+
+    def hourly_motion(self):
+        return round(self.speed()/24,self.context.toround[1])
+
+    def table_row(self):
+        """
+        get table row for cusp n
+        """
+        return [f"{self.number()}"] + [self.longitude()] + [self.hourly_motion()] + [self.speed()]
+
+
 class Cusps:
     """
     calculate house cusps for a certain place lat,long (NE both positive)
@@ -46,7 +97,7 @@ class Cusps:
         self.system = self.context.sysflg # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.cusps, self.ascmc, self.cuspsspeed, self.ascmcspeed = self.init_cusps()  # a 12 tuple of cusp points
+        self.cusps, self.ascmc,  self.ascmcspeed = self.init_cusps()  # a 12 tuple of cusp points
 
     def __iter__(self):
         return iter(self.cusps)
@@ -58,11 +109,13 @@ class Cusps:
         place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
         time = f"{self.timeJD}\n"
         sys = f"Using house system {self.hname}\n"
-        cusps = f"{self.cusps}\n"
+        retcusps = ""
+        for cusp in self.cusps:
+            retcusps += f"{cusp}\n"
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
             ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        return place + time + sys + cusps + ayanamsa
+        return place + time + sys + retcusps + ayanamsa
 
     def __str__(self):
         output = PrettyTable()
@@ -72,50 +125,18 @@ class Cusps:
             "Hourly Motion",
             "Daily Motion",
         ]
-        output.align["Planet"] = "l"
+        output.align["Cusp"] = "r"
         output.align["Longitude"] = "l"
         output.align["Hourly Motion"] = "r"
         output.align["Daily Motion"] = "r"
 
-        for n in range(0,len(self.cusps)):
-            output.add_row(self.table_row(n))
+        for cusp in self.cusps:
+            output.add_row(cusp.table_row())
 
         ret = output.get_string(fields=["Cusp", "Longitude", "Hourly Motion", "Daily Motion"])
 
         return self.mkheader() + ret
 
-    def table_row(self,n):
-        """
-        get table row for cusp n
-        """
-        return [f"{n+1}"] + [self.longitude(n)] + [self.hourly_motion(n)] + [self.speed(n)]
-
-    def mkheader(self):
-        """
-        the function swe.houses(time,lat,long,hsys) take lat first
-        """
-        place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
-        time = f"{self.timeJD}\n"
-        sys = f"Using house system {self.hname}\n"
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        return place + time + sys + ayanamsa
-
-    def longitude(self,n):
-        if self.context.signize:
-            return utils.signize(self.cusps[n],self.context.toround,self.context.sign_names)
-        else:
-            return self.cusps[n]
-
-    def speed(self,n):
-        if self.context.toround[0]:
-            return round(self.cuspsspeed[n],self.context.toround[1])
-        else:
-            return self.cuspsspeed[n]
-
-    def hourly_motion(self,n):
-        return round(self.speed(n)/24,self.context.toround[1])
 
     def init_cusps(self):
         """
@@ -128,7 +149,24 @@ class Cusps:
             if self.ayanamsa == 98:
                 self.ayanamsa = 36
             swe.set_sid_mode(self.ayanamsa)
-        return swe.houses_ex2(self.jd, self.location.lat, self.location.long, self.hsys, flag)
+        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(self.jd, self.location.lat, self.location.long, self.hsys, flag)
+        retcusps = []
+        for n, cusp in enumerate(cusps):
+            retcusps.append(Cusp(cusp,speeds[n],n,self.context))
+        return retcusps, ascmc, ascmcspeeds
+
+
+    def mkheader(self):
+        """
+        the function swe.houses(time,lat,long,hsys) take lat first
+        """
+        place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
+        time = f"{self.timeJD}\n"
+        sys = f"Using house system {self.hname}\n"
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
+            ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        return place + time + sys + ayanamsa
 
     def house_name(self):
         return self.hname
