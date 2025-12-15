@@ -17,16 +17,16 @@
 
 import swisseph as swe
 
-import constants as const
+from pyastro import constants as const
 
 class Location:
     def __init__(
         self,
-        lat=const.lat,
-        long=const.long,
-        alt=const.alt,
-        placename=const.placename,
-        timezone=const.timezone,
+        lat=0,
+        long=165.76666666666668,
+        alt=0,
+        placename="Yamakoti",
+        timezone="YKT",
     ):
         self.lat = float(lat)
         self.long = float(long)
@@ -38,7 +38,7 @@ class Location:
         return f"{self.placename} at ({self.lat},{self.long})\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def place(self):
-        return f"{self.placename} ({const.round_func(self.lat)},{pglob.round_func(self.long)})"
+        return f"{self.placename} {round(self.lat,3)},{round(self.long,3)})"
 
     def risetrans_location(self):
         return (self.long, self.lat, self.alt)

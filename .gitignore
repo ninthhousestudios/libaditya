@@ -12,3 +12,4 @@ example*
 *.pyph
 debnds.py
 copyright
+pyastro.egg-info

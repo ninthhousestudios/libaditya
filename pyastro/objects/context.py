@@ -15,28 +15,17 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
+from dataclasses import dataclass, field
+from typing import ClassVar
 
-import constants as const
+from .julian_day import JulianDay
+from pyastro import constants as const
 
-from .planet import *
-
-class Planets(JulianDay):
-
-    plist = [Sun,Moon,Mars,Mercury,Venus,Jupiter,Saturn,Rahu,Ketu,Uranus,Neptune,Pluto,Earth]
-
-    def __init__(self, timeJD=JulianDay(), sysflg=const.ECL, ayanamsa=0):
-        super().__init__(timeJD.jd)
-        self.timeJD = timeJD  # the JulianDay class of this planet
-        self.jd = self.timeJD.jd
-        self.ayanamsa = ayanamsa
-        self.sysflg = sysflg
-        self.sysflgstr = const.sysflgstr(self.sysflg,self.ayanamsa)
-        self.planets = self.init_Planets()
-
-    def init_Planets(self):
-        ret = []
-        for p in plist:
-            ret.append(p(timeJD))
-        return ret
-
+@dataclass
+class EphContext:
+    timeJD: JulianDay = JulianDay()
+    sysflg: int = const.ECL
+    ayanamsa: int = 98
+    planet_names: (str) = tuple(const.planet_names)
+    signize: bool = True
+    toround: (bool,int) = (True,3)

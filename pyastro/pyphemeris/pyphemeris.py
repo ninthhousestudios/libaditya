@@ -21,12 +21,15 @@ import swisseph as swe
 import argparse
 import time as tmod
 import os
+import sys
 from dataclasses import dataclass
 
-import constants as const
-import utils
+
+from pyastro import constants as const
+from pyastro import utils
 import read
-from objects import *
+import defaults
+from pyastro.objects import *
 
 
 def main():
@@ -35,36 +38,34 @@ def main():
     if args.edir:
         ephe_path = args.edir
     else:
-        ephe_path = const.edir
+        ephe_path = defaults.edir
 
     if os.path.exists(ephe_path):
         swe.set_ephe_path(ephe_path)
 
     if args.lang:
-        lang_file = const.dict_path + args.lang
+        lang_file = defaults.dict_path + args.lang
     else:
-        lang_file = const.lang_file
+        lang_file = defaults.lang_file
 
     planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
+    planet_names.append("Chiron")
 
     if args.timezone:
         timezone = args.timezone
     else:
-        timezone = const.timezone
+        timezone = defaults.timezone
 
     if args.signize:
-        sign_long = not (const.sign_long)
-
-    if not (const.sign_long):  # means they want raw longitudes
-        sign_func = utils.nosignize
-
-    if args.round:
-        flground = not (const.flground)
-
-    if const.flground:
-        round_func = utils.yesround
+        signize = not (defaults.signize)
     else:
-        round_func = utils.noround
+        signize = defaults.signize
+
+    toround = defaults.toround
+    if args.round:
+        toround[0] = not (defaults.toround[0])
+    else:
+        toround = defaults.toround
 
 
     if args.input: # user passed a .pyph or .chtk file
@@ -72,8 +73,8 @@ def main():
     else:
         name = ""
         placename = ""
-        utcoffset = const.utcoffset 
-        timezone = const.timezone
+        utcoffset = defaults.utcoffset 
+        timezone = defaults.timezone
         month, day, year, timedec = parse_date_time(args.date,args.time)
 
     lat, long, position, position_utcoffset = parse_position(args.position)
@@ -86,13 +87,13 @@ def main():
 
 
     if args.equatorial:
-        show_equ = not (const.show_equ)
+        show_equ = not (defaults.show_equ)
     if args.helios:
-        show_helios = not (const.show_helios)
+        show_helios = not (defaults.show_helios)
     if args.baryos:
-        show_baryos = not (const.show_baryos)
+        show_baryos = not (defaults.show_baryos)
     if args.topo:
-        show_topo = not (const.show_topo)
+        show_topo = not (defaults.show_topo)
 
 
     ayanamsa = 0
@@ -110,7 +111,7 @@ def main():
         else:
             ayanamsa = 1
 
-    context = EphContext(timeJD,sysflg,ayanamsa,planet_names)
+    context = EphContext(timeJD,sysflg,ayanamsa,planet_names,signize,toround)
 
     planets = Planets(context)
     print("print all planets")
@@ -152,7 +153,7 @@ def parse_date_time(date,time):
 
 def parse_position(position):
     if not position:
-        return const.lat, const.long, const.placename, const.utcoffset
+        return defaults.lat, defaults.long, defaults.placename, defaults.utcoffset
     if ".chtk" in position:
         placename, lat, long, utcoffset = read.read_chtk_location(position)
         sign = ""

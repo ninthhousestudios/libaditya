@@ -18,14 +18,14 @@
 import swisseph as swe
 from prettytable import PrettyTable
 
-import constants as const
+from pyastro import constants as const
 
 from .julian_day import JulianDay
 from .planet import *
 
 class Planets(JulianDay):
 
-    plist = [Sun,Moon,Mars,Mercury,Venus,Jupiter,Saturn,Rahu,Ketu,Uranus,Neptune,Pluto,Earth]
+    plist = [Sun,Moon,Mars,Mercury,Venus,Jupiter,Saturn,Rahu,Ketu,Uranus,Neptune,Pluto,Earth,Chiron]
 
     def __init__(self, context):
         self.timeJD = context.timeJD  # the JulianDay class of this planet

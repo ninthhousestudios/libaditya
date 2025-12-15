@@ -18,7 +18,7 @@
 import codecs
 import configparser
 
-import constants as const
+import defaults
 
 def read_pyph(infile):
     input = open(infile, "r")
@@ -353,7 +353,7 @@ def parse_position_argument(position):
 
     return lat, long
 
-def init_names(langfile=const.mixed):
+def init_names(langfile=defaults.mixed):
     names = configparser.ConfigParser()
     names.read(langfile)
 

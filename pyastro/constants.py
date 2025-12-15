@@ -19,43 +19,8 @@ import swisseph as swe
 
 import os
 
-import utils
+from pyastro import utils
 
-# defaults
-pyph_path = os.path.dirname(os.path.realpath(__file__))
-edir = pyph_path + "/ephe/"
-utcoffset = -5
-timezone = "EST"
-ayanamsa = 98  # dhruva equatorial
-show_helios = 0
-show_baryos = 0
-show_topo = 0
-show_adityas = 1
-show_equ = 0
-show_topo = 0
-show_vdasha = 0
-show_v2dasha = 0
-dasha_levels = 1
-# N and E are positive
-lat = round(utils.dms2dec((39, 57, 22)), 3)
-long = -round(utils.dms2dec((86, 0, 46)),3)
-alt = 0  # swe requires meters
-placename = ""
-hsys = "C"
-show_houses = 1
-lang = "eng"
-signs = []
-sign_long = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
-sign_func = utils.yessignize
-dict_path = pyph_path + "/dict/"
-eng = dict_path + "dict.eng"
-iast = dict_path + "dict.iast"
-deva = dict_path + "dict.deva"
-mixed = dict_path + "dict.mixed"
-lang_file = mixed
-flground = 1  # 1 to round, 0 to not round, ndigs is how much to round to
-ndigs = 3
-round_func = utils.yesround  # like with the signs, the function used to round constant constants for program functions
 ECL = swe.FLG_TROPICAL
 EQU = swe.FLG_EQUATORIAL
 HELIO = swe.FLG_HELCTR
@@ -89,18 +54,6 @@ def ayanamsa_name(ayanamsa):
 
 # constant constants
 
-pnames = {swe.SUN: "Sun",
-          swe.MOON: "Moon",
-          swe.MERCURY: "Mercury",
-          swe.VENUS: "Venus",
-          swe.MARS: "Mars",
-          swe.JUPITER: "Jupiter",
-          swe.SATURN: "Saturn",
-          swe.URANUS: "Uranus",
-          swe.NEPTUNE: "Neptune",
-          swe.PLUTO: "Pluto",
-          swe.EARTH: "Earth",
-          swe.TRUE_NODE: "Rahu"}
 
 dasha_years = [("saura",365.2422),("nakshatra",359.0167),("savana",360),("sidereal",365.2564),("chandra",364.2888),("lunar",354.36708)]
 
@@ -118,4 +71,8 @@ calendardays = [
     "Friday",
     "Saturday",
 ]
+
 signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎", "♏︎", "♐︎", "♑︎", "♒︎", "♓︎"]
+
+
+planet_names = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Rahu", "Ketu", [], [], "Earth","Chiron"]

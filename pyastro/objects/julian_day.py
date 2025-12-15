@@ -21,8 +21,7 @@ from typing import Callable
 
 import time
 
-import constants as const
-import utils
+from pyastro import utils
 
 
 nowtime = time.gmtime()
@@ -42,7 +41,7 @@ class JulianDay:
     oneminjd = onehrjd / 60
     onesecjd = oneminjd / 60
 
-    def __init__(self, jd=nowjdfloat, utcoffset=const.utcoffset, timezone=const.timezone):
+    def __init__(self, jd=nowjdfloat, utcoffset=0, timezone=""):
         """
         initialize JulianDay class
         :jd - can be a float or a tuple(year, month, day, decimal_time)
@@ -177,11 +176,3 @@ class JulianDay:
 
         return (usryear, usrmonth, usrday, usrhr)
 
-@dataclass
-class EphContext:
-    timeJD: JulianDay
-    sysflg: int
-    ayanamsa: int
-    planet_names: [str]
-    round_function: Callable[[float],float] = round
-    sign_function: Callable[[float],str] = utils.yessignize

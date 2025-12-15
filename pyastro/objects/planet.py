@@ -17,7 +17,7 @@
 
 import swisseph as swe
 
-import constants as const
+from pyastro import constants as const
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -174,3 +174,9 @@ class Earth(Planet):
 
     def __init__(self, context):
         super().__init__(swe.EARTH, context)
+
+class Chiron(Planet):
+
+    def __init__(self, context):
+        self.planet_name = "Chiron"
+        super().__init__(swe.CHIRON, context)
