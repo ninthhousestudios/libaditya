@@ -24,28 +24,28 @@ from .context import EphContext
 from libaditya import constants as const
 from libaditya import utils
 
-class Cusp:
 
+class Cusp:
     def __init__(self, longitude, speed, number, context=EphContext()):
         self.context = context
         self.hsys = self.context.hsys.encode()
         self.location = self.context.location
         self.timeJD = self.context.timeJD
         self.jd = self.timeJD.jd
-        self.system = self.context.sysflg # if it is sidereal or sidereal topocentric
+        self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self._longitude = longitude
+        self.long = longitude
         self.daily_speed = speed
         self._cusp_index = number
-        self._number = number+1
+        self._number = number + 1
         self._cusp_name = f"Cusp {self._number}"
 
     def __str__(self):
         return self.cusp_name + " at " + str(self.longitude())
 
     def __repr__(self):
-        return self.cusp_name + " at " + str(self._longitude)
+        return self.cusp_name + " at " + str(self.long)
 
     def name(self):
         return self.cusp_name
@@ -58,33 +58,53 @@ class Cusp:
 
     def longitude(self):
         if self.context.signize:
-            return utils.signize(self.long,self.context.toround,self.context.sign_names)
+            return self.signize()
         else:
-            return self.raw_longitude()
+            return self.rawlong()
+
+    def signize(self):
+        """
+        return a string with 360degree longitude long given with
+        long (sign), with long being in the sign
+        signs contains the signs to be used, which might be adityas
+        """
+        index = int(
+            (self.long % 360) / 30
+        )  # mod 360 in case long=360...but it probably wouldnt with swe, right?
+        if self.context.toround[0]:
+            inlong = round(self.long % 30, self.context.toround[1])
+        else:
+            inlong = self.long % 30
+        return f"{utils.dec2dmsstr(inlong)} {self.context.sign_names[index]}"
 
     def raw_longitude(self):
         if self.context.toround[0]:
-            return round(self.long,self.context.toround[1])
+            return round(self.long, self.context.toround[1])
         else:
-            return self._longitude
+            return self.long
 
     def speed(self):
         if self.context.toround[0]:
-            return round(self.daily_speed,self.context.toround[1])
+            return round(self.daily_speed, self.context.toround[1])
         else:
             return self.daily_speed
 
     def hourly_motion(self):
         if self.context.toround[0]:
-            return round(self.speed()/24,self.context.toround[1])
+            return round(self.speed() / 24, self.context.toround[1])
         else:
-            return self.speed()/24
+            return self.speed() / 24
 
     def table_row(self):
         """
         get table row for cusp n
         """
-        return [f"{self._numberber()}"] + [self.longitude()] + [self.hourly_motion()] + [self.speed()]
+        return (
+            [f"{self.number()}"]
+            + [self.longitude()]
+            + [self.hourly_motion()]
+            + [self.speed()]
+        )
 
 
 class Cusps:
@@ -106,10 +126,12 @@ class Cusps:
         self.location = self.context.location
         self.timeJD = self.context.timeJD
         self.jd = self.timeJD.jd
-        self.system = self.context.sysflg # if it is sidereal or sidereal topocentric
+        self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.cusps, self.ascmc,  self.ascmcspeed = self.init_cusps()  # a 12 tuple of cusp points
+        self.cusps, self.ascmc, self.ascmcspeed = (
+            self.init_cusps()
+        )  # a 12 tuple of cusp points
 
     def __iter__(self):
         return iter(self.cusps)
@@ -145,10 +167,11 @@ class Cusps:
         for cusp in self.cusps:
             output.add_row(cusp.table_row())
 
-        ret = output.get_string(fields=["Cusp", "Longitude", "Hourly Motion", "Daily Motion"])
+        ret = output.get_string(
+            fields=["Cusp", "Longitude", "Hourly Motion", "Daily Motion"]
+        )
 
         return self.mkheader() + ret
-
 
     def init_cusps(self):
         """
@@ -161,12 +184,13 @@ class Cusps:
             if self.ayanamsa == 98:
                 self.ayanamsa = 36
             swe.set_sid_mode(self.ayanamsa)
-        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(self.jd, self.location.lat, self.location.long, self.hsys, flag)
+        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
+            self.jd, self.location.lat, self.location.long, self.hsys, flag
+        )
         retcusps = []
         for n, cusp in enumerate(cusps):
-            retcusps.append(Cusp(cusp,speeds[n],n,self.context))
+            retcusps.append(Cusp(cusp, speeds[n], n, self.context))
         return retcusps, ascmc, ascmcspeeds
-
 
     def mkheader(self):
         """

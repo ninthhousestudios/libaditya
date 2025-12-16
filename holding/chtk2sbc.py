@@ -25,21 +25,21 @@ from pyphread import *
 
 def main():
     args = get_args()
-    
+
     for file in args.file:
-        if(len(file.split('.')) == 1):
+        if len(file.split(".")) == 1:
             # not a chtk file
             continue
-        if file.split('.')[1].strip().lower() != "chtk":
+        if file.split(".")[1].strip().lower() != "chtk":
             # not a chtk file
             continue
-        linenum=0
-        foutname = file.split('.')[0].strip().replace(' ','-').replace(',','').lower()
+        linenum = 0
+        foutname = file.split(".")[0].strip().replace(" ", "-").replace(",", "").lower()
         input = open(file, "rb")
         print(f"converting {file}")
         lines = input.readlines()
         for line in lines:
-            #print(f"{n}: {line.decode(errors='ignore')}")
+            # print(f"{n}: {line.decode(errors='ignore')}")
             match linenum:
                 case 0:
                     name = clean_line(line)
@@ -70,10 +70,10 @@ def main():
                     # someimtes it is just HH:MM
                     # sometimes it is just H, so deal with all of those
                     line = clean_line(line).split(":")
-                    if(len(line)==1):
+                    if len(line) == 1:
                         h = int(line[0])
                         m = s = 0
-                    elif(len(line)==2):
+                    elif len(line) == 2:
                         h = int(line[0])
                         m = int(line[1])
                         s = 0
@@ -81,26 +81,26 @@ def main():
                         h = int(line[0])
                         m = int(line[1])
                         s = int(line[2])
-                    utcoff = int(h)+(int(m)/60) + (int(s)/3600)
-                case 13: # dst value
+                    utcoff = int(h) + (int(m) / 60) + (int(s) / 3600)
+                case 13:  # dst value
                     dst = intize_line(codecs.decode(line))
-            linenum+=1
-        input.close() 
-    #    print(name)
-    #    print(f"{month:02d}/{day:02d}/{year}")
-    #    print(f"{hour:02d}:{min:02d}:{sec:02d}")
-    #    print(f"{"male" if sex==1 else "female"}")
-    #    print(country)
-    #    print(city)
-    #    print(f"(lat,long): ({lat},{long})")
-    #    print(utcoff)
+            linenum += 1
+        input.close()
+        #    print(name)
+        #    print(f"{month:02d}/{day:02d}/{year}")
+        #    print(f"{hour:02d}:{min:02d}:{sec:02d}")
+        #    print(f"{"male" if sex==1 else "female"}")
+        #    print(country)
+        #    print(city)
+        #    print(f"(lat,long): ({lat},{long})")
+        #    print(utcoff)
 
         # time for config needs to be utc
         # so we take the time here and add utcoffset
-        time = dms2dec((int(hour),int(min),int(sec))) # turn into float
-        time += utcoff - dst # utcoff is already a float
-        time = dec2dms(time) # return the float as a string HH:MM:SS
-    #    print(time)
+        time = dms2dec((int(hour), int(min), int(sec)))  # turn into float
+        time += utcoff - dst  # utcoff is already a float
+        time = dec2dms(time)  # return the float as a string HH:MM:SS
+        #    print(time)
 
         out = []
         out.append(f"Name = {name}\n")
@@ -114,8 +114,10 @@ def main():
         out.append(f"TTime = now\n")
         out.append(f"TLat = {lat}\n")
         out.append(f"TLong = {long}\n")
-        out.append(f"\noutput = {name.replace(' ','-').replace(',','').lower()}.svg\n")
-        fout = open(foutname+".sbc","w")
+        out.append(
+            f"\noutput = {name.replace(' ', '-').replace(',', '').lower()}.svg\n"
+        )
+        fout = open(foutname + ".sbc", "w")
         fout.writelines(out)
         fout.close()
 
@@ -123,11 +125,12 @@ def main():
 def get_args():
     parser = argparse.ArgumentParser(
         prog="chtk2sbc",
-        usage="%(prog)s [options]", 
+        usage="%(prog)s [options]",
         description=f"convert .chtk file .sbc format",
     )
-    parser.add_argument("file", nargs='*', help=".chtk file(s) to convert") 
+    parser.add_argument("file", nargs="*", help=".chtk file(s) to convert")
     args = parser.parse_args()
     return args
+
 
 main()

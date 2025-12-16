@@ -31,48 +31,51 @@ import sbc_constants as sc
 import pyphread as pread
 import pyphutils as putil
 
+
 def init_config(file=sc.config_base):
-    input = open(file,'r')
-    
-    config = {} # empty dictionary
+    input = open(file, "r")
+
+    config = {}  # empty dictionary
 
     for line in input:
-       if not "=" in line or line.startswith('#'):
-           continue # either a comment or not a variable if line doesnt have =
-       field, value = line.split("=")
-       field = field.strip().lower()
-       value = value.strip()
-       config[field]=value 
+        if not "=" in line or line.startswith("#"):
+            continue  # either a comment or not a variable if line doesnt have =
+        field, value = line.split("=")
+        field = field.strip().lower()
+        value = value.strip()
+        config[field] = value
     input.close()
     return config
+
 
 def init_chart_config(file):
     """
     initialize the dictionary for a chart
     includes birth info, transit info, theme and other options
     """
-    input = open(file,'r')
-    
-    config = init_config() # empty dictionary
+    input = open(file, "r")
+
+    config = init_config()  # empty dictionary
 
     for line in input:
-       if not "=" in line or line.startswith('#'):
-           continue # either a comment or not a variable if line doesnt have =
-       field, value = line.split("=")
-       field = field.strip().lower()
-       value = value.strip()
-       if "lat" in field or "long" in field:
-           if ":" in value: # user passed lat/long as DD:MM:SS
-               v=value.split(":")
-               if len(v) == 3:
-                   value = putil.dms2dec((int(v[0]),int(v[1]),int(v[2])))
-               elif len(v) == 2:
-                   value = putil.dms2dec((int(v[0]),int(v[1]),0))
-               else:
-                   value = int(v[0])
-       config[field]=value 
+        if not "=" in line or line.startswith("#"):
+            continue  # either a comment or not a variable if line doesnt have =
+        field, value = line.split("=")
+        field = field.strip().lower()
+        value = value.strip()
+        if "lat" in field or "long" in field:
+            if ":" in value:  # user passed lat/long as DD:MM:SS
+                v = value.split(":")
+                if len(v) == 3:
+                    value = putil.dms2dec((int(v[0]), int(v[1]), int(v[2])))
+                elif len(v) == 2:
+                    value = putil.dms2dec((int(v[0]), int(v[1]), 0))
+                else:
+                    value = int(v[0])
+        config[field] = value
     input.close()
     return config
+
 
 # user passed a chtk file, so deal with it
 def init_chtk_config(file):
@@ -80,17 +83,17 @@ def init_chtk_config(file):
 
     config = init_config()
 
-    config["name"]=name
-    config["date"]=f"{month:02d}/{day:02d}/{year:04d}"
-    config["place"]=placename
-    config["time"]=pread.dec2dms(ephclock)
-    config["lat"]=lat
-    config["long"]=long
-    config["tplace"]=placename
-    config["tdate"]="now"
-    config["ttime"]="now"
-    config["tlat"]=lat
-    config["tlong"]=long
-    config["output"]=f"{name.strip().replace(' ','-').replace(',','').lower()}.svg"
+    config["name"] = name
+    config["date"] = f"{month:02d}/{day:02d}/{year:04d}"
+    config["place"] = placename
+    config["time"] = pread.dec2dms(ephclock)
+    config["lat"] = lat
+    config["long"] = long
+    config["tplace"] = placename
+    config["tdate"] = "now"
+    config["ttime"] = "now"
+    config["tlat"] = lat
+    config["tlong"] = long
+    config["output"] = f"{name.strip().replace(' ', '-').replace(',', '').lower()}.svg"
 
     return config

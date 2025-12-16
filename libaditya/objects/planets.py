@@ -24,9 +24,24 @@ from .julian_day import JulianDay
 from .context import EphContext
 from .planet import *
 
-class Planets(JulianDay):
 
-    plist = [Sun,Moon,Mars,Mercury,Venus,Jupiter,Saturn,Rahu,Ketu,Uranus,Neptune,Pluto,Earth,Chiron]
+class Planets(JulianDay):
+    plist = [
+        Sun,
+        Moon,
+        Mars,
+        Mercury,
+        Venus,
+        Jupiter,
+        Saturn,
+        Rahu,
+        Ketu,
+        Uranus,
+        Neptune,
+        Pluto,
+        Earth,
+        Chiron,
+    ]
 
     def __init__(self, context=EphContext()):
         self.timeJD = context.timeJD  # the JulianDay class of this planet
@@ -87,18 +102,31 @@ class Planets(JulianDay):
 
         for p in self.planets:
             # dont print earth unless it is heliocentric or barycentric
-            if isinstance(p,Earth) and not (self.system == const.HELIO or self.system == const.BARY):
+            if isinstance(p, Earth) and not (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
                 continue
             # dont print rahuketu if it is heliocentric or barycentric
-            if (isinstance(p,Rahu) or isinstance(p,Ketu)) and (self.system == const.HELIO or self.system == const.BARY):
+            if (isinstance(p, Rahu) or isinstance(p, Ketu)) and (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
                 continue
             # dont print the Sun when printing heliocentric coordinates
-            if isinstance(p,Sun) and self.system == const.HELIO:
+            if isinstance(p, Sun) and self.system == const.HELIO:
                 continue
             output.add_row(p.table_row())
 
-        ret = output.get_string(fields=["Planet", "Longitude", "Speed", "Latitude", "Latitude Speed", "Distance", "Distance Speed"])
-
+        ret = output.get_string(
+            fields=[
+                "Planet",
+                "Longitude",
+                "Speed",
+                "Latitude",
+                "Latitude Speed",
+                "Distance",
+                "Distance Speed",
+            ]
+        )
 
         return self.mkheader() + ret
 

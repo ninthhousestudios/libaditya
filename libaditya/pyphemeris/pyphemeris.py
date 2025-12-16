@@ -21,7 +21,6 @@ import swisseph as swe
 import argparse
 import time as tmod
 import os
-import sys
 from dataclasses import dataclass
 
 
@@ -29,7 +28,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
 import defaults
-from libaditya.objects import *
+from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location
 
 
 def main():
@@ -51,7 +50,17 @@ def main():
     else:
         lang_file = defaults.lang_file
 
-    planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
+    (
+        planet_names,
+        zodiac,
+        tithis,
+        karanas,
+        nakshatras,
+        varas,
+        yogas,
+        adityas,
+        sidereal_adityas,
+    ) = read.init_names(lang_file)
     planet_names.append("Chiron")
 
     if args.zodiac:
@@ -87,29 +96,37 @@ def main():
 
     timezone = "UTC"
     name = ""
-    if args.input: # user passed a .pyph or .chtk file
-        name, placename, month, day, year, timedec, lat, long, utcoffset = parse_input_file(args.input)
+    if args.input:  # user passed a .pyph or .chtk file
+        name, placename, month, day, year, timedec, lat, long, utcoffset = (
+            parse_input_file(args.input)
+        )
     else:
         name = ""
         placename = ""
-        utcoffset = defaults.utcoffset 
-        month, day, year, timedec = parse_date_time(args.date,args.time)
+        utcoffset = defaults.utcoffset
+        month, day, year, timedec = parse_date_time(args.date, args.time)
 
     if args.position:
-        lat, long, placename, utcoffset, timezone = parse_position(args.position,args.placename,args.timezone)
+        lat, long, placename, utcoffset, timezone = parse_position(
+            args.position, args.placename, args.timezone
+        )
     else:
-        lat, long, placename, utcoffset = defaults.lat, defaults.long, defaults.placename, defaults.utcoffset
+        lat, long, placename, utcoffset = (
+            defaults.lat,
+            defaults.long,
+            defaults.placename,
+            defaults.utcoffset,
+        )
 
     # the time and place for our computations for this ephemeris
-    timeJD = JulianDay((year,month,day,timedec),utcoffset,timezone)
-    location = Location(lat,long,0,placename,timeJD.mktimezone())
-
+    timeJD = JulianDay((year, month, day, timedec), utcoffset, timezone)
+    location = Location(lat, long, 0, placename, timeJD.mktimezone())
 
     if args.julian:
         # user entered a julian day
         timeJD = JulianDay(float(args.julian))
 
-    toshow=[const.ECL]
+    toshow = [const.ECL]
     if args.equatorial:
         show_equ = not (defaults.show_equ)
         if show_equ:
@@ -136,9 +153,7 @@ def main():
             if args.ayanamsa:
                 ayanamsa = int(args.ayanamsa)
             else:
-                ayanamsa = 27 
-
-
+                ayanamsa = 27
 
     # @dataclass
     # class EphContext:
@@ -160,42 +175,70 @@ def main():
     #                                                      #
     ########################################################
 
-
     print(f"\nEphemeris for {name}\n")
 
     print(f"Date: {timeJD.date()}\t{timeJD.usrdate()}")
     print(f"Time: {timeJD.time()}\t{timeJD.usrtime()}\n")
-    
+
     # print planetary positions in all coordinates and types the users wants
 
     for sys in toshow:
-        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)
+        if sys == const.SID:
+            context = EphContext(
+                timeJD,
+                location,
+                sys,
+                ayanamsa,
+                signize,
+                toround,
+                hsys,
+                planet_names,
+                sidereal_adityas,
+            )
+            print(Planets(context))
+            print("\n")
+            continue
+        context = EphContext(
+            timeJD,
+            location,
+            sys,
+            ayanamsa,
+            signize,
+            toround,
+            hsys,
+            planet_names,
+            sign_names,
+        )
         print(Planets(context))
         print("\n")
 
     # now for house cusps
-
     context.sysflg = const.ECL
     print(Cusps(context))
     print("\n")
     if const.SID in toshow:
+        sign_names = sidereal_adityas
         context.sysflg = const.SID
         print(Cusps(context))
         print("\n")
+
 
 # end main function
 def parse_input_file(input):
     if ".pyph" in input:
         name, placename, month, day, year, ephclock, lat, long = read.read_pyph(input)
     elif ".chtk" in input:
-        name, placename, month, day, year, ephclock, lat, long, utcoffset = read.read_chtk(input)
-        utcoffset = round(utcoffset,1)
+        name, placename, month, day, year, ephclock, lat, long, utcoffset = (
+            read.read_chtk(input)
+        )
+        utcoffset = round(utcoffset, 1)
     else:
         print("invalid file type")
         exit
     return name, placename, month, day, year, ephclock, lat, long, utcoffset
 
-def parse_date_time(date,time):
+
+def parse_date_time(date, time):
     nowtime = tmod.gmtime()
     if date:
         month, day, year = utils.intize_date(date)
@@ -211,7 +254,8 @@ def parse_date_time(date,time):
         time = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
     return month, day, year, time
 
-def parse_position(position,placname,timezone):
+
+def parse_position(position, placname, timezone):
     if ".chtk" in position:
         placename, lat, long, utcoffset = read.read_chtk_location(position)
         timezone = "UTC"
@@ -224,6 +268,7 @@ def parse_position(position,placname,timezone):
         timezone = timezone
     return lat, long, placename, utcoffset, timezone
 
+
 def get_args():
     parser = argparse.ArgumentParser(
         prog="pyphemeris",
@@ -231,7 +276,9 @@ def get_args():
         description="get ephemeris for -dMM/DD/YYYY -tHH:MM:SS (utc)",
     )
     parser.add_argument(
-        "-i", "--input", help="use date, time and position from input file; can be a .pyph or .chtk file"
+        "-i",
+        "--input",
+        help="use date, time and position from input file; can be a .pyph or .chtk file",
     )
     parser.add_argument(
         "-d",
@@ -244,7 +291,9 @@ def get_args():
         help="time specified as HH:MM:SS, (utc); if not present will use time at runtime",
     )
     parser.add_argument(
-        "-a", "--ayanamsa", help="integer value for desired ayanamsa; use any valid swisseph value; 98 for dhruva gc mid-mula (default); 99 for ecliptic vedanga jyotisha; 100 for equatorial vedanga jyotisha"
+        "-a",
+        "--ayanamsa",
+        help="integer value for desired ayanamsa; use any valid swisseph value; 98 for dhruva gc mid-mula (default); 99 for ecliptic vedanga jyotisha; 100 for equatorial vedanga jyotisha",
     )
     parser.add_argument(
         "-p",
@@ -262,11 +311,22 @@ def get_args():
         "--house-system",
         help="house system, default: C for Campanus; try R for Regiomantus",
     )
-    parser.add_argument("-l", "--lang", help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed")
-    parser.add_argument("-j", "--julian", help="time specificed as a julian day")
-    parser.add_argument("-e", "--edir", help="path to swiss ephemeris files; default can be set in constants.py")
     parser.add_argument(
-        "-helio", "--helios", action="store_true", help="toggle heliocentric coordinates"
+        "-l",
+        "--lang",
+        help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed",
+    )
+    parser.add_argument("-j", "--julian", help="time specificed as a julian day")
+    parser.add_argument(
+        "-e",
+        "--edir",
+        help="path to swiss ephemeris files; default can be set in constants.py",
+    )
+    parser.add_argument(
+        "-helio",
+        "--helios",
+        action="store_true",
+        help="toggle heliocentric coordinates",
     )
     parser.add_argument(
         "-B",
@@ -281,10 +341,16 @@ def get_args():
         help="toggle priting equatorial coordinates from default behavior",
     )
     parser.add_argument(
-        "-S", "--sidereal", action="store_true", help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa"
+        "-S",
+        "--sidereal",
+        action="store_true",
+        help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa",
     )
     parser.add_argument(
-        "-Z", "--zodiac", action="store_true", help="use zodiac signs; can set default variable 'signs' in defaults.py"
+        "-Z",
+        "--zodiac",
+        action="store_true",
+        help="use zodiac signs; can set default variable 'signs' in defaults.py",
     )
     parser.add_argument(
         "-T",
@@ -307,6 +373,7 @@ def get_args():
 
     args = parser.parse_args()
     return args
+
 
 if __name__ == "__main__":
     main()

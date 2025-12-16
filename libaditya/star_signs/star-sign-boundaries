@@ -1,0 +1,44 @@
+https://masteringthezodiac.com/midpoint-method
+all longitudes J2000
+when using swe, set sid mode to 18, J2000
+and call swe.fixstar with swe.FLG_SIDEREAL
+
+Aries
+	Mesarthim ,gaAri
+	Botein	,deAri
+Taurus
+	Omicron Tauri 51.1675
+	Tianguan	,zeTau
+Gemini
+	1 Geminorum 90.9519
+	Kappa Geminorum 113.6714
+Cancer
+	Chi Cancri 120.9783
+	Acubens	,alCnc
+Leo
+	Al Minlear - Kappa Leonis 135.3008
+	Denebola ,beLeo
+Virgo
+	Nu Virginis 174.1608
+	Rijl al Awwa ,muVir
+Libra
+	Zubenelgenubi ,al-2Lib
+	48 Librae 240.3950
+Scorpio
+	Dschubba ,deSco
+	Paikauhale 240.3950
+Ophiucus
+	Sabik ,etOph
+	45 Ophiuci 262.8753
+Sagittarius
+	Alnasl ,ga-2Sgr
+	Terebellium ,omeSgr
+Capricorn
+	Dabih ,beCap
+	Deneb Algedi ,deCap
+Aquarius
+	Iota Aquarii 328.7161	
+	Phi Aquarii 347.1364
+Pisces
+	Gamma Piscium 351.4514	
+	Alrescha ,alPsc

@@ -27,12 +27,14 @@ from libaditya import utils
 nowtime = time.gmtime()
 nowjdfloat = utils.tmod_to_jd(nowtime)
 
+
 class JulianDay:
     """
     takes a float representing a julian day
     or (year,month,day,hour)
     any arguments not given are filled by the current time
     """
+
     # time units in julian days
     onedayjd = 1
     oneyearjd = onedayjd * 360
@@ -41,7 +43,7 @@ class JulianDay:
     oneminjd = onehrjd / 60
     onesecjd = oneminjd / 60
 
-    def __init__(self, jd=nowjdfloat, utcoffset=0,timezone="UTC"):
+    def __init__(self, jd=nowjdfloat, utcoffset=0, timezone="UTC"):
         """
         initialize JulianDay class
         :jd - can be a float or a tuple(year, month, day, decimal_time)
@@ -71,9 +73,11 @@ class JulianDay:
         print like with __str__, but indenting each line n times
         """
         tab = utils.mktab(n)
-        print(f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}")
+        print(
+            f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}"
+        )
 
-    def mktimezone(self,timezone="UTC"):
+    def mktimezone(self, timezone="UTC"):
         sign = ""
         appendix = ""
         if self.utcoffset > 0:
@@ -81,7 +85,7 @@ class JulianDay:
         if self.utcoffset == 0 or timezone != "UTC":
             appendix = ""
         else:
-            appendix = sign + f"{round(self.utcoffset,2)}"
+            appendix = sign + f"{round(self.utcoffset, 2)}"
         return timezone + appendix
 
     def jd_number(self):
@@ -116,14 +120,14 @@ class JulianDay:
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
 
     def ecliptic_obliquity(self):
-        return swe.calc(self.jd,swe.ECL_NUT)[0][0]
+        return swe.calc(self.jd, swe.ECL_NUT)[0][0]
 
     def shift(self, dir, unit, number):
         """
         shift the julianday in 'dir'ection 'f'orward or 'b'ackward
         by number units, 'second','minute','hour','day','month','year'
         """
-        sf = 1 # scale factor
+        sf = 1  # scale factor
         if dir.startswith("b"):
             sf = -1
         if unit.startswith("s"):
@@ -192,4 +196,3 @@ class JulianDay:
             usryear = self.datetime[0] - 1
 
         return (usryear, usrmonth, usrday, usrhr)
-

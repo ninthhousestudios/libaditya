@@ -19,6 +19,7 @@ import swisseph as swe
 
 from libaditya import constants as const
 
+
 class Location:
     def __init__(
         self,
@@ -38,10 +39,11 @@ class Location:
         return f"{self.placename} ({self.lat} lat,{self.long} long)\nelevation {self.alt} m\ntimezone: {self.timezone}\n"
 
     def place(self):
-        return f"{self.placename} {round(self.lat,3)},{round(self.long,3)})"
+        return f"{self.placename} {round(self.lat, 3)},{round(self.long, 3)})"
 
     def swe_location(self):
         # swe argument order is long, lat, alt
         return (self.long, self.lat, self.alt)
+
 
 Yamakoti = Location(0, 165.76666666666668, 0, "Yamakoti", "ykt")

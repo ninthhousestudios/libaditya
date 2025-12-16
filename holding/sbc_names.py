@@ -100,7 +100,6 @@ def init_sbc_names(langfile=mixed):
     nakshatra.append(nnames["Uttara Bhadrapada"])
     nakshatra.append(nnames["Revati"])
 
-
     adityas.append(anames["Aryama"])
     adityas.append(anames["Mitra"])
     adityas.append(anames["Varuna"])
@@ -141,7 +140,4 @@ def init_sbc_names(langfile=mixed):
     rasis.append(rnames["Pisces"])
     rasis.append(rnames["Aries"])
 
-    return [nakshatraeq,nakshatra,adityas,tithi,vara,rasis]
-
-
-
+    return [nakshatraeq, nakshatra, adityas, tithi, vara, rasis]

@@ -23,8 +23,8 @@ from .cusps import Cusp
 
 from libaditya import constants as const
 
-class Nakshatra:
 
+class Nakshatra:
     def __init__(self, occupant=Moon()):
         self.occupant = occupant
         self.context = occupant.context
@@ -51,7 +51,7 @@ class Nakshatra:
     def ashvini_longitude(self):
         return self.ash_long
 
-    def is_it_sidereal_already(self,sysflg):
+    def is_it_sidereal_already(self, sysflg):
         if sysflg == swe.FLG_SIDEREAL or sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
             return True
         else:
@@ -65,20 +65,28 @@ class Nakshatra:
         if self.ayanamsa == 98:
             # just for now
             self.ayanamsa = 36
-        if isinstance(self.occupant,Planet):
+        if isinstance(self.occupant, Planet):
             return self.init_ash_long_Planet()
-        if isinstance(self.occupant,Cusp):
+        if isinstance(self.occupant, Cusp):
             return self.init_ash_long_Cusp()
         else:
             print(f"instance of type {type(self.occupant)} cannot be in a nakshatra")
 
     def init_ash_long_Planet(self):
         swe.set_sid_mode(self.ayanamsa)
-        return swe.calc_ut(self.timeJD.jd_number(),self.occupant.pnumber,swe.FLG_SIDEREAL)[0][0]
+        return swe.calc_ut(
+            self.timeJD.jd_number(), self.occupant.pnumber, swe.FLG_SIDEREAL
+        )[0][0]
 
     def init_ash_long_Cusp(self):
         swe.set_sid_mode(self.ayanamsa)
-        cusps, _, _, _ = swe.houses_ex2(self.occupant.timeJD.jd_number(), self.occupant.location.lat, self.occupant.location.long, self.occupant.hsys, swe.FLG_SIDEREAL)
+        cusps, _, _, _ = swe.houses_ex2(
+            self.occupant.timeJD.jd_number(),
+            self.occupant.location.lat,
+            self.occupant.location.long,
+            self.occupant.hsys,
+            swe.FLG_SIDEREAL,
+        )
         return cusps[self.occupant.cusp_index()]
 
     def ayanamsa_name(self):

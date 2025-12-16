@@ -22,6 +22,7 @@ from .julian_day import JulianDay
 from .location import Location
 from libaditya import constants as const
 
+
 @dataclass
 class EphContext:
     timeJD: JulianDay = JulianDay()
@@ -29,7 +30,7 @@ class EphContext:
     sysflg: int = const.ECL
     ayanamsa: int = 98
     signize: bool = True
-    toround: (bool,int) = (True,3)
-    hsys: str = 'C'
-    planet_names: (str) = tuple(const.planet_names)
-    sign_names: (str) = tuple(const.adityas)
+    toround: (bool, int) = (True, 3)
+    hsys: str = "C"
+    planet_names: str = tuple(const.planet_names)
+    sign_names: str = tuple(const.adityas)

@@ -20,6 +20,7 @@ import configparser
 
 from libaditya import constants as const
 
+
 def read_pyph(infile):
     input = open(infile, "r")
     for line in input:
@@ -40,16 +41,17 @@ def read_pyph(infile):
             lat = float(value)
         if field.startswith("Lo") or field.startswith("lo"):
             long = float(value)
-    return name, placename, month, day, year, ephclock, lat, long 
+    return name, placename, month, day, year, ephclock, lat, long
+
 
 def read_chtk(infile):
     input = open(infile, "rb")
     lines = input.readlines()
     linenum = 0
     for line in lines:
-        #print(f"{n}: {line.decode(errors='ignore')}")
+        # print(f"{n}: {line.decode(errors='ignore')}")
         match linenum:
-            case 0: 
+            case 0:
                 name = clean_line(line)
             case 1:
                 year = intize_line(codecs.decode(line))
@@ -79,10 +81,10 @@ def read_chtk(infile):
                 # someimtes it is just HH:MM
                 # sometimes it is just H, so deal with all of those
                 line = clean_line(line).split(":")
-                if(len(line)==1):
+                if len(line) == 1:
                     h = int(line[0])
                     m = s = 0
-                elif(len(line)==2):
+                elif len(line) == 2:
                     h = int(line[0])
                     m = int(line[1])
                     s = 0
@@ -90,14 +92,25 @@ def read_chtk(infile):
                     h = int(line[0])
                     m = int(line[1])
                     s = int(line[2])
-                utcoff = int(h)+(int(m)/60) + (int(s)/3600)
-            case 13: # dst value
+                utcoff = int(h) + (int(m) / 60) + (int(s) / 3600)
+            case 13:  # dst value
                 dst = intize_line(codecs.decode(line))
-        linenum+=1
-    input.close() 
+        linenum += 1
+    input.close()
     placename = city + ", " + country
-    ephclock = hour + min/60 + sec/3600
-    return name, placename, month, day, year, ephclock+utcoff-dst, lat, long, -(utcoff-dst)
+    ephclock = hour + min / 60 + sec / 3600
+    return (
+        name,
+        placename,
+        month,
+        day,
+        year,
+        ephclock + utcoff - dst,
+        lat,
+        long,
+        -(utcoff - dst),
+    )
+
 
 def read_chtk_location(infile):
     _, placename, _, _, _, _, lat, long, utcoff = read_chtk(infile)
@@ -109,7 +122,7 @@ def lat_to_float(lat):
     change kalas lat representation into a float
     """
     # string is like this 030E44'00
-    if(lat[2:3] == 'N'):
+    if lat[2:3] == "N":
         degs = int(lat[:2])
     else:
         degs = -int(lat[:2])
@@ -117,23 +130,25 @@ def lat_to_float(lat):
     secs = int(lat[6:8])
     return degs + (mins / 60) + (secs / 3600)
 
+
 def float_to_lat(lat):
     if lat >= 0:
-        dir = 'N'
+        dir = "N"
     else:
-        dir = 'S'
+        dir = "S"
 
     latstr = dec2dms(lat)
-    d,m,s = latstr.split(":")
+    d, m, s = latstr.split(":")
 
-    return d+dir+m+"'"+s
+    return d + dir + m + "'" + s
+
 
 def long_to_float(long):
     """
     change kalas long representation into a float
     """
     # string is usually like this 030E44'00
-    if(long[3:4] == 'E'):
+    if long[3:4] == "E":
         degs = int(long[:3])
     else:
         degs = -int(long[:3])
@@ -141,16 +156,18 @@ def long_to_float(long):
     secs = int(long[7:9])
     return degs + (mins / 60) + (secs / 3600)
 
+
 def float_to_long(long):
     if long >= 0:
-        dir = 'E'
+        dir = "E"
     else:
-        dir = 'W'
+        dir = "W"
 
     longstr = dec2dms(long)
-    d,m,s = longstr.split(":")
+    d, m, s = longstr.split(":")
 
-    return "0"+d+dir+m+"'"+s
+    return "0" + d + dir + m + "'" + s
+
 
 def intize_line(line):
     """
@@ -158,17 +175,18 @@ def intize_line(line):
     we remove all the space, etc. characters, then
     can return the integer of the string
     """
-    nochars = ["\x00","\r","\n"]
+    nochars = ["\x00", "\r", "\n"]
     count = 0
-    line=list(line)
+    line = list(line)
     while count < len(line):
-        if(line[count] in nochars):
+        if line[count] in nochars:
             del line[count]
             continue
-        count+=1
-    retval = int(''.join(line))
-#    print(retval)
+        count += 1
+    retval = int("".join(line))
+    #    print(retval)
     return retval
+
 
 def clean_line(line):
     """
@@ -176,18 +194,19 @@ def clean_line(line):
     we remove all the space, carriage return, and newline characters, then
     can return the string as only a string
     """
-    line=line.decode(errors='ignore')
-    nochars = ["\x00","\r","\n"]
+    line = line.decode(errors="ignore")
+    nochars = ["\x00", "\r", "\n"]
     count = 0
-    line=list(line)
+    line = list(line)
     while count < len(line):
-        if(line[count] in nochars):
+        if line[count] in nochars:
             del line[count]
             continue
-        count+=1
-    retval = ''.join(line)
-#    print(retval)
+        count += 1
+    retval = "".join(line)
+    #    print(retval)
     return retval
+
 
 def dec2dms(dd):
     """
@@ -205,25 +224,28 @@ def dms2dec(dms):
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
+
 def intize_date(date):
     """
     take a string 'MM/DD/YYYY'
     and return a tuple of int (mm,dd,yyyy)
     """
-    date = date.split('/')
-    year = int(date[2]) 
+    date = date.split("/")
+    year = int(date[2])
     month = int(date[0])
     day = int(date[1])
 
     return (month, day, year)
+
 
 def intize_time(time):
     """
     take a string 'HH:MM:SS'
     and return a float of that time
     """
-    time = time.split(':')
+    time = time.split(":")
     return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
+
 
 def parse_position_argument(position):
     """
@@ -246,28 +268,32 @@ def parse_position_argument(position):
         long = float(long)
 
     # given in the form DD:MM(:SS)
-    if not isinstance(lat,float):
+    if not isinstance(lat, float):
         if ":" in lat:
             latsign = -1 if "-" in lat else 1
-            lattmp = lat.split(':')
+            lattmp = lat.split(":")
             # if len == 2, HH:MM, otherwise, HH:MM:SS
             if len(lattmp) == 2:
-                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
+                lat = latsign * (int(lattmp[0]) + int(lattmp[1]) / 60)
             else:
-                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60 + int(lattmp[2]) / 3600)
+                lat = latsign * (
+                    int(lattmp[0]) + int(lattmp[1]) / 60 + int(lattmp[2]) / 3600
+                )
 
-    if not isinstance(long,float):
+    if not isinstance(long, float):
         if ":" in long:
             longsign = -1 if "-" in long else 1
-            longtmp = long.split(':')
+            longtmp = long.split(":")
             # if len == 2, HH:MM, otherwise, HH:MM:SS
             if len(longtmp) == 2:
-                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
+                long = longsign * (int(longtmp[0]) + int(longtmp[1]) / 60)
             else:
-                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60 + int(longtmp[2]) / 3600)
+                long = longsign * (
+                    int(longtmp[0]) + int(longtmp[1]) / 60 + int(longtmp[2]) / 3600
+                )
 
     # given in Kala format DD(DIR)MM('SS)
-    if not isinstance(lat,float):
+    if not isinstance(lat, float):
         if "N" in lat or "S" in lat:
             if "N" in lat:
                 latsign = 1
@@ -277,11 +303,11 @@ def parse_position_argument(position):
                 lattmp = lat.split("S")
             if "'" in lattmp[1]:
                 min, sec = lattmp[1].split("'")
-                lat = latsign*(int(lattmp[0]) + int(min) / 60 + int(sec) / 3600)
+                lat = latsign * (int(lattmp[0]) + int(min) / 60 + int(sec) / 3600)
             else:
-                lat = latsign*(int(lattmp[0]) + int(lattmp[1]) / 60)
+                lat = latsign * (int(lattmp[0]) + int(lattmp[1]) / 60)
 
-    if not isinstance(long,float):
+    if not isinstance(long, float):
         if "E" in long or "W" in long:
             if "E" in long:
                 longsign = 1
@@ -291,13 +317,16 @@ def parse_position_argument(position):
                 longtmp = long.split("W")
             if "'" in longtmp[1]:
                 min, sec = longtmp[1].split("'")
-                long = longsign*(int(longtmp[0]) + (int(min) / 60) + (int(sec) / 3600))
+                long = longsign * (
+                    int(longtmp[0]) + (int(min) / 60) + (int(sec) / 3600)
+                )
             else:
-                long = longsign*(int(longtmp[0]) + int(longtmp[1]) / 60)
+                long = longsign * (int(longtmp[0]) + int(longtmp[1]) / 60)
 
     return lat, long
 
-def init_names(langfile=const.base_path+"/dict/dict.mixed"):
+
+def init_names(langfile=const.base_path + "/dict/dict.mixed"):
     names = configparser.ConfigParser()
     names.read(langfile)
 
@@ -343,7 +372,7 @@ def init_names(langfile=const.base_path+"/dict/dict.mixed"):
     planets.append(pnames["Ketu"])  # index 11
     planets.append([])
     planets.append([])
-    planets.append(pnames["Earth"]) # so we can use swe.EARTH
+    planets.append(pnames["Earth"])  # so we can use swe.EARTH
 
     zodiac.append(znames["Aries"])
     zodiac.append(znames["Taurus"])
@@ -454,6 +483,8 @@ def init_names(langfile=const.base_path+"/dict/dict.mixed"):
     adityas.append(anames["Parjanya"])
     adityas.append(anames["Dhata"])
 
+    sidereal_adityas = [adityas[11]] + adityas[:11]
+
     nakshatraeq.append(neqnames["Krittika"])
     nakshatraeq.append(neqnames["Rohini"])
     nakshatraeq.append(neqnames["Mrigashira"])
@@ -483,7 +514,17 @@ def init_names(langfile=const.base_path+"/dict/dict.mixed"):
     nakshatraeq.append(neqnames["Ashvini"])
     nakshatraeq.append(neqnames["Bharani"])
 
-    return planets, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas
+    return (
+        planets,
+        zodiac,
+        tithis,
+        karanas,
+        nakshatras,
+        varas,
+        yogas,
+        adityas,
+        sidereal_adityas,
+    )
 
 
 # there are 11 karanas
@@ -523,4 +564,3 @@ def organize_karana(karana):
     ret.append(tmp)
     ret.append([karana[9], karana[10]])
     return ret
-
