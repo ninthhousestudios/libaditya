@@ -33,6 +33,7 @@ show_topo = 0
 show_adityas = 1
 show_equ = 0
 show_topo = 0
+show_drac = 0
 show_sidereal = 0
 show_vdasha = 0
 show_v2dasha = 0

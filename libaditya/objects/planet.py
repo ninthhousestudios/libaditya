@@ -51,6 +51,7 @@ class Planet:
         ) = self.init_coords()
         # so that we only need only longitude() function with all the signizing and rounding or not
         self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
+        self.rahu = swe.calc_ut(self.jd,swe.TRUE_NODE)[0][0] if self.system == const.DRAC else 0
 
     def __str__(self):
         ayanamsa = ""
@@ -93,7 +94,9 @@ class Planet:
         if self.system == (const.SID | const.TOPO):
             swe.set_sid_mode(self.ayanamsa)
             swe.set_topo(loc[0], loc[1], loc[2])
-        return swe.calc_ut(self.jd, self.pnumber, self.sysflg)[0]
+        # for draconic charts i choose -8 to indicate that system
+        # but swe doesnt accept that, so replace it if necessary
+        return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
 
     def name(self):
         return self.planet_name
@@ -103,6 +106,8 @@ class Planet:
 
     def longitude(self):
         if self.context.signize:
+            if self.sysflg == const.DRAC:
+                self.long -= self.rahu
             return self.signize()
         else:
             return self.raw_longitude()

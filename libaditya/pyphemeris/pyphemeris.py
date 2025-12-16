@@ -143,6 +143,10 @@ def main():
         show_topo = not (defaults.show_topo)
         if show_topo:
             toshow.append(const.TOPO)
+    if args.draconic:
+        show_drac = not (defaults.show_drac)
+        if show_drac:
+            toshow.append(const.DRAC)
     if args.sidereal:
         show_sidereal = not (defaults.show_sidereal)
         if show_sidereal:
@@ -182,33 +186,19 @@ def main():
 
     # print planetary positions in all coordinates and types the users wants
 
+    context = EphContext(timeJD,location,const.ECL,ayanamsa,signize,toround,hsys,planet_names,sign_names)
+
     for sys in toshow:
+        context.sys = sys
+        print(f"printing Planets with {context.sys=} {sys=}")
         if sys == const.SID:
-            context = EphContext(
-                timeJD,
-                location,
-                sys,
-                ayanamsa,
-                signize,
-                toround,
-                hsys,
-                planet_names,
-                sidereal_adityas,
-            )
+            context.sign_names = sidereal_adityas
+            print(f"printing sidereal
             print(Planets(context))
+            # return to default
+            context.sign_names = sign_names
             print("\n")
             continue
-        context = EphContext(
-            timeJD,
-            location,
-            sys,
-            ayanamsa,
-            signize,
-            toround,
-            hsys,
-            planet_names,
-            sign_names,
-        )
         print(Planets(context))
         print("\n")
 

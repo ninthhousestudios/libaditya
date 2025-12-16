@@ -46,7 +46,7 @@ def sysflgstr(sflg):
         return "Topocentric"
     if sflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
         return "Sidereal Topocentric"
-    if slfg == -8:
+    if sflg == -8:
         return "Draconic"
 
 
@@ -64,7 +64,6 @@ def ayanamsa_name(ayanamsa):
 
 
 # constant constants
-
 
 dasha_years = [
     ("saura", 365.2422),
