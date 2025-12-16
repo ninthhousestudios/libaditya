@@ -18,8 +18,6 @@
 import swisseph as swe
 from prettytable import PrettyTable
 
-from .julian_day import JulianDay
-from .location import Location
 from .context import EphContext
 from libaditya import constants as const
 from libaditya import utils
@@ -39,10 +37,11 @@ class Cusp:
         self.daily_speed = speed
         self._cusp_index = number
         self._number = number + 1
-        self._cusp_name = f"Cusp {self._number}"
+        self.cusp_name = f"Cusp {self._number}"
 
     def __str__(self):
         return self.cusp_name + " at " + str(self.longitude())
+
 
     def __repr__(self):
         return self.cusp_name + " at " + str(self.long)
@@ -129,27 +128,19 @@ class Cusps:
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.cusps, self.ascmc, self.ascmcspeed = (
-            self.init_cusps()
-        )  # a 12 tuple of cusp points
+        self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
 
     def __iter__(self):
         return iter(self.cusps)
+
+    def __getitem__(self,n):
+        return self.cusps[n]
 
     def __repr__(self):
         """
         the function swe.houses(time,lat,long,hsys) take lat first
         """
-        place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
-        time = f"{self.timeJD}\n"
-        sys = f"Using house system {self.hname}\n"
-        retcusps = ""
-        for cusp in self.cusps:
-            retcusps += f"{cusp}\n"
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        return place + time + sys + retcusps + ayanamsa
+        return self.mkheader() + str([cusp for cusp in self.cusps])
 
     def __str__(self):
         output = PrettyTable()
@@ -198,7 +189,7 @@ class Cusps:
         """
         place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
         time = f"{self.timeJD}\n"
-        sys = f"Using house system {self.hname}\n"
+        sys = f"Using {self.hname} house system\n"
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
             ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"

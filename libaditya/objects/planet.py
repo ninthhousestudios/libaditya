@@ -41,14 +41,7 @@ class Planet:
         self.system = context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
-        (
-            self.long,
-            self.lat,
-            self.dist,
-            self.long_speed,
-            self.lat_speed,
-            self.dist_speed,
-        ) = self.init_coords()
+        self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
         # so that we only need only longitude() function with all the signizing and rounding or not
         self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
         self.rahu = swe.calc_ut(self.jd,swe.TRUE_NODE)[0][0] if self.system == const.DRAC else 0
@@ -68,7 +61,7 @@ class Planet:
             ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
         return (
             f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-            + f"{self.timeJD}\n"
+            + f"{self.timeJD}"
         )
 
     def table_row(self):

@@ -56,6 +56,9 @@ class Planets(JulianDay):
     def __iter__(self):
         return iter(self.planets)
 
+    def __getitem__(self,n):
+        return self.planets[n]
+
     def init_Planets(self):
         ret = []
         for p in self.plist:
@@ -66,16 +69,8 @@ class Planets(JulianDay):
         """
         the function swe.houses(time,lat,long,hsys) take lat first
         """
-        place = f"Planets at\n"
-        time = f"{self.timeJD}\n"
-        sys = f"Using {self.sysflgstr} coordinates\n"
-        retp = ""
-        for planet in self.planets:
-            retp += f"{planet}\n"
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        return place + time + sys + retp + ayanamsa
+        return self.mkheader() + str([planet for planet in self.planets])
+
 
     def __str__(self):
         """

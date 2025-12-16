@@ -193,7 +193,7 @@ def main():
         print(f"printing Planets with {context.sys=} {sys=}")
         if sys == const.SID:
             context.sign_names = sidereal_adityas
-            print(f"printing sidereal
+            print(f"printing sidereal")
             print(Planets(context))
             # return to default
             context.sign_names = sign_names
