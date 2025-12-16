@@ -29,7 +29,7 @@ HELIO = swe.FLG_HELCTR
 BARY = swe.FLG_BARYCTR
 SID = swe.FLG_SIDEREAL
 TOPO = swe.FLG_TOPOCTR
-
+DRAC = -8
 
 def sysflgstr(sflg):
     if sflg == swe.FLG_TROPICAL:
@@ -46,6 +46,8 @@ def sysflgstr(sflg):
         return "Topocentric"
     if sflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
         return "Sidereal Topocentric"
+    if slfg == -8:
+        return "Draconic"
 
 
 def ayanamsa_name(ayanamsa):

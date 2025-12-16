@@ -347,6 +347,12 @@ def get_args():
         help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa",
     )
     parser.add_argument(
+        "-D",
+        "--draconic",
+        action="store_true",
+        help="print positions for a tropical draconic chart, where Rahu = 0 Aries",
+    )
+    parser.add_argument(
         "-Z",
         "--zodiac",
         action="store_true",
