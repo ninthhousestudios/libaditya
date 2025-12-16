@@ -21,7 +21,7 @@ from typing import Callable
 
 import time
 
-from pyastro import utils
+from libaditya import utils
 
 
 nowtime = time.gmtime()

@@ -19,7 +19,7 @@ import swisseph as swe
 
 import os
 
-from pyastro import utils
+from libaditya import utils
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 

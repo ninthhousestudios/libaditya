@@ -18,7 +18,7 @@
 import codecs
 import configparser
 
-from pyastro import constants as const
+from libaditya import constants as const
 
 def read_pyph(infile):
     input = open(infile, "r")

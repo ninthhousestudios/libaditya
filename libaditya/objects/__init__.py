@@ -9,7 +9,7 @@ from .nakshatra import Nakshatra
 import os
 import pathlib
 import swisseph as swe
-from pyastro import constants as const
+from libaditya import constants as const
 
 base_path = os.path.dirname(pathlib.Path(__file__).parent)
 

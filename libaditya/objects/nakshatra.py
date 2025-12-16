@@ -21,7 +21,7 @@ from .context import EphContext
 from .planet import Planet, Moon
 from .cusps import Cusp
 
-from pyastro import constants as const
+from libaditya import constants as const
 
 class Nakshatra:
 

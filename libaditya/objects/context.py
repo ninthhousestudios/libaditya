@@ -20,7 +20,7 @@ from typing import ClassVar
 
 from .julian_day import JulianDay
 from .location import Location
-from pyastro import constants as const
+from libaditya import constants as const
 
 @dataclass
 class EphContext:

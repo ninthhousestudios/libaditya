@@ -18,7 +18,7 @@
 import swisseph as swe
 from prettytable import PrettyTable
 
-from pyastro import constants as const
+from libaditya import constants as const
 
 from .julian_day import JulianDay
 from .context import EphContext

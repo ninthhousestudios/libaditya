@@ -25,11 +25,11 @@ import sys
 from dataclasses import dataclass
 
 
-from pyastro import constants as const
-from pyastro import utils
-from pyastro import read
+from libaditya import constants as const
+from libaditya import utils
+from libaditya import read
 import defaults
-from pyastro.objects import *
+from libaditya.objects import *
 
 
 def main():

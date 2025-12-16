@@ -17,7 +17,7 @@
 
 import swisseph as swe
 
-from pyastro import constants as const
+from libaditya import constants as const
 
 class Location:
     def __init__(

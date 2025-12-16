@@ -17,15 +17,15 @@
 
 import swisseph as swe
 
-from pyastro import constants as const
-from pyastro import utils
+from libaditya import constants as const
+from libaditya import utils
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 
 
-class Planet(JulianDay):
+class Planet:
     """
     this class has information and functions related to planets
     each Planet takes a planet number and a JulianDay class
@@ -33,7 +33,6 @@ class Planet(JulianDay):
 
     def __init__(self, pnumber, context=EphContext()):
         self.timeJD = context.timeJD
-        super().__init__(self.timeJD.jd)
         self.context = context
         self.pnumber = pnumber
         self.planet_name = context.planet_names[self.pnumber]
@@ -50,13 +49,13 @@ class Planet(JulianDay):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
             ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
-        return f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + super().__str__()
+        return f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + f"{self.timeJD}\n"
 
     def __repr__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
             ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
-        return f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + super().__str__()
+        return f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n" + f"{self.timeJD}\n"
 
     def table_row(self):
         return [self.name()+self.retrostr()] + [self.longitude()] + [self.longitude_speed()] + [self.latitude()] + [self.latitude_speed()] + [self.distance()] + [self.distance_speed()] 

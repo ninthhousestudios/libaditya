@@ -17,7 +17,7 @@
 
 import swisseph as swe
 
-from pyastro import constants as const
+from libaditya import constants as const
 
 def dms2dec(dms):
     """
@@ -33,9 +33,9 @@ def signize(long,toround,names):
     """
     index = int((long % 360) / 30)  # mod 360 in case long=360...but it probably wouldnt with swe, right?
     if toround[0]:
-        inlong = round(long - (index * 30), toround[1])
+        inlong = round(long % 30, toround[1])
     else:
-        inlong = (long - (index * 30))
+        inlong = (long % 30)
     return f"{dec2dmsstr(inlong)} {names[index]}"
 
 

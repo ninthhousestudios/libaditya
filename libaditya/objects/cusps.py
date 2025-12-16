@@ -21,8 +21,8 @@ from prettytable import PrettyTable
 from .julian_day import JulianDay
 from .location import Location
 from .context import EphContext
-from pyastro import constants as const
-from pyastro import utils
+from libaditya import constants as const
+from libaditya import utils
 
 class Cusp:
 
@@ -35,26 +35,26 @@ class Cusp:
         self.system = self.context.sysflg # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.long = longitude
+        self._longitude = longitude
         self.daily_speed = speed
-        self.cindex = number
-        self.num = number+1
-        self.cusp_name = f"Cusp {self.num}"
+        self._cusp_index = number
+        self._number = number+1
+        self._cusp_name = f"Cusp {self._number}"
 
     def __str__(self):
         return self.cusp_name + " at " + str(self.longitude())
 
     def __repr__(self):
-        return self.cusp_name + " at " + str(self.long)
+        return self.cusp_name + " at " + str(self._longitude)
 
     def name(self):
         return self.cusp_name
 
     def number(self):
-        return self.num
+        return self._number
 
     def cusp_index(self):
-        return self.cindex
+        return self._cusp_index
 
     def longitude(self):
         if self.context.signize:
@@ -66,7 +66,7 @@ class Cusp:
         if self.context.toround[0]:
             return round(self.long,self.context.toround[1])
         else:
-            return self.long
+            return self._longitude
 
     def speed(self):
         if self.context.toround[0]:
@@ -84,7 +84,7 @@ class Cusp:
         """
         get table row for cusp n
         """
-        return [f"{self.number()}"] + [self.longitude()] + [self.hourly_motion()] + [self.speed()]
+        return [f"{self._numberber()}"] + [self.longitude()] + [self.hourly_motion()] + [self.speed()]
 
 
 class Cusps:

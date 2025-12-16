@@ -18,7 +18,7 @@
 import os
 import pathlib
 
-from pyastro import utils
+from libaditya import utils
 
 # defaults
 pyph_path = os.path.dirname(pathlib.Path(__file__).parent)
