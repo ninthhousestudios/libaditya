@@ -16,10 +16,10 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from prettytable import PrettyTable
 
-from .context import EphContext
-from .planet import Planet, Moon, Ketu
-from .cusps import Cusp
+from .planet import *
+from .cusps import *
 
 from libaditya import constants as const
 
@@ -41,7 +41,17 @@ class Nakshatra:
         base_long = f"base longitude: {self.base_longitude()}\n"
         ash_long = f"Degrees from beginning of ashvini: {self.ashvini_longitude()}\n"
         ayana = f"Using {self.ayanamsa_name()} ayanamsa\n"
-        return nak + base_long + ash_long + ayana
+        nakshatra = f"{self.nakshatra()}\n"
+        return nak + base_long + ash_long + ayana + nakshatra
+
+    def __repr__(self):
+        nak = f"Nakshatra of {self.occupant()}\n"
+        base_long = f"base longitude: {self.base_longitude()}\n"
+        ash_long = f"Degrees from beginning of ashvini: {self.ashvini_longitude()}\n"
+        ayana = f"Using {self.ayanamsa_name()} ayanamsa\n"
+        nakshatra = f"{self.nakshatra()}\n"
+        return nak + base_long + ash_long + ayana + nakshatra
+
 
     def occupant(self):
         return self._occupant.name()
@@ -57,6 +67,18 @@ class Nakshatra:
 
     def nakshatra(self):
         return self.context.nakshatras[self.index()]
+
+    def degrees_elapsed(self):
+        if self.context.toround[0] == True:
+            return round(self.ashvini_longitude()-(self.index()*self.naksize),2)
+        else:
+            return self.ashvini_longitude()-(self.index()*self.naksize),self.context.toround[1]
+
+    def percent_elapsed(self):
+        if self.context.toround[0] == True:
+            return round((self.degrees_elapsed()/self.naksize)*100,2)
+        else:
+            return (self.degrees_elapsed()/self.naksize)*100
 
     def is_it_sidereal_already(self, sysflg):
         if sysflg == swe.FLG_SIDEREAL or sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
@@ -152,3 +174,70 @@ class Nakshatra:
         if isinstance(self._occupant,Cusp):
             equlong = swe.cotrans((self.base_longitude(),0,1),self.timeJD.ecliptic_obliquity())[0]
         return (equlong+ashvini)%360
+
+class Nakshatras:
+
+    def __init__(self, occupants, context):
+        from .planets import Planets
+        self._occupants = occupants
+        self.context = context
+        self.nakshatras = self.init_Nakshatras()
+
+    def __iter__(self):
+        return iter(self.nakshatras)
+
+    def __getitem__(self,n):
+        return self.nakshatras[n]
+
+    def __str__(self):
+        output = PrettyTable()
+        output.field_names = [f"{self.occupant_type()}", "Nakshatra", "Percent Elapsed"]
+        output.align[f"{self.occupant_type()}"] = "l"
+        output.align["Nakshatra"] = "l"
+        output.align["Percent Elapsed"] = "r"
+
+        for occupant in self.nakshatras:
+            output.add_row([occupant.occupant(),occupant.nakshatra(),f"{occupant.degrees_elapsed()} ({occupant.percent_elapsed()} %)"])
+
+        ret = output.get_string(fields=[f"{self.occupant_type()}","Nakshatra","Percent Elapsed"])
+
+        return self.mkheader() + ret
+
+    def __repr__(self):
+        return self.mkheader()
+
+    def occupant_type(self):
+        if isinstance(self._occupants[0],Planet):
+            return "Planet"
+        elif isinstance(self._occupants[0],Cusp):
+            return "Cusp"
+        else:
+            raise TypeError("cannot make Nakshatras from this type")
+
+    def init_Nakshatras(self):
+        ret = []
+        for occupant in self._occupants:
+            ret.append(Nakshatra(occupant))
+        return ret
+
+    def mkheader(self):
+        if isinstance(self._occupants[0],Planet):
+            return self.mkheader_Planets()
+        elif isinstance(self._occupants[0],Cusp):
+            return self.mkheader_Cusps()
+        else:
+            raise TypeError("cannot make Nakshatras from this type")
+
+    def mkheader_Planets(self):
+        header = "Nakshatras of the planets:\n"
+        header += f"{self.context.timeJD}\n"
+        header += f"using {const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+        return header
+
+    def mkheader_Cusps(self):
+        header = "Nakshatras of the cusps:\n"
+        header += f"{self.context.timeJD}\n"
+        header += f"{self.context.location}\n"
+        header += f"using {const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+        header += f"using house system {self._occupants[0].house_system()}\n"
+        return header

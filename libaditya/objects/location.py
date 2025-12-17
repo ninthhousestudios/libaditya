@@ -36,7 +36,7 @@ class Location:
         self.timezone = timezone
 
     def __str__(self):
-        return f"{self.placename} ({self.lat} lat,{self.long} long)\nelevation {self.alt} m\ntimezone: {self.timezone}\n"
+        return f"{self.placename} ({self.lat} lat,{self.long} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def place(self):
         return f"{self.placename} {round(self.lat, 3)},{round(self.long, 3)})"

@@ -19,9 +19,9 @@ import swisseph as swe
 from prettytable import PrettyTable
 
 from .context import EphContext
+
 from libaditya import constants as const
 from libaditya import utils
-
 
 class Cusp:
     def __init__(self, longitude, speed, number, context=EphContext()):
@@ -105,6 +105,9 @@ class Cusp:
             + [self.speed()]
         )
 
+    def house_system(self):
+        return self.hname
+
 
 class Cusps:
     """
@@ -120,6 +123,7 @@ class Cusps:
     """
 
     def __init__(self, context=EphContext()):
+        from .nakshatra import Nakshatras
         self.context = context
         self.hsys = self.context.hsys.encode()
         self.location = self.context.location
@@ -129,6 +133,7 @@ class Cusps:
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
         self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
+        self._nakshatras = Nakshatras(self.cusps,self.context)
 
     def __iter__(self):
         return iter(self.cusps)
@@ -195,7 +200,7 @@ class Cusps:
             ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         return place + time + sys + ayanamsa
 
-    def house_name(self):
+    def house_system(self):
         return self.hname
 
     def lagna(self):
@@ -210,3 +215,6 @@ class Cusps:
 
     def mc(self):
         return self.cusps[9]
+
+    def nakshatras(self):
+        return self._nakshatras

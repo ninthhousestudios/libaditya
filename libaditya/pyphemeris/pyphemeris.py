@@ -203,6 +203,8 @@ def main():
         print(Planets(context))
         print("\n")
 
+    print(Planets(context).nakshatras())
+
     # now for house cusps
     print("\n")
     if sys == const.SID and sign_names == adityas:
@@ -212,6 +214,9 @@ def main():
         print("\n")
     else:
         print(Cusps(EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)))
+        print("\n")
+
+    print(Cusps(context).nakshatras())
 
 # end main function
 def parse_input_file(input):

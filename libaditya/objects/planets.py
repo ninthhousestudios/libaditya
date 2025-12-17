@@ -19,14 +19,15 @@ import swisseph as swe
 from prettytable import PrettyTable
 
 from libaditya import constants as const
+from libaditya import utils
 
-from .julian_day import JulianDay
 from .context import EphContext
 from .planet import Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Earth, Chiron
+from .nakshatra import *
 
 
-class Planets(JulianDay):
-    plist = [
+class Planets:
+    _planets = [
         Sun,
         Moon,
         Mars,
@@ -45,13 +46,13 @@ class Planets(JulianDay):
 
     def __init__(self, context=EphContext()):
         self.timeJD = context.timeJD  # the JulianDay class of this planet
-        super().__init__(self.timeJD.jd)
         self.context = context
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self.planets = self.init_Planets()
+        self._nakshatras = Nakshatras(self.planets,self.context)
 
     def __iter__(self):
         return iter(self.planets)
@@ -61,7 +62,7 @@ class Planets(JulianDay):
 
     def init_Planets(self):
         ret = []
-        for p in self.plist:
+        for p in self._planets:
             ret.append(p(self.context))
         return ret
 
@@ -70,7 +71,6 @@ class Planets(JulianDay):
         the function swe.houses(time,lat,long,hsys) take lat first
         """
         return self.mkheader() + str([planet for planet in self.planets])
-
 
     def __str__(self):
         """
@@ -136,3 +136,6 @@ class Planets(JulianDay):
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         header += f"{self.timeJD}\n"
         return header
+    
+    def nakshatras(self):
+        return self._nakshatras
