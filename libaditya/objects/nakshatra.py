@@ -27,7 +27,6 @@ class Nakshatra:
         self.context = occupant.context
         self.timeJD = occupant.timeJD
         self.base_long = self._occupant.raw_longitude()
-        self.is_sidereal = self.is_it_sidereal_already(self.context.sysflg)
         self.ayanamsa = self.context.ayanamsa
         # ashlong means the number of degrees from ashvini; in most cases, the sidereal longitude
         self.ash_long = self.init_ash_long()
@@ -76,13 +75,11 @@ class Nakshatra:
         else:
             return (self.degrees_elapsed()/self.naksize)*100
 
-    def is_it_sidereal_already(self, sysflg):
-        if sysflg == swe.FLG_SIDEREAL or sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
-            return True
-        else:
             return False
 
     def init_ash_long(self):
+        from .planet import Planet
+        from .cusps import Cusp
         # otherwise, find the number of degrees from ashvini
         # insert custom ayanamsa codes and methods here
         if self.ayanamsa == 98:
