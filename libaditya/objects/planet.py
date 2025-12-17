@@ -98,9 +98,9 @@ class Planet:
         return self.sysflgstr
 
     def longitude(self):
+        if self.sysflg == const.DRAC:
+            self.long = (self.long - self.rahu)%360
         if self.context.signize:
-            if self.sysflg == const.DRAC:
-                self.long -= self.rahu
             return self.signize()
         else:
             return self.raw_longitude()

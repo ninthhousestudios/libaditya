@@ -22,7 +22,7 @@ from libaditya import constants as const
 
 from .julian_day import JulianDay
 from .context import EphContext
-from .planet import *
+from .planet import Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Earth, Chiron
 
 
 class Planets(JulianDay):

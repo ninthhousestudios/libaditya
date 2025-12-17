@@ -59,7 +59,7 @@ class Cusp:
         if self.context.signize:
             return self.signize()
         else:
-            return self.rawlong()
+            return self.raw_longitude()
 
     def signize(self):
         """

@@ -186,17 +186,17 @@ def main():
 
     # print planetary positions in all coordinates and types the users wants
 
-    context = EphContext(timeJD,location,const.ECL,ayanamsa,signize,toround,hsys,planet_names,sign_names)
 
     for sys in toshow:
-        context.sys = sys
-        print(f"printing Planets with {context.sys=} {sys=}")
+        context = EphContext(timeJD,location,const.ECL,ayanamsa,signize,toround,hsys,planet_names,sign_names)
         if sys == const.SID:
-            context.sign_names = sidereal_adityas
-            print(f"printing sidereal")
+            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
             print(Planets(context))
-            # return to default
-            context.sign_names = sign_names
+            print("\n")
+            continue
+        if sys == const.DRAC:
+            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,zodiac)
+            print(Planets(context))
             print("\n")
             continue
         print(Planets(context))
@@ -241,8 +241,8 @@ def parse_date_time(date, time):
         rettime = utils.intize_time(time)
     else:
         # get current time
-        time = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-    return month, day, year, time
+        rettime = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
+    return month, day, year, rettime
 
 
 def parse_position(position, placname, timezone):
