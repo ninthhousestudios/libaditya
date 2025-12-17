@@ -188,8 +188,9 @@ def main():
 
 
     for sys in toshow:
-        context = EphContext(timeJD,location,const.ECL,ayanamsa,signize,toround,hsys,planet_names,sign_names)
-        if sys == const.SID:
+        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)
+        if sys == const.SID and sign_names == adityas:
+            # if sign_names == zodiac, then we are using the zodiac
             context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
             print(Planets(context))
             print("\n")
@@ -203,15 +204,14 @@ def main():
         print("\n")
 
     # now for house cusps
-    context.sysflg = const.ECL
-    print(Cusps(context))
     print("\n")
-    if const.SID in toshow:
-        sign_names = sidereal_adityas
-        context.sysflg = const.SID
+    if sys == const.SID and sign_names == adityas:
+        # if sign_names == zodiac, then we are using the zodiac
+        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
         print(Cusps(context))
         print("\n")
-
+    else:
+        print(Cusps(EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)))
 
 # end main function
 def parse_input_file(input):

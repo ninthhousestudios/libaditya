@@ -34,3 +34,4 @@ class EphContext:
     hsys: str = "C"
     planet_names: str = tuple(const.planet_names)
     sign_names: str = tuple(const.adityas)
+    nakshatras: str = tuple(const.nakshatras)
