@@ -110,7 +110,9 @@ def main():
         lat, long, placename, utcoffset, timezone = parse_position(
             args.position, args.placename, args.timezone
         )
-    else:
+    
+    # use defaults for position if not given by input file or args.position
+    if not args.position and not args.input:
         lat, long, placename, utcoffset = (
             defaults.lat,
             defaults.long,
@@ -126,6 +128,7 @@ def main():
         # user entered a julian day
         timeJD = JulianDay(float(args.julian))
 
+    # decide which coordinates system the user wants displayed
     toshow = [const.ECL]
     if args.equatorial:
         show_equ = not (defaults.show_equ)

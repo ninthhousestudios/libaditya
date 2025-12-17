@@ -197,7 +197,7 @@ class Cusps:
         """
         the function swe.houses(time,lat,long,hsys) take lat first
         """
-        place = f"Cusps for {self.location.placename} ({self.location.lat},{self.location.long})\n"
+        place = f"Cusps for\n{self.location}\n"
         time = f"{self.timeJD}\n"
         sys = f"Using {self.hname} house system\n"
         ayanamsa = ""
