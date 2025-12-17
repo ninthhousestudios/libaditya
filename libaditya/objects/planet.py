@@ -45,6 +45,8 @@ class Planet:
         # so that we only need only longitude() function with all the signizing and rounding or not
         self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
         self.rahu = swe.calc_ut(self.jd,swe.TRUE_NODE)[0][0] if self.system == const.DRAC else 0
+        from .nakshatra import Nakshatra
+        self._nakshatra = Nakshatra(self)
 
     def __str__(self):
         ayanamsa = ""
@@ -185,6 +187,9 @@ class Planet:
                 location.swe_location(),
             )[1][0]
         )
+
+    def nakshatra(self):
+        return self._nakshatra
 
 
 class Sun(Planet):

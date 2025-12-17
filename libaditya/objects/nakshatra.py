@@ -18,14 +18,10 @@
 import swisseph as swe
 from prettytable import PrettyTable
 
-from .planet import *
-from .cusps import *
-
 from libaditya import constants as const
 
-
 class Nakshatra:
-    def __init__(self, occupant=Moon()):
+    def __init__(self, occupant):
         self.naksize = 13+(1/3)
         self._occupant = occupant
         self.context = occupant.context
@@ -123,11 +119,14 @@ class Nakshatra:
         return const.ayanamsa_name(self.ayanamsa)
 
     def ketuize(self,long):
+        from .planet import Ketu
         if isinstance(self._occupant,Ketu):
             long = (long-180)%360
         return long
 
     def dhruva_gc_equatorial(self):
+        from .planet import Planet
+        from .cusps import Cusp
         gcequ=swe.fixstar(",SgrA*",self.timeJD.jd, swe.FLG_EQUATORIAL)[0][0]
         mula=gcequ-(self.naksize/2)
         ashvini=mula-(18*self.naksize)
@@ -178,7 +177,6 @@ class Nakshatra:
 class Nakshatras:
 
     def __init__(self, occupants, context):
-        from .planets import Planets
         self._occupants = occupants
         self.context = context
         self.nakshatras = self.init_Nakshatras()
@@ -207,6 +205,8 @@ class Nakshatras:
         return self.mkheader()
 
     def occupant_type(self):
+        from .planet import Planet
+        from .cusps import Cusp
         if isinstance(self._occupants[0],Planet):
             return "Planet"
         elif isinstance(self._occupants[0],Cusp):
@@ -217,10 +217,12 @@ class Nakshatras:
     def init_Nakshatras(self):
         ret = []
         for occupant in self._occupants:
-            ret.append(Nakshatra(occupant))
+            ret.append(occupant.nakshatra())
         return ret
 
     def mkheader(self):
+        from .planet import Planet
+        from .cusps import Cusp
         if isinstance(self._occupants[0],Planet):
             return self.mkheader_Planets()
         elif isinstance(self._occupants[0],Cusp):

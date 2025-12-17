@@ -38,6 +38,8 @@ class Cusp:
         self._cusp_index = number
         self._number = number + 1
         self.cusp_name = f"Cusp {self._number}"
+        from .nakshatra import Nakshatra
+        self._nakshatra = Nakshatra(self)
 
     def __str__(self):
         return self.cusp_name + " at " + str(self.longitude())
@@ -107,6 +109,9 @@ class Cusp:
 
     def house_system(self):
         return self.hname
+
+    def nakshatra(self):
+        return self._nakshatra
 
 
 class Cusps:
