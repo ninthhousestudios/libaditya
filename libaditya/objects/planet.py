@@ -99,6 +99,9 @@ class Planet:
     def system_name(self):
         return self.sysflgstr
 
+    def object_type(self):
+        return "Planet"
+
     def longitude(self):
         if self.sysflg == const.DRAC:
             self.long = (self.long - self.rahu)%360

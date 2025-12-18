@@ -110,6 +110,9 @@ class Cusp:
     def house_system(self):
         return self.hname
 
+    def object_type(self):
+        return "Cusp"
+
     def nakshatra(self):
         return self._nakshatra
 
