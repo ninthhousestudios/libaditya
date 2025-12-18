@@ -28,9 +28,9 @@ class EphContext:
     location: Location = Location()
     sysflg: int = const.ECL
     ayanamsa: int = 98
+    hsys: str = "C"
     signize: bool = True
     toround: (bool, int) = (True, 3)
-    hsys: str = "C"
     planet_names: str = tuple(const.planet_names)
     sign_names: str = tuple(const.adityas)
     nakshatras: str = tuple(const.nakshatras)

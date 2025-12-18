@@ -3,7 +3,7 @@ from .planets import *
 from .location import Location, Yamakoti
 from .context import EphContext
 from .cusps import Cusp, Cusps
-from .nakshatra import Nakshatra, Nakshatras
+from .nakshatras import Nakshatra, Nakshatras
 
 import os
 import pathlib

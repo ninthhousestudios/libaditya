@@ -50,7 +50,7 @@ class Planet(Longitude):
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self.context)
-        from .nakshatra import Nakshatra
+        from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
     def __str__(self):
@@ -272,8 +272,8 @@ class Planets:
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self.planets = self.init_Planets()
-        from .nakshatra import Nakshatras
-        self._nakshatras = Nakshatras(self.planets,self.context)
+        from .nakshatras import Nakshatras
+        self._nakshatras = Nakshatras(self,self.context)
 
     def __iter__(self):
         return iter(self.planets)

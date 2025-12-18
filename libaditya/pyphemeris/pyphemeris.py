@@ -192,15 +192,15 @@ def main():
 
 
     for sys in to_show:
-        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)
+        context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sign_names)
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
+            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sidereal_adityas)
             print(Planets(context))
             print("\n")
             continue
         if sys == const.DRAC:
-            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,zodiac)
+            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,planet_names,zodiac)
             print(Planets(context))
             print("\n")
             print(Cusps(context))
@@ -216,11 +216,11 @@ def main():
     for sys in to_show:
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
+            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,planet_names,sidereal_adityas)
             print(Cusps(context))
             print("\n")
         if sys == const.ECL:
-            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)))
+            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sign_names)))
             print("\n")
 
 

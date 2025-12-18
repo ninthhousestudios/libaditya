@@ -39,7 +39,7 @@ class Cusp(Longitude):
         self._number = number + 1
         self.cusp_name = f"Cusp {self._number}"
         super().__init__(self.long,self.context)
-        from .nakshatra import Nakshatra
+        from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
     def __str__(self):
@@ -104,7 +104,6 @@ class Cusps:
     """
 
     def __init__(self, context=EphContext()):
-        from .nakshatra import Nakshatras
         self.context = context
         self.hsys = self.context.hsys.encode()
         self.location = self.context.location
@@ -114,7 +113,8 @@ class Cusps:
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
         self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
-        self._nakshatras = Nakshatras(self.cusps,self.context)
+        from .nakshatras import Nakshatras
+        self._nakshatras = Nakshatras(self,self.context)
 
     def __iter__(self):
         return iter(self.cusps)

@@ -202,11 +202,11 @@ class Nakshatras:
         return self.mkheader()
 
     def occupant_type(self):
-        from .planets import Planet
-        from .cusps import Cusp
-        if isinstance(self._occupants[0],Planet):
+        from .planets import Planets
+        from .cusps import Cusps
+        if isinstance(self._occupants,Planets):
             return "Planet"
-        elif isinstance(self._occupants[0],Cusp):
+        elif isinstance(self._occupants,Cusps):
             return "Cusp"
         else:
             raise TypeError("cannot make Nakshatras from this type")
