@@ -1,7 +1,7 @@
 from .julian_day import JulianDay
 from .planets import *
 from .location import Location, Yamakoti
-from .context import EphContext
+from .context import Names, EphContext
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 

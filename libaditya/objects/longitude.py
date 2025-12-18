@@ -51,7 +51,7 @@ class Longitude:
         return int((self._longitude % 360) / 30)
 
     def sign_name(self):
-        return self.context.sign_names[self.sign_index()]
+        return self.context.names.sign_names[self.sign_index()]
 
     def get_rahu(self):
         if self.context.sysflg == const.DRAC:

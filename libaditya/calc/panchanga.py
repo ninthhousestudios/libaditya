@@ -19,10 +19,25 @@ import swisseph as swe
 
 from libaditya import constants as const
 
-from libaditya.objects import Sun, Moon
+from libaditya.objects import Sun, Moon, EphContext
 
 class Panchanga:
 
-    def __init__(self, sun=Sun(), moon=Moon()):
-        self._sun = sun
-        self._moon = moon
+    def __init__(self, context=EphContext()):
+        self.context = context
+        self._sun = Sun(self.context)
+        self._moon = Moon(self.context)
+        self._tithi_number, self._tithi_elapsed, self._tithi_remaining = self.init_tithi()
+
+
+    def init_tithi(self):
+        traw = ((self._moon.longitude() - self._sun.longitude()) % 360) / 12
+        remainder = traw % 1  # remainder shows how much has elapsed
+        elapsed = remainder * 12  # degrees elapsed
+        remaining = 12 - elapsed  # degrees remaining
+        return (int(traw)+1, elapsed, remaining)
+
+    def tithi_number(self):
+        return self.tithi_number
+
+    #def tithi

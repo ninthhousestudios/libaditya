@@ -28,7 +28,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
 import defaults
-from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location
+from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names
 
 
 def main():
@@ -63,12 +63,15 @@ def main():
     ) = read.init_names(lang_file)
     planet_names.append("Chiron")
 
+
     if args.zodiac:
         sign_names = zodiac
     elif defaults.signs == "zodiac":
         sign_names = zodiac
     else:
         sign_names = adityas
+
+    names = Names(planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas)
 
     if args.timezone:
         timezone = args.timezone
@@ -192,15 +195,15 @@ def main():
 
 
     for sys in to_show:
-        context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sign_names)
+        context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,names)
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sidereal_adityas)
+            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
             print(Planets(context))
             print("\n")
             continue
         if sys == const.DRAC:
-            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,planet_names,zodiac)
+            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
             print(Planets(context))
             print("\n")
             print(Cusps(context))
@@ -216,11 +219,11 @@ def main():
     for sys in to_show:
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,planet_names,sidereal_adityas)
+            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
             print(Cusps(context))
             print("\n")
         if sys == const.ECL:
-            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,planet_names,sign_names)))
+            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,names)))
             print("\n")
 
 

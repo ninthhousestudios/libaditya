@@ -21,6 +21,15 @@ from .julian_day import JulianDay
 from .location import Location
 from libaditya import constants as const
 
+@dataclass(frozen=True)
+class Names:
+    planet_names: str = tuple(const.planet_names)
+    sign_names: str = tuple(const.adityas)
+    nakshatras: str = tuple(const.nakshatras)
+    tithis: str =  tuple(const.tithis)
+    karanas: str = tuple(const.karanas)
+    varas: str = tuple(const.varas)
+    yogas: str = tuple(const.yogas)
 
 @dataclass
 class EphContext:
@@ -31,6 +40,5 @@ class EphContext:
     hsys: str = "C"
     signize: bool = True
     toround: (bool, int) = (True, 3)
-    planet_names: str = tuple(const.planet_names)
-    sign_names: str = tuple(const.adityas)
-    nakshatras: str = tuple(const.nakshatras)
+    names: Names = Names()
+

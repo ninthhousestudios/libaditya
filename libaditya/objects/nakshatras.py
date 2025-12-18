@@ -61,7 +61,7 @@ class Nakshatra:
         return int(self.ashvini_longitude()/self.naksize)
 
     def nakshatra(self):
-        return self.context.nakshatras[self.index()]
+        return self.context.names.nakshatras[self.index()]
 
     def degrees_elapsed(self):
         if self.context.toround[0] == True:

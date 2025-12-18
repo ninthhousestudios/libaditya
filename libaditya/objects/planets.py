@@ -36,7 +36,7 @@ class Planet(Longitude):
         self.timeJD = context.timeJD
         self.context = context
         self.pnumber = pnumber
-        self.planet_name = context.planet_names[self.pnumber]
+        self.planet_name = context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
         self.system = context.sysflg
@@ -212,7 +212,7 @@ class Saturn(Planet):
 class Rahu(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
-        self.planet_name = context.planet_names[10]
+        self.planet_name = context.names.planet_names[10]
 
 
 class Ketu(Planet):
