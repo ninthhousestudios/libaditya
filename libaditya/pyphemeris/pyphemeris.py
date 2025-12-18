@@ -21,7 +21,7 @@ import swisseph as swe
 import argparse
 import time as tmod
 import os
-from dataclasses import dataclass
+from dataclasses import replace
 
 
 from libaditya import constants as const
@@ -167,6 +167,15 @@ def main():
             else:
                 ayanamsa = 27
 
+
+    ########################################################
+    #                                                      #
+    #                                                      #
+    #         start acutally printing stuff                #
+    #                                                      #
+    #                                                      #
+    ########################################################
+
     # @dataclass
     # class EphContext:
     #     timeJD: JulianDay = JulianDay()
@@ -176,16 +185,19 @@ def main():
     #     signize: bool = True
     #     toround: (bool,int) = (True,3)
     #     hsys: str = 'C'
-    #     planet_names: (str) = tuple(const.planet_names)
-    #     sign_names: (str) = tuple(const.adityas)
+    #     names = Names = Names()
+    #
+    # @dataclass(frozen=True)
+    # class Names:
+    #     planet_names: str = tuple(const.planet_names)
+    #     sign_names: str = tuple(const.adityas)
+    #     nakshatras: str = tuple(const.nakshatras)
+    #     tithis: str =  tuple(const.tithis)
+    #     karanas: str = tuple(const.karanas)
+    #     varas: str = tuple(const.varas)
+    #     yogas: str = tuple(const.yogas)
 
-    ########################################################
-    #                                                      #
-    #                                                      #
-    #         start acutally printing stuff                #
-    #                                                      #
-    #                                                      #
-    ########################################################
+    context = EphContext(timeJD,location,const.ECL,ayanamsa,hsys,signize,toround,names)
 
     print(f"\nEphemeris for {name}\n")
 
@@ -196,21 +208,22 @@ def main():
 
 
     for sys in to_show:
-        context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,names)
         if sys == const.SID and sign_names == adityas:
+            if context.ayanamsa == -1:
+                # tropical ayanamsa, so set sys=const.ECL
+                print(Planets(replace(context,sysflg=const.ECL)))
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
-            print(Planets(context))
+            print(Planets(replace(context,sysflg=sys,names=Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))))
             print("\n")
             continue
         if sys == const.DRAC:
-            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
-            print(Planets(context))
+            dracon = replace(context,sysflg=sys,names=Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
+            print(Planets(dracon))
             print("\n")
-            print(Cusps(context))
+            print(Cusps(dracon))
             print("\n")
             continue
-        print(Planets(context))
+        print(Planets(replace(context,sysflg=sys)))
         print("\n")
 
     print(Planets(context).nakshatras())
