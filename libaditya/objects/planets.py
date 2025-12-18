@@ -21,6 +21,7 @@ from prettytable import PrettyTable
 from libaditya import constants as const
 from libaditya import utils
 
+from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 from .longitude import Longitude
@@ -158,7 +159,7 @@ class Planet(Longitude):
         swe.CALC_RISE, swe.CALC_SET, swe.MTRANSIT, swe.ITRANSIT
         :location a Location class for where this is for
         """
-        return timeJD(
+        return JulianDay(
             swe.rise_trans(
                 self.timeJD.midnightjd() if (rs == swe.CALC_RISE) else self.jd,
                 self.pnumber,
@@ -169,6 +170,9 @@ class Planet(Longitude):
 
     def nakshatra(self):
         return self._nakshatra
+
+    def nakshatra_name(self):
+        return self._nakshatra.nakshatra()
 
 
 class Sun(Planet):
@@ -283,6 +287,10 @@ class Planets:
 
     def init_Planets(self):
         ret = []
+        if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
+            # swe can only compute Chiron between these two days
+            # so if it is outside this range, get rid of Chiron
+            self._planets.pop()
         for p in self._planets:
             ret.append(p(self.context))
         return ret

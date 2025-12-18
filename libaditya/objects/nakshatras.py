@@ -26,7 +26,7 @@ class Nakshatra:
         self._occupant = occupant
         self.context = occupant.context
         self.timeJD = occupant.timeJD
-        self.base_long = self._occupant.raw_longitude()
+        self.base_long = self._occupant.real_longitude()
         self.ayanamsa = self.context.ayanamsa
         # ashlong means the number of degrees from ashvini; in most cases, the sidereal longitude
         self.ash_long = self.init_ash_long()
@@ -58,7 +58,7 @@ class Nakshatra:
         return self.ash_long
 
     def index(self):
-        return int(self.ashvini_longitude()/self.naksize)
+        return int(self.ashvini_longitude()/self.naksize)%27
 
     def nakshatra(self):
         return self.context.names.nakshatras[self.index()]
@@ -82,6 +82,8 @@ class Nakshatra:
         from .cusps import Cusp
         # otherwise, find the number of degrees from ashvini
         # insert custom ayanamsa codes and methods here
+        if self.ayanamsa == -1:
+            return self.base_longitude()
         if self.ayanamsa == 98:
             return self.dhruva_gc_equatorial()
         if self.ayanamsa == 99:
@@ -157,6 +159,8 @@ class Nakshatra:
         the projection of the winter solstice onto the equator is always at 270 equatorial longitude
         but im calculating it just for the form of it, on principle
         """
+        from .planets import Planet
+        from .cusps import Cusp
         # equatorial longitude of the winter solstice
         # the swe.calc call is for the ecliptic_obliquity, which is required for coordinate transformations
         # according to the documentation, '-' is used to go from ecliptic to equatorial, which we are doing here

@@ -29,6 +29,7 @@ from libaditya import utils
 from libaditya import read
 import defaults
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names
+from libaditya.calc import Panchanga
 
 
 def main():
@@ -229,6 +230,8 @@ def main():
 
     print(Cusps(context).nakshatras())
 
+    print(Panchanga(context))
+
 # end main function
 def parse_input_file(input):
     if ".pyph" in input:
@@ -299,7 +302,7 @@ def get_args():
     parser.add_argument(
         "-a",
         "--ayanamsa",
-        help="integer value for desired ayanamsa; use any valid swisseph value; 98 for dhruva gc mid-mula (default); 99 for ecliptic vedanga jyotisha; 100 for equatorial vedanga jyotisha",
+        help="integer value for desired ayanamsa; use any valid swisseph value; 98 for dhruva gc mid-mula (default); 99 for ecliptic vedanga jyotisha; 100 for equatorial vedanga jyotisha; -8 for tropical, i.e., put ashvini at the equinox",
     )
     parser.add_argument(
         "-p",
