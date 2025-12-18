@@ -129,34 +129,35 @@ def main():
         timeJD = JulianDay(float(args.julian))
 
     # decide which coordinates system the user wants displayed
-    toshow = [const.ECL]
+    to_show = [const.ECL]
+    show_sidereal = 0
     if args.equatorial:
         show_equ = not (defaults.show_equ)
         if show_equ:
-            toshow.append(const.EQU)
+            to_show.append(const.EQU)
     if args.helios:
         show_helios = not (defaults.show_helios)
         if show_helios:
-            toshow.append(const.HELIO)
+            to_show.append(const.HELIO)
     if args.baryos:
         show_baryos = not (defaults.show_baryos)
         if show_baryos:
-            toshow.append(const.BARY)
+            to_show.append(const.BARY)
     if args.topo:
         show_topo = not (defaults.show_topo)
         if show_topo:
-            toshow.append(const.TOPO)
+            to_show.append(const.TOPO)
     if args.draconic:
         show_drac = not (defaults.show_drac)
         if show_drac:
-            toshow.append(const.DRAC)
+            to_show.append(const.DRAC)
     if args.sidereal:
         show_sidereal = not (defaults.show_sidereal)
         if show_sidereal:
-            toshow.append(const.SID)
+            to_show.append(const.SID)
             if args.topo:
                 if show_topo:
-                    toshow.append(const.SID | const.TOPO)
+                    to_show.append(const.SID | const.TOPO)
             if args.ayanamsa:
                 ayanamsa = int(args.ayanamsa)
             else:
@@ -190,7 +191,7 @@ def main():
     # print planetary positions in all coordinates and types the users wants
 
 
-    for sys in toshow:
+    for sys in to_show:
         context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
@@ -202,6 +203,8 @@ def main():
             context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,zodiac)
             print(Planets(context))
             print("\n")
+            print(Cusps(context))
+            print("\n")
             continue
         print(Planets(context))
         print("\n")
@@ -210,14 +213,16 @@ def main():
 
     # now for house cusps
     print("\n")
-    if sys == const.SID and sign_names == adityas:
-        # if sign_names == zodiac, then we are using the zodiac
-        context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
-        print(Cusps(context))
-        print("\n")
-    else:
-        print(Cusps(EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)))
-        print("\n")
+    for sys in to_show:
+        if sys == const.SID and sign_names == adityas:
+            # if sign_names == zodiac, then we are using the zodiac
+            context = EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sidereal_adityas)
+            print(Cusps(context))
+            print("\n")
+        if sys == const.ECL:
+            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,signize,toround,hsys,planet_names,sign_names)))
+            print("\n")
+
 
     print(Cusps(context).nakshatras())
 

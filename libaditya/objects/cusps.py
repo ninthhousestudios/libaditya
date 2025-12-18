@@ -18,12 +18,12 @@
 import swisseph as swe
 from prettytable import PrettyTable
 
+from .longitude import Longitude
 from .context import EphContext
 
 from libaditya import constants as const
-from libaditya import utils
 
-class Cusp:
+class Cusp(Longitude):
     def __init__(self, longitude, speed, number, context=EphContext()):
         self.context = context
         self.hsys = self.context.hsys.encode()
@@ -38,12 +38,12 @@ class Cusp:
         self._cusp_index = number
         self._number = number + 1
         self.cusp_name = f"Cusp {self._number}"
+        super().__init__(self.long,self.context)
         from .nakshatra import Nakshatra
         self._nakshatra = Nakshatra(self)
 
     def __str__(self):
         return self.cusp_name + " at " + str(self.longitude())
-
 
     def __repr__(self):
         return self.cusp_name + " at " + str(self.long)
@@ -56,33 +56,6 @@ class Cusp:
 
     def cusp_index(self):
         return self._cusp_index
-
-    def longitude(self):
-        if self.context.signize:
-            return self.signize()
-        else:
-            return self.raw_longitude()
-
-    def signize(self):
-        """
-        return a string with 360degree longitude long given with
-        long (sign), with long being in the sign
-        signs contains the signs to be used, which might be adityas
-        """
-        index = int(
-            (self.long % 360) / 30
-        )  # mod 360 in case long=360...but it probably wouldnt with swe, right?
-        if self.context.toround[0]:
-            inlong = round(self.long % 30, self.context.toround[1])
-        else:
-            inlong = self.long % 30
-        return f"{utils.dec2dmsstr(inlong)} {self.context.sign_names[index]}"
-
-    def raw_longitude(self):
-        if self.context.toround[0]:
-            return round(self.long, self.context.toround[1])
-        else:
-            return self.long
 
     def speed(self):
         if self.context.toround[0]:
@@ -200,7 +173,8 @@ class Cusps:
         """
         the function swe.houses(time,lat,long,hsys) take lat first
         """
-        place = f"Cusps for\n{self.location}\n"
+        draconic = "Draconic " if self.context.sysflg == const.DRAC else ""
+        place = f"{draconic}Cusps for\n{self.location}\n"
         time = f"{self.timeJD}\n"
         sys = f"Using {self.hname} house system\n"
         ayanamsa = ""

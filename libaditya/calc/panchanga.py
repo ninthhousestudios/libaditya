@@ -15,22 +15,14 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
-from dataclasses import dataclass
+import swisseph as swe
 
-from .julian_day import JulianDay
-from .location import Location
 from libaditya import constants as const
 
+from libaditya.objects import Sun, Moon
 
-@dataclass
-class EphContext:
-    timeJD: JulianDay = JulianDay()
-    location: Location = Location()
-    sysflg: int = const.ECL
-    ayanamsa: int = 98
-    signize: bool = True
-    toround: (bool, int) = (True, 3)
-    hsys: str = "C"
-    planet_names: str = tuple(const.planet_names)
-    sign_names: str = tuple(const.adityas)
-    nakshatras: str = tuple(const.nakshatras)
+class Panchanga:
+
+    def __init__(self, sun=Sun(), moon=Moon()):
+        self._sun = sun
+        self._moon = moon

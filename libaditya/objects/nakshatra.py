@@ -67,7 +67,7 @@ class Nakshatra:
         if self.context.toround[0] == True:
             return round(self.ashvini_longitude()-(self.index()*self.naksize),2)
         else:
-            return self.ashvini_longitude()-(self.index()*self.naksize),self.context.toround[1]
+            return self.ashvini_longitude()-(self.index()*self.naksize)
 
     def percent_elapsed(self):
         if self.context.toround[0] == True:
@@ -78,7 +78,7 @@ class Nakshatra:
             return False
 
     def init_ash_long(self):
-        from .planet import Planet
+        from .planets import Planet
         from .cusps import Cusp
         # otherwise, find the number of degrees from ashvini
         # insert custom ayanamsa codes and methods here
@@ -116,13 +116,13 @@ class Nakshatra:
         return const.ayanamsa_name(self.ayanamsa)
 
     def ketuize(self,long):
-        from .planet import Ketu
+        from .planets import Ketu
         if isinstance(self._occupant,Ketu):
             long = (long-180)%360
         return long
 
     def dhruva_gc_equatorial(self):
-        from .planet import Planet
+        from .planets import Planet
         from .cusps import Cusp
         gcequ=swe.fixstar(",SgrA*",self.timeJD.jd, swe.FLG_EQUATORIAL)[0][0]
         mula=gcequ-(self.naksize/2)
@@ -202,7 +202,7 @@ class Nakshatras:
         return self.mkheader()
 
     def occupant_type(self):
-        from .planet import Planet
+        from .planets import Planet
         from .cusps import Cusp
         if isinstance(self._occupants[0],Planet):
             return "Planet"
@@ -218,7 +218,7 @@ class Nakshatras:
         return ret
 
     def mkheader(self):
-        from .planet import Planet
+        from .planets import Planet
         from .cusps import Cusp
         if isinstance(self._occupants[0],Planet):
             return self.mkheader_Planets()
