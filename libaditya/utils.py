@@ -17,8 +17,6 @@
 
 import swisseph as swe
 
-from libaditya import constants as const
-
 
 def dms2dec(dms):
     """

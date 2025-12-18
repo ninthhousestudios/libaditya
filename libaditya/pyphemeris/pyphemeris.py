@@ -204,7 +204,7 @@ def main():
             print("\n")
             continue
         if sys == const.DRAC:
-            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
+            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
             print(Planets(context))
             print("\n")
             print(Cusps(context))
@@ -220,7 +220,7 @@ def main():
     for sys in to_show:
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,hys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
+            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
             print(Cusps(context))
             print("\n")
         if sys == const.ECL:
@@ -230,7 +230,13 @@ def main():
 
     print(Cusps(context).nakshatras())
 
-    print(Panchanga(context))
+    p=Panchanga(context)
+    print(p)
+    p.print_addendum()
+    p.print_next_new_moon()
+    p.print_next_full_moon()
+
+
 
 # end main function
 def parse_input_file(input):
@@ -297,7 +303,7 @@ def get_args():
     parser.add_argument(
         "-t",
         "--time",
-        help="time specified as HH:MM:SS, (utc); if not present will use time at runtime",
+        help="time specified as HH:MM(:SS); must be UTC ; if not present will use time at runtime",
     )
     parser.add_argument(
         "-a",
@@ -310,26 +316,21 @@ def get_args():
         help="latitude and longitutde in the form NN,EE; north and east are positive; don't pass directional letters; if latitude is negative, pass argument as -p=-30,40, for example; if you pass a .chtk file, it will read and use the position in that file; use -z and -P to set strings for timezone and placename, if desired",
     )
     parser.add_argument(
-        "-z", "--timezone", help="a string showing the timezone; e.g., CDT"
-    )
-    parser.add_argument(
-        "-P", "--placename", help="a string showing the placename; e.g., CDT"
-    )
-    parser.add_argument(
         "-H",
         "--house-system",
         help="house system, default: C for Campanus; try R for Regiomantus",
     )
     parser.add_argument(
-        "-l",
-        "--lang",
-        help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed",
+        "-Z",
+        "--zodiac",
+        action="store_true",
+        help="toggle use of zodiac signs; can set default variable 'signs' in defaults.py",
     )
-    parser.add_argument("-j", "--julian", help="time specificed as a julian day")
     parser.add_argument(
-        "-e",
-        "--edir",
-        help="path to swiss ephemeris files; default can be set in constants.py",
+        "-S",
+        "--sidereal",
+        action="store_true",
+        help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa",
     )
     parser.add_argument(
         "-helio",
@@ -350,28 +351,27 @@ def get_args():
         help="toggle priting equatorial coordinates from default behavior",
     )
     parser.add_argument(
-        "-S",
-        "--sidereal",
-        action="store_true",
-        help="print positions in sidereal longitude; pass an ayanamsa value with the -a/--ayanamsa option; if none is passed, will default to number 27, True Chitra ayanamsa",
-    )
-    parser.add_argument(
         "-D",
         "--draconic",
         action="store_true",
         help="print positions for a tropical draconic chart, where Rahu = 0 Aries",
     )
     parser.add_argument(
-        "-Z",
-        "--zodiac",
-        action="store_true",
-        help="use zodiac signs; can set default variable 'signs' in defaults.py",
-    )
-    parser.add_argument(
         "-T",
         "--topo",
         action="store_true",
         help="toggle topocentric positions of planets; can use -p to specify lat/long; if passing an input file, -p argument will override that location information",
+    )
+    parser.add_argument(
+        "-l",
+        "--lang",
+        help="language file; current options: dict.eng, dict.iast, dict.deva, dict.mixed",
+    )
+    parser.add_argument("-j", "--julian", help="time specificed as a julian day")
+    parser.add_argument(
+        "-e",
+        "--edir",
+        help="path to swiss ephemeris files; default can be set in constants.py",
     )
     parser.add_argument(
         "-s",
@@ -384,6 +384,12 @@ def get_args():
         "--round",
         action="store_true",
         help="toggle whether output is rounded or not",
+    )
+    parser.add_argument(
+        "-z", "--timezone", help="a string showing the timezone; e.g., CDT; note: this is just a string pyphemeris will print; pyphemeris does not deal wiht timezones!"
+    )
+    parser.add_argument(
+        "-P", "--placename", help="a string showing the placename; e.g., CDT"
     )
 
     args = parser.parse_args()

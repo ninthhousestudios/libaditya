@@ -153,6 +153,16 @@ class Planet(Longitude):
         else:
             return ""
 
+    def daily_motion(self):
+        """
+        return daily motion in degress that the planet traverses
+        in the next 24 hours from self.julianday
+        """
+        return (
+            (swe.calc_ut(self.timeJD.jd + 1, self.pnumber, self.sysflg)[0][0])
+            - (swe.calc_ut(self.timeJD.jd, self.pnumber, self.sysflg)[0][0])
+        )
+
     def riseset(self, rs, location=Location()):
         """
         :rs flag for rise, set, or one of the two meridian transits
@@ -165,7 +175,7 @@ class Planet(Longitude):
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
                 location.swe_location(),
-            )[1][0]
+            )[1][0],self.timeJD.utcoffset,self.timeJD.timezone
         )
 
     def nakshatra(self):

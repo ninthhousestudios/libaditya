@@ -142,7 +142,7 @@ class JulianDay:
             sf = sf * self.oneyearjd
         else:
             print("given unit not recognized")
-        return JulianDay(self.jd + (number * sf))
+        return JulianDay(self.jd + (number * sf),self.utcoffset,self.timezone)
 
     def usrdt(self):
         """

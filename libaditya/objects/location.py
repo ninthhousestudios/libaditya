@@ -39,7 +39,7 @@ class Location:
         return f"{self.placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def place(self):
-        return f"{self.placename} {round(self.lat, 3)},{round(self.long, 3)})"
+        return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
 
     def swe_location(self):
         # swe argument order is long, lat, alt

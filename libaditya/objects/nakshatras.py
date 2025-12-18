@@ -69,6 +69,12 @@ class Nakshatra:
         else:
             return self.ashvini_longitude()-(self.index()*self.naksize)
 
+    def degrees_remaining(self):
+        if self.context.toround[0] == True:
+            return round(self.naksize-self.degrees_elapsed(),2)
+        else:
+            return self.naksize-self.degrees_elapsed()
+
     def percent_elapsed(self):
         if self.context.toround[0] == True:
             return round((self.degrees_elapsed()/self.naksize)*100,2)
@@ -76,6 +82,13 @@ class Nakshatra:
             return (self.degrees_elapsed()/self.naksize)*100
 
             return False
+    
+    def print_in_longitude(self):
+        print(f"Elapsed: {self.degrees_elapsed()} deg ({round((self.degrees_elapsed() / self.naksize) * 100, 3)} %)")
+        degremain = self.degrees_remaining()
+        print(
+            f"Remaining: {degremain} deg ({round((degremain / self.naksize) * 100, 3)} %)"
+        )
 
     def init_ash_long(self):
         from .planets import Planet
