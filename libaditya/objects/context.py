@@ -16,11 +16,17 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 from dataclasses import dataclass
+from enum import Enum
 
 from .julian_day import JulianDay
 from .location import Location
 from libaditya import constants as const
 
+class Circle(Enum):
+    ADITYA = 1
+    ZODIAC = 2
+    SIDEREAL_ADITYA = ZODIAC
+        
 @dataclass(frozen=True)
 class Names:
     planet_names: str = tuple(const.planet_names)
@@ -38,6 +44,7 @@ class EphContext:
     sysflg: int = const.ECL
     ayanamsa: int = 98
     hsys: str = "C"
+    circle: Circle = Circle
     signize: bool = True
     toround: (bool, int) = (True, 3)
     names: Names = Names()

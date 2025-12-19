@@ -470,6 +470,7 @@ def init_names(langfile=const.base_path + "/dict/dict.mixed"):
     yogas.append(ynames["Indra"])
     yogas.append(ynames["Vaidhriti"])
 
+    adityas.append(anames["Dhata"])
     adityas.append(anames["Aryama"])
     adityas.append(anames["Mitra"])
     adityas.append(anames["Varuna"])
@@ -481,9 +482,8 @@ def init_names(langfile=const.base_path + "/dict/dict.mixed"):
     adityas.append(anames["Bhaga"])
     adityas.append(anames["Pusha"])
     adityas.append(anames["Parjanya"])
-    adityas.append(anames["Dhata"])
 
-    sidereal_adityas = [adityas[11]] + adityas[:11]
+    # sidereal_adityas = [adityas[11]] + adityas[:11]
 
     nakshatraeq.append(neqnames["Krittika"])
     nakshatraeq.append(neqnames["Rohini"])
@@ -523,7 +523,6 @@ def init_names(langfile=const.base_path + "/dict/dict.mixed"):
         varas,
         yogas,
         adityas,
-        sidereal_adityas,
     )
 
 

@@ -20,13 +20,14 @@ import swisseph as swe
 from libaditya import constants as const
 from libaditya import utils
 
-from .context import EphContext
+from .context import EphContext, Circle
 
 class Longitude:
 
     def __init__(self, longitude, context=EphContext()):
         self.context = context
         self._longitude = longitude 
+        self.index = int((self._longitude % 360) / 30)
         self.rahu = self.get_rahu()
 
 
@@ -47,8 +48,14 @@ class Longitude:
         else:
             return self.raw_longitude()
 
+    def index(self):
+        return self.index
+
     def sign_index(self):
-        return int((self._longitude % 360) / 30)
+        if self.context.circle == Circle.ADITYA:
+            return (self.index + 1) % 12
+        else:
+            return self.index
 
     def sign_name(self):
         return self.context.names.sign_names[self.sign_index()]

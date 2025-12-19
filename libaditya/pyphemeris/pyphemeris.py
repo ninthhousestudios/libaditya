@@ -28,7 +28,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
 import defaults
-from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names
+from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle
 from libaditya.calc import Panchanga
 
 
@@ -60,17 +60,19 @@ def main():
         varas,
         yogas,
         adityas,
-        sidereal_adityas,
     ) = read.init_names(lang_file)
     planet_names.append("Chiron")
 
 
     if args.zodiac:
         sign_names = zodiac
+        circle = Circle.ZODIAC
     elif defaults.signs == "zodiac":
         sign_names = zodiac
+        circle = Circle.ZODIAC
     else:
         sign_names = adityas
+        circle = Circle.ADITYA
 
     names = Names(planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas)
 
@@ -182,9 +184,10 @@ def main():
     #     location: Location = Location()
     #     sysflg: int = const.ECL
     #     ayanamsa: int = 98
+    #     hsys: str = 'C'
+    #     circle: Circle = Circle
     #     signize: bool = True
     #     toround: (bool,int) = (True,3)
-    #     hsys: str = 'C'
     #     names = Names = Names()
     #
     # @dataclass(frozen=True)
@@ -197,7 +200,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.ECL,ayanamsa,hsys,signize,toround,names)
+    context = EphContext(timeJD,location,const.ECL,ayanamsa,hsys,circle,signize,toround,names)
 
     print(f"\nEphemeris for {name}\n")
 
@@ -208,16 +211,17 @@ def main():
 
 
     for sys in to_show:
-        if sys == const.SID and sign_names == adityas:
+        if sys == const.SID:
             if context.ayanamsa == -1:
                 # tropical ayanamsa, so set sys=const.ECL
                 print(Planets(replace(context,sysflg=const.ECL)))
-            # if sign_names == zodiac, then we are using the zodiac
-            print(Planets(replace(context,sysflg=sys,names=Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))))
-            print("\n")
-            continue
+                continue
+            if circle == Circle.ADITYA:
+                print(Planets(replace(context,sysflg=sys,circle=Circle.SIDEREAL_ADITYA)))
+                print("\n")
+                continue
         if sys == const.DRAC:
-            dracon = replace(context,sysflg=sys,names=Names(planet_names,zodiac,nakshatras,tithis,karanas,varas,yogas))
+            dracon = replace(context,sysflg=sys,names=replace(names,sign_names=zodiac))
             print(Planets(dracon))
             print("\n")
             print(Cusps(dracon))
@@ -228,13 +232,14 @@ def main():
 
     # now for house cusps
     for sys in to_show:
-        if sys == const.SID and sign_names == adityas:
-            # if sign_names == zodiac, then we are using the zodiac
-            context = EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,Names(planet_names,sidereal_adityas,nakshatras,tithis,karanas,varas,yogas))
+        if sys == const.SID and context.ayanamsa == -1:
+                # tropical ayanamsa, so set sys=const.ECL
+            print(Cusps(replace(context,sysflg=const.ECL)))
+        if sys == const.ECL:
             print(Cusps(context))
             print("\n")
-        if sys == const.ECL:
-            print(Cusps(EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,names)))
+        if sys == const.SID:
+            print(Cusps(replace(context,sysflg=const.SID)))
             print("\n")
 
     p=Panchanga(context)

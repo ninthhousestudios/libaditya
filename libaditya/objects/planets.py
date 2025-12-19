@@ -19,7 +19,6 @@ import swisseph as swe
 from prettytable import PrettyTable
 
 from libaditya import constants as const
-from libaditya import utils
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -33,7 +32,7 @@ class Planet(Longitude):
     each Planet takes a planet number and a JulianDay class
     """
 
-    def __init__(self, pnumber, context=EphContext()):
+    def __init__(self, pnumber, context=EphContext(), longitude=None):
         self.timeJD = context.timeJD
         self.context = context
         self.pnumber = pnumber
@@ -43,9 +42,14 @@ class Planet(Longitude):
         self.system = context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
-        self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+        # if a longitude is passed, we are in a varga not equal to 1
+        if longitude is None:
+            self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+            self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
+        else:
+            self.long = longitude
+            self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
         # so that we only need only longitude() function with all the signizing and rounding or not
-        self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
         #self.rahu = self.get_rahu()
         # this instantiates all the function in Longitude
         # this is for all the calculations that require *only* longitude
@@ -370,53 +374,8 @@ class Planets:
         using sysflag coordinates
         """
         print(f"{type(self)}")
-        output = PrettyTable()
-        output.field_names = [
-            "Planet",
-            "Longitude",
-            "Speed",
-            "Latitude",
-            "Latitude Speed",
-            "Distance",
-            "Distance Speed",
-        ]
-        output.align["Planet"] = "l"
-        output.align["Longitude"] = "l"
-        output.align["Speed"] = "r"
-        output.align["Latitude"] = "r"
-        output.align["Latitude Speed"] = "r"
-        output.align["Distance"] = "r"
-        output.align["Distance Speed"] = "r"
 
-        for p in self.planets:
-            # dont print earth unless it is heliocentric or barycentric
-            if isinstance(p, Earth) and not (
-                self.system == const.HELIO or self.system == const.BARY
-            ):
-                continue
-            # dont print rahuketu if it is heliocentric or barycentric
-            if (isinstance(p, Rahu) or isinstance(p, Ketu)) and (
-                self.system == const.HELIO or self.system == const.BARY
-            ):
-                continue
-            # dont print the Sun when printing heliocentric coordinates
-            if isinstance(p, Sun) and self.system == const.HELIO:
-                continue
-            output.add_row(p.table_row())
-
-        ret = output.get_string(
-            fields=[
-                "Planet",
-                "Longitude",
-                "Speed",
-                "Latitude",
-                "Latitude Speed",
-                "Distance",
-                "Distance Speed",
-            ]
-        )
-
-        return self.mkheader() + ret
+        return self.mkheader()
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"

@@ -19,6 +19,7 @@ import swisseph as swe
 from datetime import date
 from dataclasses import replace
 
+from libaditya import constants as const
 from libaditya import utils
 
 from libaditya.objects import Sun, Moon, EphContext
@@ -38,6 +39,7 @@ class Panchanga:
 
     def __str__(self):
         panch = "\nPanchanga\n"
+        panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
         panch += f"\n{self.context.timeJD}\n"
 
         panch += f"\nAbsolute tithi: {self.tithi()}\n"

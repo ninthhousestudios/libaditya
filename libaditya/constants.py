@@ -232,6 +232,7 @@ yogas = [
 ]
 
 adityas = [
+    "dhātā",
     "aryamā",
     "mitra",
     "varuṇa",
@@ -243,7 +244,6 @@ adityas = [
     "bhaga",
     "pūṣā",
     "parjanya",
-    "dhātā",
 ]
 
 sidereal_adityas = [adityas[11]] + adityas[:11]
