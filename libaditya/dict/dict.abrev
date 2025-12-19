@@ -1,0 +1,163 @@
+[PLANETS]
+Sun = Sun
+Moon = Moon
+Mercury = Mercury
+Venus = Venus
+Mars = Mars
+Jupiter = Jupiter
+Saturn = Saturn
+Uranus = Uranus
+Neptune = Neptune
+Pluto = Pluto
+Rahu = Rahu
+Ketu = Ketu
+Earth = Earth
+
+[RASIS]
+Aries = Aries
+Taurus = Taurus
+Gemini = Gemini
+Cancer = Cancer
+Leo = Leo       
+Virgo = Virgo
+Libra = Libra
+Scorpio = Scorpio
+Sagittarius = Sagittarius
+Capricorn = Capricorn
+Aquarius = Aquarius
+Pisces = Pisces
+
+[TITHI]
+Nanda = nanda
+Bhadra = bhadra
+Jaya = jāya
+Rkta = ṛkta
+Purna = pūrṇa
+
+[KARANA]
+Kimtughna = kiṃtughna
+Bava = bava
+Balava = balava
+Kaulava = kaulava
+Taitula = taitila
+Garija = garija
+Vanija = vaṇija
+Vishti = viṣṭi
+Shakuni = śakuni
+Chatushpada = catuṣpada
+Naga = nāga
+
+[NAKSHATRA]
+Ashvini = aśvinī
+Bharani = bharaṇī
+Krittika = kṛttikā
+Rohini = rohiṇī
+Mrigashira = mṛgaśīrṣa
+Ardra = ārdrā
+Punarvasu = punarvasu
+Pushya = puṣya
+Ashlesha = āśleṣā
+Magha = maghā
+Purva Phalguni = p.phalgunī
+Uttara Phalguni = u.phalgunī
+Hasta = hasta
+Chitra = citrā
+Svati = svāti
+Vishakha = viśākhā
+Anuradha = anurādhā
+Jyeshtha = jyeṣṭhā
+Mula = mūla
+Purva Ashadha = p.āṣāḍhā
+Uttara Ashadha = u.āṣāḍhā
+Shravana = śravaṇa
+Danishtha = dhaniṣṭhā
+Shatabhisha = śatabhiṣa
+Purva Bhadrapada = p.bhādrapadā
+Uttara Bhadrapada = u.bhādrapadā
+Revati = revatī
+
+
+[VARA]
+Ravivara = ravivāra
+Somavara = somavāra
+Mangalavara = maṅgalavāra
+Budhavara = budhavāra
+Guruvara = guruvāra
+Shukravara = śukravāra
+Shanivara = śanivāra
+
+[YOGAS]
+Vishkambha = viṣkambha
+Priti = prīti
+Ayushman = āyuṣmān
+Saubhagya = saubhāgya
+Shobana = śobhana
+Atiganda = atigaṇḍa
+Sukarma = sukarma
+Dhriti = dhṛti
+Shoola = śula
+Ganda = gaṇḍa
+Vriddhi = vṛddhi
+Dhruva = dhruva
+Vyaghata = vyāghāta
+Harshana = harṣaṇa
+Vajra = vajra
+Siddhi = siddhi
+Vyatipata = vyātipata
+Variyan = varīyas
+Parigha = parighā
+Shiva = śiva
+Siddha = siddha
+Sadhya = sādhya
+Shubha = śubha
+Shukla = śukla
+Brahma = brahmā
+Indra = indra
+Vaidhriti = vaidhṛti
+
+[ADITYAS]
+Aryama = aryamā
+Mitra = mitra
+Varuna = varuṇa
+Indra = indra
+Vivasvan = vivasvān
+Tvashta = tvaṣṭā
+Vishnu = viṣṇu
+Amshu = aṃśu
+Bhaga = bhaga
+Pusha = pūṣā
+Parjanya = parjanya
+Dhata = dhātā
+
+[NAKSHATRAEQ]
+Krittika = kṛttikā
+Rohini = rohiṇī
+Mrigashira = mṛgaśīrṣa
+Ardra = ārdrā
+Punarvasu = punarvasu
+Pushya = puṣya
+Ashlesha = āśleṣā
+Magha = maghā
+Purva Phalguni = pūrvā phalgunī
+Uttara Phalguni = uttarā phalgunī
+Hasta = hasta
+Chitra = citrā
+Svati = svāti
+Vishakha = viśākhā
+Anuradha = anurādhā
+Jyeshtha = jyeṣṭhā
+Mula = mūla
+Purva Ashadha = pūrvāṣāḍhā
+Uttara Ashadha = uttarāṣāḍhā
+Abhijit = abhijit
+Shravana = śravaṇa
+Danishtha = dhaniṣṭhā
+Shatabhisha = śatabhiṣa
+Purva Bhadrapada = pūrvabhādrapadā
+Uttara Bhadrapada = uttarabhādrapadā
+Revati = revatī
+Ashvini = aśvinī
+Bharani = bharaṇī
+
+
+

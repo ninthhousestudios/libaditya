@@ -52,16 +52,7 @@ def main():
     else:
         lang_file = defaults.lang_file
 
-    (
-        planet_names,
-        zodiac,
-        tithis,
-        karanas,
-        nakshatras,
-        varas,
-        yogas,
-        adityas,
-    ) = read.init_names(lang_file)
+    planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
     planet_names.append("Chiron")
 
 

@@ -38,6 +38,40 @@ class Varga:
         this is for every varga except the Rashi
         the rashi is printed with nakshatras
         the others are not
+
+        str prints a table with signs at the top
+        each object is printed under its sign
+        as "object in_sign_longitude"
+        the number of rows will be equal to the most objects that are in one sign
+        """
+        output = PrettyTable()
+        # list of the sign names
+        output.field_names= list([sign for sign in [self.context.names.sign_names]][0])
+
+        # get the sign with the most objects, so we know how many rows to print
+        rows = self._signs.most_objects()
+
+        for r in range(0,rows):
+            # construct the row
+            row = []
+            for s in range(0,12):
+                if len(self._signs[s]._objects) > r:
+                    row.append(f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n")
+                else:
+                    row.append("")
+            output.add_row(row)
+
+        ret = output.get_string(fields=list([sign for sign in [self.context.names.sign_names]][0]))
+        return self.mkheader() + ret
+        
+    def __repr__(self):
+        """
+        this is for every varga except the Rashi
+        the rashi is printed with nakshatras
+        the others are not
+
+        repr prints a table with objects on the side, signs at the top
+        prints a space for each sign and object, so it is quite large
         """
         output = PrettyTable()
         # list of the sign names
@@ -75,8 +109,7 @@ class Varga:
             header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
         else:
             header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        if self.context.sysflg == swe.FLG_TOPOCTR:
-            header += f"{self.context.location}"
+        header += f"{self.context.location}\n"
         header += f"{self.context.timeJD}\n"
         return header
 
@@ -87,6 +120,39 @@ class Rashi(Varga):
         super().__init__(identifier=1,planets=planets,cusps=cusps,context=context)
 
     def __str__(self):
+        """
+        this is for every varga except the Rashi
+        the rashi is printed with nakshatras
+        the others are not
+
+        str prints a table with signs at the top
+        each object is printed under its sign
+        as "object in_sign_longitude"
+        the number of rows will be equal to the most objects that are in one sign
+        """
+        output = PrettyTable()
+        # list of the sign names
+        output.field_names= list([sign for sign in [self.context.names.sign_names]][0])
+
+        # get the sign with the most objects, so we know how many rows to print
+        rows = self._signs.most_objects()
+
+        for r in range(0,rows):
+            # construct the row
+            row = []
+            for s in range(0,12):
+                if len(self._signs[s]._objects) > r:
+                    rowstr = f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n"
+                    rowstr += f"{self._signs[s]._objects[r].nakshatra_name()}\n{self._signs[s]._objects[r].nakshatra().elapsed()}\n"
+                    row.append(rowstr)
+                else:
+                    row.append("")
+            output.add_row(row)
+
+        ret = output.get_string(fields=list([sign for sign in [self.context.names.sign_names]][0]))
+        return self.mkheader() + ret
+
+    def __repr__(self):
         """
         this prints nakshatras with the chart
         """

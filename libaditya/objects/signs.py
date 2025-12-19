@@ -30,6 +30,7 @@ class Sign:
         self.context = context
         self._planets = planets
         self._cusps = cusps
+        self._objects = self._planets + self._cusps
         self._sign_index = index
         self._sign_name = self.context.names.sign_names[self.sign_index()]
 
@@ -66,6 +67,10 @@ class Sign:
 
     def sign_name(self):
         return self._sign_name
+
+    def how_many_objects(self):
+        return len(self._objects)
+
 
 class Signs:
     
@@ -112,6 +117,17 @@ class Signs:
         for n, sign in enumerate(stmp):
             signs.append(Sign(n,planets=sign[0],cusps=sign[1],context=self.context))
         return signs
+
+    def most_objects(self):
+        """
+        return sign_index of the sign with the most most_objects
+        objects are plants and cusps
+        """
+        most=0
+        for sign in self._signs:
+            if sign.how_many_objects() > most:
+                most = sign.sign_index()
+        return most
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
