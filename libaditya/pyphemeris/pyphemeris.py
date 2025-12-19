@@ -27,10 +27,11 @@ from dataclasses import replace
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
-import defaults
-from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle
-from libaditya.calc import Panchanga
 
+from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
+from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha
+
+import defaults
 
 def main():
     args = get_args()
@@ -248,6 +249,52 @@ def main():
     p.print_next_new_moon()
     p.print_next_full_moon()
 
+    # do vimshottari dasha
+    if args.dasha_levels:
+        dasha_levels = int(args.dasha_levels)
+    else:
+        dasha_levels = defaults.dasha_levels
+
+    if args.dasha_year_length:
+        for opt in const.dasha_years:
+            if opt[0][:3] in args.dasha_year_length.lower():
+                yrlen = opt[1]
+        if yrlen == 0:
+            # the option was not recognized
+            print(f"year length not recognized, using saura year")
+            yrlen = const.dasha_years[0][1] # i.e., 365.2422 days per saura year
+    else:
+        yrlen = const.dasha_years[0][1] # i.e., 365.2422 days per saura year
+
+    # get default, toggle if -V is present
+    show_vdasha = defaults.show_vdasha
+    if args.vdasha:
+        show_vdasha = not show_vdasha
+
+    if show_vdasha:
+        print_vimshottari_dasha(Moon(context),dasha_levels,yrlen)
+
+    # get default, toggle if -V2 is present
+    show_v2dasha = defaults.show_v2dasha
+    if args.v2dasha:
+        show_v2dasha = not show_v2dasha
+
+    if show_v2dasha:
+
+        print("\n\nVimshottari Dasha\n")
+
+        # this is for the year length
+        for opt in const.dasha_years:
+            if yrlen == opt[1]:
+                yrstr = opt[0].capitalize()
+
+        planet = Moon(context)
+        print(f"Based on the position of {planet.name()}")
+        print(f"Using {planet.ayanamsa_name()}")
+        print(f"Using {yrstr} year length")
+        vdasha = calculate_vimshottari_dasha(planet,dasha_levels,yrlen)
+        print_calculated_vimshottari_dasha(vdasha)
+
 
 
 # end main function
@@ -373,6 +420,34 @@ def get_args():
         "--topo",
         action="store_true",
         help="toggle topocentric positions of planets; can use -p to specify lat/long; if passing an input file, -p argument will override that location information",
+    )
+    parser.add_argument(
+        "-V",
+        "--vdasha",
+        action="store_true",
+        help="toggle printing vimshottari dasha from default; this option prints as it calculates, so it can print to however many levels you want easily",
+    )
+    parser.add_argument(
+        "-V2",
+        "--v2dasha",
+        action="store_true",
+        help="toggle printing vimshottari dasha from default; this option calculates everything, then prints",
+    )
+    parser.add_argument(
+        "-C",
+        "--current-dasha",
+        action="store_true",
+        help="print current dasha; use -L to specify how many levels; default is 3",
+    )
+    parser.add_argument(
+        "-L",
+        "--dasha-levels",
+        help="how many dasha levels to print; if not given uses default in pyphglobals",
+    )
+    parser.add_argument(
+        "-Y",
+        "--dasha-year-length",
+        help="which year length to use for dashas; default is Saura; options: Nakshatra = 359.0167 standard days; Savana = 360 standard days; Saura = 365.2422; Sidereal = 365.2564; Chandra = 364.2888; Lunar = 354.36708",
     )
     parser.add_argument(
         "-l",

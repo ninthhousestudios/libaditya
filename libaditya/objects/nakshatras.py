@@ -22,7 +22,7 @@ from libaditya import constants as const
 
 class Nakshatra:
     def __init__(self, occupant):
-        self.naksize = 13+(1/3)
+        self._naksize = 13+(1/3)
         self._occupant = occupant
         self.context = occupant.context
         self.timeJD = occupant.timeJD
@@ -51,6 +51,9 @@ class Nakshatra:
     def occupant(self):
         return self._occupant.name()
 
+    def naksize(self):
+        return self._naksize
+
     def base_longitude(self):
         return self.base_long
 
@@ -58,38 +61,38 @@ class Nakshatra:
         return self.ash_long
 
     def index(self):
-        return int(self.ashvini_longitude()/self.naksize)%27
+        return int(self.ashvini_longitude()/self.naksize())%27
 
     def nakshatra(self):
         return self.context.names.nakshatras[self.index()]
 
     def degrees_elapsed(self):
         if self.context.toround[0] == True:
-            return round(self.ashvini_longitude()-(self.index()*self.naksize),2)
+            return round(self.ashvini_longitude()-(self.index()*self.naksize()),2)
         else:
-            return self.ashvini_longitude()-(self.index()*self.naksize)
+            return self.ashvini_longitude()-(self.index()*self.naksize())
 
     def degrees_remaining(self):
         if self.context.toround[0] == True:
-            return round(self.naksize-self.degrees_elapsed(),2)
+            return round(self.naksize()-self.degrees_elapsed(),2)
         else:
-            return self.naksize-self.degrees_elapsed()
+            return self.naksize()-self.degrees_elapsed()
 
     def percent_elapsed(self):
         if self.context.toround[0] == True:
-            return round((self.degrees_elapsed()/self.naksize)*100,2)
+            return round((self.degrees_elapsed()/self.naksize())*100,2)
         else:
-            return (self.degrees_elapsed()/self.naksize)*100
+            return (self.degrees_elapsed()/self.naksize())*100
 
             return False
     def elapsed(self):
         return f"{self.degrees_elapsed()} ({self.percent_elapsed()} %)" 
     
     def print_in_longitude(self):
-        print(f"Elapsed: {self.degrees_elapsed()} deg ({round((self.degrees_elapsed() / self.naksize) * 100, 3)} %)")
+        print(f"Elapsed: {self.degrees_elapsed()} deg ({round((self.degrees_elapsed() / self.naksize()) * 100, 3)} %)")
         degremain = self.degrees_remaining()
         print(
-            f"Remaining: {degremain} deg ({round((degremain / self.naksize) * 100, 3)} %)"
+            f"Remaining: {degremain} deg ({round((degremain / self.naksize()) * 100, 3)} %)"
         )
 
     def init_ash_long(self):
@@ -142,8 +145,8 @@ class Nakshatra:
         from .planets import Planet
         from .cusps import Cusp
         gcequ=swe.fixstar(",SgrA*",self.timeJD.jd, swe.FLG_EQUATORIAL)[0][0]
-        mula=gcequ-(self.naksize/2)
-        ashvini=mula-(18*self.naksize)
+        mula=gcequ-(self.naksize()/2)
+        ashvini=mula-(18*self.naksize())
         if isinstance(self._occupant,Planet):
             equlong = swe.calc_ut(self.timeJD.jd, self._occupant.pnumber, swe.FLG_EQUATORIAL)[0][0]
             equlong = self.ketuize(equlong)
@@ -163,7 +166,7 @@ class Nakshatra:
         # aval = 23+1/3
         # this is how it is calculated
         # find where ashvini starts; it is five nakshatras after dhanishta
-        ashvini = 360 - (270+5*self.naksize)
+        ashvini = 360 - (270+5*self.naksize())
         return (self.base_longitude()+ashvini)%360
 
     def vedanga_jyotisha_equatorial(self):
@@ -181,7 +184,7 @@ class Nakshatra:
         # according to the documentation, '-' is used to go from ecliptic to equatorial, which we are doing here
         solequ = swe.cotrans((270,0,1),-swe.calc(self.timeJD.jd,swe.ECL_NUT)[0][0])[0]
         # find where equatorial ashvini starts; it is five nakshatras after dhanishta
-        ashvini = 360 - (solequ+5*self.naksize)
+        ashvini = 360 - (solequ+5*self.naksize())
         # equatorial longitude of this planet
         if isinstance(self._occupant,Planet):
             equlong = swe.calc_ut(self.timeJD.jd, self._occupant.pnumber, swe.FLG_EQUATORIAL)[0][0]

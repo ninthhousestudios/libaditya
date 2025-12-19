@@ -38,7 +38,7 @@ class Planet(Longitude):
         self.pnumber = pnumber
         self.planet_name = context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
-        self.ayanamsa = context.ayanamsa
+        self._ayanamsa = context.ayanamsa
         self.system = context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
@@ -61,7 +61,7 @@ class Planet(Longitude):
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
+            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
         return (
             f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
             + f"{self.timeJD}\n"
@@ -71,7 +71,7 @@ class Planet(Longitude):
         print(f"{type(self)}")
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
+            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
         return (
             f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
             + f"{self.timeJD}"
@@ -94,13 +94,13 @@ class Planet(Longitude):
         loc = self.context.location.swe_location()
         if self.system == const.SID:
             # will need to add custom ayanamsas here
-            if self.ayanamsa == 98:
-                self.ayanamsa = 36
-            swe.set_sid_mode(self.ayanamsa)
+            if self.ayanamsa() == 98:
+                self._ayanamsa = 36
+            swe.set_sid_mode(self.ayanamsa())
         if self.system == const.TOPO:
             swe.set_topo(loc[0], loc[1], loc[2])
         if self.system == (const.SID | const.TOPO):
-            swe.set_sid_mode(self.ayanamsa)
+            swe.set_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
         # for draconic charts i choose -8 to indicate that system
         # but swe doesnt accept that, so replace it if necessary
@@ -146,7 +146,10 @@ class Planet(Longitude):
             return self.dist_speed
 
     def ayanamsa(self):
-        return self.ayanamsa
+        return self._ayanamsa
+
+    def ayanamsa_name(self):
+        return const.ayanamsa_name(self.ayanamsa())
 
     def retrograde(self):
         if self.longitude_speed() < 0:
