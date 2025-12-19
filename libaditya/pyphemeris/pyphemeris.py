@@ -226,10 +226,7 @@ def main():
         print(Planets(replace(context,sysflg=sys)))
         print("\n")
 
-    print(Planets(context).nakshatras())
-
     # now for house cusps
-    print("\n")
     for sys in to_show:
         if sys == const.SID and sign_names == adityas:
             # if sign_names == zodiac, then we are using the zodiac
@@ -239,9 +236,6 @@ def main():
         if sys == const.ECL:
             print(Cusps(EphContext(timeJD,location,sys,ayanamsa,hsys,signize,toround,names)))
             print("\n")
-
-
-    print(Cusps(context).nakshatras())
 
     p=Panchanga(context)
     print(p)

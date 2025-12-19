@@ -82,6 +82,8 @@ class Nakshatra:
             return (self.degrees_elapsed()/self.naksize)*100
 
             return False
+    def elapsed(self):
+        return f"{self.degrees_elapsed()} ({self.percent_elapsed()} %)" 
     
     def print_in_longitude(self):
         print(f"Elapsed: {self.degrees_elapsed()} deg ({round((self.degrees_elapsed() / self.naksize) * 100, 3)} %)")

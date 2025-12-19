@@ -76,6 +76,8 @@ class Cusp(Longitude):
         return (
             [f"{self.number()}"]
             + [self.longitude()]
+            + [self.nakshatra_name()]
+            + [self.nakshatra().elapsed()]
             + [self.hourly_motion()]
             + [self.speed()]
         )
@@ -88,6 +90,9 @@ class Cusp(Longitude):
 
     def nakshatra(self):
         return self._nakshatra
+
+    def nakshatra_name(self):
+        return self._nakshatra.nakshatra()
 
 
 class Cusps:
@@ -133,11 +138,15 @@ class Cusps:
         output.field_names = [
             "Cusp",
             "Longitude",
+            "Nakshatra",
+            "Elapsed",
             "Hourly Motion",
             "Daily Motion",
         ]
         output.align["Cusp"] = "r"
         output.align["Longitude"] = "l"
+        output.align["Nakshatra"] = "r"
+        output.align["Elapsed"] = "r"
         output.align["Hourly Motion"] = "r"
         output.align["Daily Motion"] = "r"
 
@@ -145,7 +154,7 @@ class Cusps:
             output.add_row(cusp.table_row())
 
         ret = output.get_string(
-            fields=["Cusp", "Longitude", "Hourly Motion", "Daily Motion"]
+            fields=["Cusp", "Longitude", "Nakshatra", "Elapsed", "Hourly Motion", "Daily Motion"]
         )
 
         return self.mkheader() + ret
@@ -159,8 +168,9 @@ class Cusps:
         if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
             flag = swe.FLG_SIDEREAL
             if self.ayanamsa == 98:
-                self.ayanamsa = 36
-            swe.set_sid_mode(self.ayanamsa)
+                swe.set_sid_mode(36)
+            else:
+                swe.set_sid_mode(self.ayanamsa)
         cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
             self.jd, self.location.lat, self.location.long, self.hsys, flag
         )
@@ -174,11 +184,20 @@ class Cusps:
         the function swe.houses(time,lat,long,hsys) take lat first
         """
         draconic = "Draconic " if self.context.sysflg == const.DRAC else ""
-        place = f"{draconic}Cusps for\n{self.location}\n"
+        sidereal = "Sidereal " if self.context.sysflg == const.SID else ""
+        place = f"{draconic}{sidereal}Cusps for\n{self.location}\n"
         time = f"{self.timeJD}\n"
         sys = f"Using {self.hname} house system\n"
         ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
+        if self.context.sysflg == const.SID:
+            # for sidereal signs we actually use swisseph 36
+            # dhruva equatorial is only for nakshatras
+            if self.ayanamsa == 98:
+                ayanamsa += f"{const.ayanamsa_name(36)} ayanamsa for cusps\n"
+                ayanamsa += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+            else:
+                ayanamsa += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        else:
             ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         return place + time + sys + ayanamsa
 

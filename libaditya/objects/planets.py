@@ -64,6 +64,7 @@ class Planet(Longitude):
         )
 
     def __repr__(self):
+        print(f"{type(self)}")
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
             ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa)} ayanamsa"
@@ -76,6 +77,8 @@ class Planet(Longitude):
         return (
             [self.name() + self.retrostr()]
             + [self.longitude()]
+            + [self.nakshatra_name()]
+            + [self.nakshatra().elapsed()]
             + [self.longitude_speed()]
             + [self.latitude()]
             + [self.latitude_speed()]
@@ -305,17 +308,68 @@ class Planets:
             ret.append(p(self.context))
         return ret
 
-    def __repr__(self):
-        """
-        the function swe.houses(time,lat,long,hsys) take lat first
-        """
-        return self.mkheader() + str([planet for planet in self.planets])
-
     def __str__(self):
         """
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
         """
+        output = PrettyTable()
+        output.field_names = [
+            "Planet",
+            "Longitude",
+            "Nakshatra",
+            "Elapsed",
+            "Speed",
+            "Latitude",
+            "Latitude Speed",
+            "Distance",
+            "Distance Speed",
+        ]
+        output.align["Planet"] = "l"
+        output.align["Longitude"] = "l"
+        output.align["Nakshatra"] = "r"
+        output.align["Elapsed"] = "r"
+        output.align["Speed"] = "r"
+        output.align["Latitude"] = "r"
+        output.align["Latitude Speed"] = "r"
+        output.align["Distance"] = "r"
+        output.align["Distance Speed"] = "r"
+
+        for p in self.planets:
+            # dont print earth unless it is heliocentric or barycentric
+            if isinstance(p, Earth) and not (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
+                continue
+            # dont print rahuketu if it is heliocentric or barycentric
+            if (isinstance(p, Rahu) or isinstance(p, Ketu)) and (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
+                continue
+            # dont print the Sun when printing heliocentric coordinates
+            if isinstance(p, Sun) and self.system == const.HELIO:
+                continue
+            output.add_row(p.table_row())
+
+        ret = output.get_string(
+            fields=[
+                "Planet",
+                "Longitude",
+                "Speed",
+                "Nakshatra",
+                "Elapsed",
+                "Latitude",
+            ]
+        )
+
+        return self.mkheader() + ret
+
+    def __repr__(self):
+        """
+        return a PrettyTable string with coordinates for all planets on julianday
+        using sysflag coordinates
+        """
+        print(f"{type(self)}")
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -370,15 +424,19 @@ class Planets:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras
             if self.ayanamsa == 98:
-                self.ayanamsa = 36
-            header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        if self.system == swe.FLG_TOPOCTR:
-            header += f"{self.context.location}"
-        if self.system == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+            else:
+                header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        elif self.system == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
             if self.ayanamsa == 98:
                 self.ayanamsa = 36
             header += f"{self.context.location}\n"
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        else:
+            header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
+        if self.system == swe.FLG_TOPOCTR:
+            header += f"{self.context.location}"
         header += f"{self.timeJD}\n"
         return header
     
