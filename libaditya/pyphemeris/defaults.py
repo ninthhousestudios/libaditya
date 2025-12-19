@@ -24,9 +24,54 @@ from libaditya import utils
 pyph_path = os.path.dirname(pathlib.Path(__file__).parent)
 edir = pyph_path + "/ephe/"
 dict_path = pyph_path + "/dict/"
+
+default_mode = "epehemeris"
+
 utcoffset = -5.0
 timezone = "EST"
+lat = round(utils.dms2dec((39, 57, 22)), 3)
+long = -round(utils.dms2dec((86, 0, 46)), 3)
+alt = 252  # swe requires meters
+placename = "Default Place"
+
 ayanamsa = 98  # dhruva equatorial
+
+eng = dict_path + "dict.eng"
+iast = dict_path + "dict.iast"
+deva = dict_path + "dict.deva"
+mixed = dict_path + "dict.mixed"
+abrev = dict_path + "dict.abrev"
+lang_file = abrev
+
+epehemeris_mode = {
+    "zodiac": False,
+    "adityas": True,
+    "helios": False,
+    "baryos": False,
+    "topo": False,
+    "equatorial": False,
+    "sidereal": False,
+    "vimshottari dasha": False,
+    "current vimshottari dasha": True,
+    "house system": "C",
+    "language file": abrev,
+    "signize": True,
+    "toround": [True,3],
+    "complete planet info": False # if True, it prints all six values returned by swiss eph; nakshatras printed separately
+}                                 # if False, longitude, speed and latitude are printed in one table with nakshatras
+
+chart_mode = {
+    "zodiac": False,
+    "adityas": True,
+    "sidereal": False,
+    "vimshottari dasha": False,
+    "current vimshottari dasha": True,
+    "house system": "C",
+    "language file": abrev,
+    "signize": True,
+    "toround": [True,3]
+}
+
 show_helios = 0
 show_baryos = 0
 show_topo = 0
@@ -40,21 +85,10 @@ show_v2dasha = 0
 dasha_levels = 1
 signs = "adityas"  # adityas, or zodiac
 # N and E are positive
-lat = round(utils.dms2dec((39, 57, 22)), 3)
-long = -round(utils.dms2dec((86, 0, 46)), 3)
-alt = 252  # swe requires meters
-placename = "Default Place"
 hsys = "C"
 show_houses = 1
 lang = "eng"
 signs = []
 signize = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
 toround = [True, 3]  # whether to round longitudes, and if so, to how many decimals
-eng = dict_path + "dict.eng"
-iast = dict_path + "dict.iast"
-deva = dict_path + "dict.deva"
-mixed = dict_path + "dict.mixed"
-abrev = dict_path + "dict.abrev"
-lang_file = abrev
-flground = 1  # 1 to round, 0 to not round, ndigs is how much to round to
-ndigs = 3
+

@@ -185,7 +185,7 @@ class Panchanga:
         elif remaining < 0.001:
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 1/4))).next_new_moon()
         else:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 5))).next_new_moon()
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 1))).next_new_moon()
 
     def next_full_moon(self):
         if self.tithi() != 15:

@@ -32,6 +32,7 @@ from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, N
 from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha
 
 import defaults
+import parse
 
 def main():
     args = get_args()
@@ -46,6 +47,7 @@ def main():
     else:
         # swe recommends calling this even if using builtin ephemeris
         swe.set_ephe_path()
+
 
     if args.lang:
         lang_file = defaults.dict_path + args.lang
@@ -96,16 +98,16 @@ def main():
     name = ""
     if args.input:  # user passed a .pyph or .chtk file
         name, placename, month, day, year, timedec, lat, long, utcoffset = (
-            parse_input_file(args.input)
+           parse.parse_input_file(args.input)
         )
     else:
         name = ""
         placename = ""
         utcoffset = defaults.utcoffset
-        month, day, year, timedec = parse_date_time(args.date, args.time)
+        month, day, year, timedec = parse.parse_date_time(args.date, args.time)
 
     if args.position:
-        lat, long, placename, utcoffset, timezone = parse_position(
+        lat, long, placename, utcoffset, timezone = parse.parse_position(
             args.position, args.placename, args.timezone
         )
     
@@ -126,40 +128,37 @@ def main():
         # user entered a julian day
         timeJD = JulianDay(float(args.julian))
 
+    to_show = parse.coords_to_show(args)
     # decide which coordinates system the user wants displayed
-    to_show = [const.ECL]
-    show_sidereal = 0
-    if args.equatorial:
-        show_equ = not (defaults.show_equ)
-        if show_equ:
-            to_show.append(const.EQU)
-    if args.helios:
-        show_helios = not (defaults.show_helios)
-        if show_helios:
-            to_show.append(const.HELIO)
-    if args.baryos:
-        show_baryos = not (defaults.show_baryos)
-        if show_baryos:
-            to_show.append(const.BARY)
-    if args.topo:
-        show_topo = not (defaults.show_topo)
-        if show_topo:
-            to_show.append(const.TOPO)
-    if args.draconic:
-        show_drac = not (defaults.show_drac)
-        if show_drac:
-            to_show.append(const.DRAC)
-    if args.sidereal:
-        show_sidereal = not (defaults.show_sidereal)
-        if show_sidereal:
-            to_show.append(const.SID)
-            if args.topo:
-                if show_topo:
-                    to_show.append(const.SID | const.TOPO)
-            if args.ayanamsa:
-                ayanamsa = int(args.ayanamsa)
-            else:
-                ayanamsa = 27
+#    to_show = [const.ECL]
+#    show_sidereal = 0
+#    if args.equatorial:
+#        show_equ = not (defaults.show_equ)
+#        if show_equ:
+#            to_show.append(const.EQU)
+#    if args.helios:
+#        show_helios = not (defaults.show_helios)
+#        if show_helios:
+#            to_show.append(const.HELIO)
+#    if args.baryos:
+#        show_baryos = not (defaults.show_baryos)
+#        if show_baryos:
+#            to_show.append(const.BARY)
+#    if args.topo:
+#        show_topo = not (defaults.show_topo)
+#        if show_topo:
+#            to_show.append(const.TOPO)
+#    if args.draconic:
+#        show_drac = not (defaults.show_drac)
+#        if show_drac:
+#            to_show.append(const.DRAC)
+#    if args.sidereal:
+#        show_sidereal = not (defaults.show_sidereal)
+#        if show_sidereal:
+#            to_show.append(const.SID)
+#            if args.topo:
+#                if show_topo:
+#                    to_show.append(const.SID | const.TOPO)
 
 
     ########################################################
@@ -192,7 +191,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.ECL,ayanamsa,hsys,circle,signize,toround,names)
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,names)
 
     print(f"\nEphemeris for {name}\n")
 
@@ -201,14 +200,24 @@ def main():
 
     # print planetary positions in all coordinates and types the users wants
 
+    print_ephemeris(context,to_show)
 
+    # do vimshottari dasha
+    print_dashas(args,context)
+
+
+
+
+# end main function
+
+def print_ephemeris(context,to_show):
     for sys in to_show:
         if sys == const.SID:
             if context.ayanamsa == -1:
                 # tropical ayanamsa, so set sys=const.ECL
                 print(Planets(replace(context,sysflg=const.ECL)))
                 continue
-            if circle == Circle.ADITYA:
+            if context.circle == Circle.ADITYA:
                 print(Planets(replace(context,sysflg=sys,circle=Circle.SIDEREAL_ADITYA)))
                 print("\n")
                 continue
@@ -217,6 +226,10 @@ def main():
             print(Planets(dracon))
             print("\n")
             print(Cusps(dracon))
+            print("\n")
+            continue
+        if sys == const.BARY or sys == const.HELIO:
+            print(repr(Planets(replace(context,sysflg=sys))))
             print("\n")
             continue
         print(Planets(replace(context,sysflg=sys)))
@@ -240,7 +253,7 @@ def main():
     p.print_next_new_moon()
     p.print_next_full_moon()
 
-    # do vimshottari dasha
+def print_dashas(args,context):
     if args.dasha_levels:
         dasha_levels = int(args.dasha_levels)
     else:
@@ -285,54 +298,6 @@ def main():
         print(f"Using {yrstr} year length")
         vdasha = calculate_vimshottari_dasha(planet,dasha_levels,yrlen)
         print_calculated_vimshottari_dasha(vdasha)
-
-
-
-# end main function
-def parse_input_file(input):
-    if ".pyph" in input:
-        name, placename, month, day, year, ephclock, lat, long = read.read_pyph(input)
-    elif ".chtk" in input:
-        name, placename, month, day, year, ephclock, lat, long, utcoffset = (
-            read.read_chtk(input)
-        )
-        utcoffset = round(utcoffset, 1)
-    else:
-        print("invalid file type")
-        exit
-    return name, placename, month, day, year, ephclock, lat, long, utcoffset
-
-
-def parse_date_time(date, time):
-    nowtime = tmod.gmtime()
-    if date:
-        month, day, year = utils.intize_date(date)
-    else:
-        # get current date
-        month = nowtime[1]
-        day = nowtime[2]
-        year = nowtime[0]
-    if time:
-        rettime = utils.intize_time(time)
-    else:
-        # get current time
-        rettime = nowtime[3] + nowtime[4] / 60 + nowtime[5] / 3600
-    return month, day, year, rettime
-
-
-def parse_position(position, placname, timezone):
-    if ".chtk" in position:
-        placename, lat, long, utcoffset = read.read_chtk_location(position)
-        timezone = "UTC"
-    else:
-        lat, long = read.parse_position_argument(position)
-        lat = lat
-        long = long
-        placename = placename
-        utcoffset = 0
-        timezone = timezone
-    return lat, long, placename, utcoffset, timezone
-
 
 def get_args():
     parser = argparse.ArgumentParser(

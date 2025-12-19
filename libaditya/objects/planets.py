@@ -79,7 +79,7 @@ class Planet(Longitude):
 
     def table_row(self):
         return (
-            [self.name() + self.retrostr()]
+            [self.name()]
             + [self.longitude()]
             + [self.nakshatra_name()]
             + [self.nakshatra().elapsed()]
@@ -378,9 +378,53 @@ class Planets:
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
         """
-        print(f"{type(self)}")
+        output = PrettyTable()
+        output.field_names = [
+            "Planet",
+            "Longitude",
+            "Speed",
+            "Latitude",
+            "Latitude Speed",
+            "Distance",
+            "Distance Speed",
+        ]
+        output.align["Planet"] = "l"
+        output.align["Longitude"] = "l"
+        output.align["Speed"] = "r"
+        output.align["Latitude"] = "r"
+        output.align["Latitude Speed"] = "r"
+        output.align["Distance"] = "r"
+        output.align["Distance Speed"] = "r"
 
-        return self.mkheader()
+        for p in self.planets:
+            # dont print earth unless it is heliocentric or barycentric
+            if isinstance(p, Earth) and not (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
+                continue
+            # dont print rahuketu if it is heliocentric or barycentric
+            if (isinstance(p, Rahu) or isinstance(p, Ketu)) and (
+                self.system == const.HELIO or self.system == const.BARY
+            ):
+                continue
+            # dont print the Sun when printing heliocentric coordinates
+            if isinstance(p, Sun) and self.system == const.HELIO:
+                continue
+            output.add_row(p.table_row()[:2]+p.table_row()[4:])
+
+        ret = output.get_string(
+            fields=[
+                "Planet",
+                "Longitude",
+                "Speed",
+                "Latitude",
+                "Latitude Speed",
+                "Distance",
+                "Distance Speed"
+            ]
+        )
+
+        return self.mkheader() + ret
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"

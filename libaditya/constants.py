@@ -19,17 +19,24 @@ import swisseph as swe
 
 import os
 
+
 from libaditya import utils
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 
 ECL = swe.FLG_TROPICAL
+TROP = swe.FLG_TROPICAL
 EQU = swe.FLG_EQUATORIAL
 HELIO = swe.FLG_HELCTR
 BARY = swe.FLG_BARYCTR
 SID = swe.FLG_SIDEREAL
 TOPO = swe.FLG_TOPOCTR
 DRAC = -8
+
+#from libaditya.objects import Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron
+#planets = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu]
+#karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]
+#outer_planets = [Uranus, Neptune, Pluto]
 
 def sysflgstr(sflg):
     if sflg == swe.FLG_TROPICAL:
