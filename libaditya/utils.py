@@ -188,3 +188,20 @@ def mksub(n):
     for i in range(0,n):
         sub += "sub"
     return sub
+
+def construct_varga_row(cusp):
+    """
+    construct a row where every column
+    is "" except the one the corresponds to the sign
+    the planet/cusp is in, then print its in_sign_longitude there
+    e.g., if Sun is in Cancer, print nothing in the
+    first, second column, third column, print longitude in fourth column, nothing in fifth,etc.
+    """
+    ret = []
+
+    for n in range(0,12):
+        if n == cusp.sign_index():
+            ret.append(cusp.in_sign_longitude())
+        else:
+            ret.append("")
+    return ret

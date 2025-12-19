@@ -284,7 +284,6 @@ class Planets:
         Uranus,
         Neptune,
         Pluto,
-        Earth,
         Chiron,
     ]
 
@@ -311,6 +310,9 @@ class Planets:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
             self._planets.pop()
+        if self.system == const.BARY or self.system == const.HELIO:
+            # add Earth to the planets, after Pluto and before Chiron
+            self._planets.insert(1,Earth)
         for p in self._planets:
             ret.append(p(self.context))
         return ret
