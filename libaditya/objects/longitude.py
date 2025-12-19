@@ -71,7 +71,7 @@ class Longitude:
             inlong = round(self._longitude % 30, self.context.toround[1])
         else:
             inlong = self._longitude % 30
-        return inlong
+        return utils.dec2dmsstr(inlong)
 
     def signize(self):
         """
@@ -79,4 +79,4 @@ class Longitude:
         long (sign), with long being in the sign
         signs contains the signs to be used, which might be adityas
         """
-        return f"{utils.dec2dmsstr(self.in_sign_longitude())} {self.sign_name()}"
+        return f"{self.in_sign_longitude()} {self.sign_name()}"

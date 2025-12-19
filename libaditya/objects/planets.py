@@ -107,7 +107,7 @@ class Planet(Longitude):
         return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
 
     def name(self):
-        return self.planet_name
+        return self.planet_name + self.retrostr()
 
     def system_name(self):
         return self.sysflgstr
