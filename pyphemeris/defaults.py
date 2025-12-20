@@ -21,7 +21,8 @@ import pathlib
 from libaditya import utils
 
 # defaults
-pyph_path = os.path.dirname(pathlib.Path(__file__).parent)
+base_path = os.path.dirname(pathlib.Path(__file__).parent)
+pyph_path = base_path + "/libaditya"
 edir = pyph_path + "/ephe/"
 dict_path = pyph_path + "/dict/"
 
