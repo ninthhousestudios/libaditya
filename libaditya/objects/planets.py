@@ -201,7 +201,7 @@ class Sun(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.SUN, context)
 
-    def sunrise_yamakoti(self):
+    def sunrise_yamakoti(self) -> JulianDay:
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
     def lowest_daily_speed(self) -> float:

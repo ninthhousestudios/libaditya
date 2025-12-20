@@ -18,11 +18,12 @@
 import swisseph as swe
 from datetime import date
 from dataclasses import replace
+from typing import Self
 
 from libaditya import constants as const
 from libaditya import utils
 
-from libaditya.objects import Sun, Moon, EphContext
+from libaditya.objects import Sun, Moon, EphContext, JulianDay
 
 class Panchanga:
 
@@ -32,7 +33,7 @@ class Panchanga:
         self.timeJD = self.context.timeJD
         self._sun = Sun(self.context)
         self._moon = Moon(self.context)
-        self._tithi_index, self._tithi_elapsed, self._tithi_remaining = self.init_tithi()
+        self._tithi_number, self._tithi_elapsed, self._tithi_remaining = self.init_tithi()
         self._karana_number, self._karana_elapsed, self._karana_remaining = self.init_karana()
         self._karana_index = self.karana_index()
         self._yoga_raw, self._yoga_elapsed, self._yoga_remaining = self.init_yoga()
@@ -54,6 +55,24 @@ class Panchanga:
 
         return panch
 
+    def __repr__(self):
+        panch = "\nPanchanga\n"
+        panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
+        panch += f"\n{self.context.timeJD}\n"
+        panch += f"{self.context.timeJD.jd_number()}\n"
+
+        panch += f"\nAbsolute tithi: {self.tithi()}\n"
+        if self.tithi() > 15:
+            panch += f"Relative tithi: {self.tithi() - 15}\n"
+        panch += f"Type: {self.tithi_type()}\n"
+
+        panch += f"Karana: {self.karana()}\n"
+        panch += f"Vara: {self.vara()}\n"
+        panch += f"Nakshatra: {self.nakshatra()}\n"
+        panch += f"Yoga: {self.yoga()}\n"
+
+        return panch
+
     def init_tithi(self):
         traw = ((self._moon.real_longitude() - self._sun.real_longitude()) % 360) / 12
         remainder = traw % 1  # remainder shows how much has elapsed
@@ -61,8 +80,11 @@ class Panchanga:
         remaining = 12 - elapsed  # degrees remaining
         return (int(traw)+1, elapsed, remaining)
 
-    def tithi(self):
-        return self._tithi_index
+    def tithi(self) -> int:
+        """
+        returns number of the tithi
+        """
+        return self._tithi_number
 
     def tithi_type(self):
         return self.context.names.tithis[(self.tithi()-1)%5]
@@ -89,11 +111,14 @@ class Panchanga:
     def karana(self):
         return self.context.names.karanas[self.karana_index()[0]][self.karana_index()[1]]
 
+    def karana_number(self):
+        return self._karana_number
+
     def karana_degrees_elapsed(self):
-        return self._karana_elapsed
+        return round(self._karana_elapsed,3)
 
     def karana_degrees_remaining(self):
-        return self._karana_remaining
+        return round(self._karana_remaining,3)
 
     def vara(self):
         weekday = date(
@@ -139,6 +164,24 @@ class Panchanga:
 
     def yoga_degrees_remaining(self):
         return self._yoga_remaining
+
+    def next_tithi(self) -> Self:
+        if self.tithi_degrees_remaining() == 0:
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","seconds",5)))
+        shift_factor = self.tithi_degrees_remaining()*self._moon.lowest_hourly_speed()
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_tithi()
+
+    def next_karana(self) -> Self:
+        if self.karana_degrees_remaining() == 0:
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","seconds",5)))
+        shift_factor = self.karana_degrees_remaining()*self._moon.lowest_hourly_speed()
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_karana()
+        
+    def next_vara(self) -> Self:
+        # find sunrise at yamakoti the next day
+        nextJD = Sun(EphContext(timeJD=self.timeJD.shift("f","day",1))).sunrise_yamakoti()
+        # go forward one second so that the returned Panchanga will show the next vara
+        return Panchanga(replace(self.context,timeJD=nextJD.shift("f","second",1)))
 
     def print_next_new_moon(self):
         next = self.next_new_moon()  # return the Panchanga of the next new moon
