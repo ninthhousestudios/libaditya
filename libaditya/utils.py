@@ -16,6 +16,7 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+import time as tmod
 
 
 def dms2dec(dms):

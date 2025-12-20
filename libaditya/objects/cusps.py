@@ -127,11 +127,26 @@ class Cusps:
     def __getitem__(self,n):
         return self.cusps[n]
 
-    def __repr__(self):
+    def init_cusps(self):
         """
-        the function swe.houses(time,lat,long,hsys) take lat first
+        find our house cusps
+        cusps will be a 12-tuple with cusps 1-12
         """
-        return self.mkheader() + str([cusp for cusp in self.cusps])
+        flag = 0
+        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
+            flag = swe.FLG_SIDEREAL
+            if self.ayanamsa == 98:
+                swe.set_sid_mode(36)
+            else:
+                swe.set_sid_mode(self.ayanamsa)
+        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
+            self.jd, self.location.lat, self.location.long, self.hsys, flag
+        )
+        retcusps = []
+        for n, cusp in enumerate(cusps):
+            retcusps.append(Cusp(cusp, speeds[n], n, self.context))
+        return retcusps, ascmc, ascmcspeeds
+
 
     def __str__(self):
         output = PrettyTable()
@@ -153,31 +168,17 @@ class Cusps:
         for cusp in self.cusps:
             output.add_row(cusp.table_row())
 
-        ret = output.get_string(
-            fields=["Cusp", "Longitude", "Nakshatra", "Elapsed", "Hourly Motion", "Daily Motion"]
-        )
+        if self.context.print_nakshatras:
+            ret = output.get_string(
+                fields=["Cusp", "Longitude", "Nakshatra", "Elapsed", "Hourly Motion", "Daily Motion"]
+            )
+        else:
+            ret = output.get_string(
+                fields=["Cusp", "Longitude", "Hourly Motion", "Daily Motion"]
+            )
 
         return self.mkheader() + ret
 
-    def init_cusps(self):
-        """
-        find our house cusps
-        cusps will be a 12-tuple with cusps 1-12
-        """
-        flag = 0
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            flag = swe.FLG_SIDEREAL
-            if self.ayanamsa == 98:
-                swe.set_sid_mode(36)
-            else:
-                swe.set_sid_mode(self.ayanamsa)
-        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
-            self.jd, self.location.lat, self.location.long, self.hsys, flag
-        )
-        retcusps = []
-        for n, cusp in enumerate(cusps):
-            retcusps.append(Cusp(cusp, speeds[n], n, self.context))
-        return retcusps, ascmc, ascmcspeeds
 
     def mkheader(self):
         """

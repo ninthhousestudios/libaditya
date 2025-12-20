@@ -223,7 +223,7 @@ class Nakshatras:
     def __repr__(self):
         return self.mkheader()
 
-    def occupant_type(self):
+    def occupant_type(self) -> str:
         from .planets import Planets
         from .cusps import Cusps
         if isinstance(self._occupants,Planets):

@@ -47,5 +47,7 @@ class EphContext:
     circle: Circle = Circle
     signize: bool = True
     toround: (bool, int) = (True, 3)
+    print_nakshatras: bool = True
+    print_outer_planets: bool = True
     names: Names = Names()
 

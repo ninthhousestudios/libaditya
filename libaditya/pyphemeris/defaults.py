@@ -84,6 +84,8 @@ show_vdasha = 0
 show_v2dasha = 0
 dasha_levels = 1
 signs = "adityas"  # adityas, or zodiac
+print_nakshatras = True
+print_outer_planets = True
 # N and E are positive
 hsys = "C"
 show_houses = 1

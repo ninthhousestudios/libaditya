@@ -24,6 +24,7 @@ from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 from .longitude import Longitude
+from .nakshatras import Nakshatras
 
 
 class Planet(Longitude):
@@ -151,7 +152,7 @@ class Planet(Longitude):
     def ayanamsa_name(self):
         return const.ayanamsa_name(self.ayanamsa())
 
-    def retrograde(self):
+    def retrograde(self) -> bool:
         if self.longitude_speed() < 0:
             return True
         else:
@@ -194,6 +195,9 @@ class Planet(Longitude):
     def nakshatra_name(self):
         return self._nakshatra.nakshatra()
 
+    def is_outer_planet(self):
+        return isinstance(self,Uranus) or isinstance(self,Neptune) or isinstance(self,Pluto) or isinstance(self,Chiron)
+
 
 class Sun(Planet):
     def __init__(self, context=EphContext()):
@@ -202,10 +206,24 @@ class Sun(Planet):
     def sunrise_yamakoti(self):
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
+    def lowest_speed(self) -> float:
+        """
+        return a speed lower than the lowest speed for this planet
+        used in finding the time when a planet is at a certain longitude
+        """
+        return .9
+
 
 class Moon(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.MOON, context)
+
+    def lowest_speed(self) -> float:
+        """
+        return a speed lower than the lowest speed for this planet
+        used in finding the time when a planet is at a certain longitude
+        """
+        return 11.0
 
 
 class Mars(Planet):
@@ -271,21 +289,6 @@ class Chiron(Planet):
 
 
 class Planets:
-    _planets = [
-        Sun,
-        Moon,
-        Mars,
-        Mercury,
-        Venus,
-        Jupiter,
-        Saturn,
-        Rahu,
-        Ketu,
-        Uranus,
-        Neptune,
-        Pluto,
-        Chiron,
-    ]
 
     def __init__(self, context=EphContext()):
         self.timeJD = context.timeJD  # the JulianDay class of this planet
@@ -309,15 +312,21 @@ class Planets:
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
-            self._planets.pop()
+            planet_dict["planets"].pop()
         if self.system == const.BARY or self.system == const.HELIO:
-            # add Earth to the planets, after Pluto and before Chiron
-            self._planets.insert(1,Earth)
-        for p in self._planets:
+            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
+            planet_dict["planets"].insert(1,Earth)
+        for p in planet_dict["planets"]:
             ret.append(p(self.context))
         return ret
 
     def __str__(self):
+        if self.context.print_nakshatras:
+            return self.planets_with_nakshatras()
+        else:
+            return self.planets_complete_information()
+
+    def planets_with_nakshatras(self):
         """
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
@@ -358,6 +367,8 @@ class Planets:
             # dont print the Sun when printing heliocentric coordinates
             if isinstance(p, Sun) and self.system == const.HELIO:
                 continue
+            if not self.context.print_outer_planets and (isinstance(p,Uranus) or isinstance(p,Neptune) or isinstance(p,Pluto) or isinstance(p,Chiron)):
+                continue
             output.add_row(p.table_row())
 
         ret = output.get_string(
@@ -373,7 +384,7 @@ class Planets:
 
         return self.mkheader() + ret
 
-    def __repr__(self):
+    def planets_complete_information(self):
         """
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
@@ -409,6 +420,8 @@ class Planets:
                 continue
             # dont print the Sun when printing heliocentric coordinates
             if isinstance(p, Sun) and self.system == const.HELIO:
+                continue
+            if not self.context.print_outer_planets and (isinstance(p,Uranus) or isinstance(p,Neptune) or isinstance(p,Pluto) or isinstance(p,Chiron)):
                 continue
             output.add_row(p.table_row()[:2]+p.table_row()[4:])
 
@@ -448,5 +461,12 @@ class Planets:
         header += f"{self.timeJD}\n"
         return header
     
-    def nakshatras(self):
+    def nakshatras(self) -> Nakshatras:
         return self._nakshatras
+
+planet_dict = {
+    "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],
+    "inner_planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu],
+    "karakas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn],
+    "outer_planets": [Uranus, Neptune, Pluto]
+}

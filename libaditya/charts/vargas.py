@@ -56,6 +56,9 @@ class Varga:
             row = []
             for s in range(0,12):
                 if len(self._signs[s]._objects) > r:
+                    if not self.context.print_outer_planets and self._signs[s]._objects[r].object_type()=="Planet" and self._signs[s]._objects[r].is_outer_planet():
+                        row.append("")
+                        continue
                     row.append(f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n")
                 else:
                     row.append("")
@@ -92,8 +95,8 @@ class Varga:
 
     def mkheader(self):
         header = ""
-        header += f"Varga {const.varga_name(self._identifier)} ({self._identifier})"
-        header = f"{self.sysflgstr} coordinates\n"
+        header += f"Varga ({self._identifier}) {const.varga_name(self._identifier)}\n"
+        header += f"{self.sysflgstr} coordinates\n"
         if self.context.sysflg == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras
@@ -112,6 +115,15 @@ class Varga:
         header += f"{self.context.location}\n"
         header += f"{self.context.timeJD}\n"
         return header
+
+    def varga_name(self):
+        match self._identifier:
+            case 1:
+                return "Rashi"
+            case 9:
+                return "Navamsha"
+            case _:
+                return "Not yet implemented"
 
 
 class Rashi(Varga):
@@ -142,8 +154,14 @@ class Rashi(Varga):
             row = []
             for s in range(0,12):
                 if len(self._signs[s]._objects) > r:
+                    # print outer planets or not
+                    if not self.context.print_outer_planets and self._signs[s]._objects[r].object_type()=="Planet" and self._signs[s]._objects[r].is_outer_planet():
+                        row.append("")
+                        continue
                     rowstr = f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n"
-                    rowstr += f"{self._signs[s]._objects[r].nakshatra_name()}\n{self._signs[s]._objects[r].nakshatra().elapsed()}\n"
+                    # print nakshatras or not
+                    if self.context.print_nakshatras:
+                        rowstr += f"{self._signs[s]._objects[r].nakshatra_name()}\n{self._signs[s]._objects[r].nakshatra().elapsed()}\n"
                     row.append(rowstr)
                 else:
                     row.append("")

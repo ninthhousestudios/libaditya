@@ -17,8 +17,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
+
 from libaditya import constants as const
 from libaditya import read
+from libaditya import utils
 
 import defaults
 
@@ -37,7 +39,7 @@ def parse_input_file(input):
 
 
 def parse_date_time(date, time):
-    nowtime = tmod.gmtime()
+    nowtime = utils.tmod.gmtime()
     if date:
         month, day, year = utils.intize_date(date)
     else:

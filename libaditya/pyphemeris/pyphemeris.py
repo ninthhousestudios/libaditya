@@ -19,7 +19,6 @@
 
 import swisseph as swe
 import argparse
-import time as tmod
 import os
 from dataclasses import replace
 
@@ -69,6 +68,14 @@ def main():
         circle = Circle.ADITYA
 
     names = Names(planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas)
+
+    print_nakshatras = defaults.print_nakshatras
+    if args.nakshatras:
+        print_nakshatras = not (print_nakshatras)
+
+    print_outer_planets = defaults.print_outer_planets
+    if args.outer_planets:
+        print_outer_planets = not (print_outer_planets)
 
     if args.timezone:
         timezone = args.timezone
@@ -129,37 +136,6 @@ def main():
         timeJD = JulianDay(float(args.julian))
 
     to_show = parse.coords_to_show(args)
-    # decide which coordinates system the user wants displayed
-#    to_show = [const.ECL]
-#    show_sidereal = 0
-#    if args.equatorial:
-#        show_equ = not (defaults.show_equ)
-#        if show_equ:
-#            to_show.append(const.EQU)
-#    if args.helios:
-#        show_helios = not (defaults.show_helios)
-#        if show_helios:
-#            to_show.append(const.HELIO)
-#    if args.baryos:
-#        show_baryos = not (defaults.show_baryos)
-#        if show_baryos:
-#            to_show.append(const.BARY)
-#    if args.topo:
-#        show_topo = not (defaults.show_topo)
-#        if show_topo:
-#            to_show.append(const.TOPO)
-#    if args.draconic:
-#        show_drac = not (defaults.show_drac)
-#        if show_drac:
-#            to_show.append(const.DRAC)
-#    if args.sidereal:
-#        show_sidereal = not (defaults.show_sidereal)
-#        if show_sidereal:
-#            to_show.append(const.SID)
-#            if args.topo:
-#                if show_topo:
-#                    to_show.append(const.SID | const.TOPO)
-
 
     ########################################################
     #                                                      #
@@ -179,6 +155,8 @@ def main():
     #     circle: Circle = Circle
     #     signize: bool = True
     #     toround: (bool,int) = (True,3)
+    #     print_nakshatras: bool = True
+    #     print_outer_planets: bool = True
     #     names = Names = Names()
     #
     # @dataclass(frozen=True)
@@ -191,7 +169,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,names)
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
 
     print(f"\nEphemeris for {name}\n")
 
@@ -421,6 +399,18 @@ def get_args():
         "--signize",
         action="store_true",
         help="toggle longitude presentation; default is in-sign longitude; other option is raw longitude",
+    )
+    parser.add_argument(
+        "-N",
+        "--nakshatras",
+        action="store_true",
+        help="toggle printing of nakshtras",
+    )
+    parser.add_argument(
+        "-O",
+        "--outer_planets",
+        action="store_true",
+        help="toggle printing of outer planets",
     )
     parser.add_argument(
         "-R",
