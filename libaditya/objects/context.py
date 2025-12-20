@@ -44,7 +44,7 @@ class EphContext:
     sysflg: int = const.ECL
     ayanamsa: int = 98
     hsys: str = "C"
-    circle: Circle = Circle
+    circle: Circle = Circle.ADITYA
     signize: bool = True
     toround: (bool, int) = (True, 3)
     print_nakshatras: bool = True

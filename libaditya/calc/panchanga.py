@@ -164,58 +164,27 @@ class Panchanga:
         if (self.tithi() != 30):  
             # if the tithi isnt 30, it cant be a new moon, so go forward 8 hours
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_new_moon()
-        if abs(round(self._sun.real_longitude() - self._moon.real_longitude(), 4)) <= 0.0001:
+        if (self._sun.real_longitude() - self._moon.real_longitude()) <= 0.001:
             return self
         remaining = self.tithi_degrees_remaining()
-        # if there are more than x degrees remaining, check a time y forward
-        if remaining > 6:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hour", 8))).next_new_moon()
-        elif remaining > 3:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hour", 4))).next_new_moon()
-        elif remaining > 1:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "minutes", 30))).next_new_moon()
-        elif remaining > 0.5:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "minutes", 15))).next_new_moon()
-        elif remaining > 0.1:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "minutes", 1))).next_new_moon()
-        elif remaining > 0.01:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 5))).next_new_moon()
-        elif remaining > 0.001:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 1))).next_new_moon()
-        elif remaining < 0.001:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 1/4))).next_new_moon()
-        else:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "second", 1))).next_new_moon()
+        shift_factor = remaining*self._moon.lowest_hourly_speed()
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_new_moon()
 
     def next_full_moon(self):
-        if self.tithi() != 15:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hour", 8))).next_full_moon()
+        """
+        return the Panchanga of the full moon that comes after
+        self.timeJD
+        """
+        if (self.tithi() != 15):  
+            # if the tithi isnt 30, it cant be a full moon, so go forward 8 hours
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_full_moon()
         target = (self._sun.real_longitude() + 180) % 360
         diff = abs(self._moon.real_longitude() - target)
-        if diff > 16:  # at least six more degrees until a full moon
-            # moon moves about 1 degree/2 hours, so lets move it 5 degrees forward => 10 hours
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "days", 1))).next_full_moon()
-        elif diff > 5 and diff <= 16:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hours", 4))).next_full_moon()
-        elif diff > 1 and diff <= 5:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hours", 1))).next_full_moon()
-        elif diff > .5 and diff <= 1:
-            # moon is between 1 and 3 degrees from full, so move forward 1 degree
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hours", 1/2))).next_full_moon()
-        elif diff > 0.25 and diff <= .5:
-            # moon is between .1 and  1 degree from full, so move foward about .1 degrees
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "hours", 1/8))).next_full_moon()
-        elif diff > 0.1 and diff <= 0.25:
-            # moon is between .01 and .1 degree from full, so move forward about .01 degrees
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "minutes", 5))).next_full_moon()
-        elif diff > 0.01 and diff <= 0.1:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "minutes", 1/4))).next_full_moon()
-        elif diff > 0.001 and diff <= 0.01:
-            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f", "seconds", 1/2))).next_full_moon()
-        elif diff <= .0001:
+        if diff <= 0.0001:
             return self
-        else:
-            return Panchanga(EphContext(timeJD=self.timeJD.shift("f", "seconds", 1/8),signize=self.context.signize,toround=self.context.toround)).next_full_moon()
+        shift_factor = diff*self._moon.lowest_hourly_speed()
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_full_moon()
+
 
     def print_addendum(self):
         print("\nPanchanga addendum")

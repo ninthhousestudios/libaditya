@@ -31,16 +31,16 @@ class Longitude:
         self.rahu = self.get_rahu()
 
 
-    def real_longitude(self):
+    def real_longitude(self) -> float:
         return self._longitude
 
-    def raw_longitude(self):
+    def raw_longitude(self) -> float:
         if self.context.toround[0]:
             return round(self.long, self.context.toround[1])
         else:
             return self.long
 
-    def longitude(self):
+    def longitude(self) -> float | str:
         if self.context.sysflg == const.DRAC:
             self._longitude = (self._longitude - self.rahu)%360
         if self.context.signize:
@@ -80,3 +80,13 @@ class Longitude:
         signs contains the signs to be used, which might be adityas
         """
         return f"{self.in_sign_longitude()} {self.sign_name()}"
+
+    def degrees_apart(self,next_long):
+        """
+        how many degrees apart this longitude is from next_long
+        """
+        next_long%=360
+        if next_long > self.real_longitude():
+            return next_long - self.real_longitude()
+        else:
+            return (next_long+360) - self.real_longitude()

@@ -25,7 +25,7 @@ from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 from .longitude import Longitude
-from .nakshatras import Nakshatras
+from .nakshatras import Nakshatra, Nakshatras
 
 
 class Planet(Longitude):
@@ -47,13 +47,12 @@ class Planet(Longitude):
         # if a longitude is passed, we are in a varga not equal to 1
         if longitude is None:
             self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
-            self.long = self.long if not isinstance(self, Ketu) else (self.long - 180) % 360
+            self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
         else:
             self.long = longitude
             self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
         # so that we only need only longitude() function with all the signizing and rounding or not
-        #self.rahu = self.get_rahu()
-        # this instantiates all the function in Longitude
+        # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self.context)
@@ -111,13 +110,13 @@ class Planet(Longitude):
     def name(self):
         return self.planet_name + self.retrostr()
 
-    def system_name(self):
+    def system_name(self) -> str:
         return self.sysflgstr
 
-    def object_type(self):
+    def object_type(self) -> str:
         return "Planet"
 
-    def latitude(self):
+    def latitude(self) -> float:
         if self.context.toround[0]:
             return round(self.lat, self.context.toround[1])
         else:
@@ -150,7 +149,7 @@ class Planet(Longitude):
     def ayanamsa(self):
         return self._ayanamsa
 
-    def ayanamsa_name(self):
+    def ayanamsa_name(self) -> str:
         return const.ayanamsa_name(self.ayanamsa())
 
     def retrograde(self) -> bool:
@@ -159,7 +158,7 @@ class Planet(Longitude):
         else:
             return False
 
-    def retrostr(self):
+    def retrostr(self) -> str:
         if self.retrograde():
             return " (R)"
         else:
@@ -190,10 +189,10 @@ class Planet(Longitude):
             )[1][0],self.timeJD.utcoffset,self.timeJD.timezone
         )
 
-    def nakshatra(self):
+    def nakshatra(self) -> Nakshatra:
         return self._nakshatra
 
-    def nakshatra_name(self):
+    def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
 
 
@@ -237,19 +236,14 @@ class Sun(Planet):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
-        # if next_long is 0 for the equinox, change to 360
-        if next_long == 0:
-            next_long = 360
-        if next_long > 360:
-            next_long %= 360
-        if round(self.real_longitude(),6) == next_long:
+        # % 360 help in case we are looking for the equinox, next_long = 0
+        if round(self.real_longitude(),6)%360 == next_long:
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
             return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
         # difference between current longitude and desired longitude
-        diff = abs(self.real_longitude() - next_long)
-        print(f"{self.real_longitude()=} {next_long=} {diff=}")
+        diff = self.degrees_apart(next_long)
         shift_factor = diff*self.lowest_daily_speed()
         return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
 
@@ -281,7 +275,7 @@ class Moon(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.MOON, context)
 
-    def lowest_speed(self) -> float:
+    def lowest_daily_speed(self) -> float:
         """
         return a speed lower than the lowest speed for this planet
         used in finding the time when a planet is at a certain longitude
@@ -290,6 +284,15 @@ class Moon(Planet):
         x/24/60 = minute motion
         """
         return 11.0
+
+    def lowest_hourly_speed(self) -> float:
+        return self.lowest_daily_speed()/24
+
+    def lowest_minutely_speed(self) -> float:
+        return self.lowest_hourly_speed()/60
+
+    def lowest_secondly_speed(self) -> float:
+        return self.lowest_minutely_speed()/60
 
     def is_outer_planet(self):
         return False
@@ -382,9 +385,10 @@ class Rahu(Planet):
 
 class Ketu(Planet):
 
-    def __init__(self, context=EphContext()):
+    def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[11]
+        
 
     def is_outer_planet(self):
         return False
@@ -488,13 +492,18 @@ class Planets:
 
     def init_Planets(self):
         ret = []
+
+        # chiron can only be computed in a certain time frame
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
             planet_dict["planets"].pop()
+
+        # add Earth if using barycentric or heliocentric
         if self.system == const.BARY or self.system == const.HELIO:
             # add Earth to the planet_dict["planets"], after Pluto and before Chiron
             planet_dict["planets"].insert(1,Earth)
+
         for p in planet_dict["planets"]:
             ret.append(p(self.context))
         return ret
