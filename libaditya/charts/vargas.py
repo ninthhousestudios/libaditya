@@ -95,7 +95,7 @@ class Varga:
 
     def mkheader(self):
         header = ""
-        header += f"Varga ({self._identifier}) {const.varga_name(self._identifier)}\n"
+        header += f"Varga ({self._identifier}) {self.varga_name()}\n"
         header += f"{self.sysflgstr} coordinates\n"
         if self.context.sysflg == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
@@ -124,6 +124,18 @@ class Varga:
                 return "Navamsha"
             case _:
                 return "Not yet implemented"
+
+    def identifier(self):
+        return self._identifier
+
+    def planets(self):
+        return self._planets
+
+    def cusps(self):
+        return self._cusps
+
+    def signs(self):
+        return self._signs
 
 
 class Rashi(Varga):

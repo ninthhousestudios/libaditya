@@ -65,16 +65,6 @@ def ayanamsa_name(ayanamsa):
     swe.set_sid_mode(ayanamsa)
     return swe.get_ayanamsa_name(ayanamsa)
 
-def varga_name(identifier):
-    match identifier:
-        case 1:
-            return "Rashi"
-        case 9:
-            return "Navamsha"
-        case _:
-            return "Not yet implemented"
-
-
 # constant constants
 
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]

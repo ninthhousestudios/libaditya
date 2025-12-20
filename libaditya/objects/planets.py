@@ -17,6 +17,7 @@
 
 import swisseph as swe
 from prettytable import PrettyTable
+from dataclasses import replace
 
 from libaditya import constants as const
 
@@ -195,8 +196,6 @@ class Planet(Longitude):
     def nakshatra_name(self):
         return self._nakshatra.nakshatra()
 
-    def is_outer_planet(self):
-        return isinstance(self,Uranus) or isinstance(self,Neptune) or isinstance(self,Pluto) or isinstance(self,Chiron)
 
 
 class Sun(Planet):
@@ -206,12 +205,76 @@ class Sun(Planet):
     def sunrise_yamakoti(self):
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
-    def lowest_speed(self) -> float:
+    def lowest_daily_speed(self) -> float:
         """
         return a speed lower than the lowest speed for this planet
         used in finding the time when a planet is at a certain longitude
+        this is the daily motion
+        i.e., x/24 hours = hours motion
+        x/24/60 = minute motion
         """
         return .9
+
+    def lowest_hourly_speed(self) -> float:
+        return self.lowest_daily_speed()/24
+
+    def lowest_minutely_speed(self) -> float:
+        return self.lowest_hourly_speed()/60
+
+    def lowest_secondly_speed(self) -> float:
+        return self.lowest_minutely_speed()/60
+
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
+    def is_inner_planet(self):
+        return True
+
+    def ingress(self, next_long):
+        """
+        return Sun for the JulianDay where Sun arrives at longitude next_long
+        """
+        # if next_long is 0 for the equinox, change to 360
+        if next_long == 0:
+            next_long = 360
+        if next_long > 360:
+            next_long %= 360
+        if round(self.real_longitude(),6) == next_long:
+            # if we dont go forward one second the longitude we are are will be
+            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+        # difference between current longitude and desired longitude
+        diff = abs(self.real_longitude() - next_long)
+        print(f"{self.real_longitude()=} {next_long=} {diff=}")
+        shift_factor = diff*self.lowest_daily_speed()
+        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
+
+    def next_equinox(self):
+        """
+        get the next equinox from the current timeJD
+        """
+        # between ascending and descending, so find descending
+        if self.real_longitude() > 0 and self.real_longitude() < 180:
+            return self.ingress(180)
+        # otherwise, we are between descending and ascending, so find ascending
+        else:
+            return self.ingress(0)
+
+    def next_solstice(self):
+        """
+        get the next solstice from the current timeJD
+        """
+        # between norther and southern, so find southern
+        if self.real_longitude() > 90 and self.real_longitude() < 270:
+            return self.ingress(270)
+        # otherwise, we are between southern and northern, so find northern
+        else:
+            return self.ingress(90)
+
 
 
 class Moon(Planet):
@@ -222,70 +285,186 @@ class Moon(Planet):
         """
         return a speed lower than the lowest speed for this planet
         used in finding the time when a planet is at a certain longitude
+        this is the daily motion
+        i.e., x/24 hours = hours motion
+        x/24/60 = minute motion
         """
         return 11.0
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
+    def is_inner_planet(self):
+        return True
 
 class Mars(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.MARS, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
+    def is_inner_planet(self):
+        return True
 
 class Mercury(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.MERCURY, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
+    def is_inner_planet(self):
+        return True
 
 class Venus(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.VENUS, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
 
 class Jupiter(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.JUPITER, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
 
 class Saturn(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.SATURN, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
 
 class Rahu(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[10]
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return True
+
 
 class Ketu(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
+        self.planet_name = context.names.planet_names[11]
+
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return True
 
 
 class Uranus(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.URANUS, context)
 
+    def is_outer_planet(self):
+        return True
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return False
 
 class Neptune(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.NEPTUNE, context)
 
+    def is_outer_planet(self):
+        return True
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return False
+
 
 class Pluto(Planet):
+
     def __init__(self, context=EphContext()):
         super().__init__(swe.PLUTO, context)
 
+    def is_outer_planet(self):
+        return True
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return False
 
 class Earth(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.EARTH, context)
 
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return False
 
 class Chiron(Planet):
+
     def __init__(self, context=EphContext()):
         self.planet_name = "Chiron"
         super().__init__(swe.CHIRON, context)
+
+    def is_outer_planet(self):
+        return True
+
+    def is_karaka(self):
+        return False
+
+    def is_inner_planet(self):
+        return False
 
 
 class Planets:
@@ -367,7 +546,7 @@ class Planets:
             # dont print the Sun when printing heliocentric coordinates
             if isinstance(p, Sun) and self.system == const.HELIO:
                 continue
-            if not self.context.print_outer_planets and (isinstance(p,Uranus) or isinstance(p,Neptune) or isinstance(p,Pluto) or isinstance(p,Chiron)):
+            if not self.context.print_outer_planets and p.is_outer_planet():
                 continue
             output.add_row(p.table_row())
 
@@ -421,7 +600,7 @@ class Planets:
             # dont print the Sun when printing heliocentric coordinates
             if isinstance(p, Sun) and self.system == const.HELIO:
                 continue
-            if not self.context.print_outer_planets and (isinstance(p,Uranus) or isinstance(p,Neptune) or isinstance(p,Pluto) or isinstance(p,Chiron)):
+            if not self.context.print_outer_planets and p.is_outer_planet():
                 continue
             output.add_row(p.table_row()[:2]+p.table_row()[4:])
 

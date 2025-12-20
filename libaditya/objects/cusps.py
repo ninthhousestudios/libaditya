@@ -43,10 +43,10 @@ class Cusp(Longitude):
         self._nakshatra = Nakshatra(self)
 
     def __str__(self):
-        return self.cusp_name + " at " + str(self.longitude())
+        return self.cusp_name + " at " + str(self.longitude()) + "\n"
 
     def __repr__(self):
-        return self.cusp_name + " at " + str(self.long)
+        return self.cusp_name + " at " + str(self.long) + "\n"
 
     def name(self):
         return self.cusp_name
