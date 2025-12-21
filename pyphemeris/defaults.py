@@ -37,6 +37,9 @@ placename = "Default Place"
 
 ayanamsa = 98  # dhruva equatorial
 
+epehemeris_mode = True
+chart_mode = False
+
 eng = dict_path + "dict.eng"
 iast = dict_path + "dict.iast"
 deva = dict_path + "dict.deva"
@@ -44,34 +47,34 @@ mixed = dict_path + "dict.mixed"
 abrev = dict_path + "dict.abrev"
 lang_file = abrev
 
-epehemeris_mode = {
-    "zodiac": False,
-    "adityas": True,
-    "helios": False,
-    "baryos": False,
-    "topo": False,
-    "equatorial": False,
-    "sidereal": False,
-    "vimshottari dasha": False,
-    "current vimshottari dasha": True,
-    "house system": "C",
-    "language file": abrev,
-    "signize": True,
-    "toround": [True,3],
-    "complete planet info": False # if True, it prints all six values returned by swiss eph; nakshatras printed separately
-}                                 # if False, longitude, speed and latitude are printed in one table with nakshatras
+#epehemeris_mode = {
+#    "zodiac": False,
+#    "adityas": True,
+#    "helios": False,
+#    "baryos": False,
+#    "topo": False,
+#    "equatorial": False,
+#    "sidereal": False,
+#    "vimshottari dasha": False,
+#    "current vimshottari dasha": True,
+#    "house system": "C",
+#    "language file": abrev,
+#    "signize": True,
+#    "toround": [True,3],
+#    "complete planet info": False # if True, it prints all six values returned by swiss eph; nakshatras printed separately
+#}                                 # if False, longitude, speed and latitude are printed in one table with nakshatras
 
-chart_mode = {
-    "zodiac": False,
-    "adityas": True,
-    "sidereal": False,
-    "vimshottari dasha": False,
-    "current vimshottari dasha": True,
-    "house system": "C",
-    "language file": abrev,
-    "signize": True,
-    "toround": [True,3]
-}
+#chart_mode = {
+#    "zodiac": False,
+#    "adityas": True,
+#    "sidereal": False,
+#    "vimshottari dasha": False,
+#    "current vimshottari dasha": True,
+#    "house system": "C",
+#    "language file": abrev,
+#    "signize": True,
+#    "toround": [True,3]
+#}
 
 show_helios = 0
 show_baryos = 0

@@ -67,6 +67,21 @@ def ayanamsa_name(ayanamsa):
 
 # constant constants
 
+lords = {
+    1: "Mars",
+    2: "Venus",
+    3: "Mercury",
+    4: "Moon",
+    5: "Sun",
+    6: "Mercury",
+    7: "Venus",
+    8: "Mars",
+    9: "Jupiter",
+    10: "Saturn",
+    11: "Saturn",
+    12: "Jupiter"
+}
+
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
 
 dasha_years = [

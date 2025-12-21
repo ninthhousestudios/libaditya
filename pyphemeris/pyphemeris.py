@@ -169,23 +169,26 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
+    ephemeris_mode = defaults.epehemeris_mode
+    if args.ephemeris_mode:
+        ephemeris_mode = not (ephemeris_mode)
 
-    print(f"\nEphemeris for {name}\n")
+    if ephemeris_mode:
+        context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
 
-    print(f"Date: {timeJD.date()}\t{timeJD.usrdate()}")
-    print(f"Time: {timeJD.time()}\t{timeJD.usrtime()}\n")
+        print(f"\nEphemeris for {name}\n")
 
-    # print planetary positions in all coordinates and types the users wants
+        print(f"Date: {timeJD.date()}\t{timeJD.usrdate()}")
+        print(f"Time: {timeJD.time()}\t{timeJD.usrtime()}\n")
 
-    print_ephemeris(context,to_show)
+        # print planetary positions in all coordinates and types the users wants
+
+        print_ephemeris(context,to_show)
 
     # do vimshottari dasha
+    # this function takes care of deciding to print them
+    # so if there is nothing to print, it will not print anything
     print_dashas(args,context)
-
-
-
-
 # end main function
 
 def print_ephemeris(context,to_show):
@@ -314,6 +317,12 @@ def get_args():
         help="house system, default: C for Campanus; try R for Regiomantus",
     )
     parser.add_argument(
+        "-e",
+        "--ephemeris-mode",
+        action="store_true",
+        help="toggle printing of information in ephemeris mode",
+    )
+    parser.add_argument(
         "-Z",
         "--zodiac",
         action="store_true",
@@ -338,7 +347,7 @@ def get_args():
         help="toggle default of barycentric coordinates - i.e., with the solar system's barycenter as the center of the coordinate system",
     )
     parser.add_argument(
-        "-E",
+        "-Q",
         "--equatorial",
         action="store_true",
         help="toggle priting equatorial coordinates from default behavior",
@@ -390,7 +399,7 @@ def get_args():
     )
     parser.add_argument("-j", "--julian", help="time specificed as a julian day")
     parser.add_argument(
-        "-e",
+        "-E",
         "--edir",
         help="path to swiss ephemeris files; default can be set in constants.py",
     )

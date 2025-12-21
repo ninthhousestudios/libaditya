@@ -57,7 +57,10 @@ class Longitude:
         else:
             return self.index
 
-    def sign_name(self):
+    def sign(self) -> int:
+        return self.sign_index()+1
+
+    def sign_name(self) -> str:
         return self.context.names.sign_names[self.sign_index()]
 
     def get_rahu(self):
@@ -66,12 +69,15 @@ class Longitude:
         else:
             return 0
 
-    def in_sign_longitude(self):
+    def in_sign_longitude(self) -> str:
         if self.context.toround[0]:
             inlong = round(self._longitude % 30, self.context.toround[1])
         else:
             inlong = self._longitude % 30
         return utils.dec2dmsstr(inlong)
+
+    def in_sign_longitude_decimal(self) -> float:
+        return self.real_longitude() % 30
 
     def signize(self):
         """

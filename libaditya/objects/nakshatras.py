@@ -240,11 +240,11 @@ class Nakshatras:
         return ret
 
     def mkheader(self):
-        from .planets import Planet
-        from .cusps import Cusp
-        if isinstance(self._occupants[0],Planet):
+        from .planets import Planets
+        from .cusps import Cusps
+        if isinstance(self._occupants,Planets):
             return self.mkheader_Planets()
-        elif isinstance(self._occupants[0],Cusp):
+        elif isinstance(self._occupants,Cusps):
             return self.mkheader_Cusps()
         else:
             raise TypeError("cannot make Nakshatras from this type")

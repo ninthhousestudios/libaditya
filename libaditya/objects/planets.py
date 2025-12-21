@@ -107,7 +107,7 @@ class Planet(Longitude):
         # but swe doesnt accept that, so replace it if necessary
         return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
 
-    def name(self):
+    def name(self) -> str:
         return self.planet_name + self.retrostr()
 
     def system_name(self) -> str:
@@ -115,6 +115,12 @@ class Planet(Longitude):
 
     def object_type(self) -> str:
         return "Planet"
+
+    def identity(self) -> str:
+        return self._id
+
+    def lord(self):
+        return const.lords[self.sign()]
 
     def latitude(self) -> float:
         if self.context.toround[0]:
@@ -200,6 +206,7 @@ class Planet(Longitude):
 class Sun(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.SUN, context)
+        self._id = "Sun"
 
     def sunrise_yamakoti(self) -> JulianDay:
         return self.riseset(swe.CALC_RISE, Yamakoti)
@@ -274,6 +281,7 @@ class Sun(Planet):
 class Moon(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.MOON, context)
+        self._id = "Moon"
 
     def lowest_daily_speed(self) -> float:
         """
@@ -307,6 +315,7 @@ class Mars(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.MARS, context)
+        self._id = "Mars"
 
     def is_outer_planet(self):
         return False
@@ -321,6 +330,7 @@ class Mercury(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.MERCURY, context)
+        self._id = "Mercury"
 
     def is_outer_planet(self):
         return False
@@ -335,6 +345,7 @@ class Venus(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.VENUS, context)
+        self._id = "Venus"
 
     def is_outer_planet(self):
         return False
@@ -347,6 +358,7 @@ class Jupiter(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.JUPITER, context)
+        self._id = "Jupiter"
 
     def is_outer_planet(self):
         return False
@@ -359,6 +371,7 @@ class Saturn(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.SATURN, context)
+        self._id = "Saturn"
 
     def is_outer_planet(self):
         return False
@@ -372,6 +385,7 @@ class Rahu(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[10]
+        self._id = "Rahu"
 
     def is_outer_planet(self):
         return False
@@ -388,6 +402,7 @@ class Ketu(Planet):
     def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[11]
+        self._id = "Ketu"
         
 
     def is_outer_planet(self):
@@ -403,6 +418,7 @@ class Ketu(Planet):
 class Uranus(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.URANUS, context)
+        self._id = "Uranus"
 
     def is_outer_planet(self):
         return True
@@ -417,6 +433,7 @@ class Neptune(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.NEPTUNE, context)
+        self._id = "Neptune"
 
     def is_outer_planet(self):
         return True
@@ -432,6 +449,7 @@ class Pluto(Planet):
 
     def __init__(self, context=EphContext()):
         super().__init__(swe.PLUTO, context)
+        self._id = "Pluto"
 
     def is_outer_planet(self):
         return True
@@ -445,6 +463,7 @@ class Pluto(Planet):
 class Earth(Planet):
     def __init__(self, context=EphContext()):
         super().__init__(swe.EARTH, context)
+        self._id = "Earth"
 
     def is_outer_planet(self):
         return False
@@ -460,6 +479,7 @@ class Chiron(Planet):
     def __init__(self, context=EphContext()):
         self.planet_name = "Chiron"
         super().__init__(swe.CHIRON, context)
+        self._id = "Chiron"
 
     def is_outer_planet(self):
         return True
@@ -470,6 +490,21 @@ class Chiron(Planet):
     def is_inner_planet(self):
         return False
 
+planets = {
+    "Sun": Sun,
+    "Moon": Moon,
+    "Mars": Mars,
+    "Mercury": Mercury,
+    "Jupiter": Jupiter,
+    "Venus": Venus,
+    "Saturn": Saturn,
+    "Rahu": Rahu,
+    "Ketu": Ketu,
+    "Uranus": Uranus,
+    "Neptune": Neptune,
+    "Pluto": Pluto,
+    "Chiron": Chiron
+}
 
 class Planets:
 
@@ -485,27 +520,28 @@ class Planets:
         self._nakshatras = Nakshatras(self,self.context)
 
     def __iter__(self):
-        return iter(self.planets)
+        return iter(self.planets.values())
 
     def __getitem__(self,n):
         return self.planets[n]
 
     def init_Planets(self):
-        ret = []
+        ret = {}
 
         # chiron can only be computed in a certain time frame
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
-            planet_dict["planets"].pop()
+            planets.pop()
 
         # add Earth if using barycentric or heliocentric
         if self.system == const.BARY or self.system == const.HELIO:
             # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-            planet_dict["planets"].insert(1,Earth)
+            planets["Earth"] = Earth
 
-        for p in planet_dict["planets"]:
-            ret.append(p(self.context))
+        for p,v in planets.items():
+            ret[p] = v(self.context)
+
         return ret
 
     def __str__(self):
@@ -541,7 +577,7 @@ class Planets:
         output.align["Distance"] = "r"
         output.align["Distance Speed"] = "r"
 
-        for p in self.planets:
+        for p in self.planets.values():
             # dont print earth unless it is heliocentric or barycentric
             if isinstance(p, Earth) and not (
                 self.system == const.HELIO or self.system == const.BARY
@@ -595,7 +631,7 @@ class Planets:
         output.align["Distance"] = "r"
         output.align["Distance Speed"] = "r"
 
-        for p in self.planets:
+        for p in self.planets.values():
             # dont print earth unless it is heliocentric or barycentric
             if isinstance(p, Earth) and not (
                 self.system == const.HELIO or self.system == const.BARY
@@ -627,6 +663,9 @@ class Planets:
 
         return self.mkheader() + ret
 
+    def __repr__(self):
+        return self.planets_complete_information()
+
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
         if self.system == swe.FLG_SIDEREAL:
@@ -651,6 +690,45 @@ class Planets:
     
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
+
+    def sun(self):
+        return self.planets["Sun"]
+
+    def moon(self):
+        return self.planets["Moon"]
+
+    def mars(self):
+        return self.planets["Mars"]
+
+    def mercury(self):
+        return self.planets["Mercury"]
+
+    def jupiter(self):
+        return self.planets["Jupiter"]
+
+    def venus(self):
+        return self.planets["Venus"]
+
+    def saturn(self):
+        return self.planets["Saturn"]
+
+    def rahu(self):
+        return self.planets["Rahu"]
+
+    def ketu(self):
+        return self.planets["Ketu"]
+
+    def uranus(self):
+        return self.planets["Uranus"]
+
+    def neptune(self):
+        return self.planets["Neptune"]
+
+    def pluto(self):
+        return self.planets["Pluto"]
+
+    def chiron(self):
+        return self.planets["Chiron"]
 
 planet_dict = {
     "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],
