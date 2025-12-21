@@ -75,14 +75,17 @@ class Varga:
         for r in range(0,rows):
             # construct the row
             row = []
-            for s in self._signs.signs().keys():
+            # could also write for s in self._signs.signs().values()
+            # and then replace self._signs[s]._objects by s._objects
+            for s in self._signs.keys():
                 if len(self._signs[s]._objects) > r:
                     if not self.context.print_outer_planets and self._signs[s]._objects[r].object_type()=="Planet" and self._signs[s]._objects[r].is_outer_planet():
                         row.append("")
                         continue
                     rowstr = f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n"
                     # if this is a Rashi, print nakshatras, if that is specified
-                    if isinstance(self,Rashi):
+                    # unless it is barycentric or heliocentric
+                    if isinstance(self,Rashi) and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):
                         # print nakshatras or not
                         if self.context.print_nakshatras:
                             rowstr += f"{self._signs[s]._objects[r].nakshatra_name()}\n{self._signs[s]._objects[r].nakshatra().elapsed()}\n"

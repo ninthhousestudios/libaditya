@@ -22,7 +22,7 @@ from libaditya import constants as const
 
 from .planets import Planets
 from .cusps import Cusps
-from .context import EphContext, Circle
+from .context import EphContext
 
 class Sign:
 
@@ -30,7 +30,7 @@ class Sign:
         self.context = context
         self._planets = planets
         self._cusps = cusps
-        self._objects = self._planets + self._cusps
+        self._objects = self.init_objects()
         self._sign_index = (number-1)%12
         self._sign_name = self.context.names.sign_names[self.sign_index()]
         self._id = number
@@ -49,6 +49,12 @@ class Sign:
 
     def how_many_objects(self):
         return len(self._objects)
+
+    def init_objects(self):
+        if self.context.sysflg == const.BARY or self.context.sysflg == const.HELIO:
+            return self._planets
+        else:
+            return self._planets + self._cusps
 
     def __str__(self):
         header = ""
@@ -177,7 +183,20 @@ class Signs:
         return iter(self._signs.values())
 
     def __getitem__(self,n):
+        """
+        s=Signs(), then you can write
+        then you can write s[key] with key between 1 and 12 inclusive
+        """
         return self._signs[n]
+
+    def keys(self):
+        """
+        say s=Signs()
+        without this method, i have to do s.signs().keys()
+        s.signs() is the dictionary of signs
+        with this, i can just write s.keys()
+        """
+        return self._signs.keys()
 
     def __str__(self):
         ret = ""
