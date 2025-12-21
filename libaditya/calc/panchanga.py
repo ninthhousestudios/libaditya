@@ -224,7 +224,7 @@ class Panchanga:
             # if the tithi isnt 30, it cant be a new moon, so go forward 8 hours
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_new_moon()
         if (self._sun.real_longitude() - self._moon.real_longitude()) <= 0.001:
-            return self
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","second",10)))
         remaining = self.tithi_degrees_remaining()
         shift_factor = remaining*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_new_moon()
@@ -240,7 +240,7 @@ class Panchanga:
         target = (self._sun.real_longitude() + 180) % 360
         diff = abs(self._moon.real_longitude() - target)
         if diff <= 0.0001:
-            return self
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","second",10)))
         shift_factor = diff*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_full_moon()
 

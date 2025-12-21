@@ -18,6 +18,7 @@
 import swisseph as swe
 from prettytable import PrettyTable
 from dataclasses import replace
+from typing import Self
 
 from libaditya import constants as const
 
@@ -36,7 +37,7 @@ class Planet(Longitude):
 
     def __init__(self, pnumber, context=EphContext(), longitude=None):
         self.timeJD = context.timeJD
-        self.context = context
+        self._context = context
         self.pnumber = pnumber
         self.planet_name = context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
@@ -47,6 +48,7 @@ class Planet(Longitude):
         # if a longitude is passed, we are in a varga not equal to 1
         if longitude is None:
             self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+            # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
             self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
         else:
             self.long = longitude
@@ -55,7 +57,7 @@ class Planet(Longitude):
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
-        super().__init__(self.long,self.context)
+        super().__init__(self.long,self._context)
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -92,7 +94,7 @@ class Planet(Longitude):
         )
 
     def init_coords(self):
-        loc = self.context.location.swe_location()
+        loc = self._context.location.swe_location()
         if self.system == const.SID:
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
@@ -123,32 +125,32 @@ class Planet(Longitude):
         return const.lords[self.sign()]
 
     def latitude(self) -> float:
-        if self.context.toround[0]:
-            return round(self.lat, self.context.toround[1])
+        if self._context.toround[0]:
+            return round(self.lat, self._context.toround[1])
         else:
             return self.lat
 
     def distance(self):
-        if self.context.toround[0]:
-            return round(self.dist, self.context.toround[1])
+        if self._context.toround[0]:
+            return round(self.dist, self._context.toround[1])
         else:
             return self.dist
 
     def longitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.long_speed, self.context.toround[1])
+        if self._context.toround[0]:
+            return round(self.long_speed, self._context.toround[1])
         else:
             return self.long_speed
 
     def latitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.lat_speed, self.context.toround[1])
+        if self._context.toround[0]:
+            return round(self.lat_speed, self._context.toround[1])
         else:
             return self.lat_speed
 
     def distance_speed(self):
-        if self.context.toround[0]:
-            return round(self.dist_speed, self.context.toround[1])
+        if self._context.toround[0]:
+            return round(self.dist_speed, self._context.toround[1])
         else:
             return self.dist_speed
 
@@ -201,6 +203,8 @@ class Planet(Longitude):
     def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
 
+    def context(self):
+        return self._context
 
 
 class Sun(Planet):
@@ -239,7 +243,7 @@ class Sun(Planet):
     def is_inner_planet(self):
         return True
 
-    def ingress(self, next_long):
+    def ingress(self, next_long) -> Self:
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """

@@ -18,12 +18,27 @@
 import swisseph as swe
 
 from libaditya.objects import JulianDay, Sun, EphContext
+from libaditya.calc import Panchanga
 
 def lunar_new_year(year):
     """
     find chinese lunar new year in calendar year "year"
+    chinese lunar new year is the second new moon after the winter solstice
+    so the lunar new year in 2026 is after the solstice in 2025
     """
-    pass
+    # get january 1st of the previous year so we can find the winter solstice of that year
+    solstice_yearJD = JulianDay(swe.julday(year-1,1,1))
+    solsticeSun = Sun(EphContext(timeJD=solstice_yearJD)).ingress(270)
+
+    print(f"lunar_new_year: {solsticeSun} {type(solsticeSun)}")
+    # now get a Panchanga for this time
+    panch = Panchanga(solsticeSun._context)
+
+    new_year = panch.next_new_moon().next_new_moon()
+
+    return new_year
+
+
 
 def cardinal_points(year) -> [JulianDay]:
     """
