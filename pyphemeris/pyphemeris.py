@@ -28,7 +28,7 @@ from libaditya import utils
 from libaditya import read
 
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
-from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha
+from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points
 
 import defaults
 import parse
@@ -169,12 +169,17 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
+    # print kala information and exit
+    if args.kala:
+        print_kala(context)
+        exit()
+
     ephemeris_mode = defaults.epehemeris_mode
     if args.ephemeris_mode:
         ephemeris_mode = not (ephemeris_mode)
 
     if ephemeris_mode:
-        context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
 
         print(f"\nEphemeris for {name}\n")
 
@@ -227,6 +232,21 @@ def print_ephemeris(context,to_show):
         if sys == const.SID:
             print(Cusps(replace(context,sysflg=const.SID)))
             print("\n")
+
+    p=Panchanga(context)
+    print(p)
+    p.print_addendum()
+    p.print_next_new_moon()
+    p.print_next_full_moon()
+
+def print_kala(context):
+    """
+    print time related information
+    """
+    print_cardinal_points(context.timeJD)
+
+    print("Lunar new year:\n")
+    print(lunar_new_year(context.timeJD).moon())
 
     p=Panchanga(context)
     print(p)
@@ -321,6 +341,12 @@ def get_args():
         "--ephemeris-mode",
         action="store_true",
         help="toggle printing of information in ephemeris mode",
+    )
+    parser.add_argument(
+        "-k",
+        "--kala",
+        action="store_true",
+        help="display a set of time related information",
     )
     parser.add_argument(
         "-Z",

@@ -73,6 +73,12 @@ class Panchanga:
 
         return panch
 
+    def sun(self):
+        return self._sun
+    
+    def moon(self):
+        return self._moon
+
     def init_tithi(self):
         traw = ((self._moon.real_longitude() - self._sun.real_longitude()) % 360) / 12
         remainder = traw % 1  # remainder shows how much has elapsed
