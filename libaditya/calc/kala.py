@@ -19,6 +19,12 @@ import swisseph as swe
 
 from libaditya.objects import JulianDay, Sun, EphContext
 
+def lunar_new_year(year):
+    """
+    find chinese lunar new year in calendar year "year"
+    """
+    pass
+
 def cardinal_points(year) -> [JulianDay]:
     """
     return the cardinal points of the year in order
@@ -28,3 +34,6 @@ def cardinal_points(year) -> [JulianDay]:
     year_jd = swe.julday(year,1,1,0)
     s=Sun(EphContext(timeJD=JulianDay(year_jd)))
     return [s.ingress(0), s.ingress(90), s.ingress(180), s.ingress(270)]
+
+def print_cardinal_points(year) -> None:
+    pass
