@@ -19,7 +19,6 @@ import swisseph as swe
 
 import os
 
-
 from libaditya import utils
 
 base_path = os.path.dirname(os.path.realpath(__file__))
@@ -64,6 +63,14 @@ def ayanamsa_name(ayanamsa):
         return "Equatorial Vedanga Jyotisha"
     swe.set_sid_mode(ayanamsa)
     return swe.get_ayanamsa_name(ayanamsa)
+
+def circle_name(circle) -> str:
+    from libaditya.objects import Circle
+    if circle == Circle.ADITYA:
+        return "Aditya Circle"
+    if circle == Circle.ZODIAC:
+        return "Zodiac Circle"
+
 
 # constant constants
 

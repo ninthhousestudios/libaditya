@@ -143,8 +143,8 @@ class Panchanga:
         """
         yraw = ((self._moon.nakshatra().ashvini_longitude() + self._sun.nakshatra().ashvini_longitude()) % 360) / (13 + (20 / 60))
         remainder = yraw % 1  # remainder shows how much has elapsed
-        elapsed = remainder * 12  # degrees elapsed
-        remaining = 12 - elapsed  # degrees remaining
+        elapsed = remainder * (13+(1/3))  # degrees elapsed
+        remaining = (13+(1/3)) - elapsed  # degrees remaining
         return (yraw, elapsed, remaining)
 
     def yoga_index(self):
@@ -160,10 +160,10 @@ class Panchanga:
         return f"{self.yoga_number()} {self.yoga_name()}"
 
     def yoga_degrees_elapsed(self):
-        return self._yoga_elapsed
+        return round(self._yoga_elapsed,3)
 
     def yoga_degrees_remaining(self):
-        return self._yoga_remaining
+        return round(self._yoga_remaining,3)
 
     def next_tithi(self) -> Self:
         if self.tithi_degrees_remaining() == 0:
@@ -182,7 +182,7 @@ class Panchanga:
         today_yamakotiJD = self._sun.sunrise_yamakoti()
         # if the current time is before sunrise at yamakoti, todayJD is the next varas
         if self.timeJD.jd_number() < today_yamakotiJD.jd_number():
-            return Panchanga(replace(self.context,timeJD=today_yamakotiJD.shift("f","second",1)))
+            return Panchanga(replace(self.context,timeJD=today_yamakotiJD.shift("f","second",5)))
         # if the current time is after sunrise at yamaktoi, go ahead one today
         next_yamakotiJD = Sun(replace(self.context,timeJD=self.timeJD.shift("f","day",1)))
         return Panchanga(replace(self.context,timeJD=next_yamakotiJD.timeJD.shift("f","second",5)))
@@ -193,11 +193,11 @@ class Panchanga:
         shift_factor = self._moon.nakshatra().degrees_remaining()*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_nakshatra()
 
-#    def next_yoga(self):
-#        if self.yoga_degrees_remaining() == 0:
-#            return self
-#        shift_factor = self.yoga_degrees_remaining()*self._moon.lowest_hourly_speed()
-#        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_tithi()
+    def next_yoga(self):
+        if self.yoga_degrees_remaining() == 0:
+            return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","seconds",5)))
+        shift_factor = self.yoga_degrees_remaining()*self._moon.lowest_hourly_speed()
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_yoga()
 
     def print_next_new_moon(self):
         next = self.next_new_moon()  # return the Panchanga of the next new moon
@@ -325,15 +325,17 @@ class Panchanga:
         yremaining = round(self.yoga_degrees_remaining(), 2)
 
         print(f"\nYoga: {self.yoga()}")
-        print("Elapsed: ", yelapsed, " degrees (", round((yelapsed / 12) * 100, 2), "%)")
+        print("Elapsed: ", yelapsed, " degrees (", round((yelapsed / (13+(1/3))) * 100, 2), "%)")
         print(
-            "Remaining: ", yremaining, " degree (", round((yremaining / 12) * 100, 2), "%)"
+            "Remaining: ", yremaining, " degree (", round((yremaining / (13+(1/3))) * 100, 2), "%)"
         )
 
-        hours_left = ((yremaining) / (dmmoon - dmsun)) * 24
-        end_time = self.timeJD.shift("f", "hour", hours_left)
+        next_yoga = self.next_yoga()
 
-        print(
-            f"Ending time of current yoga: {round(hours_left, 2)} hours from panchanga time, at\n{end_time.timedate()}\n{end_time.usrtimedate()}"
-        )
+        hours_left = abs(self.timeJD.jd_number() - next_yoga.timeJD.jd_number())*24
+
+        print(f"Ending time of current yoga: {round(hours_left, 2)} hours from panchanga time")
+        print(f"Next yoga is {next_yoga.yoga()}, starting at:")
+        print(f"{next_yoga.timeJD}\n")
+
 

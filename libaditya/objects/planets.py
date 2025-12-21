@@ -61,24 +61,6 @@ class Planet(Longitude):
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
-    def __str__(self):
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-        return (
-            f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-            + f"{self.timeJD}\n"
-        )
-
-    def __repr__(self):
-        print(f"{type(self)}")
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-        return (
-            f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-            + f"{self.timeJD}"
-        )
 
     def table_row(self):
         return (
@@ -205,6 +187,25 @@ class Planet(Longitude):
 
     def context(self):
         return self._context
+
+    def __str__(self):
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
+        return (
+            f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+            + f"{self.timeJD}\n"
+        )
+
+    def __repr__(self):
+        print(f"{type(self)}")
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
+        return (
+            f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+            + f"{self.timeJD}"
+        )
 
 
 class Sun(Planet):
@@ -548,6 +549,48 @@ class Planets:
 
         return ret
 
+    def nakshatras(self) -> Nakshatras:
+        return self._nakshatras
+
+    def sun(self):
+        return self.planets["Sun"]
+
+    def moon(self):
+        return self.planets["Moon"]
+
+    def mars(self):
+        return self.planets["Mars"]
+
+    def mercury(self):
+        return self.planets["Mercury"]
+
+    def jupiter(self):
+        return self.planets["Jupiter"]
+
+    def venus(self):
+        return self.planets["Venus"]
+
+    def saturn(self):
+        return self.planets["Saturn"]
+
+    def rahu(self):
+        return self.planets["Rahu"]
+
+    def ketu(self):
+        return self.planets["Ketu"]
+
+    def uranus(self):
+        return self.planets["Uranus"]
+
+    def neptune(self):
+        return self.planets["Neptune"]
+
+    def pluto(self):
+        return self.planets["Pluto"]
+
+    def chiron(self):
+        return self.planets["Chiron"]
+
     def __str__(self):
         if self.context.print_nakshatras:
             return self.planets_with_nakshatras()
@@ -692,47 +735,6 @@ class Planets:
         header += f"{self.timeJD}\n"
         return header
     
-    def nakshatras(self) -> Nakshatras:
-        return self._nakshatras
-
-    def sun(self):
-        return self.planets["Sun"]
-
-    def moon(self):
-        return self.planets["Moon"]
-
-    def mars(self):
-        return self.planets["Mars"]
-
-    def mercury(self):
-        return self.planets["Mercury"]
-
-    def jupiter(self):
-        return self.planets["Jupiter"]
-
-    def venus(self):
-        return self.planets["Venus"]
-
-    def saturn(self):
-        return self.planets["Saturn"]
-
-    def rahu(self):
-        return self.planets["Rahu"]
-
-    def ketu(self):
-        return self.planets["Ketu"]
-
-    def uranus(self):
-        return self.planets["Uranus"]
-
-    def neptune(self):
-        return self.planets["Neptune"]
-
-    def pluto(self):
-        return self.planets["Pluto"]
-
-    def chiron(self):
-        return self.planets["Chiron"]
 
 planet_dict = {
     "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],

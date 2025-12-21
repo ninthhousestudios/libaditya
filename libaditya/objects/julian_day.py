@@ -68,6 +68,9 @@ class JulianDay:
     def __lt__(self, jd2):
         return self.jd < jd2.jd
 
+    def __le__(self, jd2):
+        return self.jd <= jd2.jd
+
     def indent_print(self, n=1):
         """
         print like with __str__, but indenting each line n times

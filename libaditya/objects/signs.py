@@ -26,13 +26,29 @@ from .context import EphContext, Circle
 
 class Sign:
 
-    def __init__(self, index, planets, cusps, context):
+    def __init__(self, number, planets, cusps, context):
         self.context = context
         self._planets = planets
         self._cusps = cusps
         self._objects = self._planets + self._cusps
-        self._sign_index = index
+        self._sign_index = (number-1)%12
         self._sign_name = self.context.names.sign_names[self.sign_index()]
+        self._id = number
+        
+    def sign_index(self):
+        return self._sign_index
+
+    def sign_name(self):
+        return self._sign_name
+
+    def sign(self):
+        return self._id
+
+    def lord(self):
+        return const.lords[self.sign()]
+
+    def how_many_objects(self):
+        return len(self._objects)
 
     def __str__(self):
         header = ""
@@ -62,15 +78,90 @@ class Sign:
         name += "\n"
         return name
 
-    def sign_index(self):
-        return self._sign_index
+class One(Sign):
 
-    def sign_name(self):
-        return self._sign_name
+    def __init__(self,planets,cusps,context):
+        super().__init__(1,planets,cusps,context)
 
-    def how_many_objects(self):
-        return len(self._objects)
+class Two(Sign):
 
+    def __init__(self,planets,cusps,context):
+        super().__init__(2,planets,cusps,context)
+
+class Three(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(3,planets,cusps,context)
+        
+
+class Four(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(4,planets,cusps,context)
+        
+
+class Five(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(5,planets,cusps,context)
+        
+
+class Six(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(6,planets,cusps,context)
+        
+
+class Seven(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(7,planets,cusps,context)
+        
+
+class Eight(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(8,planets,cusps,context)
+        
+
+class Nine(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(9,planets,cusps,context)
+        
+
+class Ten(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(10,planets,cusps,context)
+        
+
+class Eleven(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(11,planets,cusps,context)
+        
+
+class Twelve(Sign):
+
+    def __init__(self,planets,cusps,context):
+        super().__init__(12,planets,cusps,context)
+        
+
+signs = {
+    1: One,
+    2: Two,
+    3: Three,
+    4: Four,
+    5: Five,
+    6: Six,
+    7: Seven,
+    8: Eight,
+    9: Nine,
+    10: Ten,
+    11: Eleven,
+    12: Twelve
+}
 
 class Signs:
     
@@ -83,7 +174,7 @@ class Signs:
         self.sysflgstr = const.sysflgstr(context.sysflg)
 
     def __iter__(self):
-        return iter(self._signs)
+        return iter(self._signs.values())
 
     def __getitem__(self,n):
         return self._signs[n]
@@ -92,8 +183,9 @@ class Signs:
         ret = ""
         ret += self.mkheader()
 
-        for s in self._signs:
-            ret += f"{s}"
+        for number,sign in self._signs.items():
+            ret += f"{number}: {sign}\n"
+        ret += "\n"
 
         return ret
 
@@ -113,20 +205,22 @@ class Signs:
         inner_index = 1
         for c in self._cusps:
             stmp[c.sign_index()][inner_index].append(c)
-        signs=[]
+        retsigns={}
         for n, sign in enumerate(stmp):
-            signs.append(Sign(n,planets=sign[0],cusps=sign[1],context=self.context))
-        return signs
+            retsigns[n+1] = Sign(n+1,planets=sign[0],cusps=sign[1],context=self.context)
+        return retsigns
+
+    def signs(self):
+        return self._signs
 
     def most_objects(self):
         """
-        return sign_index of the sign with the most most_objects
-        objects are plants and cusps
+        return the number of objects that is greatest of any sign
         """
         most=0
-        for sign in self._signs:
+        for sign in self:
             if sign.how_many_objects() > most:
-                most = sign.sign_index()
+                most = sign.how_many_objects()
         return most
 
     def mkheader(self):
