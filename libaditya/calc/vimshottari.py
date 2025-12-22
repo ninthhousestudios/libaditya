@@ -19,7 +19,7 @@ import swisseph as swe
 
 from libaditya import constants as const
 from libaditya import utils
-from libaditya.objects import Moon
+from libaditya.objects import Moon, JulianDay
 
 # to make code more readable
 lord = 0
@@ -233,3 +233,100 @@ def pd(dlist,dasha,level,age):
         age += dasha[d][1]/365.2422
         this_dasha = (this_dasha+1)%9
 
+def current_vimshottari_dasha(planet=Moon(),nowtimeJD=JulianDay(),dlevels=3,yrlen=const.dasha_years[0][1]):
+    """
+    find the dasha at nowtime for the dashas of someone born at btime down to dlevels levels
+    """
+    # first we need to find where the dashas start
+
+    # long is the sidereal longitude
+    # nindex is the index of the nakhsatra into pglob.nakshatra
+    long = planet.nakshatra().ashvini_longitude()
+    nindex = planet.nakshatra().index()
+
+    # how far into the nakshatra the moon is
+    elapsed = long-(nindex*planet.nakshatra().naksize())
+    elapsedfraction = elapsed/planet.nakshatra().naksize()
+
+    # find which dasha is the first mahadasha
+    first_dasha = nindex%9
+    years_elapsed = const.vimshottari_dashas[first_dasha][length]*elapsedfraction
+    # age when the mahadasha started, which was probably before birth
+    age = -years_elapsed
+
+    dasha_startsJD = planet.timeJD.shift('b','d',-age*yrlen)
+    level = 0
+    dlist = [first_dasha]
+    # returns a list
+    # [[current,dasha,lords], [next,dasha,lords], time_next_dasha_starts]
+    result = calc_current(dlist,dasha_startsJD,nowtimeJD,level,dlevels,yrlen)
+
+    lords = []
+    for r in result:
+        lords.append(const.vimshottari_dashas[r][0])
+
+    return "/".join(lords)
+    
+def calc_current(dlist,this_dasha_startsJD,nowtimeJD,level,dlevels,yrlen):
+    this_dasha = (dlist[level])%9
+    next_dasha = (this_dasha+1)%9
+
+    if level+1<=dlevels:
+        for n in range(0,9):
+        # find the length of the current dasha
+            dlen = 1
+            for lord in range(1,len(dlist)):
+                dlen = dlen * const.vimshottari_dashas[dlist[lord]][length]
+            dlen = dlen * const.vimshottari_dashas[this_dasha][length]
+            divfac = 120**level
+            dlen = dlen / divfac  # the length of this dasha in years
+            next_dasha_startsJD = this_dasha_startsJD.shift('f','d',dlen*yrlen)
+            # if next_dasha starts after current time, then we are in this dasha
+            if next_dasha_startsJD > nowtimeJD:
+                return [this_dasha] + calc_current(dlist+[this_dasha],this_dasha_startsJD,nowtimeJD,level+1,dlevels,yrlen)
+            this_dasha = next_dasha
+            next_dasha = (this_dasha+1)%9
+            this_dasha_startsJD = next_dasha_startsJD
+    return []
+
+
+    
+#def calc_current(dlist,dasha_time,nowtimeJD,level,dlevels,yrlen):
+#    this_dasha_list = []
+#    next_dasha_list = []
+#    # if dlevels is 3 and level is 3, we want to print this level, else just return
+#    if level+1 <= dlevels:
+#        print(f"calc_current: {nowtimeJD.jd_number() - dasha_time.jd_number()}")
+#        if (nowtimeJD.jd_number() - dasha_time.jd_number()) > 0:
+#            this_dasha = (dlist[level])%9
+#            for d in range(0,9):
+#                # find the length of this (sub)dasha
+#                dlen = 1
+#                for lord in range(1,len(dlist)):
+#                    dlen = dlen * const.vimshottari_dashas[dlist[lord]][length]
+#                dlen = dlen * const.vimshottari_dashas[this_dasha][length]
+#                divfac = 120**level
+#                dlen = dlen / divfac 
+#                #print(f"{dlen=} {dlen*yrlen}")
+#                # now dlen is the length of the dasha in years
+#                if level+1 < dlevels:
+#                    next_dasha_list = calc_current(dlist+[this_dasha],dasha_time,nowtimeJD,level+1,dlevels,yrlen)
+#                this_dasha_list.append([dasha_time,dlen*yrlen,next_dasha_list])
+#                dasha_time = dasha_time.shift('f','d', dlen*yrlen)
+#                this_dasha = (this_dasha+1)%9
+#    return this_dasha_list
+
+#def calc_current(dasha_startsJD,nowtimeJD,level,dlevels,dlist,yrlen):
+#    this_dasha_list = []
+#    next_dasha_list = []
+#    # we find the dasha by going forward from the start date
+#    # however many days are between the start date and the date we want to find
+#    days_to_go = nowtimeJD.jd_number() - dasha_startsJD.jd_number()
+#    
+#    this_dasha = (dlist[level])%9
+#    # days_to_go is < 0, then we have gone past the current dasha
+#    # so the current dasha is the previous one
+#    if days_to_go < 0: 
+#        if level+1 <= dlevels:
+#        # we are at the current dasha
+#        return [this_dasha, (this_dasha+1)%9, ]

@@ -54,6 +54,10 @@ class JulianDay:
             self.jd = jd
         elif isinstance(jd, tuple):
             self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3])
+        elif jd == "now":
+            nowtime = time.gmtime()
+            jd = utils.tmod_to_jd(nowtime)
+            self.jd = jd
         self.datetime = swe.revjul(self.jd)
         self.utcoffset = utcoffset
         self.timezone = self.mktimezone(timezone)
@@ -65,11 +69,20 @@ class JulianDay:
         else:
             return f"{self.date()} at {self.time()}\n{self.usrdate()} at {self.usrtime()}\n{self.jd}"
 
+    def __repr__(self):
+        return self.__str__()
+
     def __lt__(self, jd2):
         return self.jd < jd2.jd
 
     def __le__(self, jd2):
         return self.jd <= jd2.jd
+
+    def __gt__(self, jd2):
+        return self.jd > jd2.jd
+
+    def __ge__(self, jd2):
+        return self.jd >= jd2.jd
 
     def indent_print(self, n=1):
         """

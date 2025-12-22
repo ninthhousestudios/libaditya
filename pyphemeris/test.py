@@ -10,6 +10,12 @@ acon=EphContext(timeJD=JulianDay(utcoffset=-5,timezone="EST"),
 zcon=EphContext(timeJD=JulianDay(utcoffset=-5,timezone="EST"),
                 location=Location(lat=39.95611111111111,long=-86.01277777777777,placename="Fishers, IN",timezone="EST"),
                 circle=Circle.ZODIAC,names=Names(sign_names=const.zodiac,nakshatras=nakshatras))
+joshcon=EphContext(timeJD=JulianDay(2447679.3388888887,utcoffset=-5,timezone="EST"),
+                location=Location(lat=39.95611111111111,long=-86.01277777777777,placename="Fishers, IN",timezone="EST"),
+                circle=Circle.ADITYA)
+now=JulianDay()
+jm=Moon(joshcon)
+
 ap=Planets(acon)
 ac=Cusps(acon)
 

@@ -28,7 +28,7 @@ from libaditya import utils
 from libaditya import read
 
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
-from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points
+from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points, current_vimshottari_dasha
 
 import defaults
 import parse
@@ -285,7 +285,7 @@ def print_dashas(args,context):
 
     if show_v2dasha:
 
-        print("\n\nVimshottari Dasha\n")
+        print("\n\nCurrent Vimshottari Dasha\n")
 
         # this is for the year length
         for opt in const.dasha_years:
@@ -298,6 +298,21 @@ def print_dashas(args,context):
         print(f"Using {yrstr} year length")
         vdasha = calculate_vimshottari_dasha(planet,dasha_levels,yrlen)
         print_calculated_vimshottari_dasha(vdasha)
+
+    if args.current_vdasha:
+        print("\n\nCurrent Vimshottari Dasha\n")
+
+        # this is for the year length
+        for opt in const.dasha_years:
+            if yrlen == opt[1]:
+                yrstr = opt[0].capitalize()
+
+        planet = Moon(context)
+        print(f"Based on the position of {planet.name()}")
+        print(f"Using {planet.ayanamsa_name()}")
+        print(f"Using {yrstr} year length\n")
+        current_dasha = current_vimshottari_dasha(planet,JulianDay("now"),dasha_levels,yrlen)
+        print(current_dasha)
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -390,6 +405,12 @@ def get_args():
         help="toggle topocentric positions of planets; can use -p to specify lat/long; if passing an input file, -p argument will override that location information",
     )
     parser.add_argument(
+        "-C",
+        "--current-vdasha",
+        action="store_true",
+        help="toggle printing of current vimshottari dashas; use -L to determine how many levels; default for printing current is 3",
+    )
+    parser.add_argument(
         "-V",
         "--vdasha",
         action="store_true",
@@ -400,12 +421,6 @@ def get_args():
         "--v2dasha",
         action="store_true",
         help="toggle printing vimshottari dasha from default; this option calculates everything, then prints",
-    )
-    parser.add_argument(
-        "-C",
-        "--current-dasha",
-        action="store_true",
-        help="print current dasha; use -L to specify how many levels; default is 3",
     )
     parser.add_argument(
         "-L",

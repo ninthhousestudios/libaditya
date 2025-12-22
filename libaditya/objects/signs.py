@@ -67,7 +67,7 @@ class Sign:
         for obj in self._objects:
             ret += f"{obj.name()}\n"
             ret += f"{obj.longitude()}\n"
-            if self.context.print_nakshatras:
+            if self.context.print_nakshatras and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):
                 ret += f"{obj.nakshatra_name()}\n"
                 ret += f"{obj.nakshatra().elapsed()}\n"
             ret += "\n"

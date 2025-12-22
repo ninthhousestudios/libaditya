@@ -68,7 +68,7 @@ class Varga:
 
         ret = output.get_string(fields=["  ", "   ", "    ", "     "])
 
-        return ret
+        return self.mkheader() + ret
 
 
     def __repr__(self):
