@@ -53,8 +53,25 @@ class Varga:
 
     def signs(self):
         return self._signs
-
+    
     def __str__(self):
+        output = PrettyTable()
+        output.field_names = ["  ", "   ", "    ", "     "]
+
+        output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[11]}", "  ", "  ", f"{self.signs()[4]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[10]}", "  ", "  ", f"{self.signs()[5]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[9]}", f"{self.signs()[8]}", f"{self.signs()[7]}", f"{self.signs()[6]}"])
+
+        ret = output.get_string(fields=["  ", "   ", "    ", "     "])
+
+        return ret
+
+
+    def __repr__(self):
         """
         this is for every varga except the Rashi
         the rashi is printed with nakshatras
@@ -97,7 +114,7 @@ class Varga:
         ret = output.get_string(fields=list([sign for sign in [self.context.names.sign_names]][0]))
         return self.mkheader() + ret
 
-    def __repr__(self):
+    def draw_sun_by_sign_table(self):
         """
         this prints nakshatras with the chart
         """

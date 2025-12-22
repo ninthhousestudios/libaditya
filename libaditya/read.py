@@ -373,6 +373,7 @@ def init_names(langfile=const.base_path + "/dict/dict.mixed"):
     planets.append([])
     planets.append([])
     planets.append(pnames["Earth"])  # so we can use swe.EARTH
+    planets.append("Chiron")
 
     zodiac.append(znames["Aries"])
     zodiac.append(znames["Taurus"])

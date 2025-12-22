@@ -79,6 +79,9 @@ class Longitude:
     def in_sign_longitude_decimal(self) -> float:
         return self.real_longitude() % 30
 
+    def lord(self):
+        return const.lords[self.sign()]
+
     def signize(self):
         """
         return a string with 360degree longitude long given with

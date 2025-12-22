@@ -103,9 +103,6 @@ class Planet(Longitude):
     def identity(self) -> str:
         return self._id
 
-    def lord(self):
-        return const.lords[self.sign()]
-
     def latitude(self) -> float:
         if self._context.toround[0]:
             return round(self.lat, self._context.toround[1])
@@ -715,6 +712,7 @@ class Planets:
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
+        header += f"{const.circle_name(self.context.circle)}\n"
         if self.system == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras

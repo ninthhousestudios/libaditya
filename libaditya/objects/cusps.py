@@ -187,6 +187,7 @@ class Cusps:
         draconic = "Draconic " if self.context.sysflg == const.DRAC else ""
         sidereal = "Sidereal " if self.context.sysflg == const.SID else ""
         place = f"{draconic}{sidereal}Cusps for\n{self.location}\n"
+        circle = f"{const.circle_name(self.context.circle)}\n"
         time = f"{self.timeJD}\n"
         sys = f"Using {self.hname} house system\n"
         ayanamsa = ""
@@ -200,7 +201,7 @@ class Cusps:
                 ayanamsa += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         else:
             ayanamsa = f"Using {const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        return place + time + sys + ayanamsa
+        return place + circle + time + sys + ayanamsa
 
     def house_system(self):
         return self.hname

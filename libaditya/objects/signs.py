@@ -57,8 +57,26 @@ class Sign:
             return self._planets + self._cusps
 
     def __str__(self):
+        """
+        a string representation that is used for printing charts
+        each objects is listed:
+        name
+        longitude
+        """
+        ret = ""
+        for obj in self._objects:
+            ret += f"{obj.name()}\n"
+            ret += f"{obj.longitude()}\n"
+            if self.context.print_nakshatras:
+                ret += f"{obj.nakshatra_name()}\n"
+                ret += f"{obj.nakshatra().elapsed()}\n"
+            ret += "\n"
+
+        return ret
+
+    def __repr__(self):
         header = ""
-        header += f"\n{self.sign_name()}\n"
+        header += f"\n{self.sign_index()=} {self.sign_name()}\n"
         output = PrettyTable()
         output.field_names = ["Object", "In Sign Longitude", "Real Longitude"]
         output.align["Object"] = "l"
@@ -74,15 +92,15 @@ class Sign:
 
         return header + ret
 
-    def __repr__(self):
-        name = ""
-        name += f"{self.sign_index()=} {self.sign_name()=}\n"
-        for p in self._planets:
-            name += f"{p}"
-        for c in self._cusps:
-            name += f"{c}"
-        name += "\n"
-        return name
+#    def __repr__(self):
+#        name = ""
+#        name += f"{self.sign_index()=} {self.sign_name()=}\n"
+#        for p in self._planets:
+#            name += f"{p}"
+#        for c in self._cusps:
+#            name += f"{c}"
+#        name += "\n"
+#        return name
 
 class One(Sign):
 
