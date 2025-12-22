@@ -65,14 +65,15 @@ class Sign:
         """
         ret = ""
         for obj in self._objects:
-            ret += f"{obj.name()}\n"
-            ret += f"{obj.longitude()}\n"
+            ret += f"{obj.name()} "
+            ret += f"{obj.longitude().split(" ")[0]}\n" # remove the sign name here since we are printing in a south indian chart
             if self.context.print_nakshatras and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):
-                ret += f"{obj.nakshatra_name()}\n"
+                ret += f"{obj.nakshatra_name()} "
                 ret += f"{obj.nakshatra().elapsed()}\n"
             ret += "\n"
 
-        return ret
+        # remove final \n when returning
+        return ret[:-1]
 
     def __repr__(self):
         header = ""

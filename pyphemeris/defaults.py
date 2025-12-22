@@ -37,8 +37,8 @@ placename = "Default Place"
 
 ayanamsa = 98  # dhruva equatorial
 
-epehemeris_mode = True
-chart_mode = False
+epehemeris_mode = False
+chart_mode = True
 
 eng = dict_path + "dict.eng"
 iast = dict_path + "dict.iast"

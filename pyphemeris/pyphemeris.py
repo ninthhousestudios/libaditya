@@ -29,6 +29,7 @@ from libaditya import read
 
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
 from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points, current_vimshottari_dasha
+from libaditya.charts import Chart
 
 import defaults
 import parse
@@ -178,6 +179,10 @@ def main():
     if args.ephemeris_mode:
         ephemeris_mode = not (ephemeris_mode)
 
+    chart_mode = defaults.chart_mode
+    if args.chart_mode:
+        chart_mode = not(chart_mode)
+
     if ephemeris_mode:
 
         print(f"\nEphemeris for {name}\n")
@@ -189,11 +194,19 @@ def main():
 
         print_ephemeris(context,to_show)
 
+    if chart_mode:
+        for sys in to_show:
+            print_chart(replace(context,sysflg=sys))
+
     # do vimshottari dasha
     # this function takes care of deciding to print them
     # so if there is nothing to print, it will not print anything
     print_dashas(args,context)
 # end main function
+
+def print_chart(context):
+    chart = Chart(context)
+    print(chart)
 
 def print_ephemeris(context,to_show):
     for sys in to_show:
@@ -257,7 +270,10 @@ def print_dashas(args,context):
     if args.dasha_levels:
         dasha_levels = int(args.dasha_levels)
     else:
-        dasha_levels = defaults.dasha_levels
+        if args.current_vdasha:
+            dasha_levels = 3
+        else:
+            dasha_levels = defaults.dasha_levels
 
     if args.dasha_year_length:
         for opt in const.dasha_years:
@@ -355,6 +371,12 @@ def get_args():
         "--ephemeris-mode",
         action="store_true",
         help="toggle printing of information in ephemeris mode",
+    )
+    parser.add_argument(
+        "-c",
+        "--chart-mode",
+        action="store_true",
+        help="toggle printing of information in chart mode",
     )
     parser.add_argument(
         "-k",

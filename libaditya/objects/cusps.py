@@ -51,6 +51,9 @@ class Cusp(Longitude):
     def name(self):
         return self.cusp_name
 
+    def identity(self):
+        return self.name()
+
     def number(self):
         return self._number
 

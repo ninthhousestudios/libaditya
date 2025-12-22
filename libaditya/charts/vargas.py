@@ -99,6 +99,10 @@ class Varga:
                     if not self.context.print_outer_planets and self._signs[s]._objects[r].object_type()=="Planet" and self._signs[s]._objects[r].is_outer_planet():
                         row.append("")
                         continue
+                    if self._signs[s]._objects[r].identity() == "Sun" and self.context.sysflg == const.HELIO:
+                        # dont print the Sun is using heliocentric coordinates
+                        row.append("")
+                        continue
                     rowstr = f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n"
                     # if this is a Rashi, print nakshatras, if that is specified
                     # unless it is barycentric or heliocentric
