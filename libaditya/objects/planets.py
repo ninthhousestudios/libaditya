@@ -26,6 +26,7 @@ from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 from .longitude import Longitude
+from .cusps import Cusp
 from .nakshatras import Nakshatra, Nakshatras
 
 
@@ -222,6 +223,38 @@ class Planet(Longitude):
             case ("E","E"):
                 return "GE"
 
+    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+        """
+        return the float of the precise parashara aspect between
+        self and planet
+
+        this function does aspects for Sun, Moon, Mercury and Venus
+        the other karakas have their own special aspects that are defined in their own classes
+
+        this is implemented according to the sutras from bphs as found in graha sutras by ew
+        """
+        if self.identity() == planet.identity():
+            # a planet is not aspecting itself; so there is no value
+            return ""
+        if self.sign() == planet.sign():
+            # Y for yuti, conjunction
+            return "Y"
+        diff = self.degrees_apart(planet.real_longitude())
+        if diff <= 30 or diff >= 300:
+            # within this orb planets do not aspect other planets
+            return ""
+        if diff > 180 and diff < 300:
+            return (300 - diff)/2
+        if diff > 150 and diff <= 180:
+            return (diff - 150)*2
+        if diff > 120 and diff <= 150:
+            return (150 - diff)
+        if diff > 90 and diff <= 120:
+            return ((120-diff)/2) + 30
+        if diff > 60 and diff <= 90:
+            return (diff - 60) + 15
+        if diff > 30 and diff <= 60:
+            return (diff - 30)/2
 
     def __str__(self):
         ayanamsa = ""
