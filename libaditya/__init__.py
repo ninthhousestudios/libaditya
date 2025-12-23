@@ -6,6 +6,7 @@ from libaditya.charts import *
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
+from libaditya import print_functions as printf
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 

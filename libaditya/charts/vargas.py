@@ -20,6 +20,7 @@ from prettytable import PrettyTable
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya import print_functions as printf
 
 from libaditya.objects import Signs
 
@@ -58,9 +59,11 @@ class Varga:
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
+        dignities = printf.dignity_table(self.planets().dignities())
+
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()
-        output.add_row([f"{self.signs()[11]}", "  ", "  ", f"{self.signs()[4]}"])
+        output.add_row([f"{self.signs()[11]}", f"{dignities} ", "  ", f"{self.signs()[4]}"])
         output.add_divider()
         output.add_row([f"{self.signs()[10]}", "  ", "  ", f"{self.signs()[5]}"])
         output.add_divider()

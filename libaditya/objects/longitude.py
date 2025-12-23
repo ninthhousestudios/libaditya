@@ -90,7 +90,7 @@ class Longitude:
         """
         return f"{self.in_sign_longitude()} {self.sign_name()}"
 
-    def degrees_apart(self,next_long):
+    def degrees_apart(self, next_long):
         """
         how many degrees apart this longitude is from next_long
         """
@@ -99,3 +99,13 @@ class Longitude:
             return next_long - self.real_longitude()
         else:
             return (next_long+360) - self.real_longitude()
+
+    def signs_apart(self, other_sign):
+        """
+        how many signs apart are this one sign and other_sign
+        if self=12 and other=1 -> (1-12)%12 = 1
+        used for temporary relationships
+        """
+        return (other_sign - self.sign())%12
+        
+

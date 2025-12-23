@@ -188,6 +188,41 @@ class Planet(Longitude):
     def context(self):
         return self._context
 
+    def dignity(self, lord: Self) -> str:
+        """
+        return the dignity of a planet
+        i.e, the combined relationship, so we need to know where the lord is
+        """
+        if self.is_ex():
+            return "EX"
+        if self.is_mt():
+            return "MT"
+        if self.is_oh():
+            return "OH"
+        if self.is_db():
+            return "DB"
+        natural_relationship = self.natural_relationship_from(lord)
+        distance = self.signs_apart(lord.sign())
+        match distance:
+            case 1 | 2 | 3 | 9 | 10 | 11:
+                temporary_relationship = "F"
+            case _:
+                temporary_relationship = "E"
+        match (natural_relationship,temporary_relationship):
+            case ("F","F"):
+                return "GF"
+            case ("N","F"):
+                return "F"
+            case ("E","F"):
+                return "N"
+            case ("F","E"):
+                return "N"
+            case ("N","E"):
+                return "E"
+            case ("E","E"):
+                return "GE"
+
+
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
@@ -306,6 +341,21 @@ class Sun(Planet):
         else:
             return False
 
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Moon":
+                return "F"
+            case "Mars":
+                return "F"
+            case "Mercury":
+                return "N"
+            case "Jupiter":
+                return "F"
+            case "Venus":
+                return "E"
+            case "Saturn":
+                return "E"
+
 
 class Moon(Planet):
     def __init__(self, context=EphContext()):
@@ -364,6 +414,21 @@ class Moon(Planet):
         else:
             return False
 
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "F"
+            case "Mars":
+                return "N"
+            case "Mercury":
+                return "F"
+            case "Jupiter":
+                return "N"
+            case "Venus":
+                return "N"
+            case "Saturn":
+                return "N"
+
 class Mars(Planet):
 
     def __init__(self, context=EphContext()):
@@ -402,6 +467,21 @@ class Mars(Planet):
             return True
         else:
             return False
+
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "F"
+            case "Moon":
+                return "F"
+            case "Mercury":
+                return "E"
+            case "Jupiter":
+                return "F"
+            case "Venus":
+                return "N"
+            case "Saturn":
+                return "N"
 
 class Mercury(Planet):
 
@@ -442,6 +522,21 @@ class Mercury(Planet):
         else:
             return False
 
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "F"
+            case "Moon":
+                return "E"
+            case "Mars":
+                return "N"
+            case "Jupiter":
+                return "N"
+            case "Venus":
+                return "F"
+            case "Saturn":
+                return "N"
+
 class Venus(Planet):
 
     def __init__(self, context=EphContext()):
@@ -477,6 +572,21 @@ class Venus(Planet):
             return True
         else:
             return False
+
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "E"
+            case "Moon":
+                return "E"
+            case "Mars":
+                return "N"
+            case "Mercury":
+                return "F"
+            case "Jupiter":
+                return "N"
+            case "Saturn":
+                return "F"
 
 
 class Jupiter(Planet):
@@ -516,6 +626,21 @@ class Jupiter(Planet):
         else:
             return False
 
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "F"
+            case "Moon":
+                return "F"
+            case "Mars":
+                return "F"
+            case "Mercury":
+                return "E"
+            case "Venus":
+                return "E"
+            case "Saturn":
+                return "N"
+
 
 class Saturn(Planet):
 
@@ -552,6 +677,21 @@ class Saturn(Planet):
             return True
         else:
             return False
+
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "E"
+            case "Moon":
+                return "E"
+            case "Mars":
+                return "E"
+            case "Mercury":
+                return "F"
+            case "Jupiter":
+                return "N"
+            case "Venus":
+                return "F"
 
 
 class Rahu(Planet):
@@ -742,6 +882,16 @@ class Planets:
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
+
+    def dignities(self):
+        """
+        return a list of dignities in the natural order
+        Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
+        """
+        dignities = []
+        for planet in self.karakas().values():
+            dignities.append(planet.dignity(self.karakas()[planet.lord()]))
+        return dignities
 
     def sun(self):
         return self.planets["Sun"]

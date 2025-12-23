@@ -89,6 +89,25 @@ lords = {
     12: "Jupiter"
 }
 
+
+karaka_glyphs = ["⨀","☾","♂","☿","♃","♀","♄"]
+
+glyphs = {
+    "Sun": "⨀",
+    "Moon": "☾",
+    "ercury": "☿",
+    "Venus": "♀",
+    "Mars": "♂",
+    "Jupiter": "♃",
+    "Saturn": "♄",
+    "Uranus": "⛢",
+    "Neptune": "♆",
+    "Pluto": "⯓",
+    "Rahu": "☊",
+    "Ketu": "☋",
+    "Earth": "⨁"
+}
+
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
 
 dasha_years = [
