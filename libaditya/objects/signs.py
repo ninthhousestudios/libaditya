@@ -65,6 +65,12 @@ class Sign:
         """
         ret = ""
         for obj in self._objects:
+            if not self.context.print_outer_planets and obj.object_type()=="Planet" and obj.is_outer_planet():
+                # dont print outer planets
+                continue
+            if obj.identity() == "Sun" and self.context.sysflg == const.HELIO:
+                # dont print sun with heliocentric coordinates
+                continue
             ret += f"{obj.name()} "
             ret += f"{obj.longitude().split(" ")[0]}\n" # remove the sign name here since we are printing in a south indian chart
             if self.context.print_nakshatras and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):

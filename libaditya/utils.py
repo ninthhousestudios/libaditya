@@ -18,6 +18,7 @@
 import swisseph as swe
 import time as tmod
 
+from libaditya import constants as const
 
 def dms2dec(dms):
     """
@@ -206,3 +207,16 @@ def construct_varga_row(cusp):
         else:
             ret.append("")
     return ret
+
+# make a string for dasha lords including subdashas
+def mk_dasha_lord(dlist):
+    """
+    make a string of dashas lords
+    """
+    lordstr = ""
+    for lord in range(0,len(dlist)):
+        if lord == len(dlist)-1:
+            lordstr += const.vimshottari_dashas[dlist[lord]][0]
+        else:
+            lordstr += const.vimshottari_dashas[dlist[lord]][0] + "/"
+    return lordstr

@@ -28,7 +28,9 @@ from libaditya import utils
 from libaditya import read
 
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
-from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha, print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points, current_vimshottari_dasha
+from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha
+from libaditya.calc import print_calculated_vimshottari_dasha, lunar_new_year, print_cardinal_points, current_vimshottari_dasha
+from libaditya.calc import next_dasha_lords
 from libaditya.charts import Chart
 
 import defaults
@@ -194,8 +196,16 @@ def main():
 
         print_ephemeris(context,to_show)
 
-    if chart_mode:
+    if chart_mode and not ephemeris_mode:
         for sys in to_show:
+            if sys == const.SID:
+                if not args.aditya:
+                    # use zodiac circle and signs
+                    print_chart(replace(context,sysflg=sys,circle=circle.ZODIAC,names=replace(names,sign_names=zodiac)))
+                else:
+                    # use sidereal aditya circle and signs
+                    print_chart(replace(context,sysflg=sys,circle=circle.SIDEREAL_ADITYA,names=replace(names,sign_names=adityas)))
+                continue
             print_chart(replace(context,sysflg=sys))
 
     # do vimshottari dasha
@@ -324,11 +334,18 @@ def print_dashas(args,context):
                 yrstr = opt[0].capitalize()
 
         planet = Moon(context)
+
         print(f"Based on the position of {planet.name()}")
         print(f"Using {planet.ayanamsa_name()}")
         print(f"Using {yrstr} year length\n")
+        
         current_dasha = current_vimshottari_dasha(planet,JulianDay("now"),dasha_levels,yrlen)
-        print(current_dasha)
+        next_dasha_startsJD = current_dasha.pop()
+
+        print(f"Current dasha: {utils.mk_dasha_lord(current_dasha)}")
+        print(f"Next dasha: {utils.mk_dasha_lord(next_dasha_lords(current_dasha))}, at:")
+        print(f"{next_dasha_startsJD}")
+
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -389,6 +406,12 @@ def get_args():
         "--zodiac",
         action="store_true",
         help="toggle use of zodiac signs; can set default variable 'signs' in defaults.py",
+    )
+    parser.add_argument(
+        "-A",
+        "--aditya",
+        action="store_true",
+        help="use this is you want to use sidereal adityas, otherwise sidereal defautls to using zodiac signs",
     )
     parser.add_argument(
         "-S",

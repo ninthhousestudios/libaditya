@@ -96,7 +96,7 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
         # how many "sub" dashas
         sub = utils.mksub(level)
         for d in range(0,9):
-            lordstr = mklord(dlist+[this_dasha])
+            lordstr = utils.mk_dasha_lord(dlist+[this_dasha])
             # now we figure out how long this dasha runs
             # then we shift forward to that time, so that on the next loop, we print that information first
             # length of this dasha
@@ -129,18 +129,6 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
             age += dlen
             this_dasha = (this_dasha+1)%9
 
-# make a string for dasha lords including subdashas
-def mklord(dlist):
-    """
-    make a string of dashas lords
-    """
-    lordstr = ""
-    for lord in range(0,len(dlist)):
-        if lord == len(dlist)-1:
-            lordstr += const.vimshottari_dashas[dlist[lord]][0]
-        else:
-            lordstr += const.vimshottari_dashas[dlist[lord]][0] + "/"
-    return lordstr
 
 def calculate_vimshottari_dasha(planet=Moon(),dlevels=1,yrlen=const.dasha_years[0][1]):
     """
@@ -224,7 +212,7 @@ def pd(dlist,dasha,level,age):
     this_dasha = dlist[len(dlist)-1]
 
     for d in range(0,len(dasha)):
-        lordstr = mklord(dlist[1:]+[this_dasha])
+        lordstr = utils.mk_dasha_lord(dlist[1:]+[this_dasha])
         print(f"\n{tab}{lordstr} {sub}dasha: {utils.dec2ymd(age)}")
         print(f"{tab}Duration: {utils.dec2ymd(dasha[d][1]/365.2422)}")
         dasha[d][0].indent_print(level)
@@ -236,6 +224,7 @@ def pd(dlist,dasha,level,age):
 def current_vimshottari_dasha(planet=Moon(),nowtimeJD=JulianDay(),dlevels=3,yrlen=const.dasha_years[0][1]):
     """
     find the dasha at nowtime for the dashas of someone born at btime down to dlevels levels
+    returns a list [lord,lord,lord,...,next_dasha_startsJD]
     """
     # first we need to find where the dashas start
 
@@ -261,11 +250,7 @@ def current_vimshottari_dasha(planet=Moon(),nowtimeJD=JulianDay(),dlevels=3,yrle
     # [[current,dasha,lords], [next,dasha,lords], time_next_dasha_starts]
     result = calc_current(dlist,dasha_startsJD,nowtimeJD,level,dlevels,yrlen)
 
-    lords = []
-    for r in result:
-        lords.append(const.vimshottari_dashas[r][0])
-
-    return "/".join(lords)
+    return result
     
 def calc_current(dlist,this_dasha_startsJD,nowtimeJD,level,dlevels,yrlen):
     this_dasha = (dlist[level])%9
@@ -283,50 +268,65 @@ def calc_current(dlist,this_dasha_startsJD,nowtimeJD,level,dlevels,yrlen):
             next_dasha_startsJD = this_dasha_startsJD.shift('f','d',dlen*yrlen)
             # if next_dasha starts after current time, then we are in this dasha
             if next_dasha_startsJD > nowtimeJD:
-                return [this_dasha] + calc_current(dlist+[this_dasha],this_dasha_startsJD,nowtimeJD,level+1,dlevels,yrlen)
+                next_dasha = calc_current(dlist+[this_dasha],this_dasha_startsJD,nowtimeJD,level+1,dlevels,yrlen)
+                if next_dasha == []:
+                    return [this_dasha] + [next_dasha_startsJD]
+                else:
+                    return [this_dasha] + next_dasha # next_dasha is a list
+#                return [this_dasha] + calc_current(dlist+[this_dasha],this_dasha_startsJD,nowtimeJD,level+1,dlevels,yrlen)
             this_dasha = next_dasha
             next_dasha = (this_dasha+1)%9
             this_dasha_startsJD = next_dasha_startsJD
     return []
 
+def get_next_lord(lord: int) -> int:
+    """
+    lord is an integer
+    """
+    return (lord+1)%9
 
-    
-#def calc_current(dlist,dasha_time,nowtimeJD,level,dlevels,yrlen):
-#    this_dasha_list = []
-#    next_dasha_list = []
-#    # if dlevels is 3 and level is 3, we want to print this level, else just return
-#    if level+1 <= dlevels:
-#        print(f"calc_current: {nowtimeJD.jd_number() - dasha_time.jd_number()}")
-#        if (nowtimeJD.jd_number() - dasha_time.jd_number()) > 0:
-#            this_dasha = (dlist[level])%9
-#            for d in range(0,9):
-#                # find the length of this (sub)dasha
-#                dlen = 1
-#                for lord in range(1,len(dlist)):
-#                    dlen = dlen * const.vimshottari_dashas[dlist[lord]][length]
-#                dlen = dlen * const.vimshottari_dashas[this_dasha][length]
-#                divfac = 120**level
-#                dlen = dlen / divfac 
-#                #print(f"{dlen=} {dlen*yrlen}")
-#                # now dlen is the length of the dasha in years
-#                if level+1 < dlevels:
-#                    next_dasha_list = calc_current(dlist+[this_dasha],dasha_time,nowtimeJD,level+1,dlevels,yrlen)
-#                this_dasha_list.append([dasha_time,dlen*yrlen,next_dasha_list])
-#                dasha_time = dasha_time.shift('f','d', dlen*yrlen)
-#                this_dasha = (this_dasha+1)%9
-#    return this_dasha_list
+def next_dasha_lords(lords):
+    """
+    lords is list of dasha lords
+    it finds the next dasha lords to the same number of levels
 
-#def calc_current(dasha_startsJD,nowtimeJD,level,dlevels,dlist,yrlen):
-#    this_dasha_list = []
-#    next_dasha_list = []
-#    # we find the dasha by going forward from the start date
-#    # however many days are between the start date and the date we want to find
-#    days_to_go = nowtimeJD.jd_number() - dasha_startsJD.jd_number()
-#    
-#    this_dasha = (dlist[level])%9
-#    # days_to_go is < 0, then we have gone past the current dasha
-#    # so the current dasha is the previous one
-#    if days_to_go < 0: 
-#        if level+1 <= dlevels:
-#        # we are at the current dasha
-#        return [this_dasha, (this_dasha+1)%9, ]
+    only works properly down to 5 levels
+
+    in this function, we reverse the list
+    "first_lord" is actually the last lord in the dasha scheme, etc.
+    """
+    lords = list(lords.__reversed__())
+
+    if len(lords) == 1:
+        return [get_next_lord(lords[0])]
+
+    length = len(lords)
+
+    first_lord = lords[0]
+    next_lord = lords[1]
+    if get_next_lord(first_lord) == next_lord:
+        if length > 2:
+            next_next_lord = lords[2]
+            if get_next_lord(next_lord) == next_next_lord:
+                if length > 3:
+                    next_next_next_lord = lords[3]
+                    if get_next_lord(next_next_lord) == next_next_next_lord:
+                        if length > 4:
+                            mahadasha_lord = lords[4]
+                            if get_next_lord(next_next_next_lord) == mahadasha_lord:
+                                mahadasha_lord = get_next_lord(mahadasha_lord)
+                                lords[0] = lords[1] = lords[2] = lords[3] = lords[4] = mahadasha_lord
+                            else:
+                                next_next_next_lord = get_next_lord(next_next_next_lord)
+                                lords[0] = lords[1] = lords[2] = lords[3] = next_next_next_lord
+                    else:
+                        next_next_lord = get_next_lord(next_next_lord)
+                        lords[0] = lords[1] = lords[2] = next_next_lord
+            else:
+                next_lord = get_next_lord(next_lord)
+                first_lord = next_lord
+                lords[0] = lords[1] = next_lord
+    else:
+        lords[0]=get_next_lord(lords[0])
+
+    return list(lords.__reversed__())
