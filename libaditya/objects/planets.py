@@ -103,6 +103,9 @@ class Planet(Longitude):
     def identity(self) -> str:
         return self._id
 
+    def key(self) -> str:
+        return self.identity()
+
     def latitude(self) -> float:
         if self._context.toround[0]:
             return round(self.lat, self._context.toround[1])
@@ -278,6 +281,30 @@ class Sun(Planet):
         else:
             return self.ingress(90)
 
+    def is_ex(self):
+        if self.sign() == 1:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 5 and (self.real_in_sign_longitude() >= 0 or self.real_in_sign_longitude() < 20):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 5 and self.real_in_sign_longitude() > 20:
+            return True
+        else:
+            return False
+
+
+    def is_db(self):
+        if self.sign() == 7:
+            return True
+        else:
+            return False
 
 
 class Moon(Planet):
@@ -313,6 +340,30 @@ class Moon(Planet):
     def is_inner_planet(self):
         return True
 
+    def is_ex(self):
+        if self.sign() == 2 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 3):
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 2 and self.real_in_sign_longitude() > 3:
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 4:
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 8 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 3):
+            return True
+        else:
+            return False
+
 class Mars(Planet):
 
     def __init__(self, context=EphContext()):
@@ -327,6 +378,30 @@ class Mars(Planet):
 
     def is_inner_planet(self):
         return True
+
+    def is_ex(self):
+        if self.sign() == 10:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 1 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 12):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if (self.sign() == 1 and self.real_in_sign_longitude() > 12) or self.sign() == 8:
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 4:
+            return True
+        else:
+            return False
 
 class Mercury(Planet):
 
@@ -343,6 +418,30 @@ class Mercury(Planet):
     def is_inner_planet(self):
         return True
 
+    def is_ex(self):
+        if self.sign() == 6 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 15):
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 6 and (self.real_in_sign_longitude() >= 15 and self.real_in_sign_longitude() < 20):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 3 or (self.sign() == 6 and self.real_in_sign_longitude() >= 20):
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 12 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 15):
+            return True
+        else:
+            return False
+
 class Venus(Planet):
 
     def __init__(self, context=EphContext()):
@@ -354,6 +453,30 @@ class Venus(Planet):
 
     def is_karaka(self):
         return True
+
+    def is_ex(self):
+        if self.sign() == 12:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 7 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude < 15):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 2 or (self.sign() == 7 and self.real_in_sign_longitude > 15):
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 6:
+            return True
+        else:
+            return False
 
 
 class Jupiter(Planet):
@@ -368,6 +491,31 @@ class Jupiter(Planet):
     def is_karaka(self):
         return True
 
+    def is_ex(self):
+        if self.sign() == 4:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 9 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 10):
+            return True
+        else:
+            return False
+                
+
+    def is_oh(self):
+        if self.sign() == 12 or (self.sign() == 9 and self.real_in_sign_longitude() > 10):
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 10:
+            return True
+        else:
+            return False
+
 
 class Saturn(Planet):
 
@@ -380,6 +528,30 @@ class Saturn(Planet):
 
     def is_karaka(self):
         return True
+
+    def is_ex(self):
+        if self.sign() == 7:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 11 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 20):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 10 or (self.sign() == 11 and self.real_in_sign_longitude() > 20):
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 1:
+            return True
+        else:
+            return False
 
 
 class Rahu(Planet):
@@ -526,6 +698,28 @@ class Planets:
 
     def __getitem__(self,n):
         return self.planets[n]
+
+    def karakas(self):
+        return {"Sun": self.sun(),
+                "Moon": self.moon(),
+                "Mars": self.mars(),
+                "Mercury": self.mercury(),
+                "Jupiter": self.jupiter(),
+                "Venus": self.venus(),
+                "Saturn": self.saturn()
+                }
+
+    def inner_planets(self):
+        return {"Sun": self.sun(),
+                "Moon": self.moon(),
+                "Mars": self.mars(),
+                "Mercury": self.mercury(),
+                "Jupiter": self.jupiter(),
+                "Venus": self.venus(),
+                "Saturn": self.saturn(),
+                "Rahu": self.rahu(),
+                "Ketu": self.ketu()
+                }
 
     def init_Planets(self):
         ret = {}

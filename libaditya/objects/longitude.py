@@ -76,7 +76,7 @@ class Longitude:
             inlong = self._longitude % 30
         return utils.dec2dmsstr(inlong)
 
-    def in_sign_longitude_decimal(self) -> float:
+    def real_in_sign_longitude(self) -> float:
         return self.real_longitude() % 30
 
     def lord(self):
