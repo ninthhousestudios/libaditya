@@ -20,6 +20,8 @@ a variety of functions to return string forms of various information
 that can be computed with libaditya
 """
 
+from prettytable import PrettyTable
+
 from libaditya import constants as const
 
 
@@ -32,3 +34,37 @@ def dignity_table(dignities):
         ret += f"{const.karaka_glyphs[n]} :  {dignities[n]}\n"
     # slice removes last \n
     return ret[:-1]
+
+def parashara_aspect_table_planets(aspects):
+    """
+    aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects
+    make a prettytable list of these values
+    """
+    output = PrettyTable()
+    output.field_names = [" "] + [glyph for glyph in const.inner_planets_glyphs]
+    output.align[" "] = "l"
+
+    for n,row in enumerate(aspects):
+        output.add_row(*[[const.karaka_glyphs[n]] + row]) 
+        output.add_divider()
+
+    ret = output.get_string(fields=[" "] + [glyph for glyph in const.inner_planets_glyphs])
+
+    return ret
+
+def parashara_aspect_table_cusps(aspects):
+    """
+    aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects
+    make a prettytable list of these values
+    """
+    output = PrettyTable()
+    output.field_names = [" "] + [str(n) for n in range(1,13)]
+    output.align[" "] = "l"
+
+    for n,row in enumerate(aspects):
+        output.add_row(*[[const.karaka_glyphs[n]] + row]) 
+        output.add_divider()
+
+    ret = output.get_string(fields=[" "] + [str(n) for n in range(1,13)])
+
+    return ret

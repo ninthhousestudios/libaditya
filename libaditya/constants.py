@@ -91,6 +91,7 @@ lords = {
 
 
 karaka_glyphs = ["⨀","☾","♂","☿","♃","♀","♄"]
+inner_planets_glyphs = ["⨀","☾","♂","☿","♃","♀","♄","☊","☋"]
 
 glyphs = {
     "Sun": "⨀",

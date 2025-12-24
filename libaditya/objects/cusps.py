@@ -128,7 +128,10 @@ class Cusps:
         return iter(self.cusps)
 
     def __getitem__(self,n):
-        return self.cusps[n]
+        """
+        n-1 so that we can pass the cusp number, e.g., 1
+        """
+        return self.cusps[n-1]
 
     def init_cusps(self):
         """

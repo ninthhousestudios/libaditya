@@ -978,15 +978,18 @@ class Planets:
         self.ayanamsa = context.ayanamsa
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
-        self.planets = self.init_Planets()
+        self._planets = self.init_Planets()
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
 
     def __iter__(self):
-        return iter(self.planets.values())
+        return iter(self._planets.values())
 
     def __getitem__(self,n):
-        return self.planets[n]
+        return self._planets[n]
+
+    def planets(self):
+        return self._planets
 
     def karakas(self):
         return {"Sun": self.sun(),
@@ -1051,44 +1054,76 @@ class Planets:
             dignities.append(planet.dignity(temp_planets.karakas()[planet.lord()]))
         return dignities
 
+    def parashara_aspects(self):
+        """
+        return a list of lists, each inner list being a row
+        the first list is sun aspecting sun through ketu in order, etc.
+        """
+        ret = []
+
+        for aspecting in self.karakas().values():
+            this_row = []
+            for aspected in self.inner_planets().values():
+                value = aspecting.parashara_aspect_to(aspected)
+                this_row.append(int(round(value,0)) if isinstance(value,float) else value)
+            ret.append(this_row)
+
+        return ret
+
+    def parashara_aspects_cusps(self, cusps):
+        """
+        return a list of lists, each inner list being a row
+        the first list is sun aspecting sun through ketu in order, etc.
+        """
+        ret = []
+
+        for aspecting in self.karakas().values():
+            this_row = []
+            for aspected in cusps:
+                value = aspecting.parashara_aspect_to(aspected)
+                this_row.append(int(round(value,0)) if isinstance(value,float) else value)
+            ret.append(this_row)
+
+        return ret
+
     def sun(self):
-        return self.planets["Sun"]
+        return self._planets["Sun"]
 
     def moon(self):
-        return self.planets["Moon"]
+        return self._planets["Moon"]
 
     def mars(self):
-        return self.planets["Mars"]
+        return self._planets["Mars"]
 
     def mercury(self):
-        return self.planets["Mercury"]
+        return self._planets["Mercury"]
 
     def jupiter(self):
-        return self.planets["Jupiter"]
+        return self._planets["Jupiter"]
 
     def venus(self):
-        return self.planets["Venus"]
+        return self._planets["Venus"]
 
     def saturn(self):
-        return self.planets["Saturn"]
+        return self._planets["Saturn"]
 
     def rahu(self):
-        return self.planets["Rahu"]
+        return self._planets["Rahu"]
 
     def ketu(self):
-        return self.planets["Ketu"]
+        return self._planets["Ketu"]
 
     def uranus(self):
-        return self.planets["Uranus"]
+        return self._planets["Uranus"]
 
     def neptune(self):
-        return self.planets["Neptune"]
+        return self._planets["Neptune"]
 
     def pluto(self):
-        return self.planets["Pluto"]
+        return self._planets["Pluto"]
 
     def chiron(self):
-        return self.planets["Chiron"]
+        return self._planets["Chiron"]
 
     def __str__(self):
         if self.context.print_nakshatras:
@@ -1123,7 +1158,7 @@ class Planets:
         output.align["Distance"] = "r"
         output.align["Distance Speed"] = "r"
 
-        for p in self.planets.values():
+        for p in self._planets.values():
             # dont print earth unless it is heliocentric or barycentric
             if isinstance(p, Earth) and not (
                 self.system == const.HELIO or self.system == const.BARY
@@ -1177,7 +1212,7 @@ class Planets:
         output.align["Distance"] = "r"
         output.align["Distance Speed"] = "r"
 
-        for p in self.planets.values():
+        for p in self._planets.values():
             # dont print earth unless it is heliocentric or barycentric
             if isinstance(p, Earth) and not (
                 self.system == const.HELIO or self.system == const.BARY

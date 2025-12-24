@@ -26,6 +26,7 @@ from dataclasses import replace
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
+from libaditya import print_functions as printf
 
 from libaditya.objects import JulianDay, Planets, Cusps, EphContext, Location, Names, Circle, Sun, Moon
 from libaditya.calc import Panchanga, print_vimshottari_dasha, calculate_vimshottari_dasha
@@ -201,12 +202,12 @@ def main():
             if sys == const.SID:
                 if not args.aditya:
                     # use zodiac circle and signs
-                    print_chart(replace(context,sysflg=sys,circle=circle.ZODIAC,names=replace(names,sign_names=zodiac)))
+                    print_chart(name,args,replace(context,sysflg=sys,circle=circle.ZODIAC,names=replace(names,sign_names=zodiac)))
                 else:
                     # use sidereal aditya circle and signs
-                    print_chart(replace(context,sysflg=sys,circle=circle.SIDEREAL_ADITYA,names=replace(names,sign_names=adityas)))
+                    print_chart(name,args,replace(context,sysflg=sys,circle=circle.SIDEREAL_ADITYA,names=replace(names,sign_names=adityas)))
                 continue
-            print_chart(replace(context,sysflg=sys))
+            print_chart(name,args,replace(context,sysflg=sys))
 
     # do vimshottari dasha
     # this function takes care of deciding to print them
@@ -214,9 +215,23 @@ def main():
     print_dashas(args,context)
 # end main function
 
-def print_chart(context):
+def print_chart(name,args,context):
+    print(f"\nChart for {name}\n")
     chart = Chart(context)
     print(chart)
+    planetary_aspects = defaults.planetary_aspects
+    if args.planetary_aspects:
+        planetary_aspects  = not (planetary_aspects )
+    planetary_cusps_aspects = defaults.planetary_cusps_aspects
+    if args.planetary_cusps_aspects:
+        planetary_cusps_aspects  = not (planetary_cusps_aspects )
+
+    if planetary_aspects:
+        print(f"\nPlanetary Aspect Table")
+        print(printf.parashara_aspect_table_planets(chart.rashi().planets().parashara_aspects()))
+    if planetary_cusps_aspects:
+        print(f"\nCusp Aspect Table")
+        print(printf.parashara_aspect_table_cusps(chart.rashi().planets().parashara_aspects_cusps(chart.rashi().cusps())))
 
 def print_ephemeris(context,to_show):
     for sys in to_show:
@@ -535,6 +550,18 @@ def get_args():
     )
     parser.add_argument(
         "-P", "--placename", help="a string showing the placename; e.g., CDT"
+    )
+    parser.add_argument(
+        "-PA",
+        "--planetary-aspects",
+        action="store_true",
+        help="toggle printing planetary aspects in chart mode",
+    )
+    parser.add_argument(
+        "-PC",
+        "--planetary-cusps-aspects",
+        action="store_true",
+        help="toggle printing planetary cusp aspects in chart mode",
     )
 
     args = parser.parse_args()

@@ -47,6 +47,34 @@ mixed = dict_path + "dict.mixed"
 abrev = dict_path + "dict.abrev"
 lang_file = abrev
 
+
+show_helios = 0
+show_baryos = 0
+show_topo = 0
+show_adityas = 1
+show_equ = 0
+show_topo = 0
+show_drac = 0
+show_sidereal = 0
+show_vdasha = 0
+show_v2dasha = 0
+dasha_levels = 1
+signs = "adityas"  # adityas, or zodiac
+print_nakshatras = True
+print_outer_planets = True
+# N and E are positive
+hsys = "C"
+show_houses = 1
+lang = "eng"
+signs = []
+signize = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
+toround = [True, 3]  # whether to round longitudes, and if so, to how many decimals
+
+# chart options
+
+planetary_aspects = True
+planetary_cusps_aspects = True
+
 #epehemeris_mode = {
 #    "zodiac": False,
 #    "adityas": True,
@@ -75,26 +103,3 @@ lang_file = abrev
 #    "signize": True,
 #    "toround": [True,3]
 #}
-
-show_helios = 0
-show_baryos = 0
-show_topo = 0
-show_adityas = 1
-show_equ = 0
-show_topo = 0
-show_drac = 0
-show_sidereal = 0
-show_vdasha = 0
-show_v2dasha = 0
-dasha_levels = 1
-signs = "adityas"  # adityas, or zodiac
-print_nakshatras = True
-print_outer_planets = True
-# N and E are positive
-hsys = "C"
-show_houses = 1
-lang = "eng"
-signs = []
-signize = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
-toround = [True, 3]  # whether to round longitudes, and if so, to how many decimals
-
