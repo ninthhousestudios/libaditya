@@ -130,7 +130,7 @@ def define_true_sidereal_hd_ayanamsa():
 
 def dec2ymd(age):
     """
-    take a floating point age and return a string
+    take a floating point age (=number of years) and return a string
     "x years, y months, z days, a hours, b minutes, c seconds"
     the days isnt precise, since i didnt just now feel like
     programming the details of that

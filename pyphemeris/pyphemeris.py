@@ -311,7 +311,7 @@ def print_dashas(args,context):
 
     if show_v2dasha:
 
-        print("\n\nCurrent Vimshottari Dasha\n")
+        print("\n\nVimshottari Dasha\n")
 
         # this is for the year length
         for opt in const.dasha_years:
@@ -325,26 +325,44 @@ def print_dashas(args,context):
         vdasha = calculate_vimshottari_dasha(planet,dasha_levels,yrlen)
         print_calculated_vimshottari_dasha(vdasha)
 
+    if args.dasha_levels:
+        # if the user wants only a specific level, print that
+        levels = [args.dasha_levels]
+    else:
+        # otherwise, print levels 1-5
+        levels = [1,2,3,4,5]
+
     if args.current_vdasha:
-        print("\n\nCurrent Vimshottari Dasha\n")
+        print_current_vdasha(context,yrlen,levels)
 
-        # this is for the year length
-        for opt in const.dasha_years:
-            if yrlen == opt[1]:
-                yrstr = opt[0].capitalize()
+def print_current_vdasha(context,yrlen,levels: [int]):
+    """
+    print information on current vimshottari dasha
+    levels is a list of levels, e.g., [1,2,3]
+    it will print the information for all these levels
+    """
+    print("\n\nCurrent Vimshottari Dasha\n")
 
-        planet = Moon(context)
+    # this is for the year length
+    for opt in const.dasha_years:
+        if yrlen == opt[1]:
+            yrstr = opt[0].capitalize()
 
-        print(f"Based on the position of {planet.name()}")
-        print(f"Using {planet.ayanamsa_name()}")
-        print(f"Using {yrstr} year length\n")
-        
-        current_dasha = current_vimshottari_dasha(planet,JulianDay("now"),dasha_levels,yrlen)
+    planet = Moon(context)
+    now = JulianDay("now")
+
+    print(f"Based on the position of {planet.name()}")
+    print(f"Using {planet.ayanamsa_name()}")
+    print(f"Using {yrstr} year length\n")
+    
+    for level in levels:
+        current_dasha = current_vimshottari_dasha(planet,now,level,yrlen)
         next_dasha_startsJD = current_dasha.pop()
 
         print(f"Current dasha: {utils.mk_dasha_lord(current_dasha)}")
-        print(f"Next dasha: {utils.mk_dasha_lord(next_dasha_lords(current_dasha))}, at:")
+        print(f"Next dasha: {utils.mk_dasha_lord(next_dasha_lords(current_dasha))}, starts at:")
         print(f"{next_dasha_startsJD}")
+        print(f"in {utils.dec2ymd((next_dasha_startsJD.jd_number()-now.jd_number())/365.2422)}\n")
 
 
 def get_args():

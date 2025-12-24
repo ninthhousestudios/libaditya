@@ -916,14 +916,23 @@ class Planets:
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
 
-    def dignities(self):
+    def dignities(self, temp_planets=None):
         """
         return a list of dignities in the natural order
         Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
+
+        dignity is a combination of natural and temporary relationship
+        we can use the temporary relationship from the varga itself, or from the rashi chart
+
+        if Planets is in a varga and temp_planets=None, then it will use temporary relationships based on that varga
+        so if, for instance, you want to determine dignity in the Navamsha based on temporary friends in the Rashi
+        you must past d9Planets.dignites(temp_planets=d1Planets)
         """
+        if temp_planets == None:
+            temp_planets = self
         dignities = []
         for planet in self.karakas().values():
-            dignities.append(planet.dignity(self.karakas()[planet.lord()]))
+            dignities.append(planet.dignity(temp_planets.karakas()[planet.lord()]))
         return dignities
 
     def sun(self):

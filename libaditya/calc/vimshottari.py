@@ -326,6 +326,9 @@ def next_dasha_lords(lords):
                 next_lord = get_next_lord(next_lord)
                 first_lord = next_lord
                 lords[0] = lords[1] = next_lord
+        else:
+            next_lord = get_next_lord(next_lord)
+            lords[0] = lords[1] = next_lord
     else:
         lords[0]=get_next_lord(lords[0])
 
