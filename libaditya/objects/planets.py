@@ -95,6 +95,9 @@ class Planet(Longitude):
     def name(self) -> str:
         return self.planet_name + self.retrostr()
 
+    def swe_id(self):
+        return self.pnumber
+
     def system_name(self) -> str:
         return self.sysflgstr
 
@@ -280,8 +283,8 @@ class Planet(Longitude):
 
 
 class Sun(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.SUN, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.SUN, context, longitude)
         self._id = "Sun"
 
     def sunrise_yamakoti(self) -> JulianDay:
@@ -394,8 +397,8 @@ class Sun(Planet):
 
 
 class Moon(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.MOON, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.MOON, context, longitude)
         self._id = "Moon"
 
     def lowest_daily_speed(self) -> float:
@@ -467,8 +470,8 @@ class Moon(Planet):
 
 class Mars(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.MARS, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.MARS, context, longitude)
         self._id = "Mars"
 
     def is_outer_planet(self):
@@ -558,8 +561,8 @@ class Mars(Planet):
 
 class Mercury(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.MERCURY, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.MERCURY, context, longitude)
         self._id = "Mercury"
 
     def is_outer_planet(self):
@@ -612,8 +615,8 @@ class Mercury(Planet):
 
 class Venus(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.VENUS, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.VENUS, context, longitude)
         self._id = "Venus"
 
     def is_outer_planet(self):
@@ -664,8 +667,8 @@ class Venus(Planet):
 
 class Jupiter(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.JUPITER, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.JUPITER, context, longitude)
         self._id = "Jupiter"
 
     def is_outer_planet(self):
@@ -756,8 +759,8 @@ class Jupiter(Planet):
 
 class Saturn(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.SATURN, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.SATURN, context, longitude)
         self._id = "Saturn"
 
     def is_outer_planet(self):
@@ -845,8 +848,8 @@ class Saturn(Planet):
 
 class Rahu(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.TRUE_NODE, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.TRUE_NODE, context, longitude)
         self.planet_name = context.names.planet_names[10]
         self._id = "Rahu"
 
@@ -863,7 +866,7 @@ class Rahu(Planet):
 class Ketu(Planet):
 
     def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.TRUE_NODE, context)
+        super().__init__(swe.TRUE_NODE, context, longitude)
         self.planet_name = context.names.planet_names[11]
         self._id = "Ketu"
         
@@ -879,8 +882,8 @@ class Ketu(Planet):
 
 
 class Uranus(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.URANUS, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.URANUS, context, longitude)
         self._id = "Uranus"
 
     def is_outer_planet(self):
@@ -894,8 +897,8 @@ class Uranus(Planet):
 
 class Neptune(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.NEPTUNE, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.NEPTUNE, context, longitude)
         self._id = "Neptune"
 
     def is_outer_planet(self):
@@ -910,8 +913,8 @@ class Neptune(Planet):
 
 class Pluto(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.PLUTO, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.PLUTO, context, longitude)
         self._id = "Pluto"
 
     def is_outer_planet(self):
@@ -924,8 +927,8 @@ class Pluto(Planet):
         return False
 
 class Earth(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.EARTH, context)
+    def __init__(self, context=EphContext(), longitude=None):
+        super().__init__(swe.EARTH, context, longitude)
         self._id = "Earth"
 
     def is_outer_planet(self):
@@ -939,9 +942,9 @@ class Earth(Planet):
 
 class Chiron(Planet):
 
-    def __init__(self, context=EphContext()):
+    def __init__(self, context=EphContext(), longitude=None):
         self.planet_name = "Chiron"
-        super().__init__(swe.CHIRON, context)
+        super().__init__(swe.CHIRON, context, longitude)
         self._id = "Chiron"
 
     def is_outer_planet(self):
@@ -971,14 +974,24 @@ planets = {
 
 class Planets:
 
-    def __init__(self, context=EphContext()):
+    def __init__(self, context=EphContext(), planets=None):
+        """
+        initialize Planets
+        planets default is for vargas > 1, which will pass
+        a list of Planet classes and this will make a container for them
+        the varga.__init__ function will make a dictionary of planets
+        and pass that dictionary into this class
+        """
         self.timeJD = context.timeJD  # the JulianDay class of this planet
         self.context = context
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
-        self._planets = self.init_Planets()
+        if planets is None:
+            self._planets = self.init_Planets()
+        else:
+            self._planets = planets
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
 
