@@ -79,6 +79,21 @@ class Panchanga:
     def moon(self):
         return self._moon
 
+    def sunrise(self):
+        """
+        return a JulianDay
+        """
+        return self._sun.riseset(swe.CALC_RISE, self.location)
+
+    def sunset(self):
+        return self._sun.riseset(swe.CALC_SET, self.location)
+
+    def moonrise(self):
+        return self._moon.riseset(swe.CALC_RISE, self.location)
+
+    def moonset(self):
+        return self._moon.riseset(swe.CALC_SET, self.location)
+
     def init_tithi(self):
         traw = ((self._moon.real_longitude() - self._sun.real_longitude()) % 360) / 12
         remainder = traw % 1  # remainder shows how much has elapsed
