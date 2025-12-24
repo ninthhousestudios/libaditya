@@ -256,6 +256,9 @@ class Planet(Longitude):
         if diff > 30 and diff <= 60:
             return (diff - 30)/2
 
+    def parashara_aspect_from(self, planet: Self | Cusp) -> float | str:
+        return planet.parashara_aspect_to(self)
+
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
@@ -516,6 +519,43 @@ class Mars(Planet):
             case "Saturn":
                 return "N"
 
+    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+        """
+        return the float of the precise parashara aspect between
+        self and planet
+
+        this function does aspects for Mars
+        the other karakas have their own special aspects that are defined in their own classes
+
+        this is implemented according to the sutras from bphs as found in graha sutras by ew
+        """
+        if self.identity() == planet.identity():
+            # a planet is not aspecting itself; so there is no value
+            return ""
+        if self.sign() == planet.sign():
+            # Y for yuti, conjunction
+            return "Y"
+        diff = self.degrees_apart(planet.real_longitude())
+        if diff <= 30 or diff >= 300:
+            # within this orb planets do not aspect other planets
+            return ""
+        if diff > 240 and diff < 300:
+            return (300 - diff)/2
+        if diff > 210 and diff <= 240:
+            return 60 - (diff - 210)
+        if diff > 180 and diff < 210:
+            return 60
+        if diff > 150 and diff <= 180:
+            return (diff - 150)*2
+        if diff > 120 and diff <= 150:
+            return (150 - diff)
+        if diff > 90 and diff <= 120:
+            return 60 - (120 - diff)
+        if diff > 60 and diff <= 90:
+            return (diff - 60) + (diff - 60)/2 + 15
+        if diff > 30 and diff <= 60:
+            return (diff - 30)/2
+
 class Mercury(Planet):
 
     def __init__(self, context=EphContext()):
@@ -674,6 +714,45 @@ class Jupiter(Planet):
             case "Saturn":
                 return "N"
 
+    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+        """
+        return the float of the precise parashara aspect between
+        self and planet
+
+        this function does aspects for Jupiter 
+        the other karakas have their own special aspects that are defined in their own classes
+
+        this is implemented according to the sutras from bphs as found in graha sutras by ew
+        """
+        if self.identity() == planet.identity():
+            # a planet is not aspecting itself; so there is no value
+            return ""
+        if self.sign() == planet.sign():
+            # Y for yuti, conjunction
+            return "Y"
+        diff = self.degrees_apart(planet.real_longitude())
+        if diff <= 30 or diff >= 300:
+            # within this orb planets do not aspect other planets
+            return ""
+        if diff > 270 and diff < 300:
+            return (300 - diff)/2
+        if diff > 240 and diff <= 270:
+            return ((30-(diff-240))*1.5) + 15
+        if diff > 210 and diff <= 240:
+            return ((diff-210)/2) + 45
+        if diff > 180 and diff <= 210:
+            return (300 - diff)/2
+        if diff > 150 and diff <= 180:
+            return (diff - 150)*2
+        if diff > 120 and diff <= 150:
+            return 60 - ((diff-120)*2)
+        if diff > 90 and diff <= 120:
+            return (diff/2) + 45
+        if diff > 60 and diff <= 90:
+            return (diff - 60) + 15
+        if diff > 30 and diff <= 60:
+            return (diff - 30)/2
+
 
 class Saturn(Planet):
 
@@ -725,6 +804,43 @@ class Saturn(Planet):
                 return "N"
             case "Venus":
                 return "F"
+
+    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+        """
+        return the float of the precise parashara aspect between
+        self and planet
+
+        this function does aspects for Saturn
+        the other karakas have their own special aspects that are defined in their own classes
+
+        this is implemented according to the sutras from bphs as found in graha sutras by ew
+        """
+        if self.identity() == planet.identity():
+            # a planet is not aspecting itself; so there is no value
+            return ""
+        if self.sign() == planet.sign():
+            # Y for yuti, conjunction
+            return "Y"
+        diff = self.degrees_apart(planet.real_longitude())
+        if diff <= 30 or diff >= 300:
+            # within this orb planets do not aspect other planets
+            return ""
+        if diff > 270 and diff < 300:
+            return (300 - diff)*2
+        if diff > 240 and diff <= 270:
+            return (diff - 240) + 30
+        if diff > 180 and diff <= 240:
+            return (300 - diff)/2
+        if diff > 150 and diff <= 180:
+            return (diff - 150)*2
+        if diff > 120 and diff <= 150:
+            return (150 - diff)
+        if diff > 90 and diff <= 120:
+            return ((120-diff)/2) + 30
+        if diff > 60 and diff <= 90:
+            return 60 - ((diff - 60)/2)
+        if diff > 30 and diff <= 60:
+            return (diff - 30)*2
 
 
 class Rahu(Planet):

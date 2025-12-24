@@ -39,7 +39,7 @@ class Panchanga:
         self._yoga_raw, self._yoga_elapsed, self._yoga_remaining = self.init_yoga()
 
     def __str__(self):
-        panch = "\nPanchanga\n"
+        panch = "\nPanchanga\n\n"
         panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
         panch += f"\n{self.context.timeJD}\n"
 
