@@ -108,4 +108,22 @@ class Longitude:
         """
         return (other_sign - self.sign())%12
         
+    def varga(self, amsha):
+        """
+        return the "real" longitude for self.real_longitude() in
+        varga number "division"
+        number 2-60 all refer to parvritti vargas
 
+        this algorithm was adapted from pyjhora
+        """
+        # shift is to take care of aditya/zodiac cirlce
+        shift = 0
+        if self.context.circle == Circle.ADITYA:
+            shift = 30
+        one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
+        one_sign = 12.0 * one_amsha    # = 40 degrees exactly
+        signs_elapsed = (self.real_longitude()+shift) / one_sign
+        left = signs_elapsed % 1
+        sign = int(left * 12)
+        in_sign_long = (((self.real_longitude()+shift)/one_amsha)%1)*30
+        return ((sign*30) + (in_sign_long)) - shift

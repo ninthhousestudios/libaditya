@@ -189,35 +189,10 @@ class Navamsha(Varga):
     def init_d9Planets(self, planets):
         d9planets = {}
         for name,planet in planets.planets().items():
-            d9planets[name] = pdict[name](self.context,longitude=((planet.real_longitude()*9)%360))
+            d9planets[name] = pdict[name](self.context,longitude=((planet.varga(9))))
         return Planets(self.context,d9planets)
               
 
     def init_d9Cusps(self, cusps):
         return cusps
 
-#"""
-#from pyjhora, panchanga/drik1.py, line 1005
-#
-#def dasavarga_from_long(longitude, divisional_chart_factor):
-#    """
-#        Calculates the dasavarga-sign in which given longitude falls
-#        @param longitude: longitude of the planet
-#        @param divisional_chart_factor: divisional chart index as below. 
-#          divisional_chart_factor = 2 => Hora, 3=>Drekana 4=>Chaturthamsa 5=>Panchamsa, 6=>Shashthamsa
-#          7=>Saptamsa, 8=>Ashtamsa, 9=>Navamsa, 10=>Dasamsa, 11=>Rudramsa, 12=>Dwadamsa, 16=>Shodamsa, 
-#          20=>Vimsamsa, 24=>Chaturvimsamsa, 27=>Nakshatramsa, 30=>Trisamsa, 40=>Khavedamsa, 
-#          45=>Akshavedamsa, 60=>Shastyamsa
-#        @return: constellation,longitude within_raasi
-#            0 = Aries, 1 = Taurus, ..., 11 = Pisces
-#    """
-#    if divisional_chart_factor not in const.division_chart_factors:
-#        raise ValueError("Wrong divisional_chart_factor",divisional_chart_factor,' Valid value:',const.division_chart_factors)
-#    one_pada = (360.0 / (12 * divisional_chart_factor))  # There are also 108 navamsas
-#    one_sign = 12.0 * one_pada    # = 40 degrees exactly
-#    signs_elapsed = longitude / one_sign
-#    fraction_left = signs_elapsed % 1
-#    constellation = int(fraction_left * 12)
-#    long_in_raasi = (longitude-(constellation*30)) % 30
-#    return constellation,long_in_raasi
-#"""
