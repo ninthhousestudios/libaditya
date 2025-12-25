@@ -362,7 +362,7 @@ class Sun(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 5 and (self.real_in_sign_longitude() >= 0 or self.real_in_sign_longitude() < 20):
+        if self.sign() == 5 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 20):
             return True
         else:
             return False
@@ -1003,6 +1003,9 @@ class Planets:
 
     def planets(self):
         return self._planets
+
+    def items(self):
+        return self._planets.items()
 
     def karakas(self):
         return {"Sun": self.sun(),

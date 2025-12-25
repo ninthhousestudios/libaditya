@@ -17,36 +17,66 @@
 
 import swisseph as swe
 from prettytable import PrettyTable
+from dataclasses import replace
 
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
 
-from libaditya.objects import Signs, Planets
+from libaditya.objects import Signs, Planets, Cusp, Cusps
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
 
 class Varga:
 
-    def __init__(self,identifier,planets,cusps,context):
-        self.context = context
-        self._identifier = identifier
-        self._planets = planets
-        self._cusps = cusps
+    def __init__(self,amsha,planets,cusps,context):
+        # only print nakshatras in Rashi
+        self.context = replace(context,print_nakshatras=False)
+        self._amsha = amsha
+        self._rashi_planets = planets
+        if amsha == 1:
+            self._planets = planets
+        else:
+            self._planets = self.init_planets(planets)
+        self._cusps = self.init_cusps(cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
         self.sysflgstr = const.sysflgstr(context.sysflg)
 
     def varga_name(self):
-        match self._identifier:
+        match self._amsha:
             case 1:
                 return "Rashi"
+            case 2:
+                return "Hora Parivritti"
+            case 3:
+                return "Drekkana Parivritti"
+            case 4:
+                return "Chaturthamsha Parivritti"
+            case 5:
+                return "Panchamsha"
             case 9:
                 return "Navamsha"
             case _:
                 return "Not yet implemented"
 
-    def identifier(self):
-        return self._identifier
+    def amsha(self):
+        return self._amsha
+
+    def init_planets(self, planets):
+        retplanets = {}
+        for name,planet in planets.items():
+            retplanets[name] = pdict[name](self.context,longitude=((planet.varga(self.amsha()))))
+        return Planets(self.context,retplanets)
+              
+    def init_cusps(self, cusps):
+        """
+        cusps is a list of Cusp classes, which is what is stored in Cusps.self.cusps
+        so iterate through, copying everything over, while changing the longitude
+        """
+        varga_cusps = []
+        for cusp in cusps:
+            varga_cusps.append(Cusp(cusp.varga(self.amsha()),cusp.speed(),cusp.number(),cusp.context))
+        return Cusps(self.context,varga_cusps)
 
     def planets(self):
         return self._planets
@@ -61,6 +91,7 @@ class Varga:
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
+        # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
         dignities = printf.dignity_table(self.planets().dignities())
 
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
@@ -149,7 +180,7 @@ class Varga:
         
     def mkheader(self):
         header = ""
-        header += f"Varga {self._identifier} {self.varga_name()}\n"
+        header += f"Varga {self._amsha} {self.varga_name()}\n"
         header += f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"
         if self.context.sysflg == swe.FLG_SIDEREAL:
@@ -176,23 +207,41 @@ class Varga:
 class Rashi(Varga):
     
     def __init__(self,planets,cusps,context):
-        super().__init__(identifier=1,planets=planets,cusps=cusps,context=context)
+        self.context = context
+        self._planets = planets
+        self._cusps = cusps
+        self._signs = Signs(self._planets,self._cusps,self.context)
+        super().__init__(amsha=1,planets=self._planets,cusps=self._cusps,context=self.context)
+
+    def __str__(self):
+        output = PrettyTable()
+        output.field_names = ["  ", "   ", "    ", "     "]
+
+        dignities = printf.dignity_table(self.planets().dignities())
+
+        output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[11]}", f"{dignities} ", "  ", f"{self.signs()[4]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[10]}", "  ", "  ", f"{self.signs()[5]}"])
+        output.add_divider()
+        output.add_row([f"{self.signs()[9]}", f"{self.signs()[8]}", f"{self.signs()[7]}", f"{self.signs()[6]}"])
+
+        ret = output.get_string(fields=["  ", "   ", "    ", "     "])
+
+        return self.mkheader() + ret
+
+    def planets(self):
+        return self._planets
+
+    def cusps(self):
+        return self._cusps
+
+    def signs(self):
+        return self._signs
 
 class Navamsha(Varga):
 
     def __init__(self,planets,cusps,context):
-        self.context = context
-        self._planets = self.init_d9Planets(planets)
-        self._cusps = self.init_d9Cusps(cusps)
-        super().__init__(9,self._planets,self._cusps,self.context)
-
-    def init_d9Planets(self, planets):
-        d9planets = {}
-        for name,planet in planets.planets().items():
-            d9planets[name] = pdict[name](self.context,longitude=((planet.varga(9))))
-        return Planets(self.context,d9planets)
-              
-
-    def init_d9Cusps(self, cusps):
-        return cusps
+        super().__init__(9,planets,cusps,context)
 

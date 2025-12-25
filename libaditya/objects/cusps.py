@@ -36,7 +36,7 @@ class Cusp(Longitude):
         self.long = longitude
         self.daily_speed = speed
         self._cusp_index = number
-        self._number = number + 1
+        self._number = number
         self.cusp_name = f"Cusp {self._number}"
         super().__init__(self.long,self.context)
         from .nakshatras import Nakshatra
@@ -111,7 +111,7 @@ class Cusps:
     Campanus is the default house system, 'C'
     """
 
-    def __init__(self, context=EphContext()):
+    def __init__(self, context=EphContext(), cusps=None):
         self.context = context
         self.hsys = self.context.hsys.encode()
         self.location = self.context.location
@@ -120,7 +120,11 @@ class Cusps:
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
+        if cusps == None:
+            self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
+        else:
+            # this is for varga cusps, where we pass a list of Cusp classes that have the right cusps in them
+            self.cusps = cusps
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
 
@@ -150,7 +154,7 @@ class Cusps:
         )
         retcusps = []
         for n, cusp in enumerate(cusps):
-            retcusps.append(Cusp(cusp, speeds[n], n, self.context))
+            retcusps.append(Cusp(cusp, speeds[n], n+1, self.context))
         return retcusps, ascmc, ascmcspeeds
 
 
