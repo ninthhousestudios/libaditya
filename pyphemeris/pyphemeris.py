@@ -107,9 +107,7 @@ def main():
     timezone = "UTC"
     name = ""
     if args.input:  # user passed a .pyph or .chtk file
-        name, placename, month, day, year, timedec, lat, long, utcoffset = (
-           parse.parse_input_file(args.input)
-        )
+        name, placename, month, day, year, timedec, lat, long, utcoffset = (parse.parse_input_file(args.input))
     else:
         name = ""
         placename = ""

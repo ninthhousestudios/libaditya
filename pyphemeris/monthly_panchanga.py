@@ -25,26 +25,25 @@ from dataclasses import replace
 import libaditya.read as read
 from libaditya import constants as const
 
-from libaditya.objects import JulianDay, EphContext, Location
+from libaditya.objects import JulianDay, EphContext, Location, Yamakoti
 from libaditya.calc import Panchanga
 
 def main():
     args = get_args()
 
-    lat, long, placename, utcoffset, timezone = parse_position(args.location)
-    this_location = Location(lat,long,0,placename,timezone)
+    if args.location:
+        lat, long, placename, utcoffset, timezone = parse_position(args.location)
+        this_location = Location(lat,long,0,placename,timezone)
+    else:
+        utcoffset = 12
+        timezone = "YKT"
+        this_location = Yamakoti
 
-    format = "text"
-    if args.format:
-        format = args.format
 
     ayanamsa = 98
     if args.ayanamsa:
         ayanamsa = int(args.ayanamsa)
 
-    utc = False
-    if args.utc:
-        utc = True
 
     for month in args.months:
         month, year = parse_date(month)
@@ -54,32 +53,55 @@ def main():
         context = EphContext(timeJD=this_timeJD,location=this_location,ayanamsa=ayanamsa)
         panch = Panchanga(context)
 
-        panch_str = make_table(panch,utc,format)
+        panch_str = make_table(args,panch)
 
         print(f"Panchanga for {month}/{year}")
         print(f"{this_location}")
         print(f"Using {const.ayanamsa_name(ayanamsa)} ayanamsa")
+        if args.midnight:
+            print("Times at midnight")
+        else:
+            print("Times at sunrise")
 
         print(panch_str)
 
 
-def make_table(panch,utc,format):
+def make_table(args,panch):
     output = PrettyTable()
     output.field_names = ["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"]
 
     # so we can keep track of when the month ends
     _, this_month, day, _ = swe.revjul(panch.timeJD.jd_number())
-   
+
+    utc = False
+    if args.utc:
+        utc = True
+
+    format = "text"
+    if args.format:
+        format = args.format
+
     month = this_month
     while month == this_month:
+        today_midnight = panch
+        # this is so that we change change the Panchanga to be at sunrise if desired
+        sunrise = panch.sunrise()
+        sunset = panch.sunset()
+        moonrise = panch.moonrise()
+        moonset = panch.moonset()
+        today_sunrise = Panchanga(replace(panch.context,timeJD=sunrise))
+        if args.midnight:
+            panch = today_midnight
+        else:
+            panch = today_sunrise
         # build row for this day
         row = []
         row.append(day)
         if utc:
-            row.append(f"{panch.sunrise().time()}")
-            row.append(f"{panch.sunset().time()}")
-            row.append(f"{panch.moonrise().time()}")
-            row.append(f"{panch.moonset().time()}")
+            row.append(f"{sunrise.time()}")
+            row.append(f"{sunset.time()}")
+            row.append(f"{moonrise.time()}")
+            row.append(f"{moonset.time()}")
             row.append(f"{panch.vara()}")
             row.append(f"{panch.next_vara().timeJD.time()}")
             row.append(f"{panch.nakshatra()}")
@@ -109,7 +131,7 @@ def make_table(panch,utc,format):
         output.add_row(row)
         output.add_divider()
         # go forward one day
-        panch = Panchanga(replace(panch.context,timeJD=panch.timeJD.shift('f','day',1)))
+        panch = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1)))
         _, month, day, _ = swe.revjul(panch.timeJD.jd_number())
 
     return output.get_formatted_string(out_format=format,fields=["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"])
@@ -149,6 +171,12 @@ def get_args():
         "--utc",
         action="store_true",
         help="display times as utc; default is local timezone specified in .chtk file",
+    )
+    parser.add_argument(
+        "-m",
+        "--midnight",
+        action="store_true",
+        help="display elements as they are as midnight; default is to display at the time of sunrise",
     )
     parser.add_argument(
         "-f",

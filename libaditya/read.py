@@ -123,12 +123,13 @@ def lat_to_float(lat):
     """
     # string is like this 030E44'00
     if lat[2:3] == "N":
-        degs = int(lat[:2])
+        sign = 1
     else:
-        degs = -int(lat[:2])
-    mins = int(lat[3:5])
-    secs = int(lat[6:8])
-    return degs + (mins / 60) + (secs / 3600)
+        sign = -1
+    degs = float(lat[:2])
+    mins = float(lat[3:5])
+    secs = float(lat[6:8])
+    return sign*(degs + (mins / 60) + (secs / 3600))
 
 
 def float_to_lat(lat):
@@ -149,12 +150,13 @@ def long_to_float(long):
     """
     # string is usually like this 030E44'00
     if long[3:4] == "E":
-        degs = int(long[:3])
+        sign = 1
     else:
-        degs = -int(long[:3])
-    mins = int(long[4:6])
-    secs = int(long[7:9])
-    return degs + (mins / 60) + (secs / 3600)
+        sign = -1
+    degs = float(long[:3])
+    mins = float(long[4:6])
+    secs = float(long[7:9])
+    return sign*(degs + (mins / 60) + (secs / 3600))
 
 
 def float_to_long(long):
