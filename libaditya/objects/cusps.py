@@ -35,7 +35,7 @@ class Cusp(Longitude):
         self.ayanamsa = self.context.ayanamsa
         self.long = longitude
         self.daily_speed = speed
-        self._cusp_index = number
+        self._cusp_index = number - 1
         self._number = number
         self.cusp_name = f"Cusp {self._number}"
         super().__init__(self.long,self.context)

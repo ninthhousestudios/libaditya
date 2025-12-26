@@ -192,10 +192,13 @@ class Planet(Longitude):
     def context(self):
         return self._context
 
-    def dignity(self, lord: Self) -> str:
+    def dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
         i.e, the combined relationship, so we need to know where the lord is
+
+        we need self_in_rashi to calculate temporary relationships based on the rashi chart
+        so now we cant calculate temporary relationships based on the specific varga with this code
         """
         if self.is_ex():
             return "EX"
@@ -206,7 +209,7 @@ class Planet(Longitude):
         if self.is_db():
             return "DB"
         natural_relationship = self.natural_relationship_from(lord)
-        distance = self.signs_apart(lord.sign())
+        distance = self_in_rashi.signs_apart(lord.sign())
         match distance:
             case 1 | 2 | 3 | 9 | 10 | 11:
                 temporary_relationship = "F"
@@ -632,13 +635,13 @@ class Venus(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 7 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude < 15):
+        if self.sign() == 7 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 15):
             return True
         else:
             return False
 
     def is_oh(self):
-        if self.sign() == 2 or (self.sign() == 7 and self.real_in_sign_longitude > 15):
+        if self.sign() == 2 or (self.sign() == 7 and self.real_in_sign_longitude() > 15):
             return True
         else:
             return False
@@ -1066,7 +1069,7 @@ class Planets:
             temp_planets = self
         dignities = []
         for planet in self.karakas().values():
-            dignities.append(planet.dignity(temp_planets.karakas()[planet.lord()]))
+            dignities.append(planet.dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 
     def parashara_aspects(self):

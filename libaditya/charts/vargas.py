@@ -30,13 +30,13 @@ from libaditya.objects import planets as pdict
 class Varga:
 
     def __init__(self,amsha,planets,cusps,context):
-        # only print nakshatras in Rashi
-        self.context = replace(context,print_nakshatras=False)
         self._amsha = amsha
         self._rashi_planets = planets
         if amsha == 1:
             self._planets = planets
         else:
+            # dont print nakshatras in vargas not = 1
+            self.context = replace(context,print_nakshatras=False)
             self._planets = self.init_planets(planets)
         self._cusps = self.init_cusps(cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
@@ -92,7 +92,7 @@ class Varga:
         output.field_names = ["  ", "   ", "    ", "     "]
 
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
-        dignities = printf.dignity_table(self.planets().dignities())
+        dignities = printf.dignity_table(self.planets().dignities(self._rashi_planets))
 
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()
@@ -212,24 +212,6 @@ class Rashi(Varga):
         self._cusps = cusps
         self._signs = Signs(self._planets,self._cusps,self.context)
         super().__init__(amsha=1,planets=self._planets,cusps=self._cusps,context=self.context)
-
-    def __str__(self):
-        output = PrettyTable()
-        output.field_names = ["  ", "   ", "    ", "     "]
-
-        dignities = printf.dignity_table(self.planets().dignities())
-
-        output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
-        output.add_divider()
-        output.add_row([f"{self.signs()[11]}", f"{dignities} ", "  ", f"{self.signs()[4]}"])
-        output.add_divider()
-        output.add_row([f"{self.signs()[10]}", "  ", "  ", f"{self.signs()[5]}"])
-        output.add_divider()
-        output.add_row([f"{self.signs()[9]}", f"{self.signs()[8]}", f"{self.signs()[7]}", f"{self.signs()[6]}"])
-
-        ret = output.get_string(fields=["  ", "   ", "    ", "     "])
-
-        return self.mkheader() + ret
 
     def planets(self):
         return self._planets

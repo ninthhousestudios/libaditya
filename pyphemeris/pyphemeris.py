@@ -198,16 +198,32 @@ def main():
         print_ephemeris(context,to_show)
 
     if chart_mode and not ephemeris_mode:
-        for sys in to_show:
-            if sys == const.SID:
-                if not args.aditya:
-                    # use zodiac circle and signs
-                    print_chart(name,args,replace(context,sysflg=sys,circle=circle.ZODIAC,names=replace(names,sign_names=zodiac)))
-                else:
-                    # use sidereal aditya circle and signs
-                    print_chart(name,args,replace(context,sysflg=sys,circle=circle.SIDEREAL_ADITYA,names=replace(names,sign_names=adityas)))
-                continue
-            print_chart(name,args,replace(context,sysflg=sys))
+        if args.helio_chart:
+            context = replace(context,sysflg=const.HELIO)
+            print_chart(name,args,context)
+            exit()
+        if args.baryos_chart:
+            context = replace(context,sysflg=const.BARY)
+            print_chart(name,args,context)
+            exit()
+        if args.sidereal_chart:
+            if not args.aditya:
+                # use zodiac circle and signs
+                context = replace(context,sysflg=const.SID,circle=circle.ZODIAC,names=replace(names,sign_names=zodiac))
+                chart = print_chart(name,args,context)
+                print_planetary_aspects(args,chart)
+                print_vargas(args,chart)
+            else:
+                # use sidereal aditya circle and signs
+                context = replace(context,sysflg=const.SID,circle=circle.SIDEREAL_ADITYA,names=replace(names,sign_names=adityas))
+                chart = print_chart(name,args,context)
+                print_planetary_aspects(args,chart)
+                print_vargas(args,chart)
+        else:
+            # default sysflg in context is const.TROP, set above
+            chart = print_chart(name,args,replace(context))
+            print_planetary_aspects(args,chart)
+            print_vargas(args,chart)
 
     # do vimshottari dasha
     # this function takes care of deciding to print them
@@ -219,19 +235,29 @@ def print_chart(name,args,context):
     print(f"\nChart for {name}\n")
     chart = Chart(context)
     print(chart)
+    return chart
+
+def print_planetary_aspects(args,chart):
     planetary_aspects = defaults.planetary_aspects
     if args.planetary_aspects:
-        planetary_aspects  = not (planetary_aspects )
+        planetary_aspects = not (planetary_aspects)
     planetary_cusps_aspects = defaults.planetary_cusps_aspects
     if args.planetary_cusps_aspects:
-        planetary_cusps_aspects  = not (planetary_cusps_aspects )
-
+        planetary_cusps_aspects = not (planetary_cusps_aspects)
     if planetary_aspects:
         print(f"\nPlanetary Aspect Table")
         print(printf.parashara_aspect_table_planets(chart.rashi().planets().parashara_aspects()))
     if planetary_cusps_aspects:
         print(f"\nCusp Aspect Table")
         print(printf.parashara_aspect_table_cusps(chart.rashi().planets().parashara_aspects_cusps(chart.rashi().cusps())))
+
+def print_vargas(args,chart):
+    if not args.vargas:
+        return
+    vargas = [int(varga) for varga in args.vargas.split(',')]
+
+    for varga in vargas:
+        print(chart.get_varga(varga))
 
 def print_ephemeris(context,to_show):
     for sys in to_show:
@@ -552,6 +578,24 @@ def get_args():
         "-P", "--placename", help="a string showing the placename; e.g., CDT"
     )
     parser.add_argument(
+        "-Sc",
+        "--sidereal-chart",
+        action="store_true",
+        help="in chart mode, print sidereal chart",
+    )
+    parser.add_argument(
+        "-Hc",
+        "--helio-chart",
+        action="store_true",
+        help="in chart mode, print heliocentric chart",
+    )
+    parser.add_argument(
+        "-Bc",
+        "--baryos-chart",
+        action="store_true",
+        help="in chart mode, print barycentric chart",
+    )
+    parser.add_argument(
         "-PA",
         "--planetary-aspects",
         action="store_true",
@@ -562,6 +606,11 @@ def get_args():
         "--planetary-cusps-aspects",
         action="store_true",
         help="toggle printing planetary cusp aspects in chart mode",
+    )
+    parser.add_argument(
+        "-v",
+        "--vargas",
+        help="vargas to print; any integer number will print the corresponding parivritti varga; multiple vargas can be printed at once, e.g., -v 4,5,9",
     )
 
     args = parser.parse_args()

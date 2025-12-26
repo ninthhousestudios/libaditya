@@ -16,7 +16,7 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 from libaditya.objects import EphContext, Planets, Cusps
-from libaditya.charts import Rashi
+from libaditya.charts import Rashi, Varga
 
 class Chart:
 
@@ -32,3 +32,6 @@ class Chart:
 
     def rashi(self):
         return self._Rashi
+
+    def get_varga(self, amsha):
+        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context)
