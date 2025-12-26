@@ -92,13 +92,15 @@ class Longitude:
 
     def degrees_apart(self, next_long):
         """
-        how many degrees apart this longitude is from next_long
+        how many degrees from this longitude to next_long going forward around the ecliptic
         """
-        next_long%=360
+        # we dont cross the equinox to find the difference
         if next_long > self.real_longitude():
             return next_long - self.real_longitude()
+        # we have to cross the equinox, thus find the remainder in this cycle
+        # plus the portion of the next cycle
         else:
-            return (next_long+360) - self.real_longitude()
+            return (360 - self.real_longitude()) + next_long
 
     def signs_apart(self, other_sign):
         """

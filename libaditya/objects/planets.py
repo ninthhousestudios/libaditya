@@ -688,7 +688,6 @@ class Jupiter(Planet):
             return True
         else:
             return False
-                
 
     def is_oh(self):
         if self.sign() == 12 or (self.sign() == 9 and self.real_in_sign_longitude() > 10):
@@ -750,7 +749,7 @@ class Jupiter(Planet):
         if diff > 120 and diff <= 150:
             return 60 - ((diff-120)*2)
         if diff > 90 and diff <= 120:
-            return (diff/2) + 45
+            return ((120-diff)/2) + 45
         if diff > 60 and diff <= 90:
             return (diff - 60) + 15
         if diff > 30 and diff <= 60:
