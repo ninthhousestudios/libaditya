@@ -1158,6 +1158,11 @@ class Planets:
         # sorted() gives from least to most, but karakas are from most to least
         return list(ret.__reversed__())
 
+    def is_moon_benefic(self):
+        return self.sun().degrees_apart(self.moon().real_longitude()) <= 180
+
+    def is_moon_malefic(self):
+        return self.sun().degrees_apart(self.moon().real_longitude()) > 180
 
     def sun(self):
         return self._planets["Sun"]

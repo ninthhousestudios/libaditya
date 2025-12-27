@@ -6,3 +6,8 @@ panchanga and monthly_panchanga
     somethings are still off
 
 fix printing of time left in -C option for current vimshottari dasha
+
+akriti yogas
+    the ones needing all planets in 7 houses need work
+    the same algorithm doesnt work for them as for the others
+

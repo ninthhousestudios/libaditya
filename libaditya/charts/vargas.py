@@ -240,68 +240,150 @@ class Rashi(Varga):
         akritis = []
         # these yogas are based on signs from the lagna
         lagna = self.signs().lagna()
-        second = self.signs()[lagna.n_signs_forward(2)]
-        third = self.signs()[lagna.n_signs_forward(3)]
-        fourth = self.signs()[lagna.n_signs_forward(4)]
-        fifth = self.signs()[lagna.n_signs_forward(5)]
-        sixth = self.signs()[lagna.n_signs_forward(6)]
-        seventh = self.signs()[lagna.n_signs_forward(7)]
-        eighth = self.signs()[lagna.n_signs_forward(8)]
-        ninth = self.signs()[lagna.n_signs_forward(9)]
-        tenth = self.signs()[lagna.n_signs_forward(10)]
-        eleventh = self.signs()[lagna.n_signs_forward(11)]
-        twelfth = self.signs()[lagna.n_signs_forward(12)]
+        second = self.signs()[lagna.n_signs_forward(2)].how_many_karakas()
+        third = self.signs()[lagna.n_signs_forward(3)].how_many_karakas()
+        fourth = self.signs()[lagna.n_signs_forward(4)].how_many_karakas()
+        fifth = self.signs()[lagna.n_signs_forward(5)].how_many_karakas()
+        sixth = self.signs()[lagna.n_signs_forward(6)].how_many_karakas()
+        seventh = self.signs()[lagna.n_signs_forward(7)].how_many_karakas()
+        eighth = self.signs()[lagna.n_signs_forward(8)].how_many_karakas()
+        ninth = self.signs()[lagna.n_signs_forward(9)].how_many_karakas()
+        tenth = self.signs()[lagna.n_signs_forward(10)].how_many_karakas()
+        eleventh = self.signs()[lagna.n_signs_forward(11)].how_many_karakas()
+        twelfth = self.signs()[lagna.n_signs_forward(12)].how_many_karakas()
+        lagna = self.signs().lagna().how_many_karakas()
 
         # sringataka yoga; all planets in 1,5,9 from lagna
         # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (lagna.how_many_karakas() + fifth.how_many_karakas() + ninth.how_many_karakas())
+        to_move = 7 - (lagna + fifth + ninth)
         akritis.append(("Sringataka", to_move))
 
         # artha hala; all planets in 2,6,10
         # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (second.how_many_karakas() + sixth.how_many_karakas() + tenth.how_many_karakas())
+        to_move = 7 - (second + sixth + tenth)
         akritis.append(("Artha Hala", to_move))
 
         # kama hala; all planets in 3,7,11
         # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (third.how_many_karakas() + seventh.how_many_karakas() + eleventh.how_many_karakas())
+        to_move = 7 - (third + seventh + eleventh)
         akritis.append(("Kama Hala", to_move))
 
         # moksha hala; all planets in 4,8,12
         # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (fourth.how_many_karakas() + eighth.how_many_karakas() + twelfth.how_many_karakas())
+        to_move = 7 - (fourth + eighth + twelfth)
         akritis.append(("Moksha Hala", to_move))
 
         # gada yogas; all planets in two successive angles 1/4,4/7,7/10,10/1, so check all of these
 
         # 1/4 gada
-        to_move = 7 - (lagna.how_many_karakas() + fourth.how_many_karakas())
+        to_move = 7 - (lagna + fourth)
         akritis.append(("Gada 1/4", to_move))
 
         # 4/7 gada
-        to_move = 7 - (fourth.how_many_karakas() + seventh.how_many_karakas())
+        to_move = 7 - (fourth + seventh)
         akritis.append(("Gada 4/7", to_move))
 
         # 7/10 gada
-        to_move = 7 - (seventh.how_many_karakas() + tenth.how_many_karakas())
+        to_move = 7 - (seventh + tenth)
         akritis.append(("Gada 7/10", to_move))
 
         # 10/1 gada
-        to_move = 7 - (lagna.how_many_karakas() + tenth.how_many_karakas())
+        to_move = 7 - (lagna + tenth)
         akritis.append(("Gada 1/4", to_move))
 
         # sakata; all planets in 1 and 7
-        to_move = 7 - (lagna.how_many_karakas() + seventh.how_many_karakas())
+        to_move = 7 - (lagna + seventh)
         akritis.append(("Sakata", to_move))
 
         # vihaga; all planets in 4 and 10 
-        to_move = 7 - (fourth.how_many_karakas() + tenth.how_many_karakas())
+        to_move = 7 - (fourth + tenth)
         akritis.append(("Vihaga", to_move))
 
         # kamala; all planets in the four angles
-        to_move = 7 - (lagna.how_many_karakas() + fourth.how_many_karakas() + seventh.how_many_karakas() + tenth.how_many_karakas())
+        to_move = 7 - (lagna + fourth + seventh + tenth)
         akritis.append(("Kamala", to_move))
 
+        # panaphara vapi; all planets in 2,5,8,11
+        to_move = 7 - (second + fifth + eighth + eleventh)
+        akritis.append(("Panaphara Vapi", to_move))
 
+        # apoklima vapi; all planets in 3,6,9,12
+        to_move = 7 - (third + sixth + ninth + twelfth)
+        akritis.append(("Apoklima Vapi", to_move))
+
+        # do vajra and yava yogas
+
+
+        # yupa yoga; all planets in 1,2,3,4
+        to_move = 7 - (lagna + second + third + fourth)
+        akritis.append(("Yupa", to_move))
+
+        # shara yoga: all planets in 4,5,6,7
+        to_move = 7 - (fourth + fifth + sixth + seventh)
+        akritis.append(("Shara", to_move))
+
+        # shakti yoga; all planets in 7,8,9,10
+        to_move = 7 - (seventh + eighth + ninth + tenth)
+        akritis.append(("Shakti", to_move))
+
+        # danda yoga; all planets in 10,11,12,1
+        to_move = 7 - (tenth + eleventh + twelfth + lagna)
+        akritis.append(("Danda", to_move))
+
+#        # nauka yoga; all planets in the 1,2,3,4,5,6,7
+#        to_move = 7 - (lagna + second + third + fourth + fifth + sixth + seventh)
+#        akritis.append(("Nauka", to_move))
+#
+#        # kuta yoga; all planets in 4,5,6,7,8,9,10
+#        to_move = 7 - (fourth + fifth + sixth + seventh + eighth + ninth + tenth)
+#        akritis.append(("Kuta", to_move))
+#
+#        # chatra yoga; all planets in 7,8,9,10,11,12,1
+#        to_move = 7 - (seventh + eighth + ninth + tenth + eleventh + twelfth + lagna)
+#        akritis.append(("Chatra", to_move))
+#
+#        # chapa yoga; all planets in 10,11,12,1,2,3,4
+#        to_move = 7 - (tenth + eleventh + twelfth + lagna + second + third + fourth)
+#        akritis.append(("Chapa", to_move))
+#
+#        # artha panaphara ardha chandra; all planets in 2,3,4,5,6,7,8
+#        to_move = 7 - (second + third + fourth + fifth + sixth + seventh + eighth)
+#        akritis.append(("Artha Panaphara Ardha Chandra", to_move))
+#
+#        # dharma panaphara ardha chandra; all planets in 5,6,7,8,9,10,11
+#        to_move = 7 - (fifth + sixth + seventh + eighth + ninth + tenth + eleventh)
+#        akritis.append(("Dharma Panaphara Ardha Chandra", to_move))
+#
+#        # moksha panaphara ardha chandra; all planets in 8,9,10,11,12,1,2
+#        to_move = 7 - (eighth + ninth + tenth + eleventh + twelfth + lagna + second)
+#        akritis.append(("Moksha Panaphara Ardha Chandra", to_move))
+#
+#        # kama panaphara ardha chandra; all planets in 11,12,1,2,3,4,5
+#        to_move = 7 - (eleventh + twelfth + lagna + second + third + fourth + fifth)
+#        akritis.append(("Kama Panaphara Ardha Chandra", to_move))
+#
+#        # kama apoklima ardha chandra; all planets in 3,4,5,6,7,8,9
+#        to_move = 7 - (third + fourth + fifth + sixth + seventh + eighth + ninth)
+#        akritis.append(("Kama Apoklima Ardha Chandra", to_move))
+#
+#        # artha apoklima ardha chandra; all planets in 6,7,8,9,10,11,12
+#        to_move = 7 - (sixth + seventh + eighth + ninth + tenth + eleventh + twelfth)
+#        akritis.append(("Artha Apoklima Ardha Chandra", to_move))
+#
+#        # dharma apoklima ardha chandra; all planets in 9,10,11,12,1,2,3
+#        to_move = 7 - (ninth + tenth + eleventh + twelfth + lagna + second + third)
+#        akritis.append(("Dharma Apoklima Ardha Chandra", to_move))
+#
+#        # moksha apoklima ardha chandra; all planets in 12,1,2,3,4,5,6
+#        to_move = 7 - (twelfth + lagna + second + third + fourth + fifth + sixth)
+#        akritis.append(("Moksha Apoklima Ardha Chandra", to_move))
+
+        # chakra yoga; all planets in 1,3,5,7,9,11
+        to_move = 7 - (lagna + third + fifth + seventh + ninth + eleventh)
+        akritis.append(("Chakra", to_move))
+
+        # samudra yoga; all plants in 2,4,6,8,10,12
+        to_move = 7 - (second + fourth + sixth + eighth + tenth + twelfth)
+        akritis.append(("Samdura", to_move))
 
         return akritis
