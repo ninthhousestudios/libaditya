@@ -65,6 +65,17 @@ def parashara_aspect_table_cusps(aspects):
         output.add_row(*[[const.karaka_glyphs[n]] + row]) 
         output.add_divider()
 
-    ret = output.get_string(fields=[" "] + [str(n) for n in range(1,13)])
+    return output.get_string(fields=[" "] + [str(n) for n in range(1,13)])
 
-    return ret
+def jaimini_karakas(karakas):
+    """
+    return a PrettyTable string displaying the Jaimini karakas in karakas
+    karakas is a list of Planet classes, with ak being element 0, amk element 1, etc.
+    """
+    output = PrettyTable()
+    output.field_names = ["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"]
+
+    # this table only has a header and one row
+    output.add_row([planet.glyph() for planet in karakas])
+
+    return output.get_string(fields=["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"])

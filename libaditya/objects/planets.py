@@ -290,6 +290,9 @@ class Sun(Planet):
         super().__init__(swe.SUN, context, longitude)
         self._id = "Sun"
 
+    def glyph(self):
+        return "⨀"
+
     def sunrise_yamakoti(self) -> JulianDay:
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
@@ -404,6 +407,9 @@ class Moon(Planet):
         super().__init__(swe.MOON, context, longitude)
         self._id = "Moon"
 
+    def glyph(self):
+        return "☾"
+
     def lowest_daily_speed(self) -> float:
         """
         return a speed lower than the lowest speed for this planet
@@ -476,6 +482,9 @@ class Mars(Planet):
     def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.MARS, context, longitude)
         self._id = "Mars"
+
+    def glyph(self):
+        return "♂"
 
     def is_outer_planet(self):
         return False
@@ -568,6 +577,9 @@ class Mercury(Planet):
         super().__init__(swe.MERCURY, context, longitude)
         self._id = "Mercury"
 
+    def glyph(self):
+        return "☿"
+
     def is_outer_planet(self):
         return False
 
@@ -622,6 +634,9 @@ class Venus(Planet):
         super().__init__(swe.VENUS, context, longitude)
         self._id = "Venus"
 
+    def glyph(self):
+        return "♀"
+
     def is_outer_planet(self):
         return False
 
@@ -673,6 +688,9 @@ class Jupiter(Planet):
     def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.JUPITER, context, longitude)
         self._id = "Jupiter"
+
+    def glyph(self):
+        return "♃"
 
     def is_outer_planet(self):
         return False
@@ -765,6 +783,9 @@ class Saturn(Planet):
         super().__init__(swe.SATURN, context, longitude)
         self._id = "Saturn"
 
+    def glyph(self):
+        return "♄"
+
     def is_outer_planet(self):
         return False
 
@@ -855,6 +876,9 @@ class Rahu(Planet):
         self.planet_name = context.names.planet_names[10]
         self._id = "Rahu"
 
+    def glyph(self):
+        return "☊"
+
     def is_outer_planet(self):
         return False
 
@@ -872,6 +896,8 @@ class Ketu(Planet):
         self.planet_name = context.names.planet_names[11]
         self._id = "Ketu"
         
+    def glyph(self):
+        return "☋"
 
     def is_outer_planet(self):
         return False
@@ -888,6 +914,9 @@ class Uranus(Planet):
         super().__init__(swe.URANUS, context, longitude)
         self._id = "Uranus"
 
+    def glyph(self):
+        return "⛢"
+
     def is_outer_planet(self):
         return True
 
@@ -902,6 +931,9 @@ class Neptune(Planet):
     def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.NEPTUNE, context, longitude)
         self._id = "Neptune"
+
+    def glyph(self):
+        return "♆"
 
     def is_outer_planet(self):
         return True
@@ -919,6 +951,9 @@ class Pluto(Planet):
         super().__init__(swe.PLUTO, context, longitude)
         self._id = "Pluto"
 
+    def glyph(self):
+        return "♇"
+
     def is_outer_planet(self):
         return True
 
@@ -932,6 +967,9 @@ class Earth(Planet):
     def __init__(self, context=EphContext(), longitude=None):
         super().__init__(swe.EARTH, context, longitude)
         self._id = "Earth"
+
+    def glyph(self):
+        return "⨁"
 
     def is_outer_planet(self):
         return False
@@ -1103,6 +1141,23 @@ class Planets:
             ret.append(this_row)
 
         return ret
+
+    def jaimini_karakas(self):
+        """
+        return a list of Planet classes where the first element is the ak, the second the amk, etc.
+        """
+        # we need to sort according to real longitude
+        longs = {}
+        for karaka in self.karakas().values():
+            # the longitude is the key, the Planet the value
+            longs[karaka.in_sign_longitude()] = karaka
+        ret = []
+        for long in sorted(longs.keys()):
+            # append the Planet
+            ret.append(longs[long])
+        # sorted() gives from least to most, but karakas are from most to least
+        return list(ret.__reversed__())
+
 
     def sun(self):
         return self._planets["Sun"]

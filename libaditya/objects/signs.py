@@ -44,17 +44,49 @@ class Sign:
     def sign(self):
         return self._id
 
-    def lord(self):
+    def planets(self):
+        return self._planets
+
+    def cusps(self):
+        return self._cusps
+
+    def lord(self) -> str:
         return const.lords[self.sign()]
 
     def how_many_objects(self):
         return len(self._objects)
+
+    def how_many_karakas(self):
+        n = 0
+        for planet in self.planets():
+            if planet.is_karaka():
+                n+=1
+        return n
 
     def init_objects(self):
         if self.context.sysflg == const.BARY or self.context.sysflg == const.HELIO:
             return self._planets
         else:
             return self._planets + self._cusps
+
+    def n_signs_forward(self,n) -> int:
+        """
+        go forward n signs
+        this means in the astrologically sense
+        so this sign is 1 and then we count
+        e.g., if this sign is sign 8 and we go forward 4 signs ->
+        8,9,10,11, so 4 signs forwards from Scorpio is Aquarius
+        so self.n_signs_forward(1) =  self
+
+        but in terms of sign numbers, we add n-1 to the sign number
+        and have to deal with how it wraps around
+        """
+        forward = self.sign() + (n-1)
+        if forward <= 12:
+            return forward
+        else:
+            return forward % 12
+        
 
     def __str__(self):
         """
@@ -86,7 +118,7 @@ class Sign:
 
     def __repr__(self):
         header = ""
-        header += f"\n{self.sign_index()=} {self.sign_name()}\n"
+        header += f"\n{self.sign()=} {self.sign_name()}\n"
         output = PrettyTable()
         output.field_names = ["Object", "In Sign Longitude", "Real Longitude"]
         output.align["Object"] = "l"
@@ -259,6 +291,16 @@ class Signs:
 
     def signs(self):
         return self._signs
+
+    def lagna(self) -> Sign:
+        """
+        return the Sign class of the lagna sign, i.e., whichever one has Cusp 1
+        """
+        for sign in self.signs().values():
+            for cusp in sign.cusps():
+                if cusp.number() == 1:
+                    return sign
+
 
     def most_objects(self):
         """

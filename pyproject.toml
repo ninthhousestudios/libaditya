@@ -8,3 +8,6 @@ dependencies = [
     "prettytable>=3.17.0",
     "pyswisseph>=2.10.3.2",
 ]
+
+[tool.setuptools]
+py-modules = []

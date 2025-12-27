@@ -94,9 +94,14 @@ class Varga:
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
         dignities = printf.dignity_table(self.planets().dignities(self._rashi_planets))
 
+        # print jaimini karakas in the rashi
+        jaimini_karakas = ""
+        if self._amsha == 1:
+            jaimini_karakas = printf.jaimini_karakas(self.planets().jaimini_karakas())
+
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()
-        output.add_row([f"{self.signs()[11]}", f"{dignities} ", "  ", f"{self.signs()[4]}"])
+        output.add_row([f"{self.signs()[11]}", f"{dignities} ", f"{jaimini_karakas}", f"{self.signs()[4]}"])
         output.add_divider()
         output.add_row([f"{self.signs()[10]}", "  ", "  ", f"{self.signs()[5]}"])
         output.add_divider()
@@ -222,8 +227,81 @@ class Rashi(Varga):
     def signs(self):
         return self._signs
 
-class Navamsha(Varga):
+    def akriti_yogas(self):
+        """
+        find the akriti yogas in this Rashi varga
+        these are rarely found perfectly or completely, so we find
+        how many planets would need to be moved to create each
+        this function returns a list of tuples of the name of each yoga and how many planets would
+        need to be moved in order to create the yoga
+        for these yogas, planets means the seven embodied planets, i.e., karakas
+        """
+        # this will be a list of tuples ("name", planets_to_move_to_form_yoga)
+        akritis = []
+        # these yogas are based on signs from the lagna
+        lagna = self.signs().lagna()
+        second = self.signs()[lagna.n_signs_forward(2)]
+        third = self.signs()[lagna.n_signs_forward(3)]
+        fourth = self.signs()[lagna.n_signs_forward(4)]
+        fifth = self.signs()[lagna.n_signs_forward(5)]
+        sixth = self.signs()[lagna.n_signs_forward(6)]
+        seventh = self.signs()[lagna.n_signs_forward(7)]
+        eighth = self.signs()[lagna.n_signs_forward(8)]
+        ninth = self.signs()[lagna.n_signs_forward(9)]
+        tenth = self.signs()[lagna.n_signs_forward(10)]
+        eleventh = self.signs()[lagna.n_signs_forward(11)]
+        twelfth = self.signs()[lagna.n_signs_forward(12)]
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(9,planets,cusps,context)
+        # sringataka yoga; all planets in 1,5,9 from lagna
+        # the number of planets to move is 7 - the number of planets in these signs
+        to_move = 7 - (lagna.how_many_karakas() + fifth.how_many_karakas() + ninth.how_many_karakas())
+        akritis.append(("Sringataka", to_move))
 
+        # artha hala; all planets in 2,6,10
+        # the number of planets to move is 7 - the number of planets in these signs
+        to_move = 7 - (second.how_many_karakas() + sixth.how_many_karakas() + tenth.how_many_karakas())
+        akritis.append(("Artha Hala", to_move))
+
+        # kama hala; all planets in 3,7,11
+        # the number of planets to move is 7 - the number of planets in these signs
+        to_move = 7 - (third.how_many_karakas() + seventh.how_many_karakas() + eleventh.how_many_karakas())
+        akritis.append(("Kama Hala", to_move))
+
+        # moksha hala; all planets in 4,8,12
+        # the number of planets to move is 7 - the number of planets in these signs
+        to_move = 7 - (fourth.how_many_karakas() + eighth.how_many_karakas() + twelfth.how_many_karakas())
+        akritis.append(("Moksha Hala", to_move))
+
+        # gada yogas; all planets in two successive angles 1/4,4/7,7/10,10/1, so check all of these
+
+        # 1/4 gada
+        to_move = 7 - (lagna.how_many_karakas() + fourth.how_many_karakas())
+        akritis.append(("Gada 1/4", to_move))
+
+        # 4/7 gada
+        to_move = 7 - (fourth.how_many_karakas() + seventh.how_many_karakas())
+        akritis.append(("Gada 4/7", to_move))
+
+        # 7/10 gada
+        to_move = 7 - (seventh.how_many_karakas() + tenth.how_many_karakas())
+        akritis.append(("Gada 7/10", to_move))
+
+        # 10/1 gada
+        to_move = 7 - (lagna.how_many_karakas() + tenth.how_many_karakas())
+        akritis.append(("Gada 1/4", to_move))
+
+        # sakata; all planets in 1 and 7
+        to_move = 7 - (lagna.how_many_karakas() + seventh.how_many_karakas())
+        akritis.append(("Sakata", to_move))
+
+        # vihaga; all planets in 4 and 10 
+        to_move = 7 - (fourth.how_many_karakas() + tenth.how_many_karakas())
+        akritis.append(("Vihaga", to_move))
+
+        # kamala; all planets in the four angles
+        to_move = 7 - (lagna.how_many_karakas() + fourth.how_many_karakas() + seventh.how_many_karakas() + tenth.how_many_karakas())
+        akritis.append(("Kamala", to_move))
+
+
+
+        return akritis
