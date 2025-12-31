@@ -87,6 +87,15 @@ class Sign:
         else:
             return forward % 12
         
+    def astrological_signs_apart(self, other_sign: int) -> int:
+        """
+        how many signs apart are this one sign and other_sign
+        if self=12 and other=1 -> (1-12)%12 = 1
+        astrological means counting in an astrological way
+        i.e., signs 10 and 1 are 4 signs apart
+        other_sign is the sign number of the other sign
+        """
+        return ((other_sign - self.sign())%12)+1
 
     def __str__(self):
         """

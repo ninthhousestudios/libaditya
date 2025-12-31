@@ -89,6 +89,15 @@ def make_table(args,panch):
         sunset = panch.sunset()
         moonrise = panch.moonrise()
         moonset = panch.moonset()
+        if moonrise.day() != today_midnight.timeJD.day():
+            moonrise = "N/A"
+        else:
+            moonrise = moonrise.time()
+        if moonset.day() != today_midnight.timeJD.day():
+            moonset = "N/A"
+        else:
+            moonset = moonset.time()
+
         today_sunrise = Panchanga(replace(panch.context,timeJD=sunrise))
         if args.midnight:
             panch = today_midnight
@@ -100,8 +109,8 @@ def make_table(args,panch):
         if utc:
             row.append(f"{sunrise.time()}")
             row.append(f"{sunset.time()}")
-            row.append(f"{moonrise.time()}")
-            row.append(f"{moonset.time()}")
+            row.append(f"{moonrise}")
+            row.append(f"{moonset}")
             row.append(f"{panch.vara()}")
             row.append(f"{panch.next_vara().timeJD.time()}")
             row.append(f"{panch.nakshatra()}")

@@ -23,7 +23,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
 
-from libaditya.objects import Signs, Planets, Cusp, Cusps
+from libaditya.objects import Sign, Signs, Planets, Cusp, Cusps
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
 
@@ -86,6 +86,60 @@ class Varga:
 
     def signs(self):
         return self._signs
+
+    def lagna(self):
+        return self.signs().lagna()
+
+    def pada(self) -> Sign:
+        """
+        the "foot" of the lagna
+        find how many signs the lagna lord is from the lagna
+        from the lord that many signs is the pada
+        if the lord is in the 4th or 10th from lagna, pada is in the 4th
+        if the lord is in the 1st or 7th from lagna, pada is in the 10th
+
+        return Sign class of the pada
+        """
+        # Sign class of the lagna
+        lagna = self.signs().lagna()
+        # Planet class of the lord
+        lagna_lord = self.planets()[lagna.lord()]
+        signs_apart = lagna.astrological_signs_apart(lagna_lord.sign())
+
+        # check special pada rules
+        if signs_apart == 4 or signs_apart == 10:
+            return self.signs()[lagna.n_signs_forward(4)]
+        if signs_apart == 1 or signs_apart == 7:
+            return self.signs()[lagna.n_signs_forward(10)]
+        # otherwise signs_apart forward from lagna lord is the pada
+        lords_sign = self.signs()[lagna_lord.sign()]
+        return self.signs()[lords_sign.n_signs_forward(signs_apart)]
+
+    def upapada(self) -> Sign:
+        """
+        the "foot" of the 10th house
+        find how many signs the lagna lord is from the lagna
+        from the lord that many signs is the pada
+        if the lord is in the 4th or 10th from lagna, pada is in the 4th
+        if the lord is in the 1st or 7th from lagna, pada is in the 10th
+
+        return Sign class of the pada
+        """
+        # Sign class of the lagna
+        lagna = self.signs().lagna()
+        tenth = self.signs()[lagna.n_signs_forward(10)]
+        # Planet class of the lord
+        tenth_lord = self.planets()[tenth.lord()]
+        signs_apart = tenth.astrological_signs_apart(tenth_lord.sign())
+
+        # check special pada rules
+        if signs_apart == 4 or signs_apart == 10:
+            return self.signs()[tenth.n_signs_forward(4)]
+        if signs_apart == 1 or signs_apart == 7:
+            return self.signs()[tenth.n_signs_forward(10)]
+        # otherwise signs_apart forward from lagna lord is the pada
+        lords_sign = self.signs()[tenth_lord.sign()]
+        return self.signs()[lords_sign.n_signs_forward(signs_apart)]
     
     def __str__(self):
         output = PrettyTable()

@@ -119,6 +119,12 @@ class JulianDay:
     def year(self):
         return int(self.datetime[0])
 
+    def month(self):
+        return int(self.datetime[1])
+
+    def day(self):
+        return int(self.datetime[2])
+
     def hour(self):
         return float(self.datetime[3])
 
