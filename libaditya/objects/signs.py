@@ -17,10 +17,11 @@
 
 import swisseph as swe
 from prettytable import PrettyTable
+from typing import Self
 
 from libaditya import constants as const
 
-from .planets import Planets
+from .planets import Planet, Planets
 from .cusps import Cusps
 from .context import EphContext
 
@@ -96,6 +97,27 @@ class Sign:
         other_sign is the sign number of the other sign
         """
         return ((other_sign - self.sign())%12)+1
+
+    def pada(self, lord: Planet) -> int:
+        """
+        find the pada of this sign
+        to do so, we need to know the sign of the lord
+        so the Planet class of the lord is passed here
+        realistically, one should use Varga.pada to find the (lagna) pada of that varga
+        and Varga.padas() to find all the padas
+        this is just to make the code for Varga.pada/upapada/padas nicer
+        return the sign as a number
+        """
+        signs_apart = self.astrological_signs_apart(lord.sign())
+
+        # check special pada rules
+        if signs_apart == 4 or signs_apart == 10:
+            return self.n_signs_forward(4)
+        if signs_apart == 1 or signs_apart == 7:
+            return self.n_signs_forward(10)
+        # otherwise signs_apart forward from lagna lord is the pada
+        return lord.n_signs_forward(signs_apart)
+
 
     def __str__(self):
         """

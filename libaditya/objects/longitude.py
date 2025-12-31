@@ -79,7 +79,7 @@ class Longitude:
     def real_in_sign_longitude(self) -> float:
         return self.real_longitude() % 30
 
-    def lord(self):
+    def lord(self) -> str:
         return const.lords[self.sign()]
 
     def signize(self):
@@ -109,6 +109,24 @@ class Longitude:
         used for temporary relationships
         """
         return (other_sign - self.sign())%12
+
+    def n_signs_forward(self,n) -> int:
+        """
+        go forward n signs
+        this means in the astrologically sense
+        so this sign is 1 and then we count
+        e.g., if this sign is sign 8 and we go forward 4 signs ->
+        8,9,10,11, so 4 signs forwards from Scorpio is Aquarius
+        so self.n_signs_forward(1) =  self
+
+        but in terms of sign numbers, we add n-1 to the sign number
+        and have to deal with how it wraps around
+        """
+        forward = self.sign() + (n-1)
+        if forward <= 12:
+            return forward
+        else:
+            return forward % 12
         
     def varga(self, amsha):
         """
