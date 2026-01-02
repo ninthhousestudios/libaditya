@@ -11,3 +11,24 @@ dependencies = [
 
 [tool.setuptools]
 py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["./"]
+include = ["libaditya", "pyphemeris"]
+
+[project.scripts]
+run-module= "pyphemeris.pyphemeris:main"
+
+[tool.uv.workspace]
+members = [
+    ".",
+    ".",
+]
+
+[tool.uv.sources]
+libaditya = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "libaditya",
+]

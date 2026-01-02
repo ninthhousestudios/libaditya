@@ -11,11 +11,19 @@ dependencies = [
     { name = "pyswisseph" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "libaditya" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "prettytable", specifier = ">=3.17.0" },
     { name = "pyswisseph", specifier = ">=2.10.3.2" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "libaditya", virtual = "." }]
 
 [[package]]
 name = "prettytable"
