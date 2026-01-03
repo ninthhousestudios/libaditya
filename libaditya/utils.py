@@ -128,7 +128,7 @@ def define_true_sidereal_hd_ayanamsa():
     """
     swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
-def dec2ymd(age):
+def dec2ymd(age: float) -> str:
     """
     take a floating point age (=number of years) and return a string
     "x years, y months, z days, a hours, b minutes, c seconds"
@@ -136,6 +136,7 @@ def dec2ymd(age):
     programming the details of that
     if any of these are zero, it does not print that
     """
+#    import pdb; pdb.set_trace()
     sign = ""
     if age < 0:
         sign = "-" 
@@ -163,6 +164,7 @@ def dec2ymd(age):
     if years == 0 and months == 0:
         # only compute hours and seconds if years and months are 0
         rem = dpart%1
+        dpart = rem*24
         hours = int(dpart)
         if not hours == 0:
             strlist.append(f"{hours} hours")

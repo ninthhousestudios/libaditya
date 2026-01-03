@@ -375,7 +375,7 @@ def print_dashas(args,context):
 
     if args.dasha_levels:
         # if the user wants only a specific level, print that
-        levels = [args.dasha_levels]
+        levels = [int(args.dasha_levels)]
     else:
         # otherwise, print levels 1-5
         levels = [1,2,3,4,5]
