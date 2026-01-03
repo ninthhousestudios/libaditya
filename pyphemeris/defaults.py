@@ -66,7 +66,6 @@ print_outer_planets = True
 hsys = "C"
 show_houses = 1
 lang = "eng"
-signs = []
 signize = 1  # default to printing longitudes as "degrees Sign", e.g., 10.3 Capricorn
 toround = [True, 3]  # whether to round longitudes, and if so, to how many decimals
 
