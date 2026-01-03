@@ -35,3 +35,7 @@ class Chart:
 
     def get_varga(self, amsha):
         return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context)
+
+    def jaimini(self):
+        from libaditya.charts import Jaimini
+        return Jaimini(context=self.context)

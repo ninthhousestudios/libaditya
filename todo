@@ -5,14 +5,14 @@ beginning of the vara, it will say the vara that is beginning, not the next one
 panchanga and monthly_panchanga
     somethings are still off
 
-fix printing of time left in -C option for current vimshottari dasha
-
 akriti yogas
     the ones needing all planets in 7 houses need work
     the same algorithm doesnt work for them as for the others
     actually, relook at all of them because all probably need some work
 
 validate vargas with parivritti calculations
+
+think about implementing non-parivritti vargas
 
 contain Names within Chart
     want each Chart to have a Names that is inherent to the Chart

@@ -154,7 +154,6 @@ def make_table(args,panch):
     return output.get_formatted_string(out_format=format,fields=["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"])
 
 
-
 def parse_date(date):
     return [int(x) for x in date.split('/')]
 
