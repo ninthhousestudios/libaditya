@@ -38,8 +38,9 @@ pip install -e .
 
 if using ```uv``` then:
 ```
-uv add . --dev
+uv venv
 source .venv/bin/activate
+uv pip install -e .
 ```
 
 ## Usage
