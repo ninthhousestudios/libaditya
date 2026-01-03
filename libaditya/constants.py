@@ -292,6 +292,10 @@ adityas = [
     "parjanya",
 ]
 
+sign_names = adityas
+
+names = planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas
+
 
 # template comment box
 

@@ -22,7 +22,7 @@ from typing import Self
 from libaditya import constants as const
 
 from .planets import Planet, Planets
-from .cusps import Cusps
+from .cusps import Cusp, Cusps
 from .context import EphContext
 
 class Sign:
@@ -306,11 +306,23 @@ class Signs:
         """
         return the Sign class of the lagna sign, i.e., whichever one has Cusp 1
         """
-        for sign in self.signs().values():
-            for cusp in sign.cusps():
-                if cusp.number() == 1:
-                    return sign
-
+        return self.where_is(1) # 1 means Cusp 1
+        
+    def where_is(self, object: int | str) -> Sign:
+        """
+        if object is int, a Cusp
+        if object is str, a Planet id
+        return the Sign class that has in it object
+        """
+        for sign in self:
+            if isinstance(object, str):
+                for planet in sign.planets():
+                    if object == planet.identity():
+                        return sign
+            if isinstance(object, int):
+                for cusp in sign.cusps():
+                    if object == cusp.number():
+                        return sign
 
     def most_objects(self):
         """

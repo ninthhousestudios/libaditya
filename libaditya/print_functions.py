@@ -79,3 +79,11 @@ def jaimini_karakas(karakas):
     output.add_row([planet.glyph() for planet in karakas])
 
     return output.get_string(fields=["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"])
+
+def print_padas(padas):
+    """
+    receive a dictionary of all the padas
+    key is the sign number, value is the Sign of the pada
+    """
+    for sign,pada in padas.items():
+        print(f"{sign.sign_name()} pada: {pada.sign_name()}") 

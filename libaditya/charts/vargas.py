@@ -100,24 +100,12 @@ class Varga:
 
         return Sign class of the pada
         """
-        # Sign class of the lagna
         lagna = self.signs().lagna()
-        # Planet class of the lord
-        lagna_lord = self.planets()[lagna.lord()]
-        signs_apart = lagna.astrological_signs_apart(lagna_lord.sign())
-
-        # check special pada rules
-        if signs_apart == 4 or signs_apart == 10:
-            return self.signs()[lagna.n_signs_forward(4)]
-        if signs_apart == 1 or signs_apart == 7:
-            return self.signs()[lagna.n_signs_forward(10)]
-        # otherwise signs_apart forward from lagna lord is the pada
-        lords_sign = self.signs()[lagna_lord.sign()]
-        return self.signs()[lords_sign.n_signs_forward(signs_apart)]
+        return self._get_pada(lagna)
 
     def upapada(self) -> Sign:
         """
-        the "foot" of the 10th house
+        the "foot" of the 10th cusp
         find how many signs the lagna lord is from the lagna
         from the lord that many signs is the pada
         if the lord is in the 4th or 10th from lagna, pada is in the 4th
@@ -125,22 +113,39 @@ class Varga:
 
         return Sign class of the pada
         """
-        # Sign class of the lagna
-        lagna = self.signs().lagna()
-        tenth = self.signs()[lagna.n_signs_forward(10)]
+        # we need to find the Sign that has the 10th cusp
+        tenth = self.signs().where_is(10) # 10 means the 10th cusp
+        return self._get_pada(tenth)
+
+    def padas(self):
+        """
+        return a dictionary of all the padas
+        key is the Sign, value is the Sign of the pada
+        """
+        padas = {}
+        for sign in self.signs():
+            padas[sign] = self._get_pada(sign)
+        return padas
+
+    def _get_pada(self, sign: Sign) -> Sign:
+        """
+        a generic helper to get the pada Sign of Sign sign
+        """
         # Planet class of the lord
-        tenth_lord = self.planets()[tenth.lord()]
-        signs_apart = tenth.astrological_signs_apart(tenth_lord.sign())
+        lord = self.planets()[sign.lord()]
+        signs_apart = sign.astrological_signs_apart(lord.sign())
 
         # check special pada rules
         if signs_apart == 4 or signs_apart == 10:
-            return self.signs()[tenth.n_signs_forward(4)]
+            return self.signs()[sign.n_signs_forward(4)]
         if signs_apart == 1 or signs_apart == 7:
-            return self.signs()[tenth.n_signs_forward(10)]
+            return self.signs()[sign.n_signs_forward(10)]
         # otherwise signs_apart forward from lagna lord is the pada
-        lords_sign = self.signs()[tenth_lord.sign()]
+        lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.n_signs_forward(signs_apart)]
-    
+
+
+
     def __str__(self):
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
@@ -168,50 +173,9 @@ class Varga:
 
     def __repr__(self):
         """
-        this is for every varga except the Rashi
-        the rashi is printed with nakshatras
-        the others are not
-
-        str prints a table with signs at the top
-        each object is printed under its sign
-        as "object in_sign_longitude"
-        the number of rows will be equal to the most objects that are in one sign
+        represents as a header with the chart information
         """
-        output = PrettyTable()
-        # list of the sign names
-        output.field_names= list([sign for sign in [self.context.names.sign_names]][0])
-
-        # get the sign with the most objects, so we know how many rows to print
-        rows = self._signs.most_objects()
-
-        for r in range(0,rows):
-            # construct the row
-            row = []
-            # could also write for s in self._signs.signs().values()
-            # and then replace self._signs[s]._objects by s._objects
-            for s in self._signs.keys():
-                if len(self._signs[s]._objects) > r:
-                    if not self.context.print_outer_planets and self._signs[s]._objects[r].object_type()=="Planet" and self._signs[s]._objects[r].is_outer_planet():
-                        row.append("")
-                        continue
-                    if self._signs[s]._objects[r].identity() == "Sun" and self.context.sysflg == const.HELIO:
-                        # dont print the Sun is using heliocentric coordinates
-                        row.append("")
-                        continue
-                    rowstr = f"{self._signs[s]._objects[r].name()}\n{self._signs[s]._objects[r].in_sign_longitude()}\n"
-                    # if this is a Rashi, print nakshatras, if that is specified
-                    # unless it is barycentric or heliocentric
-                    if isinstance(self,Rashi) and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):
-                        # print nakshatras or not
-                        if self.context.print_nakshatras:
-                            rowstr += f"{self._signs[s]._objects[r].nakshatra_name()}\n{self._signs[s]._objects[r].nakshatra().elapsed()}\n"
-                    row.append(rowstr) 
-                else:
-                    row.append("")
-            output.add_row(row)
-
-        ret = output.get_string(fields=list([sign for sign in [self.context.names.sign_names]][0]))
-        return self.mkheader() + ret
+        return self.mkheader()
 
     def draw_sun_by_sign_table(self):
         """

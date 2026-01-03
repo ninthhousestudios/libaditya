@@ -19,6 +19,7 @@ import codecs
 import configparser
 
 from libaditya import constants as const
+from libaditya.objects import JulianDay, Location, EphContext, Circle, Names
 
 
 def read_pyph(infile):
@@ -115,6 +116,16 @@ def read_chtk(infile):
 def read_chtk_location(infile):
     _, placename, _, _, _, _, lat, long, utcoff = read_chtk(infile)
     return placename, lat, long, utcoff
+
+
+# note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
+def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names=const.names):
+    name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
+    timeJD = JulianDay((year,month,day,timedec))
+    location = Location(lat, long, 0, placename, timeJD.mktimezone())
+    names = Names(*names)
+    return EphContext(timeJD,location,sysflg,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
+
 
 
 def lat_to_float(lat):

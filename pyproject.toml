@@ -22,7 +22,6 @@ run-module= "pyphemeris.pyphemeris:main"
 [tool.uv.workspace]
 members = [
     ".",
-    ".",
 ]
 
 [tool.uv.sources]
