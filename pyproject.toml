@@ -5,6 +5,7 @@ description = "Astrological calculation library for Adityas"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "guppy3",
     "prettytable>=3.17.0",
     "pyswisseph>=2.10.3.2",
 ]
@@ -26,6 +27,7 @@ members = [
 
 [tool.uv.sources]
 libaditya = { workspace = true }
+guppy3 = { git = "https://github.com/zhuyifei1999/guppy3" }
 
 [dependency-groups]
 dev = [

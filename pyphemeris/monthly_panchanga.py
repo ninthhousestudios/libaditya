@@ -21,6 +21,8 @@ import swisseph as swe
 import argparse
 from prettytable import PrettyTable
 from dataclasses import replace
+import tracemalloc
+tracemalloc.start()
 
 import libaditya.read as read
 from libaditya import constants as const
@@ -64,6 +66,12 @@ def main():
             print("Times at sunrise")
 
         print(panch_str)
+    snapshot = tracemalloc.take_snapshot()
+    top_stats = snapshot.statistics('lineno')
+
+    print("[ Top 10 ]")
+    for stat in top_stats[:10]:
+        print(stat)
 
 
 def make_table(args,panch):

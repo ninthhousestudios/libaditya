@@ -21,6 +21,8 @@ import swisseph as swe
 import argparse
 import os
 from dataclasses import replace
+#import tracemalloc
+#tracemalloc.start()
 
 
 from libaditya import constants as const
@@ -227,6 +229,13 @@ def main():
     # this function takes care of deciding to print them
     # so if there is nothing to print, it will not print anything
     print_dashas(args,context)
+
+#    snapshot = tracemalloc.take_snapshot()
+#    top_stats = snapshot.statistics('lineno')
+#
+#    print("[ Top 10 ]")
+#    for stat in top_stats[:10]:
+#        print(stat)
 # end main function
 
 def print_chart(name,args,context):
