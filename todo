@@ -2,15 +2,6 @@ fix next_vara
     it basically works. it is just that sometimes if it is literally at the
 beginning of the vara, it will say the vara that is beginning, not the next one
 
-this command wont make a chart, will make an ephemeris
-    pyph -j 2447681.328358219
-    if -j is precisely a new moon, then Planets.jaimini_karakas() will fail
-    this would probably also happen in two planets had the exact same longitude to 3 decimals
-    to sort, they are stored in a dictionary where longitude is the key, Planet is the value. so when two
-    planets are at the same longitude, the second planet gets erased in the dictionary. so on a new moon, there
-    will not be a Sun is the returned list, since it will have gotten erased by the Moon
-    so perhaps i need to switch these so i know the keys will be be unique, then at a test for equality and then decide what to do
-
 panchanga and monthly_panchanga
     moonrise and moonset seem to work appropriately when doing utc but not local time
     check against kala and maybe another source

@@ -62,6 +62,10 @@ class Planet(Longitude):
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
+    # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
+    def __lt__(self,p2: Self):
+        return self.real_in_sign_longitude() < p2.real_in_sign_longitude()
+
 
     def table_row(self):
         return (
@@ -1142,24 +1146,25 @@ class Planets:
 
         return ret
 
-    def jaimini_karakas(self):
+    def jaimini_karakas(self) -> [Self]:
         """
         return a list of Planet classes where the first element is the ak, the second the amk, etc.
         """
-        #import pdb; pdb.set_trace()
-        # we need to sort according to real longitude
+        # we need to sort according to real in sign longitude
         longs = {}
         for karaka in self.karakas().values():
             # the longitude is the key, the Planet the value
             # the following doesnt work if two planets have the same longitude!
-            longs[karaka.in_sign_longitude()] = karaka
+            # longs[karaka.in_sign_longitude()] = karaka
             # below is better, but still, what if two planets have same longitude? doesnt work then
-            # longs[karaka] = karaka.in_sign_longitude()
+            longs[karaka] = karaka.in_sign_longitude()
         ret = []
         # for long in sorted(longs.values())
-        for long in sorted(longs.keys()):
-            # append the Planet
-            ret.append(longs[long])
+        # sorted from least in sign longitude to to most
+        # sorted returns a list of Planet classes
+        karakas_reverse = sorted(longs.items())
+        # karakas_reverse is a list of tuples (Planet,in_sign_longitude)
+        ret = [karaka[0] for karaka in karakas_reverse]
         # sorted() gives from least to most, but karakas are from most to least
         return list(ret.__reversed__())
 

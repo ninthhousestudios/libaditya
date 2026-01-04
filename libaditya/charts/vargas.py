@@ -145,6 +145,33 @@ class Varga:
         lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.n_signs_forward(signs_apart)]
 
+    def first_source_strength(self) -> [Sign]:
+        """
+        calculate Jaiminis first source of strength for all signs
+        return a list of Sign with highest strength, then second-highest, etc.
+
+        does not work at all
+        """
+        import pdb; pdb.set_trace()
+        sortedls = []
+        for sign in self.signs():
+            # determine where in ls to put the sign
+            if sortedls == []:
+                sortedls.append(sign)
+                continue
+            # check against each sign in sortedls to determine where to place sign
+            for n,sorted_sign in enumerate(sortedls):
+                if sign.how_many_karakas() > 0 and sorted_sign.how_many_karakas() == 0:
+                    # this means sign is stronger than sorted_sign
+                    # so put sign at this index 'n', which will move sorted_sign down one
+                    sortedls.insert(n,sign)
+                    continue
+                if sign.how_many_karakas() > sorted_sign.how_many_karakas():
+                    # this means sign is stronger than sorted_sign
+                    # so put sign at this index 'n', which will move sorted_sign down one
+                    sortedls.insert(n,sign)
+                    continue
+            sortedls.append(sign)
 
 
     def __str__(self):
