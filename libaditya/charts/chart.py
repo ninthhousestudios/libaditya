@@ -14,6 +14,7 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
+from typing import Self
 
 from libaditya.objects import EphContext, Planets, Cusps
 from libaditya.charts import Rashi, Varga
@@ -22,7 +23,7 @@ class Chart:
 
     def __init__(self, context=EphContext()):
         self.context = context
-        self._Rashi = Rashi(Planets(self.context), Cusps(self.context), self.context)
+        self._Rashi = Rashi(Planets(self.context), Cusps(self.context), self.context, self)
 
     def __str__(self):
         return f"{self.rashi()}" 
@@ -34,7 +35,7 @@ class Chart:
         return self._Rashi
 
     def get_varga(self, amsha):
-        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context)
+        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
 
     def jaimini(self):
         from libaditya.charts import Jaimini

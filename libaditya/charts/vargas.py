@@ -29,7 +29,7 @@ from libaditya.objects import planets as pdict
 
 class Varga:
 
-    def __init__(self,amsha,planets,cusps,context):
+    def __init__(self,amsha,planets,cusps,context,chart):
         self._amsha = amsha
         self._rashi_planets = planets
         if amsha == 1:
@@ -41,6 +41,7 @@ class Varga:
         self._cusps = self.init_cusps(cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
         self.sysflgstr = const.sysflgstr(context.sysflg)
+        self.chart = chart
 
     def varga_name(self):
         match self._amsha:
@@ -153,10 +154,7 @@ class Varga:
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
         dignities = printf.dignity_table(self.planets().dignities(self._rashi_planets))
 
-        # print jaimini karakas in the rashi
-        jaimini_karakas = ""
-        if self._amsha == 1:
-            jaimini_karakas = printf.jaimini_karakas(self.planets().jaimini_karakas())
+        jaimini_karakas = printf.print_jaimini_karakas(self.chart.jaimini().karakas())
 
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()
@@ -229,12 +227,12 @@ class Varga:
 
 class Rashi(Varga):
     
-    def __init__(self,planets,cusps,context):
+    def __init__(self,planets,cusps,context,chart):
         self.context = context
         self._planets = planets
         self._cusps = cusps
         self._signs = Signs(self._planets,self._cusps,self.context)
-        super().__init__(amsha=1,planets=self._planets,cusps=self._cusps,context=self.context)
+        super().__init__(amsha=1,planets=self._planets,cusps=self._cusps,context=self.context,chart=chart)
 
     def planets(self):
         return self._planets

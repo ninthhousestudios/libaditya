@@ -67,7 +67,7 @@ def parashara_aspect_table_cusps(aspects):
 
     return output.get_string(fields=[" "] + [str(n) for n in range(1,13)])
 
-def jaimini_karakas(karakas):
+def print_jaimini_karakas(karakas):
     """
     return a PrettyTable string displaying the Jaimini karakas in karakas
     karakas is a list of Planet classes, with ak being element 0, amk element 1, etc.
