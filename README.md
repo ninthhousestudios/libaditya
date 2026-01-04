@@ -31,11 +31,6 @@ written with python 3.13
 git clone https://gitlab.com/j0sh4rp3/libaditya
 ```
 
-if using ```pip``` then:
-```
-pip install -e .
-```
-
 if using ```uv``` then:
 ```
 uv venv
