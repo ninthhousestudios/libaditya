@@ -26,6 +26,15 @@ from libaditya import utils
 from libaditya.objects import Sun, Moon, EphContext, JulianDay
 
 class Panchanga:
+    """
+    an independent object that is a function of EphContext
+    does everything related to panchanga
+
+    repr(Panchanga()) gives the concise information on the specific Panchanga
+
+    print(Panchanga()) gives all the information that is given in a row that might be printed in pyphemeris/monthly_panchanga.py
+    it actually prints to stdout rather than return a string...i should maybe change that to produce a string...
+    """
 
     def __init__(self, context=EphContext()):
         self.context = context
@@ -39,6 +48,10 @@ class Panchanga:
         self._yoga_raw, self._yoga_elapsed, self._yoga_remaining = self.init_yoga()
 
     def __str__(self):
+        """
+        print everything that is known about this Panchanga()
+        this prints directly...should change to return a string
+        """
         panch = "\nPanchanga\n\n"
         panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
         panch += f"\n{self.context.timeJD}\n"
@@ -53,13 +66,19 @@ class Panchanga:
         panch += f"Nakshatra: {self.nakshatra()}\n"
         panch += f"Yoga: {self.yoga()}\n"
 
-        return panch
+        print(panch)
+
+        self.print_addendum()
+
+        return ""
 
     def __repr__(self):
+        """
+        for the purposes of identification in a repl, or for just the basic panchanga information
+        """
         panch = "\nPanchanga\n"
         panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
         panch += f"\n{self.context.timeJD}\n"
-        panch += f"{self.context.timeJD.jd_number()}\n"
 
         panch += f"\nAbsolute tithi: {self.tithi()}\n"
         if self.tithi() > 15:

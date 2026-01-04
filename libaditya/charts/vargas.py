@@ -154,7 +154,7 @@ class Varga:
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
         dignities = printf.dignity_table(self.planets().dignities(self._rashi_planets))
 
-        jaimini_karakas = printf.print_jaimini_karakas(self.chart.jaimini().karakas())
+        jaimini_karakas = printf.jaimini_karakas_str(self.chart.jaimini().karakas())
 
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()

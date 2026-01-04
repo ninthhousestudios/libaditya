@@ -47,9 +47,6 @@ def cardinal_points(year) -> [JulianDay]:
     return the cardinal points of the year in order
     i.e., ascending equinox, northern solstice, descedending equinox, southern solstice
     """
-    # get january 1 of year
-    if isinstance(year,JulianDay):
-        year = year.year()
     year_jd = swe.julday(year,1,1,0)
     s=Sun(EphContext(timeJD=JulianDay(year_jd)))
     return [s.ingress(0), s.ingress(90), s.ingress(180), s.ingress(270)]
@@ -57,16 +54,20 @@ def cardinal_points(year) -> [JulianDay]:
 def print_cardinal_points(year: int | JulianDay) -> None:
     """
     print four cardinal points of year
+    year can be specified as either integer or JulianDay
     """
+    # get january 1 of year
+    if isinstance(year,JulianDay):
+        year = year.year()
     points = cardinal_points(year)
 
-    print(f"Cardinal points for {year.year()}\n")
+    print(f"Cardinal points for {year}\n")
 
     print("Ascending equinox:")
     print(points[0])
     print("Northern solstice:")
     print(points[1])
-    print("Descedning equinox:")
+    print("Descending equinox:")
     print(points[2])
     print("Southern solstice:")
     print(points[3])

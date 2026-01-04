@@ -65,7 +65,7 @@ class JulianDay:
 
     def __str__(self):
         if self.utcoffset == 0:
-            return f"{self.date()} at {self.time()}"
+            return f"{self.date()} at {self.time()}\n{self.jd}"
         else:
             return f"{self.date()} at {self.time()}\n{self.usrdate()} at {self.usrtime()}\n{self.jd}"
 

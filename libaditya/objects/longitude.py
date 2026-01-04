@@ -127,8 +127,19 @@ class Longitude:
             return forward
         else:
             return forward % 12
+
+    def varga(self,amsha):
+        """
+        get varga with amsha divisions
+        all positive numbers give parivritti varga of that number
+        other numbers are for special vargas (listed as implemented):
+            -2 Hora -> "the second half of a sign relates to the opposite sign"
+                    the first half of a sign is of that element, the second half of the other
+        """
+        if amsha > 0:
+            return self.parvritti_varga(amsha)
         
-    def varga(self, amsha):
+    def parvritti_varga(self, amsha):
         """
         return the "real" longitude for self.real_longitude() in
         varga number "division"

@@ -306,7 +306,7 @@ def print_ephemeris(context,to_show):
 
     p=Panchanga(context)
     print(p)
-    p.print_addendum()
+    #p.print_addendum() = Panchanga.__str__() includes panchanga addendum
     p.print_next_new_moon()
     p.print_next_full_moon()
 
@@ -321,7 +321,7 @@ def print_kala(context):
 
     p=Panchanga(context)
     print(p)
-    p.print_addendum()
+    #p.print_addendum() = Panchanga.__str__() includes panchanga addendum
     p.print_next_new_moon()
     p.print_next_full_moon()
 

@@ -1146,12 +1146,17 @@ class Planets:
         """
         return a list of Planet classes where the first element is the ak, the second the amk, etc.
         """
+        #import pdb; pdb.set_trace()
         # we need to sort according to real longitude
         longs = {}
         for karaka in self.karakas().values():
             # the longitude is the key, the Planet the value
+            # the following doesnt work if two planets have the same longitude!
             longs[karaka.in_sign_longitude()] = karaka
+            # below is better, but still, what if two planets have same longitude? doesnt work then
+            # longs[karaka] = karaka.in_sign_longitude()
         ret = []
+        # for long in sorted(longs.values())
         for long in sorted(longs.keys()):
             # append the Planet
             ret.append(longs[long])
