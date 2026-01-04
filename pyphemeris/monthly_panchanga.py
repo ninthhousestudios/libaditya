@@ -27,7 +27,7 @@ tracemalloc.start()
 import libaditya.read as read
 from libaditya import constants as const
 
-from libaditya.objects import JulianDay, EphContext, Location, Yamakoti
+from libaditya.objects import JulianDay, EphContext, Location, Yamakoti, Names
 from libaditya.calc import Panchanga
 
 def main():
@@ -35,6 +35,8 @@ def main():
 
     if args.location:
         lat, long, placename, utcoffset, timezone = parse_position(args.location)
+        if args.timezone_string:
+            timezone = args.timezone_string
         this_location = Location(lat,long,0,placename,timezone)
     else:
         utcoffset = 12
@@ -46,13 +48,17 @@ def main():
     if args.ayanamsa:
         ayanamsa = int(args.ayanamsa)
 
+    names = Names(*const.abbreviated_names)
+    if args.long_names:
+        names = Names(*const.names)
+
 
     for month in args.months:
         month, year = parse_date(month)
 
         # midnight on the first day of the month
         this_timeJD = JulianDay((year,month,1,0),utcoffset,timezone)
-        context = EphContext(timeJD=this_timeJD,location=this_location,ayanamsa=ayanamsa)
+        context = EphContext(timeJD=this_timeJD,location=this_location,ayanamsa=ayanamsa,names=names)
         panch = Panchanga(context)
 
         panch_str = make_table(args,panch)
@@ -123,7 +129,7 @@ def make_table(args,panch):
             row.append(f"{panch.next_vara().timeJD.time()}")
             row.append(f"{panch.nakshatra()}")
             row.append(f"{panch.next_nakshatra().timeJD.time()}")
-            row.append(f"{panch.tithi()} ({panch.tithi_type()})")
+            row.append(f"{panch.tithi()}")
             row.append(f"{panch.next_tithi().timeJD.time()}")
             row.append(f"{panch.karana()}")
             row.append(f"{panch.next_karana().timeJD.time()}")
@@ -138,7 +144,7 @@ def make_table(args,panch):
             row.append(f"{panch.next_vara().timeJD.usrtime()}")
             row.append(f"{panch.nakshatra()}")
             row.append(f"{panch.next_nakshatra().timeJD.usrtime()}")
-            row.append(f"{panch.tithi()} ({panch.tithi_type()})")
+            row.append(f"{panch.tithi()}")
             row.append(f"{panch.next_tithi().timeJD.usrtime()}")
             row.append(f"{panch.karana()}")
             row.append(f"{panch.next_karana().timeJD.usrtime()}")
@@ -183,16 +189,27 @@ def get_args():
         help="swiss epehemeris code for the ayanamsa you want; lahiri = 1; true citra = 27; dhruva gc equatorial = 98, ecliptic vedanga jyotisha = 99, equatorial vedanga jyotisha = 100",
     )
     parser.add_argument(
+        "-m",
+        "--midnight",
+        action="store_true",
+        help="display elements as they are as midnight; default is to display at the time of sunrise",
+    )
+    parser.add_argument(
         "-u",
         "--utc",
         action="store_true",
         help="display times as utc; default is local timezone specified in .chtk file",
     )
     parser.add_argument(
-        "-m",
-        "--midnight",
+        "-z",
+        "--timezone-string",
+        help="set a timezone-string to make local time output more readable; e.g., using -z EST will make the table more readable, rather than having it print \"UTC-5.0\""
+    )
+    parser.add_argument(
+        "-L",
+        "--long-names",
         action="store_true",
-        help="display elements as they are as midnight; default is to display at the time of sunrise",
+        help="default is to use 2-4 letter abbreviations of all names; use this flag to use the full name as given in libaditya/constants.py",
     )
     parser.add_argument(
         "-f",

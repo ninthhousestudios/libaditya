@@ -157,6 +157,25 @@ planet_names = [
     "Chiron",
 ]
 
+planet_names_abbreviated = [
+    "Su",
+    "Mo",
+    "Me",
+    "Ve",
+    "Ma",
+    "Ju",
+    "Sa",
+    "Ur",
+    "Ne",
+    "Pl",
+    "Ra",
+    "Ke",
+    [],
+    [],
+    "Ea",
+    "Ch",
+]
+
 zodiac = [
     "Aries",
     "Taurus",
@@ -171,8 +190,24 @@ zodiac = [
     "Aquarius",
     "Pisces",
 ]
+zodiac_abbreviated = [
+    "Ar",
+    "Ta",
+    "Ge",
+    "Ca",
+    "Le",
+    "Vi",
+    "Li",
+    "Sc",
+    "Sa",
+    "Ca",
+    "Aq",
+    "Pi",
+]
 
 tithis = ["nanda", "bhadra", "jāya", "ṛkta", "pūrṇa"]
+
+tithis_abbreviated = ["nan", "bha", "jāy", "ṛkt", "pūr"]
 
 karanas = [
     ["kiṃtughna", "bava"],
@@ -207,6 +242,39 @@ karanas = [
     ["catuṣpada", "nāga"],
 ]
 
+karanas_abbreviated = [
+    ["kiṃ", "bav"],
+    ["bal", "kau"],
+    ["tai", "gar"],
+    ["vaṇ", "viṣ"],
+    ["bav", "bal"],
+    ["kau", "tai"],
+    ["gar", "vaṇ"],
+    ["viṣ", "bav"],
+    ["bal", "kau"],
+    ["tai", "gar"],
+    ["vaṇ", "viṣ"],
+    ["bav", "bal"],
+    ["kau", "tai"],
+    ["gar", "vaṇ"],
+    ["viṣ", "bav"],
+    ["bal", "kau"],
+    ["tai", "gar"],
+    ["vaṇ", "viṣ"],
+    ["bav", "bal"],
+    ["kau", "tai"],
+    ["gar", "vaṇ"],
+    ["viṣ", "bav"],
+    ["bal", "kau"],
+    ["tai", "gar"],
+    ["vaṇ", "viṣ"],
+    ["bav", "bal"],
+    ["kau", "tai"],
+    ["gar", "vaṇ"],
+    ["viṣ", "śak"],
+    ["cat", "nāg"],
+]
+
 nakshatras = [
     "aśvinī",
     "bharaṇī",
@@ -237,6 +305,36 @@ nakshatras = [
     "revatī",
 ]
 
+nakshatras_abbreviated = [
+    "aśv",
+    "bha",
+    "kṛt",
+    "roh",
+    "mṛg",
+    "ārd",
+    "pun",
+    "puṣ",
+    "āśl",
+    "mghā",
+    "pph",
+    "uph",
+    "has",
+    "cit",
+    "svā",
+    "viś",
+    "anu",
+    "jye",
+    "mūl",
+    "pāṣ",
+    "uāṣ",
+    "śra",
+    "dhaā",
+    "śat",
+    "pdā",
+    "udā",
+    "rev",
+]
+
 varas = [
     "ravivāra",
     "somavāra",
@@ -245,6 +343,16 @@ varas = [
     "guruvāra",
     "śukravāra",
     "śanivāra",
+]
+
+varas_abbreviated = [
+    "rav",
+    "som",
+    "maṅ",
+    "budh",
+    "guru",
+    "śuk",
+    "śan",
 ]
 
 yogas = [
@@ -277,6 +385,36 @@ yogas = [
     "vaidhṛti",
 ]
 
+yogas_abbreviated = [
+    "viṣ",
+    "prī",
+    "āyu",
+    "sau",
+    "śobh",
+    "ati",
+    "suk",
+    "dhṛt",
+    "śul",
+    "gaṇḍ",
+    "vṛd",
+    "dhr",
+    "vyā",
+    "har",
+    "vaj",
+    "sid",
+    "vyā",
+    "var",
+    "par",
+    "śiv",
+    "sidd",
+    "sādh",
+    "śubh",
+    "śuk",
+    "bra",
+    "ind",
+    "vai",
+]
+
 adityas = [
     "dhātā",
     "aryamā",
@@ -292,9 +430,26 @@ adityas = [
     "parjanya",
 ]
 
+adityas_abbreviated = [
+    "dhā",
+    "ary",
+    "mit",
+    "var",
+    "ind",
+    "viv",
+    "tva",
+    "viṣ",
+    "aṃś",
+    "bha",
+    "pūṣ",
+    "par",
+]
+
 sign_names = adityas
+sign_names_abbreviated = adityas_abbreviated
 
 names = planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas
+abbreviated_names = planet_names_abbreviated,sign_names_abbreviated,nakshatras_abbreviated,tithis_abbreviated,karanas_abbreviated,varas_abbreviated,yogas_abbreviated
 
 
 # template comment box

@@ -4,7 +4,7 @@
 of what calculations are performed and how they are done. it includes a sample program
 called ```pyphemeris```.
 
-```pyphemeris``` ideally is meant to serve as an easily readable documentation on how
+```pyphemeris``` is meant to serve as an easily readable documentation on how
 the library works. Each function in libaditya itself is meant to return the requested
 data in a way that can then be presented in some way. Built into most ```libaditya```
 classes are functions to represent themselves as text through repr (__repr__) and

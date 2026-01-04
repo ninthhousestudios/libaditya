@@ -3,7 +3,8 @@ fix next_vara
 beginning of the vara, it will say the vara that is beginning, not the next one
 
 panchanga and monthly_panchanga
-    somethings are still off
+    moonrise and moonset seem to work appropriately when doing utc but not local time
+    check against kala and maybe another source
 
 akriti yogas
     the ones needing all planets in 7 houses need work
@@ -20,3 +21,7 @@ contain Names within Chart
 single one basically. seems like a lot of memory if they are copied all the
 time? especially considering performance of monthly_panchanga. write an altered
 version, then test of each works
+
+revamp .pyph file
+make interactive .pyph creator
+

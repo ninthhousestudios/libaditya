@@ -59,6 +59,7 @@ def main():
     else:
         lang_file = defaults.lang_file
 
+    global planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas 
     planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
 
 
@@ -278,7 +279,7 @@ def print_ephemeris(context,to_show):
                 print("\n")
                 continue
         if sys == const.DRAC:
-            dracon = replace(context,sysflg=sys,names=replace(names,sign_names=zodiac))
+            dracon = replace(context,sysflg=sys,names=replace(context.names,sign_names=zodiac))
             print(Planets(dracon))
             print("\n")
             print(Cusps(dracon))
