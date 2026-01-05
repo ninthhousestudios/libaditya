@@ -119,11 +119,10 @@ def read_chtk_location(infile):
 
 
 # note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
-def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names=const.names):
+def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names=Names()):
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
     timeJD = JulianDay((year,month,day,timedec))
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
-    names = Names(*names)
     return EphContext(timeJD,location,sysflg,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
 
 

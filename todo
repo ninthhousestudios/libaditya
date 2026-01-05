@@ -28,7 +28,8 @@ make interactive .pyph creator
 jaimini
     first source of strength
     this sort of works
-    test on irina-tweedies chart. if only returns a list of length 3, debug this
+    seems to always return 12 signs for the list now, so now need to fine tune
+        how it chooses
     argala
     vargas
 

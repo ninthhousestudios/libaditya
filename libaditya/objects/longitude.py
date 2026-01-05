@@ -110,14 +110,14 @@ class Longitude:
         """
         return (other_sign - self.sign())%12
 
-    def n_signs_forward(self,n) -> int:
+    def astrological_signs_foward(self,n) -> int:
         """
         go forward n signs
         this means in the astrologically sense
         so this sign is 1 and then we count
         e.g., if this sign is sign 8 and we go forward 4 signs ->
         8,9,10,11, so 4 signs forwards from Scorpio is Aquarius
-        so self.n_signs_forward(1) =  self
+        so self.astrological_signs_foward(1) =  self
 
         but in terms of sign numbers, we add n-1 to the sign number
         and have to deal with how it wraps around

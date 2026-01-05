@@ -225,10 +225,13 @@ class Planet(Longitude):
     def context(self):
         return self._context
 
-    def dignity(self, self_in_rashi, lord: Self) -> str:
+    def _dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
         i.e, the combined relationship, so we need to know where the lord is
+    
+        this doesnt really work like you might expect, since we need information from Planets
+        since a Planet cannot always determine its dignity on its own
 
         we need self_in_rashi to calculate temporary relationships based on the rashi chart
         so now we cant calculate temporary relationships based on the specific varga with this code
@@ -691,6 +694,9 @@ class Venus(Planet):
     def is_karaka(self):
         return True
 
+    def is_graha(self):
+        return True
+
     def is_ex(self):
         if self.sign() == 12:
             return True
@@ -747,6 +753,9 @@ class Jupiter(Planet):
         return False
 
     def is_karaka(self):
+        return True
+
+    def is_graha(self):
         return True
 
     def is_ex(self):
@@ -844,6 +853,9 @@ class Saturn(Planet):
         return False
 
     def is_karaka(self):
+        return True
+
+    def is_graha(self):
         return True
 
     def is_ex(self):
@@ -1182,7 +1194,7 @@ class Planets:
             temp_planets = self
         dignities = []
         for planet in self.karakas().values():
-            dignities.append(planet.dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
+            dignities.append(planet._dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 
     def parashara_aspects(self):

@@ -16,4 +16,3 @@ libaditya.egg-info
 dist
 tests.py
 bak.pyproject.toml
-charts/

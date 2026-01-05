@@ -138,12 +138,12 @@ class Varga:
 
         # check special pada rules
         if signs_apart == 4 or signs_apart == 10:
-            return self.signs()[sign.n_signs_forward(4)]
+            return self.signs()[sign.astrological_signs_foward(4)]
         if signs_apart == 1 or signs_apart == 7:
-            return self.signs()[sign.n_signs_forward(10)]
+            return self.signs()[sign.astrological_signs_foward(10)]
         # otherwise signs_apart forward from lagna lord is the pada
         lords_sign = self.signs()[lord.sign()]
-        return self.signs()[lords_sign.n_signs_forward(signs_apart)]
+        return self.signs()[lords_sign.astrological_signs_foward(signs_apart)]
 
     def jaimini_first_strength(self) -> [Sign]:
         """
@@ -207,6 +207,7 @@ class Varga:
                             # sign is the weaker, so append it at the end
                                 sortedls.append(sign)
                                 break
+                            # if not the last Planet in sortedls, test against the next Planet to see where to put it
                             continue
                         if modality_strength == 0:
                             # have same modality strength, check next level, which is the rashis of the lords of these rashis
@@ -397,17 +398,17 @@ class Rashi(Varga):
         akritis = []
         # these yogas are based on signs from the lagna
         lagna = self.signs().lagna()
-        second = self.signs()[lagna.n_signs_forward(2)].how_many_karakas()
-        third = self.signs()[lagna.n_signs_forward(3)].how_many_karakas()
-        fourth = self.signs()[lagna.n_signs_forward(4)].how_many_karakas()
-        fifth = self.signs()[lagna.n_signs_forward(5)].how_many_karakas()
-        sixth = self.signs()[lagna.n_signs_forward(6)].how_many_karakas()
-        seventh = self.signs()[lagna.n_signs_forward(7)].how_many_karakas()
-        eighth = self.signs()[lagna.n_signs_forward(8)].how_many_karakas()
-        ninth = self.signs()[lagna.n_signs_forward(9)].how_many_karakas()
-        tenth = self.signs()[lagna.n_signs_forward(10)].how_many_karakas()
-        eleventh = self.signs()[lagna.n_signs_forward(11)].how_many_karakas()
-        twelfth = self.signs()[lagna.n_signs_forward(12)].how_many_karakas()
+        second = self.signs()[lagna.astrological_signs_foward(2)].how_many_karakas()
+        third = self.signs()[lagna.astrological_signs_foward(3)].how_many_karakas()
+        fourth = self.signs()[lagna.astrological_signs_foward(4)].how_many_karakas()
+        fifth = self.signs()[lagna.astrological_signs_foward(5)].how_many_karakas()
+        sixth = self.signs()[lagna.astrological_signs_foward(6)].how_many_karakas()
+        seventh = self.signs()[lagna.astrological_signs_foward(7)].how_many_karakas()
+        eighth = self.signs()[lagna.astrological_signs_foward(8)].how_many_karakas()
+        ninth = self.signs()[lagna.astrological_signs_foward(9)].how_many_karakas()
+        tenth = self.signs()[lagna.astrological_signs_foward(10)].how_many_karakas()
+        eleventh = self.signs()[lagna.astrological_signs_foward(11)].how_many_karakas()
+        twelfth = self.signs()[lagna.astrological_signs_foward(12)].how_many_karakas()
         lagna = self.signs().lagna().how_many_karakas()
 
         # sringataka yoga; all planets in 1,5,9 from lagna
@@ -469,6 +470,7 @@ class Rashi(Varga):
         akritis.append(("Apoklima Vapi", to_move))
 
         # do vajra and yava yogas
+        # find out who is kruura and saumya and how to find out
 
 
         # yupa yoga; all planets in 1,2,3,4

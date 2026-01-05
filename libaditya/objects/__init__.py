@@ -11,7 +11,7 @@ from .location import Location, Yamakoti
 from .context import Circle, Names, EphContext
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
-from .signs import Sign, Signs
+from .signs import *
 
 from libaditya import constants as const
 

@@ -21,7 +21,7 @@ from typing import Self
 
 from libaditya import constants as const
 
-from .planets import Planet, Planets, karakas
+from .planets import *
 from .cusps import Cusp, Cusps
 from .context import EphContext
 
@@ -45,7 +45,11 @@ class Sign:
     def sign(self):
         return self._id
 
-    def planets(self):
+    def planets(self) -> [Planet]:
+        """
+        Planet is anything that can possibly be a Planet
+        return a list of Planets that are in this sign
+        """
         return self._planets
 
     def cusps(self):
@@ -57,6 +61,7 @@ class Sign:
     def karakas(self) -> [Planet]:
         """
         return a list of Planet classes of the karakas in this sign
+        karakas are sun-sat
         """
         ks = []
         for planet in self.planets():
@@ -66,7 +71,8 @@ class Sign:
 
     def grahas(self) -> [Planet]:
         """
-        return a list of Planet classes of the karakas in this sign
+        return a list of Planet classes of the grahas in this sign
+        grahas are sun-ketu
         """
         gs = []
         for planet in self.planets():
@@ -87,14 +93,14 @@ class Sign:
         else:
             return self._planets + self._cusps
 
-    def n_signs_forward(self,n) -> int:
+    def astrological_signs_forward(self,n) -> int:
         """
         go forward n signs
         this means in the astrologically sense
         so this sign is 1 and then we count
         e.g., if this sign is sign 8 and we go forward 4 signs ->
         8,9,10,11, so 4 signs forwards from Scorpio is Aquarius
-        so self.n_signs_forward(1) =  self
+        so self.astrological_signs_forward(1) =  self
 
         but in terms of sign numbers, we add n-1 to the sign number
         and have to deal with how it wraps around
