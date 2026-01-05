@@ -148,9 +148,9 @@ class Varga:
     def jaimini_first_strength(self) -> [Sign]:
         """
         calculate Jaiminis first source of strength for all signs
-        return a list of Sign with highest strength, then second-highest, etc.
+        return a list of Sign classes with highest strength, then second-highest, etc.
         """
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         sortedls = []
         for sign in self.signs():
             # determine where in ls to put the sign
@@ -170,7 +170,11 @@ class Varga:
                     break
                 if sign.how_many_karakas() < sorted_sign.how_many_karakas():
                     # sign is weaker, so go to next sorted_sign to check that
-                    continue
+                    if n == len(sortedls) - 1:
+                    # this is the last sign in what we have so far
+                    # sign is the weaker, so append it at the end
+                        sortedls.append(sign)
+                        break
                 if sign.how_many_karakas() == sorted_sign.how_many_karakas():
                     # need to find which planet has the highest dignitiy
                     has_higher = utils.compare_signs_dignities(sign,sorted_sign,self.dignities())
@@ -180,6 +184,12 @@ class Varga:
                         break
                     if has_higher == 2:
                         # sorted_sign is stronger, so continue this loop to check against the next sign
+                        # unless this is the last element, then append
+                        if n == len(sortedls) - 1:
+                        # this is the last sign in what we have so far
+                        # sign is the weaker, so append it at the end
+                            sortedls.append(sign)
+                            break
                         continue
                     if has_higher == 0:
                         # they have the same strength on this level, so we must check other things
@@ -191,6 +201,12 @@ class Varga:
                             sortedls.insert(n,sign)
                             break
                         if modality_strength == 2:
+                            # if this is the last element in sortedls, append sign since it is weaker
+                            if n == len(sortedls) - 1:
+                            # this is the last sign in what we have so far
+                            # sign is the weaker, so append it at the end
+                                sortedls.append(sign)
+                                break
                             continue
                         if modality_strength == 0:
                             # have same modality strength, check next level, which is the rashis of the lords of these rashis
@@ -220,6 +236,11 @@ class Varga:
                                 break
                             if signs_lords_rashi.how_many_karakas() < sorted_signs_lords_rashi.how_many_karakas():
                                 # sign is weaker, so go to next sorted_sign to check that
+                                if n == len(sortedls) - 1:
+                                # this is the last sign in what we have so far
+                                # sign is the weaker, so append it at the end
+                                    sortedls.append(sign)
+                                    break
                                 continue
                             if signs_lords_rashi.how_many_karakas() == sorted_signs_lords_rashi.how_many_karakas():
                                 # need to find which planet has the highest dignitiy
@@ -230,6 +251,11 @@ class Varga:
                                     break
                                 if has_higher == 2:
                                     # sorted_sign is stronger, so continue this loop to check against the next sign
+                                    if n == len(sortedls) - 1:
+                                    # this is the last sign in what we have so far
+                                    # sign is the weaker, so append it at the end
+                                        sortedls.append(sign)
+                                        break
                                     continue
                                 if has_higher == 0:
                                     # they have the same strength on this level, so we must check other things
@@ -241,6 +267,11 @@ class Varga:
                                         sortedls.insert(n,sign)
                                         break
                                     if modality_strength == 2:
+                                        if n == len(sortedls) - 1:
+                                        # this is the last sign in what we have so far
+                                        # sign is the weaker, so append it at the end
+                                            sortedls.append(sign)
+                                            break
                                         continue
                                     if modality_strength == 0:
                                         # 6. If both the lords are the same strong according to the above measures, 

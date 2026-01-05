@@ -353,7 +353,7 @@ class Signs:
             stmp[c.sign_index()][inner_index].append(c)
         retsigns={}
         for n, sign in enumerate(stmp):
-            retsigns[n+1] = Sign(n+1,planets=sign[0],cusps=sign[1],context=self.context)
+            retsigns[n+1] = signs[n+1](planets=sign[0],cusps=sign[1],context=self.context)
         return retsigns
 
     def signs(self):
