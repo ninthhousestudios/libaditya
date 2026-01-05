@@ -145,41 +145,69 @@ class Varga:
         lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.n_signs_forward(signs_apart)]
 
-    def first_source_strength(self) -> [Sign]:
+    def jaimini_first_strength(self) -> [Sign]:
         """
         calculate Jaiminis first source of strength for all signs
         return a list of Sign with highest strength, then second-highest, etc.
-
-        does not work at all
         """
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         sortedls = []
         for sign in self.signs():
             # determine where in ls to put the sign
             if sortedls == []:
                 sortedls.append(sign)
                 continue
-            # check against each sign in sortedls to determine where to place sign
+            if sign in sortedls:
+                continue
+            # determine if sign is stronger than sortedls[0]
+            # if so, put it at sortedls[0], if not check against sortedls[1] if it exists
             for n,sorted_sign in enumerate(sortedls):
                 if sign.how_many_karakas() > 0 and sorted_sign.how_many_karakas() == 0:
-                    # this means sign is stronger than sorted_sign
-                    # so put sign at this index 'n', which will move sorted_sign down one
+                    # sign is stronger than sorted_sign, so put sign at sorted_sign
                     sortedls.insert(n,sign)
-                    continue
+                    break # break out of this while loop and go back to the for loop, checking the next sign
                 if sign.how_many_karakas() > sorted_sign.how_many_karakas():
-                    # this means sign is stronger than sorted_sign
-                    # so put sign at this index 'n', which will move sorted_sign down one
                     sortedls.insert(n,sign)
-                    continue
-            sortedls.append(sign)
+                    break
+                if sign.how_many_karakas() == sorted_sign.how_many_karakas():
+                    # need to find which planet has the highest dignitiy
+                    has_higher = utils.compare_signs_dignities(sign,sorted_sign,self.dignities())
+                    if has_higher == 1:
+                        # sign is stronger
+                        sortedls.insert(n,sign)
+                        break
+                    if has_higher == 2:
+                        # sorted_sign is stronger, so continue this loop to check against the next sign
+                        continue
+                    if has_higher == 0:
+                        # they have the same strength on this level, so we must check other things
+                        # we have to check sign modalities to see which is stronger
+                        # dual strongest, fixed middle, moveable weakest
+                        modality_strength = utils.compare_signs_modalities(sign,sorted_sign)
+                        if modality_strength == 1:
+                            # sign is stronger
+                            sortedls.insert(n,sign)
+                            break
+                        if modality_strength == 2:
+                            continue
+                        if modality_strength == 0:
+                            # have same modality strength, check next level
+                            print(f"Checking this with the lords now")
+                            sortedls.append(sign)
+                            break
+                # if it is not stronger than any, it is weaker than all, so it goes at the end
+        return sortedls
 
+
+    def dignities(self):
+        return self.planets().dignities(self._rashi_planets)
 
     def __str__(self):
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
-        dignities = printf.dignity_table(self.planets().dignities(self._rashi_planets))
+        dignities = printf.dignity_table(self.dignities())
 
         jaimini_karakas = printf.jaimini_karakas_str(self.chart.jaimini().karakas())
 

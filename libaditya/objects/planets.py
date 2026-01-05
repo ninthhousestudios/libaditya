@@ -102,6 +102,35 @@ class Planet(Longitude):
     def swe_id(self):
         return self.pnumber
 
+    def list_index(self):
+        match self.pnumber:
+            case swe.SUN:
+                return 0
+            case swe.MOON:
+                return 1
+            case swe.MARS:
+                return 2
+            case swe.MERCURY:
+                return 3
+            case swe.JUPITER:
+                return 4
+            case swe.VENUS:
+                return 5
+            case swe.SATURN:
+                return 6
+            case swe.RAHU:
+                return 7
+            case swe.KETU:
+                return 8
+            case swe.URANUS:
+                return 9
+            case swe.NEPTUNE:
+                return 10
+            case swe.PLUTO:
+                return 11
+            case swe.CHIRON:
+                return 12
+
     def system_name(self) -> str:
         return self.sysflgstr
 
@@ -297,6 +326,9 @@ class Sun(Planet):
     def glyph(self):
         return "⨀"
 
+    def type(self):
+        return Sun
+
     def sunrise_yamakoti(self) -> JulianDay:
         return self.riseset(swe.CALC_RISE, Yamakoti)
 
@@ -325,7 +357,7 @@ class Sun(Planet):
     def is_karaka(self):
         return True
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
     def ingress(self, next_long) -> Self:
@@ -414,6 +446,9 @@ class Moon(Planet):
     def glyph(self):
         return "☾"
 
+    def type(self):
+        return Moon
+
     def lowest_daily_speed(self) -> float:
         """
         return a speed lower than the lowest speed for this planet
@@ -439,7 +474,7 @@ class Moon(Planet):
     def is_karaka(self):
         return True
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
     def is_ex(self):
@@ -490,13 +525,16 @@ class Mars(Planet):
     def glyph(self):
         return "♂"
 
+    def type(self):
+        return Mars
+
     def is_outer_planet(self):
         return False
 
     def is_karaka(self):
         return True
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
     def is_ex(self):
@@ -584,13 +622,16 @@ class Mercury(Planet):
     def glyph(self):
         return "☿"
 
+    def type(self):
+        return Mercury
+
     def is_outer_planet(self):
         return False
 
     def is_karaka(self):
         return True
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
     def is_ex(self):
@@ -640,6 +681,9 @@ class Venus(Planet):
 
     def glyph(self):
         return "♀"
+
+    def type(self):
+        return Venus
 
     def is_outer_planet(self):
         return False
@@ -695,6 +739,9 @@ class Jupiter(Planet):
 
     def glyph(self):
         return "♃"
+
+    def type(self):
+        return Jupiter
 
     def is_outer_planet(self):
         return False
@@ -790,6 +837,9 @@ class Saturn(Planet):
     def glyph(self):
         return "♄"
 
+    def type(self):
+        return Saturn
+
     def is_outer_planet(self):
         return False
 
@@ -883,13 +933,16 @@ class Rahu(Planet):
     def glyph(self):
         return "☊"
 
+    def type(self):
+        return Rahu
+
     def is_outer_planet(self):
         return False
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
 
@@ -903,13 +956,16 @@ class Ketu(Planet):
     def glyph(self):
         return "☋"
 
+    def type(self):
+        return Ketu
+
     def is_outer_planet(self):
         return False
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return True
 
 
@@ -921,13 +977,16 @@ class Uranus(Planet):
     def glyph(self):
         return "⛢"
 
+    def type(self):
+        return Uranus
+
     def is_outer_planet(self):
         return True
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return False
 
 class Neptune(Planet):
@@ -939,13 +998,16 @@ class Neptune(Planet):
     def glyph(self):
         return "♆"
 
+    def type(self):
+        return Neptune
+
     def is_outer_planet(self):
         return True
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return False
 
 
@@ -958,13 +1020,16 @@ class Pluto(Planet):
     def glyph(self):
         return "♇"
 
+    def type(self):
+        return Pluto
+
     def is_outer_planet(self):
         return True
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return False
 
 class Earth(Planet):
@@ -975,13 +1040,16 @@ class Earth(Planet):
     def glyph(self):
         return "⨁"
 
+    def type(self):
+        return Earth
+
     def is_outer_planet(self):
         return False
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return False
 
 class Chiron(Planet):
@@ -991,13 +1059,16 @@ class Chiron(Planet):
         super().__init__(swe.CHIRON, context, longitude)
         self._id = "Chiron"
 
+    def type(self):
+        return Chiron
+
     def is_outer_planet(self):
         return True
 
     def is_karaka(self):
         return False
 
-    def is_inner_planet(self):
+    def is_graha(self):
         return False
 
 planets = {
@@ -1095,7 +1166,7 @@ class Planets:
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
 
-    def dignities(self, temp_planets=None):
+    def dignities(self, temp_planets=None) -> [str]:
         """
         return a list of dignities in the natural order
         Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
@@ -1365,3 +1436,5 @@ planet_dict = {
     "karakas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn],
     "outer_planets": [Uranus, Neptune, Pluto]
 }
+
+karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]

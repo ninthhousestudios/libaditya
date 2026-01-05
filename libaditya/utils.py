@@ -222,3 +222,92 @@ def mk_dasha_lord(dlist):
         else:
             lordstr += const.vimshottari_dashas[dlist[lord]][0] + "/"
     return lordstr
+
+def compare_signs_dignities(sign1,sign2,dignities: [str]) -> int:
+    """
+    find which sign has the highest dignity in it
+    dignities of the list of planetary dignities returned by Planets.dignities()
+    0 means they both have equal highest dignity
+    1 means sign1 has the highest dignity
+    2 means sign2 has the highest dignity
+    """
+    s1digs = []
+    for planet in sign1.karakas():
+        s1digs.append(dignities[planet.list_index()])
+    s2digs = []
+    for planet in sign2.karakas():
+        s2digs.append(dignities[planet.list_index()])
+    if s1digs == [] and s2digs == []:
+        return 0
+    if "EX" in s1digs and "EX" in s2digs:
+        return 0
+    if "EX" in s1digs and not "EX" in s2digs:
+        return 1
+    if not "EX" in s1digs and "EX" in s2digs:
+        return 2
+    if "MT" in s1digs and "MT" in s2digs:
+        return 0
+    if "MT" in s1digs and not "MT" in s2digs:
+        return 1
+    if not "MT" in s1digs and "MT" in s2digs:
+        return 2
+    if "OH" in s1digs and "OH" in s2digs:
+        return 0
+    if "OH" in s1digs and not "OH" in s2digs:
+        return 1
+    if not "OH" in s1digs and "OH" in s2digs:
+        return 2
+    if "GF" in s1digs and "GF" in s2digs:
+        return 0
+    if "GF" in s1digs and not "GF" in s2digs:
+        return 1
+    if not "GF" in s1digs and "GF" in s2digs:
+        return 2
+    if "F" in s1digs and "F" in s2digs:
+        return 0
+    if "F" in s1digs and not "F" in s2digs:
+        return 1
+    if not "F" in s1digs and "F" in s2digs:
+        return 2
+    if "E" in s1digs and "E" in s2digs:
+        return 0
+    if "E" in s1digs and not "E" in s2digs:
+        return 1
+    if not "E" in s1digs and "E" in s2digs:
+        return 2
+    if "GE" in s1digs and "GE" in s2digs:
+        return 0
+    if "GE" in s1digs and not "GE" in s2digs:
+        return 1
+    if not "GE" in s1digs and "GE" in s2digs:
+        return 2
+    if "DB" in s1digs and "DB" in s2digs:
+        return 0
+    if "DB" in s1digs and not "DB" in s2digs:
+        return 1
+    if not "DB" in s1digs and "DB" in s2digs:
+        return 2
+
+def compare_signs_modalities(sign1,sign2) -> int:
+    """
+    compare the modalities of sign1 and sign2, both Sign classes
+    return which is stronger
+    0 means equal strength
+    1 means sign1 is stronger
+    2 means sign2 is stronger
+    """
+    if sign1.modality() == sign2.modality():
+        return 0
+    match (sign1.modality(),sign2.modality()):
+        case ("Dual", "Fixed"):
+            return 1
+        case ("Dual", "Moveable"):
+            return 1
+        case ("Fixed", "Dual"):
+            return 2
+        case ("Fixed", "Moveable"):
+            return 1
+        case ("Moveable", "Dual"):
+            return 2
+        case ("Moveable", "Fixed"):
+            return 2

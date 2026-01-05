@@ -21,7 +21,7 @@ from typing import Self
 
 from libaditya import constants as const
 
-from .planets import Planet, Planets
+from .planets import Planet, Planets, karakas
 from .cusps import Cusp, Cusps
 from .context import EphContext
 
@@ -54,15 +54,32 @@ class Sign:
     def lord(self) -> str:
         return const.lords[self.sign()]
 
+    def karakas(self) -> [Planet]:
+        """
+        return a list of Planet classes of the karakas in this sign
+        """
+        ks = []
+        for planet in self.planets():
+            if planet.is_karaka():
+                ks.append(planet)
+        return ks
+
+    def grahas(self) -> [Planet]:
+        """
+        return a list of Planet classes of the karakas in this sign
+        """
+        gs = []
+        for planet in self.planets():
+            if planet.is_graha():
+                gs.append(planet)
+        return gs
+
+
     def how_many_objects(self):
         return len(self._objects)
 
     def how_many_karakas(self):
-        n = 0
-        for planet in self.planets():
-            if planet.is_karaka():
-                n+=1
-        return n
+        return len(self.karakas())
 
     def init_objects(self):
         if self.context.sysflg == const.BARY or self.context.sysflg == const.HELIO:
@@ -97,6 +114,18 @@ class Sign:
         other_sign is the sign number of the other sign
         """
         return ((other_sign - self.sign())%12)+1
+
+    def modality(self):
+        """
+        return modality "Moveable", "Fixed", "Dual"
+        """
+        match self.sign():
+            case 1 | 4 | 7 | 10:
+                return "Moveable"
+            case 2 | 5 | 8 | 11:
+                return "Fixed"
+            case 3 | 6 | 9 | 12:
+                return "Dual"
 
     def __str__(self):
         """
@@ -159,27 +188,40 @@ class One(Sign):
     def __init__(self,planets,cusps,context):
         super().__init__(1,planets,cusps,context)
 
+    def modality(self) -> str:
+        return "Moveable"
+
 class Two(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(2,planets,cusps,context)
+
+    def modality(self) -> str:
+        return "Fixed"
 
 class Three(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(3,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Dual"
 
 class Four(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(4,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Moveable"
 
 class Five(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(5,planets,cusps,context)
+
+    def modality(self) -> str:
+        return "Fixed"
         
 
 class Six(Sign):
@@ -187,41 +229,56 @@ class Six(Sign):
     def __init__(self,planets,cusps,context):
         super().__init__(6,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Dual"
 
 class Seven(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(7,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Moveable"
 
 class Eight(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(8,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Fixed"
 
 class Nine(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(9,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Dual"
 
 class Ten(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(10,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Moveable"
 
 class Eleven(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(11,planets,cusps,context)
         
+    def modality(self) -> str:
+        return "Fixed"
 
 class Twelve(Sign):
 
     def __init__(self,planets,cusps,context):
         super().__init__(12,planets,cusps,context)
+
+    def modality(self) -> str:
+        return "Dual"
         
 
 signs = {
