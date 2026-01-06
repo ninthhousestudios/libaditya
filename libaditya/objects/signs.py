@@ -104,12 +104,30 @@ class Sign:
 
         but in terms of sign numbers, we add n-1 to the sign number
         and have to deal with how it wraps around
+
+
         """
+        if n == 0 or  n == -1:
+            return self.sign()
+        if n < 0:
+            # go backwards
+            almost = (self.sign() - (abs(n)-1))%12
+            if almost == 0:
+                return 12
+            else:
+                return almost
         forward = self.sign() + (n-1)
-        if forward <= 12:
+        if forward > 0 and forward <= 12:
             return forward
         else:
             return forward % 12
+
+    def astrological_signs_backward(self, n: int):
+        """
+        go backwards n signs in the astrological sense
+        this just calls astrological_signs_forward with -n
+        """
+        return self.astrological_signs_forward(-n)
         
     def astrological_signs_apart(self, other_sign: int) -> int:
         """
@@ -315,11 +333,14 @@ class Signs:
     def __iter__(self):
         return iter(self._signs.values())
 
-    def __getitem__(self,n):
+    def __getitem__(self,n: int) -> Self:
         """
         s=Signs(), then you can write
         then you can write s[key] with key between 1 and 12 inclusive
+        modified so you can use negatives to go backwards
+        astrologal then means that
         """
+
         return self._signs[n]
 
     def keys(self):

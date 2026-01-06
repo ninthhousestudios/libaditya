@@ -145,6 +145,16 @@ class Varga:
         lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.astrological_signs_foward(signs_apart)]
 
+    def dignities(self):
+        return self.planets().dignities(self._rashi_planets)
+
+    def argala(self, rashi: Sign):
+        """
+        get argala to rashi in this varga
+        """
+        pass
+
+
     def jaimini_first_strength(self) -> [Sign]:
         """
         calculate Jaiminis first source of strength for all signs
@@ -286,9 +296,6 @@ class Varga:
         return sortedls
 
 
-    def dignities(self):
-        return self.planets().dignities(self._rashi_planets)
-
     def __str__(self):
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
@@ -384,6 +391,11 @@ class Rashi(Varga):
 
     def signs(self):
         return self._signs
+
+    def argala(self):
+        argala_first = super().argala(self.signs().lagna())
+        argala_seventh = super().argala(self.signs().lagna().astrological_signs_forward(7))
+        print(f"combining argala given by {argala_first=} and {argala_seventh=}")
 
     def akriti_yogas(self):
         """

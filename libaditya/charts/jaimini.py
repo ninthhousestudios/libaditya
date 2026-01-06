@@ -49,3 +49,12 @@ class Jaimini(Chart):
             return self.rashi().jaimini_first_strength()
         else:
             return self.get_varga(amsha).jaimini_first_strength()
+
+    def argala(self):
+        """
+        determine the argala in this chart
+        this means combined argala to 1st and 7th houses in the Rashi chart
+
+        the deepest python function for argala will be able to do it to any sign in any varga
+        """
+        return self.rashi().argala()
