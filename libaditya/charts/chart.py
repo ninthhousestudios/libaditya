@@ -34,7 +34,13 @@ class Chart:
     def rashi(self):
         return self._Rashi
 
-    def get_varga(self, amsha):
+    def get_varga(self, amsha: int):
+        """
+        use Chart.rashi() for the rashi() chart
+        you must pass an integer to get_varga
+        Chart.get_varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
+        is different in some respects...not sure if they should be or not, e.g., wrt to argala
+        """
         return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
 
     def jaimini(self):

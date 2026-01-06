@@ -23,6 +23,7 @@ that can be computed with libaditya
 from prettytable import PrettyTable
 
 from libaditya import constants as const
+from libaditya.objects import Planet
 
 
 def dignity_table(dignities):
@@ -87,3 +88,30 @@ def print_padas(padas):
     """
     for sign,pada in padas.items():
         print(f"{sign.sign_name()} pada: {pada.sign_name()}") 
+
+def print_jaimini_first_strength(fs: [int]) -> None:
+    """
+    print jaiminis first strength
+    """
+    for n,s in enumerate(fs):
+        print(f"{n+1}\t{s.sign()}")
+
+def print_jaimini_argala(result: [Planet]):
+    """
+    result is a list of Planet-s returned by Varga().argala()
+    the result of argala to one specific house
+    Rashi().argala() returns the results of argala to the signs of the lagna and 7th cusp; not currently printed by this function
+
+    result[0] = planets forming argala
+    result[1] = malefics forming malefic argala to the 3rd
+    result[2] = planets having their argala obstructed
+    """
+    print(f"argala to the rashi:")
+    for planet in result[0]:
+        print(planet.identity())
+    print(f"\nmalefics causing argala from/to the third:")
+    for planet in result[1]:
+        print(planet.identity())
+    print(f"\nobstructed planets from the rashi:")
+    for planet in result[2]:
+        print(planet.identity())

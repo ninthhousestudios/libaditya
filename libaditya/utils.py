@@ -288,6 +288,59 @@ def compare_signs_dignities(sign1,sign2,dignities: [str]) -> int:
     if not "DB" in s1digs and "DB" in s2digs:
         return 2
 
+def compare_planets_dignities(planet1,planet2) -> int:
+    """
+    compare the dignities of these two planets
+    0 for equal
+    1 for planet1 has higher dignity
+    2 for planet2 has higher dignity
+    """
+    match planet1,planet2:
+        case "EX", "EX":
+            return 0
+        case "EX", _:
+            return 1
+        case _, "EX":
+            return 2
+        case "MT", "MT":
+            return 0
+        case "MT", _:
+            return 1
+        case _, "MT":
+            return 2
+        case "GF", "GF":
+            return 0
+        case "GF", _:
+            return 1
+        case _, "GF":
+            return 2
+        case "F", "F":
+            return 0
+        case "F", _:
+            return 1
+        case _, "F":
+            return 2
+        case "E", "E":
+            return 0
+        case "E", _:
+            return 1
+        case _, "E":
+            return 2
+        case "GE", "GE":
+            return 0
+        case "GE", _:
+            return 1
+        case _, "GE":
+            return 2
+        case "DB", "DB":
+            return 0
+        case "DB", _:
+            return 1
+        case _, "DB":
+            return 2
+
+
+
 def compare_signs_modalities(sign1,sign2) -> int:
     """
     compare the modalities of sign1 and sign2, both Sign classes

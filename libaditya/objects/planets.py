@@ -363,6 +363,12 @@ class Sun(Planet):
     def is_graha(self):
         return True
 
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Malefic"
+
     def ingress(self, next_long) -> Self:
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
@@ -442,15 +448,19 @@ class Sun(Planet):
 
 
 class Moon(Planet):
-    def __init__(self, context=EphContext(), longitude=None):
+    def __init__(self, context=EphContext(), longitude=None, nature=None):
         super().__init__(swe.MOON, context, longitude)
         self._id = "Moon"
+        self._nature = nature
 
     def glyph(self):
         return "☾"
 
     def type(self):
         return Moon
+
+    def nature(self):
+        return  self._nature
 
     def lowest_daily_speed(self) -> float:
         """
@@ -530,6 +540,12 @@ class Mars(Planet):
 
     def type(self):
         return Mars
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Malefic"
 
     def is_outer_planet(self):
         return False
@@ -628,6 +644,12 @@ class Mercury(Planet):
     def type(self):
         return Mercury
 
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Benefic"
+
     def is_outer_planet(self):
         return False
 
@@ -687,6 +709,12 @@ class Venus(Planet):
 
     def type(self):
         return Venus
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Benefic"
 
     def is_outer_planet(self):
         return False
@@ -748,6 +776,12 @@ class Jupiter(Planet):
 
     def type(self):
         return Jupiter
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Benefic"
 
     def is_outer_planet(self):
         return False
@@ -849,6 +883,12 @@ class Saturn(Planet):
     def type(self):
         return Saturn
 
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Malefic"
+
     def is_outer_planet(self):
         return False
 
@@ -948,6 +988,12 @@ class Rahu(Planet):
     def type(self):
         return Rahu
 
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Malefic"
+
     def is_outer_planet(self):
         return False
 
@@ -970,6 +1016,12 @@ class Ketu(Planet):
 
     def type(self):
         return Ketu
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Malefic"
 
     def is_outer_planet(self):
         return False
@@ -1101,7 +1153,7 @@ planets = {
 
 class Planets:
 
-    def __init__(self, context=EphContext(), planets=None):
+    def __init__(self, context=EphContext(), planets=None, amsha=1):
         """
         initialize Planets
         planets default is for vargas > 1, which will pass
@@ -1172,6 +1224,9 @@ class Planets:
 
         for p,v in planets.items():
             ret[p] = v(self.context)
+
+        moon_nature = "Benefic" if ret["Sun"].degrees_apart(ret["Moon"].real_longitude()) <= 180 else "Malefic"
+        ret["Moon"] = Moon(self.context,nature=moon_nature)
 
         return ret
 

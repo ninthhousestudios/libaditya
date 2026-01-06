@@ -87,6 +87,9 @@ class Sign:
     def how_many_karakas(self):
         return len(self.karakas())
 
+    def how_many_grahas(self):
+        return len(self.grahas())
+
     def init_objects(self):
         if self.context.sysflg == const.BARY or self.context.sysflg == const.HELIO:
             return self._planets
@@ -407,6 +410,19 @@ class Signs:
                 for cusp in sign.cusps():
                     if object == cusp.number():
                         return sign
+
+    def get_signs_of(self, planet: Planet | str) -> [Sign]:
+        """
+        get the signs of Planet, either a Planet class or a Planet.identity
+        """
+        ret = []
+        # find the lord string of the Planet
+        if isinstance(planet, Planet):
+            planet = planet.identity()
+        for sign in self:
+            if sign.lord() == planet:
+                ret.append(sign)
+        return ret
 
     def most_objects(self):
         """

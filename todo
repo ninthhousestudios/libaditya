@@ -6,6 +6,10 @@ panchanga and monthly_panchanga
     moonrise and moonset seem to work appropriately when doing utc but not local time
     check against kala and maybe another source
 
+should i add a recursive Varga somewhere? right now, Planets of a Varga dont
+know they they belong to a certain varga. maybe i could just indicate that,
+rather than passing itself as i did with Chart and Jaimini
+
 akriti yogas
     the ones needing all planets in 7 houses need work
     the same algorithm doesnt work for them as for the others
