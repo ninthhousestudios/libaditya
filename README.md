@@ -86,3 +86,20 @@ You can read a .chtk file into the repl like this:
 ```
 
 this returns an ```EphContext``` that you can then use to instantiated a Chart.
+
+An ```EphContext``` also includes all the options for the chart.
+
+### Sidereal
+
+Sidereal is possible, but here is how you must do it to get meaningful results:
+three options must be set:
+
+```
+sysflg=const.SID     # indicates sidereal ecliptic
+ayanamsa=98          # this shouldnt be the default, but it is; Lahiri - 1; True Citra - 27; and
+                     # swisseph ayanamsa
+circle=Circle.ZODIAC # circle starts where the zodiac starts; with Circle.ADITYA, it
+                     # doesnt start where the "zodiac" starts, i.e., ecltipic longitude doesn't line up to
+                     # where the zodiac starts; if you dont change this, it might be
+                     # confusing!
+```

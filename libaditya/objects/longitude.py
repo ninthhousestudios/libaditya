@@ -26,6 +26,7 @@ class Longitude:
 
     def __init__(self, longitude, context=EphContext()):
         self.context = context
+        self.jd = self.context.timeJD.jd_number()
         self._longitude = longitude 
         self.index = int((self._longitude % 360) / 30)
         self.rahu = self.get_rahu()
@@ -42,7 +43,9 @@ class Longitude:
 
     def longitude(self) -> float | str:
         if self.context.sysflg == const.DRAC:
+            #import pdb; pdb.set_trace()
             self._longitude = (self._longitude - self.rahu)%360
+            # return Longitude((self._longitude - self.rahu)%360,self.context)
         if self.context.signize:
             return self.signize()
         else:
@@ -63,7 +66,10 @@ class Longitude:
     def sign_name(self) -> str:
         return self.context.names.sign_names[self.sign_index()]
 
-    def get_rahu(self):
+    def get_rahu(self) -> float:
+        """
+        return float of rahus "real_longitude"
+        """
         if self.context.sysflg == const.DRAC:
             return swe.calc_ut(self.jd,swe.TRUE_NODE)[0][0] 
         else:
