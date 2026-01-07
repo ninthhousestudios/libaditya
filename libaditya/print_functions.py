@@ -36,6 +36,9 @@ def dignity_table(dignities):
     # slice removes last \n
     return ret[:-1]
 
+def print_dignity_table(dignites):
+    print(dignity_table(dignites))
+
 def parashara_aspect_table_planets(aspects):
     """
     aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects

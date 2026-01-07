@@ -96,10 +96,109 @@ three options must be set:
 
 ```
 sysflg=const.SID     # indicates sidereal ecliptic
-ayanamsa=98          # this shouldnt be the default, but it is; Lahiri - 1; True Citra - 27; and
+ayanamsa=98          # this shouldnt be the default, but it is; Lahiri - 1; True Citra - 27; any
                      # swisseph ayanamsa
 circle=Circle.ZODIAC # circle starts where the zodiac starts; with Circle.ADITYA, it
                      # doesnt start where the "zodiac" starts, i.e., ecltipic longitude doesn't line up to
                      # where the zodiac starts; if you dont change this, it might be
                      # confusing!
 ```
+
+### Read a .chtk file
+
+this is the most useful for getting birth information without needing to do it manually
+
+```
+jhcontext = read.chtk_to_context("josh.cht")
+jhchart = Chart(jdcontext)
+```
+
+to change any of the options, do like this:
+
+```
+jhsiderealcontext =
+replace(jhcontext,sysflg=const.SID,ayanamsa=27,circle=Circle.ZODIAC,print_outer_planets=False)
+```
+
+this keeps everything else the same same, and changes what you specified to what you
+specified
+
+```
+jhdsidchart = Chart(jhsiderealcontext)
+```
+
+using tab completion is a good way to explore:
+type
+
+```>>> jhchart.```
+
+then tab twice, and you will see a list:
+```
+>>> jhchart.
+jhchart.context     jhchart.get_varga(  jhchart.jaimini()   jhchart.rashi()  
+```
+
+a Chart is basically a collection of Vargas. The Rashi is the most important. You can
+access it through Chart.rashi()
+
+if you assign is to a variable while in the repl:
+```
+>>> rashi=jhchart.rashi()
+```
+
+then you can use tab completion of, ```dir()```:
+
+```
+>>> dir(rashi)
+['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__firstlineno__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__static_attributes__', '__str__', '__subclasshook__', '__weakref__', '_amsha', '_cusps', '_get_pada', '_planets', '_rashi_planets', '_signs', 'akriti_yogas', 'amsha', 'argala', 'bandhana_yogas', 'chart', 'context', 'cusps', 'dignities', 'draw_sun_by_sign_table', 'init_cusps', 'init_planets', 'jaimini_first_strength', 'lagna', 'mkheader', 'pada', 'padas', 'planets', 'signs', 'sysflgstr', 'upapada', 'varga_name', 'where_is']
+```
+
+everything surrounded by "__" is a special Python  method. The ones without any
+underscores are the methods that "Rashi" has, things you can know about the rashi at
+hand.
+
+e.g.,
+
+```
+>>> rashi.lagna()
+
+self.sign()=8 viṣṇu
++--------+-------------------+----------------+
+| Object | In Sign Longitude | Real Longitude |
++--------+-------------------+----------------+
+| Cusp 1 |          12:59:45 |        192.996 |
++--------+-------------------+----------------+
+```
+
+The functions of the Classes themselves give the information in some way, and then there
+is a separate part that prints. Most of these have in-built printing methods due to
+Python, so that is why we can look at them to here. But to use them in a different
+application, we need to understand the data is returned, so we can read it and use it is
+whichever way we need at some time.
+
+#### Dignity example
+
+for example
+
+```
+>>> rashi.dignities()
+['GF', 'N', 'GF', 'OH', 'EX', 'N', 'MT']
+```
+
+```
+>>> help(rashi.dignities)
+```
+
+you will see a help screen where you can read
+
+```
+dignities() -> [<class 'str'>]
+    return a list of dignities in the natural order
+    Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
+```
+
+so is returns a list of strings "EX", "DB", "GF", etc. for all the dignities of the
+planets in normal Vedic order. So that is the data; it is use to you how to find it.
+
+in libaditya.printf (which you should be able to use as printf if you did ```from
+libaditya import *```), there are print functions for some things.

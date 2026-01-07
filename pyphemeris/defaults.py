@@ -62,6 +62,7 @@ dasha_levels = 1
 signs = "adityas"  # adityas, or zodiac
 print_nakshatras = True
 print_outer_planets = True
+rashi_temporary_friendships = True
 # N and E are positive
 hsys = "C"
 show_houses = 1

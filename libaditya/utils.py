@@ -326,6 +326,12 @@ def compare_planets_dignities(planet1,planet2) -> int:
             return 1
         case _, "E":
             return 2
+        case "N", "N":
+            return 0
+        case "N", _:
+            return 1
+        case _, "N":
+            return 2
         case "GE", "GE":
             return 0
         case "GE", _:

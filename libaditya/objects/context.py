@@ -53,6 +53,7 @@ class EphContext:
     toround: (True/False,n), round output to n digits
     print_nakshatras: True or False
     print_outer_planets: True or False
+    rashi_temporary_friendships: bool; calculate temporary friendships for dignity in Rashi, True, or not
     names: Names()
     """
     timeJD: JulianDay = JulianDay()
@@ -65,5 +66,6 @@ class EphContext:
     toround: (bool, int) = (True, 3)
     print_nakshatras: bool = True
     print_outer_planets: bool = True
+    rashi_temporary_friendships: bool = True # other option is "Varga"
     names: Names = Names()
 

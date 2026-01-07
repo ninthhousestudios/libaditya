@@ -150,8 +150,22 @@ class Varga:
         lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.astrological_signs_forward(signs_apart)]
 
-    def dignities(self):
-        return self.planets().dignities(self._rashi_planets)
+    def dignities(self) -> [str]:
+        """
+        return a list of dignities in the natural order
+        Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
+
+        dignity is a combination of natural and temporary relationship
+        we can use the temporary relationship from the varga itself, or from the rashi chart
+
+        if Planets is in a varga and temp_planets=None, then it will use temporary relationships based on that varga
+        so if, for instance, you want to determine dignity in the Navamsha based on temporary friends in the Rashi
+        you must past d9Planets.dignites(temp_planets=d1Planets)
+        """
+        if self.context.rashi_temporary_friendships:
+            return self.planets().dignities(self._rashi_planets)
+        else:
+            return self.planets().dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
 
     def bandhana_yogas(self) -> [([Planet],[Planet])]:
         """
@@ -169,8 +183,14 @@ class Varga:
         # we go forwards and backwards by the same amount
 
         pairs = (2,3,4,5,6)
+        lagna = self.lagna()
 
-        #for pair in pairs:
+        ret = []
+
+        for pair in pairs:
+            one = self.astrological_rashis_from_lagna(pair)
+            if self.signs()[lagna.astrological_signs_forward(pair)].how_many_grahas() == self.signs()[lagna.astrological_signs_backward(pair)].how_many_grahas():
+                ret.append(tuple(list())) 
 
 
     def argala(self, rashi: Sign) -> [[Planet], [Planet], [Planet]]:
@@ -254,8 +274,8 @@ class Varga:
             # determine if sign is stronger than sortedls[0]
             # if so, put it at sortedls[0], if not check against sortedls[1] if it exists
             for n,sorted_sign in enumerate(sortedls):
-#                if sign.sign() == 7 and n == 5:
-#                    import pdb; pdb.set_trace()
+                #if sign.sign() == 12 and n == 3:
+                #import pdb; pdb.set_trace()
                 if sign.how_many_karakas() > 0 and sorted_sign.how_many_karakas() == 0:
                     # sign is stronger than sorted_sign, so put sign at sorted_sign
                     sortedls.insert(n,sign)
@@ -390,6 +410,7 @@ class Varga:
                                                 # sign is the weaker, so append it at the end
                                                     sortedls.append(sign)
                                                     break
+                                                continue
                                         if signs_Lord.real_in_sign_longitude() > sorted_signs_Lord.real_in_sign_longitude():
                                             sortedls.insert(n,sign)
                                             break
@@ -459,6 +480,8 @@ class Varga:
         header += f"Varga {self._amsha} {self.varga_name()}\n"
         header += f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"
+        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
+        header += f"Dignities based on {digplace}\n"
         if self.context.sysflg == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras

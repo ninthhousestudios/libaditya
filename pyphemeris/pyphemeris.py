@@ -121,6 +121,10 @@ def main():
         lat, long, placename, utcoffset, timezone = parse.parse_position(
             args.position, args.placename, args.timezone
         )
+
+    rashi_temporary_friendships = defaults.rashi_temporary_friendships
+    if args.dignities_varga:
+        rashi_temporary_friendships = False
     
     # use defaults for position if not given by input file or args.position
     if not args.position and not args.input:
@@ -173,7 +177,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names)
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,rashi_temporary_friendships,names)
     # print kala information and exit
     if args.kala:
         print_kala(context)
@@ -619,6 +623,12 @@ def get_args():
         "-v",
         "--vargas",
         help="vargas to print; any integer number will print the corresponding parivritti varga; multiple vargas can be printed at once, e.g., -v 4,5,9",
+    )
+    parser.add_argument(
+        "-Dv",
+        "--dignities-varga",
+        action="store_true",
+        help="use varga placement to determine temporary relationships for dignity",
     )
 
     args = parser.parse_args()
