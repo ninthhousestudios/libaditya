@@ -36,9 +36,11 @@ class Longitude:
         self.context = context
         self._amsha = amsha
         self.jd = self.context.timeJD.jd_number()
+        # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
         self._longitude = longitude
+        self._real_index = int((self.real_longitude() % 360) / 30)
         self._amsha_longitude = self.varga(amsha)
-        self.index = int((self._amsha_longitude % 360) / 30)
+        self.index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
 
 
@@ -115,9 +117,18 @@ class Longitude:
 
     def lord(self) -> str:
         """
-        update this to return the lord according to the amsha
+        returns the varga deity of the amsha that this longitude is in
+        varga lord is set in Longitude.varga() when it finds the longitude
+        amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        return const.lords[self.sign()]
+        if self.amsha() == 1:
+            return const.lords[self.sign()]
+        elif self.amsha() > 1:
+            # do sign lords in the parivritti vargas for now
+            return const.lords[self.sign()]
+        else:
+            # varga lord is set in Longitude.varga() when it finds the longitude
+            return self._lord
 
     def signize(self):
         """
@@ -168,13 +179,15 @@ class Longitude:
     def amsha(self):
         return self._amsha
 
-    def varga(self,amsha):
+    def varga(self,amsha) -> float:
         """
         get varga with amsha divisions
+        returns float of longitude that varga
+        options for amsha:
         all positive numbers give parivritti varga of that number
         other numbers are for special vargas (listed as implemented):
-            -2 Hora -> "the second half of a sign relates to the opposite sign"
-                    the first half of a sign is of that element, the second half of the other
+            -2 Hora -> the second half of a sign relates to the opposite sign
+                        the first half of a sign is of that element, the second half of the other
         """
         if amsha == 1:
             return self.real_longitude()
@@ -194,8 +207,37 @@ class Longitude:
                      lord of first half of a female sign is hte moon, of second half is the sun
                      a planet in the first half stays in that sign
                      a planet in the second half goes to the opposite sign
+
+        this 1) returns the longitude of the planet in the hora
+             2) sets self._lord to the hora lord
         """
-        sign = self.sign()
+        # just to make sure we are working with the rashi longitude
+        real_sign = self._real_index+1
+        real_in_sign = self.real_in_sign_longitude()
+
+        # we need to 1) set the lord 2) return the amsha=-2 longitude
+        if real_sign%2 == 1 and real_in_sign < 15:
+            # first half of odd sign ->
+            self._lord = "Sun"
+            # stays in this sign
+            # minus makes the sign number into an index
+            return (30*(real_sign-1))+real_in_sign
+        if real_sign%2 == 1 and real_in_sign >= 15:
+            # second half of odd sign ->
+            self._lord = "Moon"
+            # goes to opposite sign
+            return (30*((real_sign-1)+7)%12)+real_in_sign
+        if real_sign%2 == 0 and real_in_sign < 15:
+            # first half of even sign ->
+            self._lord = "Moon"
+            # stays in this sign
+            # minus makes the sign number into an index
+            return (30*(real_sign-1))+real_in_sign
+        if real_sign%2 == 0 and real_in_sign >= 15:
+            # second half of odd sign ->
+            self._lord = "Sun"
+            # goes to opposite sign
+            return (30*((real_sign-1)+7)%12)+real_in_sign
 
         
     def parvritti_varga(self, amsha):

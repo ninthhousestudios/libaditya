@@ -53,6 +53,8 @@ class Varga(Jaimini):
                 return "Rashi"
             case 2:
                 return "Hora Parivritti"
+            case -2:
+                return "Hora"
             case 3:
                 return "Drekkana Parivritti"
             case 4:
