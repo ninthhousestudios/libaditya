@@ -24,7 +24,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
 
-from libaditya.objects import Sign, Signs, Planet, Planets, Cusp, Cusps
+from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
 
@@ -41,8 +41,8 @@ class Varga(Jaimini):
         else:
             # dont print nakshatras in vargas not = 1
             self.context = replace(context,print_nakshatras=False)
-            self._planets = self.init_planets(planets)
-        self._cusps = self.init_cusps(cusps)
+            self._planets = self.init_Planets(planets)
+        self._cusps = self.init_Cusps(cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self.chart = chart
@@ -67,13 +67,13 @@ class Varga(Jaimini):
     def amsha(self):
         return self._amsha
 
-    def init_planets(self, planets):
+    def init_Planets(self, planets):
         retplanets = {}
         for name,planet in planets.items():
-            retplanets[name] = pdict[name](self.context,longitude=((planet.varga(self.amsha()))))
+            retplanets[name] = pdict[name](self.context,longitude=Longitude(planet.real_longitude(),amsha=self.amsha()))
         return Planets(self.context,retplanets)
               
-    def init_cusps(self, cusps):
+    def init_Cusps(self, cusps):
         """
         cusps is a list of Cusp classes, which is what is stored in Cusps.self.cusps
         so iterate through, copying everything over, while changing the longitude

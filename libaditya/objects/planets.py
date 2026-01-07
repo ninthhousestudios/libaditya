@@ -51,14 +51,17 @@ class Planet(Longitude):
             self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
             # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
             self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
+            self._amsha = 1
         else:
-            self.long = longitude
+            self.longituDE = longitude # a Longitude class
+            self.long = self.longituDE.real_longitude()
             self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
+            self._amsha = self.longituDE.amsha()
         # so that we only need only longitude() function with all the signizing and rounding or not
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
-        super().__init__(self.long,self._context)
+        super().__init__(self.long,self._context,self._amsha)
         self.attributes = {"dignity": "NA"} # will hold attributes to be set post-init; dictionary, where "attribute" is the key, e.g., "dignity"
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
@@ -66,6 +69,9 @@ class Planet(Longitude):
     # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
     def __lt__(self,p2: Self):
         return self.real_in_sign_longitude() < p2.real_in_sign_longitude()
+
+    def amsha(self):
+        return self._amsha
 
     def table_row(self):
         return (
@@ -1177,7 +1183,7 @@ planets = {
 
 class Planets:
 
-    def __init__(self, context=EphContext(), planets=None, amsha=1):
+    def __init__(self, context=EphContext(), planets=None):
         """
         initialize Planets
         planets default is for vargas > 1, which will pass

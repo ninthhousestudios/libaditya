@@ -23,33 +23,51 @@ from libaditya import utils
 from .context import EphContext, Circle
 
 class Longitude:
+    """
+    Longitude expects at minimum a longitude
+    
+    for vargas, pass the longitude in the rashi along with, e.g., amsha=9
+    Longitude will know its original longitude, as well as the varga one
+    but it will consider itself to be a navamsha
+    so that Longitude.longitude() will give the longitude in the navamsha
+    """
 
-    def __init__(self, longitude, context=EphContext()):
+    def __init__(self, longitude, context=EphContext(), amsha=1):
         self.context = context
+        self._amsha = amsha
         self.jd = self.context.timeJD.jd_number()
-        self._longitude = longitude 
-        self.index = int((self._longitude % 360) / 30)
+        self._longitude = longitude
+        self._amsha_longitude = self.varga(amsha)
+        self.index = int((self._amsha_longitude % 360) / 30)
         self.rahu = self.get_rahu()
 
 
     def real_longitude(self) -> float:
         return self._longitude
 
+    def amsha_raw_longitude(self):
+        return self._amsha_longitude
+
     def raw_longitude(self) -> float:
         if self.context.toround[0]:
-            return round(self.long, self.context.toround[1])
+            return round(self.real_longitude(), self.context.toround[1])
         else:
-            return self.long
+            return self.real_longitude()
+
+    def amsha_longitude(self) -> float:
+        if self.context.toround[0]:
+            return round(self._amsha_longitude, self.context.toround[1])
+        else:
+            return self._amsha_longitude
 
     def longitude(self) -> float | str:
-        if self.context.sysflg == const.DRAC:
-            #import pdb; pdb.set_trace()
-            self._longitude = (self._longitude - self.rahu)%360
-            # return Longitude((self._longitude - self.rahu)%360,self.context)
+        if self.amsha() == 1:
+            if self.context.sysflg == const.DRAC:
+                self._longitude = (self._longitude - self.rahu)%360
         if self.context.signize:
             return self.signize()
         else:
-            return self.raw_longitude()
+            return self.amsha_longitude()
 
     def index(self):
         return self.index
@@ -85,7 +103,20 @@ class Longitude:
     def real_in_sign_longitude(self) -> float:
         return self.real_longitude() % 30
 
+    def amsha_in_sign_longitude(self) -> float:
+        if self.context.toround[0]:
+            inlong = round(self.amsha_longitude() % 30, self.context.toround[1])
+        else:
+            inlong = self.amsha_longitude() % 30
+        return utils.dec2dmsstr(inlong)
+
+    def amsha(self) -> int:
+        return self._amsha
+
     def lord(self) -> str:
+        """
+        update this to return the lord according to the amsha
+        """
         return const.lords[self.sign()]
 
     def signize(self):
@@ -94,7 +125,7 @@ class Longitude:
         long (sign), with long being in the sign
         signs contains the signs to be used, which might be adityas
         """
-        return f"{self.in_sign_longitude()} {self.sign_name()}"
+        return f"{self.amsha_in_sign_longitude()} {self.sign_name()}"
 
     def degrees_apart(self, next_long):
         """
@@ -134,6 +165,9 @@ class Longitude:
         else:
             return forward % 12
 
+    def amsha(self):
+        return self._amsha
+
     def varga(self,amsha):
         """
         get varga with amsha divisions
@@ -142,8 +176,27 @@ class Longitude:
             -2 Hora -> "the second half of a sign relates to the opposite sign"
                     the first half of a sign is of that element, the second half of the other
         """
+        if amsha == 1:
+            return self.real_longitude()
         if amsha > 0:
             return self.parvritti_varga(amsha)
+        match amsha:
+            case -2:
+                return self.hora() 
+            case -3:
+                return self.drekkana()
+            case _:
+                return "not yet implemented"
+        
+    def hora(self):
+        """
+        in the hora, lord of first half of a male sign is the sun, of second half is the moon
+                     lord of first half of a female sign is hte moon, of second half is the sun
+                     a planet in the first half stays in that sign
+                     a planet in the second half goes to the opposite sign
+        """
+        sign = self.sign()
+
         
     def parvritti_varga(self, amsha):
         """
