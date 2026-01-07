@@ -59,13 +59,13 @@ class Planet(Longitude):
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self._context)
+        self.attributes = {"dignity": "NA"} # will hold attributes to be set post-init; dictionary, where "attribute" is the key, e.g., "dignity"
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
     # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
     def __lt__(self,p2: Self):
         return self.real_in_sign_longitude() < p2.real_in_sign_longitude()
-
 
     def table_row(self):
         return (
@@ -101,6 +101,20 @@ class Planet(Longitude):
 
     def swe_id(self):
         return self.pnumber
+
+    def set_attribute(self,attrs):
+        """
+        attrs is a dictionary "attribute": value
+        add all of these to self.attributes
+        """
+        for kind,value in attrs.items():
+            self.attributes[kind] = value
+
+    def dignity(self):
+        """
+        return the dignity that has been set by Planets.
+        """
+        return self.attributes["dignity"]
 
     def list_index(self):
         match self.pnumber:
@@ -148,6 +162,16 @@ class Planet(Longitude):
             return round(self.lat, self._context.toround[1])
         else:
             return self.lat
+
+    def declination(self) -> float:
+        """
+        add declination so that is is always retrivable
+        """
+        declination = swe.calc_ut(self.timeJD.jd_number(),self.pnumber,swe.FLG_EQUATORIAL)[0][1]
+        if self._context.toround[0]:
+            return round(declination, self._context.toround[1])
+        else:
+            return declination
 
     def distance(self):
         if self._context.toround[0]:
@@ -451,7 +475,7 @@ class Moon(Planet):
     def __init__(self, context=EphContext(), longitude=None, nature=None):
         super().__init__(swe.MOON, context, longitude)
         self._id = "Moon"
-        self._nature = nature
+        self.attributes = {"nature": nature}
 
     def glyph(self):
         return "☾"
@@ -460,7 +484,7 @@ class Moon(Planet):
         return Moon
 
     def nature(self):
-        return  self._nature
+        return  self.attributes["nature"]
 
     def lowest_daily_speed(self) -> float:
         """
@@ -1171,6 +1195,7 @@ class Planets:
             self._planets = self.init_Planets()
         else:
             self._planets = planets
+        self.set_attributes()
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
 
@@ -1196,7 +1221,7 @@ class Planets:
                 "Saturn": self.saturn()
                 }
 
-    def inner_planets(self):
+    def grahas(self):
         return {"Sun": self.sun(),
                 "Moon": self.moon(),
                 "Mars": self.mars(),
@@ -1225,10 +1250,32 @@ class Planets:
         for p,v in planets.items():
             ret[p] = v(self.context)
 
-        moon_nature = "Benefic" if ret["Sun"].degrees_apart(ret["Moon"].real_longitude()) <= 180 else "Malefic"
-        ret["Moon"] = Moon(self.context,nature=moon_nature)
 
         return ret
+
+    def set_attributes(self):
+        """
+        there is some information i want each Planet to know, but that I have to use
+        the other Planet-s to calculate first. so we init_Planets() above,
+        then we can set_attributes() in __init__(), e.g., dignity
+        """
+        moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().real_longitude()) <= 180 else "Malefic"
+        self.moon().set_attribute(dict({"nature": moon_nature}))
+        digs = self.dignities()
+        self.sun().set_attribute(dict({"dignity": digs[self.sun().list_index()]}))
+        self.moon().set_attribute(dict({"dignity": digs[self.moon().list_index()]}))
+        self.mars().set_attribute(dict({"dignity": digs[self.mars().list_index()]}))
+        self.mercury().set_attribute(dict({"dignity": digs[self.mercury().list_index()]}))
+        self.jupiter().set_attribute(dict({"dignity": digs[self.jupiter().list_index()]}))
+        self.venus().set_attribute(dict({"dignity": digs[self.venus().list_index()]}))
+        self.saturn().set_attribute(dict({"dignity": digs[self.saturn().list_index()]}))
+        self.rahu().set_attribute(dict({"dignity": digs[self.planets()[self.rahu().lord()].list_index()]}))
+        self.ketu().set_attribute(dict({"dignity": digs[self.planets()[self.ketu().lord()].list_index()]}))
+        self.uranus().set_attribute(dict({"dignity": "NA"}))
+        self.neptune().set_attribute(dict({"dignity": "NA"}))
+        self.pluto().set_attribute(dict({"dignity": "NA"}))
+        self.chiron().set_attribute(dict({"dignity": "NA"}))
+
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
@@ -1261,7 +1308,7 @@ class Planets:
 
         for aspecting in self.karakas().values():
             this_row = []
-            for aspected in self.inner_planets().values():
+            for aspected in self.grahas().values():
                 value = aspecting.parashara_aspect_to(aspected)
                 this_row.append(int(round(value,0)) if isinstance(value,float) else value)
             ret.append(this_row)
@@ -1499,7 +1546,7 @@ class Planets:
 
 planet_dict = {
     "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],
-    "inner_planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu],
+    "grahas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu],
     "karakas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn],
     "outer_planets": [Uranus, Neptune, Pluto]
 }

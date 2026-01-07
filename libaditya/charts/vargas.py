@@ -166,6 +166,7 @@ class Varga:
             return self.planets().dignities(self._rashi_planets)
         else:
             return self.planets().dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
+        
 
     def bandhana_yogas(self) -> [([Planet],[Planet])]:
         """
@@ -188,9 +189,19 @@ class Varga:
         ret = []
 
         for pair in pairs:
-            one = self.astrological_rashis_from_lagna(pair)
-            if self.signs()[lagna.astrological_signs_forward(pair)].how_many_grahas() == self.signs()[lagna.astrological_signs_backward(pair)].how_many_grahas():
-                ret.append(tuple(list())) 
+            one = self.signs()[lagna.astrological_signs_forward(pair)]
+            two = self.signs()[lagna.astrological_signs_backward(pair)]
+            if one.how_many_grahas() == two.how_many_grahas():
+                if one.how_many_grahas() == 0:
+                    continue
+                s1ls = []
+                s2ls = []
+                for sign1, sign2 in zip(one.grahas(),two.grahas()):
+                    s1ls.append(sign1)
+                    s2ls.append(sign2)
+                ret.append((s1ls,s2ls))
+
+        return ret
 
 
     def argala(self, rashi: Sign) -> [[Planet], [Planet], [Planet]]:

@@ -45,14 +45,14 @@ def parashara_aspect_table_planets(aspects):
     make a prettytable list of these values
     """
     output = PrettyTable()
-    output.field_names = [" "] + [glyph for glyph in const.inner_planets_glyphs]
+    output.field_names = [" "] + [glyph for glyph in const.grahas_glyphs]
     output.align[" "] = "l"
 
     for n,row in enumerate(aspects):
         output.add_row(*[[const.karaka_glyphs[n]] + row]) 
         output.add_divider()
 
-    ret = output.get_string(fields=[" "] + [glyph for glyph in const.inner_planets_glyphs])
+    ret = output.get_string(fields=[" "] + [glyph for glyph in const.grahas_glyphs])
 
     return ret
 
