@@ -376,11 +376,11 @@ class Signs:
         # do planets first, inner index = 0
         inner_index = 0
         for p in self._planets:
-            stmp[p.sign_index()][inner_index].append(p)
+            stmp[p.amsha_sign_index()][inner_index].append(p)
         # now do cusps
         inner_index = 1
         for c in self._cusps:
-            stmp[c.sign_index()][inner_index].append(c)
+            stmp[c.amsha_sign_index()][inner_index].append(c)
         retsigns={}
         for n, sign in enumerate(stmp):
             retsigns[n+1] = signs[n+1](planets=sign[0],cusps=sign[1],context=self.context)

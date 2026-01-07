@@ -294,6 +294,8 @@ class Planet(Longitude):
                 return "E"
             case ("E","E"):
                 return "GE"
+            case ("N","N"):
+                return "N"
 
     def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
         """
@@ -1300,8 +1302,14 @@ class Planets:
         """
         if temp_planets == None:
             temp_planets = self
+        # else: temp_planets are the planets from the rashi chart
         dignities = []
         for planet in self.karakas().values():
+            # _dignity() takes two arguments: 1) itself in the rashi chart or this varga, depending on the options
+            #                                 2) its lord in rashi or in this varga, depending on the option
+            #                                 set with EphContext.rashi_temporary_friends True or False
+#            if planet.identity() == "Sun":
+#                import pdb; pdb.set_trace()
             dignities.append(planet._dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 

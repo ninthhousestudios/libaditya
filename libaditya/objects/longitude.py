@@ -40,7 +40,7 @@ class Longitude:
         self._longitude = longitude
         self._real_index = int((self.real_longitude() % 360) / 30)
         self._amsha_longitude = self.varga(amsha)
-        self.index = int((self.amsha_raw_longitude() % 360) / 30)
+        self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
 
 
@@ -71,20 +71,26 @@ class Longitude:
         else:
             return self.amsha_longitude()
 
-    def index(self):
-        return self.index
+    def real_index(self):
+        return self._real_index
 
-    def sign_index(self):
+    def real_sign_index(self):
         if self.context.circle == Circle.ADITYA:
-            return (self.index + 1) % 12
+            return (self.real_index() + 1) % 12
         else:
-            return self.index
+            return self.real_index()
+
+    def amsha_index(self):
+        return self._amsha_index
+
+    def amsha_sign_index(self):
+        return self.amsha_index()
 
     def sign(self) -> int:
-        return self.sign_index()+1
+        return self.amsha_sign_index()+1
 
     def sign_name(self) -> str:
-        return self.context.names.sign_names[self.sign_index()]
+        return self.context.names.sign_names[self.amsha_sign_index()]
 
     def get_rahu(self) -> float:
         """
@@ -212,8 +218,11 @@ class Longitude:
              2) sets self._lord to the hora lord
         """
         # just to make sure we are working with the rashi longitude
-        real_sign = self._real_index+1
+        real_sign = self.real_sign_index()+1 # +1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
+
+        base_longitude = 30*(real_sign-1)
+        opposite_base_longitude = (base_longitude+180)%360
 
         # we need to 1) set the lord 2) return the amsha=-2 longitude
         if real_sign%2 == 1 and real_in_sign < 15:
@@ -221,23 +230,28 @@ class Longitude:
             self._lord = "Sun"
             # stays in this sign
             # minus makes the sign number into an index
-            return (30*(real_sign-1))+real_in_sign
+            hora_elapsed = (real_in_sign/15)*30
+            #            print(f"{self.real_longitude()=}\n{self.sign()=}\t{real_sign=}")
+            return base_longitude+hora_elapsed
         if real_sign%2 == 1 and real_in_sign >= 15:
             # second half of odd sign ->
             self._lord = "Moon"
             # goes to opposite sign
-            return (30*((real_sign-1)+7)%12)+real_in_sign
+            hora_elapsed = ((real_in_sign-15)/15)*30
+            return opposite_base_longitude+hora_elapsed
         if real_sign%2 == 0 and real_in_sign < 15:
             # first half of even sign ->
             self._lord = "Moon"
             # stays in this sign
             # minus makes the sign number into an index
-            return (30*(real_sign-1))+real_in_sign
+            hora_elapsed = (real_in_sign/15)*30
+            return base_longitude+hora_elapsed
         if real_sign%2 == 0 and real_in_sign >= 15:
             # second half of odd sign ->
             self._lord = "Sun"
             # goes to opposite sign
-            return (30*((real_sign-1)+7)%12)+real_in_sign
+            hora_elapsed = ((real_in_sign-15)/15)*30
+            return opposite_base_longitude+hora_elapsed
 
         
     def parvritti_varga(self, amsha):
