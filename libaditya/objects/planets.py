@@ -364,6 +364,12 @@ class Sun(Planet):
     def glyph(self):
         return "⨀"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Su"
+
     def type(self):
         return Sun
 
@@ -491,6 +497,12 @@ class Moon(Planet):
     def glyph(self):
         return "☾"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Mo"
+
     def type(self):
         return Moon
 
@@ -572,6 +584,12 @@ class Mars(Planet):
 
     def glyph(self):
         return "♂"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ma"
 
     def type(self):
         return Mars
@@ -676,6 +694,12 @@ class Mercury(Planet):
     def glyph(self):
         return "☿"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Me"
+
     def type(self):
         return Mercury
 
@@ -741,6 +765,12 @@ class Venus(Planet):
 
     def glyph(self):
         return "♀"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ve"
 
     def type(self):
         return Venus
@@ -808,6 +838,12 @@ class Jupiter(Planet):
 
     def glyph(self):
         return "♃"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ju"
 
     def type(self):
         return Jupiter
@@ -915,6 +951,12 @@ class Saturn(Planet):
     def glyph(self):
         return "♄"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Sa"
+
     def type(self):
         return Saturn
 
@@ -1020,6 +1062,12 @@ class Rahu(Planet):
     def glyph(self):
         return "☊"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ra"
+
     def type(self):
         return Rahu
 
@@ -1049,6 +1097,12 @@ class Ketu(Planet):
     def glyph(self):
         return "☋"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ke"
+
     def type(self):
         return Ketu
 
@@ -1076,6 +1130,12 @@ class Uranus(Planet):
     def glyph(self):
         return "⛢"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ur"
+
     def type(self):
         return Uranus
 
@@ -1096,6 +1156,12 @@ class Neptune(Planet):
 
     def glyph(self):
         return "♆"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ne"
 
     def type(self):
         return Neptune
@@ -1119,6 +1185,12 @@ class Pluto(Planet):
     def glyph(self):
         return "♇"
 
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Pu"
+
     def type(self):
         return Pluto
 
@@ -1138,6 +1210,12 @@ class Earth(Planet):
 
     def glyph(self):
         return "⨁"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ea"
 
     def type(self):
         return Earth
@@ -1160,6 +1238,12 @@ class Chiron(Planet):
 
     def type(self):
         return Chiron
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ch"
 
     def is_outer_planet(self):
         return True

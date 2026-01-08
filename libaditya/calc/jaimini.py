@@ -19,16 +19,26 @@ from more_itertools import collapse
 
 from libaditya import utils
 
-from libaditya.objects import Planet, Sign
+from libaditya.objects import Planet, Planets, Sign
 
 class Jaimini:
     """
+    this is calc.Jaimini
+
     this class is a "Mixin"
     it has no __init__ functions and cannot instantiate anything
     it inherits unto Varga, giving Varga all of Jaimini capabilities
 
     can use any Varga.methods()
+
+    this is really just to keep Varga from being humongeous by itself, so the functionality
+    will be split in modules that inherit into Varga
+
+    do not confuse with charts.Jaimini, which provides API functionality through Chart
+    that is the frontend
+    this is the backend
     """
+
 
     def pada(self) -> Sign:
         """
@@ -348,3 +358,32 @@ class Jaimini:
                 # if it is not stronger than any, it is weaker than all, so it goes at the end
         return sortedls
 
+    def jaimini_second_strength(self) -> {Sign: [Planets]}:
+        """
+        calculate Jaiminis second source of strength for all signs
+        return a dictionary of Sign: [Planet]
+        [Planet] is a list of Planet classes that provide a source of strength to Sign
+        due either to conjunctino or rashi aspect
+        this be either Mercury, Jupiter, or the Lord of Sign
+        """
+        sss = {}
+
+        jupiter_Sign = self.signs()[self.planets().jupiter().sign()]
+        mercury_Sign = self.signs()[self.planets().mercury().sign()]
+
+        for sign in self.signs():
+            sourcels = [] # list to hold Planet-s that are conjunct or aspect this sign
+            jup_aspects = self.signs().rashi_aspect_to(jupiter_Sign,sign)
+            # 1 means jupiter aspects sign from jupiter_Sign; 0 not
+            mer_aspects = self.signs().rashi_aspect_to(mercury_Sign,sign)
+            lord = self.planets()[sign.lord()]
+            lords_Sign = self.signs()[lord.sign()]
+            lord_aspects = self.signs().rashi_aspect_to(lords_Sign,sign)
+            if jupiter_Sign == sign or jup_aspects: # the object itself should be the same; means they are in the same sign
+                sourcels.append(self.planets().jupiter())
+            if mercury_Sign == sign or mer_aspects: # the object itself should be the same
+                sourcels.append(self.planets().mercury())
+            if lords_Sign == sign or lord_aspects:
+                sourcels.append(lord)
+            sss[sign] = sourcels
+        return sss

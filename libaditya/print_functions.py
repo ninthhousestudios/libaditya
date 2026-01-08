@@ -23,7 +23,7 @@ that can be computed with libaditya
 from prettytable import PrettyTable
 
 from libaditya import constants as const
-from libaditya.objects import Planet
+from libaditya.objects import Planet, Sign
 
 
 def dignity_table(dignities):
@@ -97,7 +97,19 @@ def print_jaimini_first_strength(fs: [int]) -> None:
     print jaiminis first strength
     """
     for n,s in enumerate(fs):
-        print(f"{n+1}\t{s.sign()}")
+        print(f"{n+1}\t{s.glyph()}")
+
+def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
+    """
+    print jaiminis second strength
+    """
+    for sign, strengths in ssd.items():
+        fstr = ""
+        fstr += f"{sign.glyph()}\t"
+        for strength in strengths:
+            # strengh is a Planet class
+            fstr+=f" {strength.abbreviation()} "
+        print(fstr) 
 
 def print_jaimini_argala(result: [Planet]):
     """

@@ -67,5 +67,6 @@ class EphContext:
     print_nakshatras: bool = True
     print_outer_planets: bool = True
     rashi_temporary_friendships: bool = True # other option is "Varga"
+    rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
     names: Names = Names()
 

@@ -45,6 +45,9 @@ class Sign:
     def sign(self):
         return self._id
 
+    def Sign(self):
+        return self
+
     def planets(self) -> [Planet]:
         """
         Planet is anything that can possibly be a Planet
@@ -79,7 +82,6 @@ class Sign:
             if planet.is_graha():
                 gs.append(planet)
         return gs
-
 
     def how_many_objects(self):
         return len(self._objects)
@@ -154,6 +156,7 @@ class Sign:
             case 3 | 6 | 9 | 12:
                 return "Dual"
 
+
     def __str__(self):
         """
         a string representation that is used for printing charts
@@ -218,6 +221,9 @@ class One(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def glyph(self):
+        return "♈"
+
 class Two(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -225,6 +231,9 @@ class Two(Sign):
 
     def modality(self) -> str:
         return "Fixed"
+
+    def glyph(self):
+        return "♉"
 
 class Three(Sign):
 
@@ -234,6 +243,9 @@ class Three(Sign):
     def modality(self) -> str:
         return "Dual"
 
+    def glyph(self):
+        return "♊"
+
 class Four(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -242,6 +254,9 @@ class Four(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def glyph(self):
+        return "♋"
+
 class Five(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -249,6 +264,9 @@ class Five(Sign):
 
     def modality(self) -> str:
         return "Fixed"
+
+    def glyph(self):
+        return "♌️"
         
 
 class Six(Sign):
@@ -259,6 +277,9 @@ class Six(Sign):
     def modality(self) -> str:
         return "Dual"
 
+    def glyph(self):
+        return "♍"
+
 class Seven(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -266,6 +287,9 @@ class Seven(Sign):
         
     def modality(self) -> str:
         return "Moveable"
+
+    def glyph(self):
+        return "♎"
 
 class Eight(Sign):
 
@@ -275,6 +299,9 @@ class Eight(Sign):
     def modality(self) -> str:
         return "Fixed"
 
+    def glyph(self):
+        return "♏"
+
 class Nine(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -282,6 +309,9 @@ class Nine(Sign):
         
     def modality(self) -> str:
         return "Dual"
+
+    def glyph(self):
+        return "♐"
 
 class Ten(Sign):
 
@@ -291,6 +321,9 @@ class Ten(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def glyph(self):
+        return "♑"
+
 class Eleven(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -299,6 +332,9 @@ class Eleven(Sign):
     def modality(self) -> str:
         return "Fixed"
 
+    def glyph(self):
+        return "♒"
+
 class Twelve(Sign):
 
     def __init__(self,planets,cusps,context):
@@ -306,6 +342,9 @@ class Twelve(Sign):
 
     def modality(self) -> str:
         return "Dual"
+
+    def glyph(self):
+        return "♓"
         
 
 signs = {
@@ -388,6 +427,51 @@ class Signs:
 
     def signs(self):
         return self._signs
+
+    def rashi_aspect_between(self, sign1: Sign, sign2: Sign):
+        """
+        tells if there are rashi aspects between sign1 and sign2
+        0 - none either way
+        1 - sign1 aspects sign2
+        2 - sign2 aspects sign1
+        3 - both aspect each other
+        i.e., sign1 aspects means that there is at least one graha in sign1 caring its aspect to sign2
+        """
+        ltr = self.rashi_aspect_to(sign1,sign2)
+        rtl = self.rashi_aspect_to(sign2,sign1)
+        match (ltr,rtl):
+            case (0,0):
+                return 0
+            case (1,0):
+                return  1
+            case (0,1):
+                return 2
+            case (1,1):
+                return 3
+
+
+    def rashi_aspect_to(self, sign1: Sign, sign2: Sign):
+        """
+        tells if there are rashi aspects between sign1 and sign2
+        0 - none either way
+        1 - sign1 aspects sign2
+        i.e., sign1 aspects means that there is at least one graha in sign1 caring its aspect to sign2
+        """
+        # a dictionary that defines our rashi aspects, {int: (int,int,int)}
+        aspects = const.rashi_aspects[self.context.rashi_aspects]
+        if not (sign2.sign() in aspects[sign1.sign()]):
+            # sign1 is the key to the aspects dictionary
+            # the value is a tuple of integers, the signs which sign1 aspects
+            # if sign2 is one of those signs, then sign1 can aspect, depending
+            # on planets in a sign
+            # so if not, return 0, meaning no aspect
+            return 0
+        # else: sign1 can aspect sign2; if sign1 does have a graha, it aspects, so return 1
+        if sign1.planets():
+            return 1
+        else:
+            # 0 means there is no aspect. there could be if there were a planet, but there isnt so no planet
+            return 0
 
     def lagna(self) -> Sign:
         """
