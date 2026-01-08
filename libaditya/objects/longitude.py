@@ -32,7 +32,7 @@ class Longitude:
     so that Longitude.longitude() will give the longitude in the navamsha
     """
 
-    def __init__(self, longitude, context=EphContext(), amsha=1):
+    def __init__(self, longitude, amsha, context=EphContext()):
         self.context = context
         if self.context.circle == Circle.ADITYA:
             self.aditya_offset = 30
@@ -130,6 +130,12 @@ class Longitude:
 
     def lord(self) -> str:
         """
+        return the planetary lord of the sign this longitude is in in this amsha
+        """
+        return const.lords[self.sign()]
+
+    def deity(self) -> str:
+        """
         returns the varga deity of the amsha that this longitude is in
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
@@ -141,7 +147,7 @@ class Longitude:
             return const.lords[self.sign()]
         else:
             # varga lord is set in Longitude.varga() when it finds the longitude
-            return self._lord
+            return self._deity
 
     def signize(self):
         """
@@ -222,7 +228,7 @@ class Longitude:
                      a planet in the second half goes to the opposite sign
 
         this 1) returns the longitude of the planet in the hora
-             2) sets self._lord to the hora lord
+             2) sets self._deity to the hora lord
         """
         # just to make sure we are working with the rashi longitude
         real_sign = self.real_sign_index()+1 # +1 to transform index into sign
@@ -234,7 +240,7 @@ class Longitude:
         # we need to 1) set the lord 2) return the amsha=-2 longitude
         if real_sign%2 == 1 and real_in_sign < 15:
             # first half of odd sign ->
-            self._lord = "Sun"
+            self._deity = "Sun"
             # stays in this sign
             # minus makes the sign number into an index
             hora_elapsed = (real_in_sign/15)*30
@@ -242,20 +248,20 @@ class Longitude:
             return base_longitude+hora_elapsed
         if real_sign%2 == 1 and real_in_sign >= 15:
             # second half of odd sign ->
-            self._lord = "Moon"
+            self._deity = "Moon"
             # goes to opposite sign
             hora_elapsed = ((real_in_sign-15)/15)*30
             return opposite_base_longitude+hora_elapsed
         if real_sign%2 == 0 and real_in_sign < 15:
             # first half of even sign ->
-            self._lord = "Moon"
+            self._deity = "Moon"
             # stays in this sign
             # minus makes the sign number into an index
             hora_elapsed = (real_in_sign/15)*30
             return base_longitude+hora_elapsed
         if real_sign%2 == 0 and real_in_sign >= 15:
             # second half of odd sign ->
-            self._lord = "Sun"
+            self._deity = "Sun"
             # goes to opposite sign
             hora_elapsed = ((real_in_sign-15)/15)*30
             return opposite_base_longitude+hora_elapsed

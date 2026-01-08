@@ -33,12 +33,14 @@ class Cusp(Longitude):
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
-        self.long = longitude
+        self.longituDE = longitude # a Longitude class
+        self.long = self.longituDE.amsha_raw_longitude()
+        self._amsha = self.longituDE.amsha()
         self.daily_speed = speed
         self._cusp_index = number - 1
         self._number = number
         self.cusp_name = f"Cusp {self._number}"
-        super().__init__(self.long,self.context)
+        super().__init__(self.long,self._amsha,self.context)
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -154,7 +156,7 @@ class Cusps:
         )
         retcusps = []
         for n, cusp in enumerate(cusps):
-            retcusps.append(Cusp(cusp, speeds[n], n+1, self.context))
+            retcusps.append(Cusp(longitude=Longitude(cusp,context=self.context,amsha=1), speed=speeds[n], number=n+1, context=self.context))
         return retcusps, ascmc, ascmcspeeds
 
 

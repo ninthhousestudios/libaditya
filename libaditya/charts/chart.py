@@ -74,6 +74,17 @@ class Chart:
         """
         return Chart(context=replace(self.context,sysflg=const.SID,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
 
+    def _new_chart(self, **kwargs):
+        """
+        return a Chart replacing anything in this EphContext by **kwargs
+        e.g., Chart.new_chart(hsys='R', ayanamsa=27) will return this Chart but using Regiomontanus house system
+        and True Citra ayanamsa, all the other options staying the same
+
+        be very careful with this as there are no protections on the option combinations and you could
+        easily choose a combination of options that doesnt really make sense
+        """
+        return Chart(context=replace(self.context,**kwargs))
+
     def rashi(self):
         return self._Rashi
 

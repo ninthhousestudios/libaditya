@@ -61,7 +61,7 @@ class Planet(Longitude):
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
-        super().__init__(self.long,self._context,self._amsha)
+        super().__init__(self.long,self._amsha,self._context)
         self.attributes = {"dignity": "NA"} # will hold attributes to be set post-init; dictionary, where "attribute" is the key, e.g., "dignity"
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
