@@ -5,6 +5,7 @@ beginning of the vara, it will say the vara that is beginning, not the next one
 panchanga and monthly_panchanga
     moonrise and moonset seem to work appropriately when doing utc but not local time
     check against kala and maybe another source
+    but in utc, it seems like sunrise/sunset is off
 
 should i add a recursive Varga somewhere? right now, Planets of a Varga dont
 know they they belong to a certain varga. maybe i could just indicate that,

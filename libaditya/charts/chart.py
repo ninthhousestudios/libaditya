@@ -14,9 +14,12 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
+from dataclasses import replace
 from typing import Self
 
-from libaditya.objects import EphContext, Planets, Cusps
+from libaditya import constants as const
+
+from libaditya.objects import EphContext, Planets, Cusps, Circle
 from libaditya.charts import Rashi, Varga
 
 class Chart:
@@ -30,6 +33,46 @@ class Chart:
 
     def __repr__(self):
         return self.__str__()
+
+    def aditya(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a tropical Aditya chart
+
+        sysflg=const.TROP
+        circle=Circle.ADITYA
+        names=replace(self.context.names,sign_names=const.adityas)
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ADITYA,names=replace(self.context.names,sign_names=const.adityas),**kwargs))
+
+    def tropical(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a tropical zodiac chart
+
+        sysflg=const.TROP
+        circle=Circle.ZODIAC
+        names=replace(self.context.names,sign_names=const.zodiac)
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
+
+    def sidereal(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a sidereal zodiac chart
+
+        sysflg=const.SID
+        circle=Circle.ZODIAC
+        names=replace(self.context.names,sign_names=const.zodiac)
+        ayanamsa=98/36 by default; use Chart.sidereal(ayanamsa=n) to set the ayanamsa
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.SID,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
 
     def rashi(self):
         return self._Rashi

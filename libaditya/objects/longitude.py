@@ -34,6 +34,10 @@ class Longitude:
 
     def __init__(self, longitude, context=EphContext(), amsha=1):
         self.context = context
+        if self.context.circle == Circle.ADITYA:
+            self.aditya_offset = 30
+        else:
+            self.aditya_offset = 0
         self._amsha = amsha
         self.jd = self.context.timeJD.jd_number()
         # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
@@ -84,10 +88,13 @@ class Longitude:
         return self._amsha_index
 
     def amsha_sign_index(self):
-        return self.amsha_index()
+        if self.context.circle == Circle.ADITYA:
+            return (self.amsha_index() + 1) % 12
+        else:
+            return self.amsha_index()
 
     def sign(self) -> int:
-        return self.amsha_sign_index()+1
+        return self.amsha_sign_index() + 1
 
     def sign_name(self) -> str:
         return self.context.names.sign_names[self.amsha_sign_index()]
@@ -221,8 +228,8 @@ class Longitude:
         real_sign = self.real_sign_index()+1 # +1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
-        base_longitude = 30*(real_sign-1)
-        opposite_base_longitude = (base_longitude+180)%360
+        base_longitude = (30*(real_sign-1))-self.aditya_offset
+        opposite_base_longitude = ((base_longitude+180)%360)
 
         # we need to 1) set the lord 2) return the amsha=-2 longitude
         if real_sign%2 == 1 and real_in_sign < 15:
@@ -262,14 +269,11 @@ class Longitude:
 
         this algorithm was adapted from pyjhora
         """
-        # shift is to take care of aditya/zodiac cirlce
-        shift = 0
-        if self.context.circle == Circle.ADITYA:
-            shift = 30
+        # self.aditya_offset is to take care of aditya/zodiac cirlce
         one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
         one_sign = 12.0 * one_amsha    # = 40 degrees exactly
-        signs_elapsed = (self.real_longitude()+shift) / one_sign
+        signs_elapsed = (self.real_longitude()+self.aditya_offset) / one_sign
         left = signs_elapsed % 1
         sign = int(left * 12)
-        in_sign_long = (((self.real_longitude()+shift)/one_amsha)%1)*30
-        return ((sign*30) + (in_sign_long)) - shift
+        in_sign_long = (((self.real_longitude()+self.aditya_offset)/one_amsha)%1)*30
+        return ((sign*30) + (in_sign_long)) - self.aditya_offset

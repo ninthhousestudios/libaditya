@@ -33,9 +33,10 @@ from libaditya.calc import Panchanga
 def main():
     args = get_args()
 
+    timezone=""
     if args.location:
         lat, long, placename, utcoffset, timezone = parse_position(args.location)
-        if args.timezone_string:
+        if isinstance(args.timezone_string,str):
             timezone = args.timezone_string
         this_location = Location(lat,long,0,placename,timezone)
     else:
