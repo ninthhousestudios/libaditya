@@ -88,7 +88,7 @@ class Varga(Jaimini):
         """
         varga_cusps = []
         for cusp in cusps:
-            varga_cusps.append(Cusp(longitude=Longitude(cusp.real_longitude(),amsha=self.amsha()),speed=cusp.speed(),number=cusp.number(),context=cusp.context))
+            varga_cusps.append(Cusp(longitude=cusp.real_longitude(),amsha=self.amsha(),speed=cusp.speed(),number=cusp.number(),context=cusp.context))
         return Cusps(self.context,cusps=varga_cusps)
 
     def planets(self):

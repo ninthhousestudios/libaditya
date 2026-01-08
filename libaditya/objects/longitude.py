@@ -328,7 +328,6 @@ class Longitude:
         square_square_square_longitude = (base_longitude+270)%360
 
         fourth = 30/4
-        import pdb; pdb.set_trace()
 
         if real_in_sign < fourth:
             self._deity = "Sanaka"
