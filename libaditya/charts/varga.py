@@ -182,6 +182,7 @@ class Varga(Jaimini):
         header += f"{const.circle_name(self.context.circle)}\n"
         digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
         header += f"Dignities based on {digplace}\n"
+        header += f"{self.context.rashi_aspects} rashi aspects\n"
         if self.context.sysflg == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras

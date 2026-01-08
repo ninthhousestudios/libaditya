@@ -89,9 +89,10 @@ def coords_to_show(args):
         if show_topo:
             to_show.append(const.TOPO)
     if args.draconic:
-        show_drac = not (defaults.show_drac)
-        if show_drac:
-            to_show.append(const.DRAC)
+        print(f"\ndraconic currently broken")
+#        show_drac = not (defaults.show_drac)
+#        if show_drac:
+#            to_show.append(const.DRAC)
     if args.sidereal:
         show_sidereal = not (defaults.show_sidereal)
         if show_sidereal:

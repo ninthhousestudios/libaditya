@@ -74,6 +74,14 @@ toround = [True, 3]  # whether to round longitudes, and if so, to how many decim
 
 planetary_aspects = True
 planetary_cusps_aspects = True
+rashi_aspects = "quadrant"
+
+jaimini_padas = True
+jaimini_first_strength = True
+jaimini_second_strength = True
+jaimini_argala = True
+
+tajika_vargas = True
 
 #epehemeris_mode = {
 #    "zodiac": False,

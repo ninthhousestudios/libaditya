@@ -54,8 +54,9 @@ def main():
         names = Names(*const.names)
 
 
+    # input multiple months as MM/YYYY,MM/YYYY,MM/YYY
     for month in args.months:
-        month, year = parse_date(month)
+        month, year = parse_date(month.replace(",","")) #
 
         # midnight on the first day of the month
         this_timeJD = JulianDay((year,month,1,0),utcoffset,timezone)

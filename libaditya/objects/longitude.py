@@ -73,9 +73,6 @@ class Longitude:
             return self._amsha_longitude
 
     def longitude(self) -> float | str:
-        if self.amsha() == 1:
-            if self.context.sysflg == const.DRAC:
-                self._longitude = (self._longitude - self.rahu)%360
         if self.context.signize:
             return self.signize()
         else:

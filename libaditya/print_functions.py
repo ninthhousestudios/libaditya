@@ -97,7 +97,7 @@ def print_jaimini_first_strength(fs: [int]) -> None:
     print jaiminis first strength
     """
     for n,s in enumerate(fs):
-        print(f"{n+1}\t{s.glyph()}")
+        print(f"{n+1}\t{s.glyph()} {s.sign()}")
 
 def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
     """
@@ -105,7 +105,7 @@ def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
     """
     for sign, strengths in ssd.items():
         fstr = ""
-        fstr += f"{sign.glyph()}\t"
+        fstr += f"{sign.glyph()} {sign.sign()}\t"
         for strength in strengths:
             # strengh is a Planet class
             fstr+=f" {strength.abbreviation()} "

@@ -125,6 +125,10 @@ def main():
     rashi_temporary_friendships = defaults.rashi_temporary_friendships
     if args.dignities_varga:
         rashi_temporary_friendships = False
+
+    rashi_aspects = defaults.rashi_aspects
+    if args.jaimini_aspects:
+        rashi_aspects = args.jaimini_aspects
     
     # use defaults for position if not given by input file or args.position
     if not args.position and not args.input:
@@ -177,7 +181,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,rashi_temporary_friendships,names)
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,rashi_temporary_friendships,rashi_aspects,names)
     # print kala information and exit
     if args.kala:
         print_kala(context)
@@ -247,7 +251,46 @@ def print_chart(name,args,context):
     print(f"\nChart for {name}\n")
     chart = Chart(context)
     print(chart)
+    print_jaimini(args,chart)
     return chart
+
+def print_jaimini(args,chart,amsha=1):
+    # now go through all the jaimini options, then print
+    jaimini_padas = defaults.jaimini_padas
+    if args.jaimini_padas:
+        jaimini_padas = not (defaults.jaimini_padas)
+    jaimini_first_strength = defaults.jaimini_first_strength
+    if args.jaimini_first_strength:
+        jaimini_first_strength = not (defaults.jaimini_first_strength)
+    jaimini_second_strength = defaults.jaimini_second_strength
+    if args.jaimini_second_strength:
+        jaimini_second_strength = not (defaults.jaimini_second_strength)
+    jaimini_argala = defaults.jaimini_argala
+    if args.jaimini_argala:
+        jaimini_argala = not (defaults.jaimini_argala)
+
+    if jaimini_padas:
+        print("Padas:")
+        printf.print_padas(chart.jaimini().padas(amsha))
+    if jaimini_first_strength:
+        print("First Strength")
+        printf.print_jaimini_first_strength(chart.jaimini().first_strength(amsha))
+    if jaimini_second_strength:
+        print("Second Strength")
+        printf.print_jaimini_second_strength(chart.jaimini().second_strength(amsha))
+    if jaimini_argala:
+        if amsha == 1:
+            print("Argala")
+            printf.print_jaimini_argala(chart.jaimini().argala())
+
+def print_vargas(args,chart):
+    if not args.vargas:
+        return
+    vargas = [int(varga) for varga in args.vargas.split(',')]
+
+    for varga in vargas:
+        print(chart.get_varga(varga))
+        print_jaimini(args,chart,amsha=varga)
 
 def print_planetary_aspects(args,chart):
     planetary_aspects = defaults.planetary_aspects
@@ -263,13 +306,6 @@ def print_planetary_aspects(args,chart):
         print(f"\nCusp Aspect Table")
         print(printf.parashara_aspect_table_cusps(chart.rashi().planets().parashara_aspects_cusps(chart.rashi().cusps())))
 
-def print_vargas(args,chart):
-    if not args.vargas:
-        return
-    vargas = [int(varga) for varga in args.vargas.split(',')]
-
-    for varga in vargas:
-        print(chart.get_varga(varga))
 
 def print_ephemeris(context,to_show):
     for sys in to_show:
@@ -282,13 +318,13 @@ def print_ephemeris(context,to_show):
                 print(Planets(replace(context,sysflg=sys,circle=Circle.SIDEREAL_ADITYA)))
                 print("\n")
                 continue
-        if sys == const.DRAC:
-            dracon = replace(context,sysflg=sys,names=replace(context.names,sign_names=zodiac))
-            print(Planets(dracon))
-            print("\n")
-            print(Cusps(dracon))
-            print("\n")
-            continue
+#        if sys == const.DRAC:
+#            dracon = replace(context,sysflg=sys,names=replace(context.names,sign_names=zodiac))
+#            print(Planets(dracon))
+#            print("\n")
+#            print(Cusps(dracon))
+#            print("\n")
+#            continue
         if sys == const.BARY or sys == const.HELIO:
             print(repr(Planets(replace(context,sysflg=sys))))
             print("\n")
@@ -512,7 +548,7 @@ def get_args():
         "-D",
         "--draconic",
         action="store_true",
-        help="print positions for a tropical draconic chart, where Rahu = 0 Aries",
+        help="this feature currently broken. hope to replace it later. print positions for a tropical draconic chart, where Rahu = 0 Aries",
     )
     parser.add_argument(
         "-T",
@@ -635,6 +671,35 @@ def get_args():
         "--dignities-varga",
         action="store_true",
         help="use varga placement to determine temporary relationships for dignity",
+    )
+    parser.add_argument(
+        "-Js",
+        "--jaimini-aspects",
+        help="type of rashi aspects to use: quadrant, element, conventional",
+    )
+    parser.add_argument(
+        "-Jp",
+        "--jaimini-padas",
+        action="store_true",
+        help="print Jaimini padas for this chart",
+    )
+    parser.add_argument(
+        "-Jfs",
+        "--jaimini-first-strength",
+        action="store_true",
+        help="print Jaimini first strength for this chart",
+    )
+    parser.add_argument(
+        "-Jss",
+        "--jaimini-second-strength",
+        action="store_true",
+        help="print Jaimini second strength for this chart",
+    )
+    parser.add_argument(
+        "-Ja",
+        "--jaimini-argala",
+        action="store_true",
+        help="print Jaimini argala for this chart",
     )
 
     args = parser.parse_args()

@@ -242,7 +242,7 @@ class Planet(Longitude):
         """
         return JulianDay(
             swe.rise_trans(
-                self.timeJD.midnightjd() if (rs == swe.CALC_RISE) else self.jd,
+                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
                 location.swe_location(),

@@ -20,7 +20,7 @@ from libaditya.charts import Chart
 
 class Jaimini(Chart):
 
-    def __init__(self, context=EphContext()):
+    def __init__(self,  context=EphContext()):
         super().__init__(context)
 
     def pada(self, amsha=1):
@@ -49,6 +49,12 @@ class Jaimini(Chart):
             return self.rashi().jaimini_first_strength()
         else:
             return self.get_varga(amsha).jaimini_first_strength()
+
+    def second_strength(self, amsha=1):
+        if amsha == 1:
+            return self.rashi().jaimini_second_strength()
+        else:
+            return self.get_varga(amsha).jaimini_second_strength()
 
     def argala(self):
         """
