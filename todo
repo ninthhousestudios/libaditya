@@ -7,6 +7,18 @@ panchanga and monthly_panchanga
     check against kala and maybe another source
     but in utc, it seems like sunrise/sunset is off
 
+added chaturthamsha, but then something weird is happening with the cusps
+    they are not being calculated right, even in the navamsha
+    must 
+
+think about removing Names from EphContext
+    they are only used in ephemeris mode in order to print to screen
+    in terms of calculation, they are not really needed
+    so can i remove the Names from the calculation and deal with them later
+    if i need to print?
+    maybe it returns the data and __str/repr__ can provide defaults to print to
+    screen, defaults that cant be changed
+
 should i add a recursive Varga somewhere? right now, Planets of a Varga dont
 know they they belong to a certain varga. maybe i could just indicate that,
 rather than passing itself as i did with Chart and Jaimini

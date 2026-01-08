@@ -226,6 +226,8 @@ class Longitude:
                 return self.hora() 
             case -3:
                 return self.drekkana()
+            case -4:
+                return self.chaturthamsha()
             case _:
                 return "not yet implemented"
 
@@ -277,6 +279,7 @@ class Longitude:
 
     def drekkana(self):
         """
+        same element, different modality
         divide the sign into three: first 3rd remains as that sign, sign 1 from this sign (sign means Longitude(amsha), which implies a sign); narada
                                     second 3rd goes to the next trine, the next sign of same element, different modality, sign 5 from here;  agastya
                                     third 3rd goes to the next next trine, the next next sign of same element, different different modality, sign 9 from here; durvasas
@@ -302,6 +305,44 @@ class Longitude:
         if real_in_sign >= 20 and real_in_sign < 30:
             self._deity = "Durvasas"
             return trine_trine_longitude + ((real_in_sign-20)/10)*30
+
+    def chaturthamsha(self):
+        """
+        same modality, different element
+        divide the sign into four: first 4th remains, sanaka
+                                   second 4th goes to next sign of same modality, sananada
+                                   third 4th goes to opposite sign of same modality, sanatkumāra
+                                   fourth 4th goes to third sign of same modality, sanātana 
+
+        this 1) returns the longitude of the planet in the hora
+             2) sets self._deity to the hora lord
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.real_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        # take care of it being aditya here, by adding self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC
+        base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
+        square_longitude = (base_longitude+90)%360
+        square_square_longitude = (base_longitude+180)%360
+        square_square_square_longitude = (base_longitude+270)%360
+
+        fourth = 30/4
+        import pdb; pdb.set_trace()
+
+        if real_in_sign < fourth:
+            self._deity = "Sanaka"
+            return base_longitude + (real_in_sign/fourth)*30
+        if real_in_sign >= fourth and real_in_sign < 2*fourth:
+            self._deity = "Sananda"
+            return square_longitude + ((real_in_sign-fourth)/fourth)*30
+        if real_in_sign >= 2*fourth and real_in_sign < 3*fourth:
+            self._deity = "Sanatkumāra"
+            return square_square_longitude + ((real_in_sign-2*fourth)/fourth)*30
+        if real_in_sign >= 3*fourth and real_in_sign < 4*fourth:
+            self._deity = "Sanātana"
+            return square_square_square_longitude + ((real_in_sign-3*fourth)/fourth)*30
+
         
     def parvritti_varga(self, amsha):
         """

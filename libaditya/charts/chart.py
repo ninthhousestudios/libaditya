@@ -23,6 +23,28 @@ from libaditya.objects import EphContext, Planets, Cusps, Circle
 from libaditya.charts import Rashi, Varga
 
 class Chart:
+    """
+    the primary interface into libaditya is the Chart
+    Chart is a collection of vargas
+
+    it explicity includes a Rashi chart Chart.rashi()
+    any implemented varga can gotten by Chart.get_varga(varga_code)
+
+    can return a new Chart that has different options set
+    aditya(),tropical(),sidereal() all have certain options they set, any others can be passed as keyword arguments, e.g., ayanamsa=27
+    defaults are documented in those functions
+
+    Jaimini and Tajika inherit from Chart, and they are here to give syntactic functionality to this
+    simply for ease of use; explained more in a code comment
+
+    the actually functionality is provided through Varga and on down.
+
+    where the syntax for chart=Chart() is chart.jaimini().first_strength()
+    .first_strength() actually belongs to Varga...so on any varga you can call
+    Varga.jaimini_first_strength()
+
+    not sure this syntax is really worth it? leaving it for now
+    """
 
     def __init__(self, context=EphContext()):
         self.context = context
@@ -33,6 +55,26 @@ class Chart:
 
     def __repr__(self):
         return self.__str__()
+
+    def rashi(self):
+        return self._Rashi
+
+    def get_varga(self, amsha: int):
+        """
+        use Chart.rashi() for the rashi() chart
+        you must pass an integer to get_varga
+        Chart.get_varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
+        is different in some respects...not sure if they should be or not, e.g., wrt to argala
+
+        1-N for positive integers make a parivritti varga of that amsha
+        special vargas have negative integer codes (updated here as implemeneted)
+        these vargas all have deities associated with the amsha in various ways
+        these can be accessed by Longitude.deity(). Longitude knows what amsha it is in. Longitude.lord() gives the
+        planetary lord for the sign Longitude inhabits in the amsha.
+            -2 Hora; Sun and Moon, same stays, opposite goes opposite
+            -3 Drekkana;
+        """
+        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
 
     # jaimini and tajika
     # these inherit from Chart, then Chart calls them here, which is why there is a local import statement
@@ -105,23 +147,4 @@ class Chart:
     def ayanamsa(self):
         return self.context.ayanamsa
 
-    def rashi(self):
-        return self._Rashi
-
-    def get_varga(self, amsha: int):
-        """
-        use Chart.rashi() for the rashi() chart
-        you must pass an integer to get_varga
-        Chart.get_varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
-        is different in some respects...not sure if they should be or not, e.g., wrt to argala
-
-        1-N for positive integers make a parivritti varga of that amsha
-        special vargas have negative integer codes (updated here as implemeneted)
-        these vargas all have deities associated with the amsha in various ways
-        these can be accessed by Longitude.deity(). Longitude knows what amsha it is in. Longitude.lord() gives the
-        planetary lord for the sign Longitude inhabits in the amsha.
-            -2 Hora; Sun and Moon, same stays, opposite goes opposite
-            -3 Drekkana;
-        """
-        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
 
