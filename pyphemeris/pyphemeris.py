@@ -625,6 +625,12 @@ def get_args():
         help="vargas to print; any integer number will print the corresponding parivritti varga; multiple vargas can be printed at once, e.g., -v 4,5,9",
     )
     parser.add_argument(
+        "-Tv",
+        "--tajika-vargas",
+        action="store_true",
+        help="print the Tajika parivritti vargas, 1-12",
+    )
+    parser.add_argument(
         "-Dv",
         "--dignities-varga",
         action="store_true",

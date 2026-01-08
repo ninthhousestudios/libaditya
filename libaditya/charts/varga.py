@@ -63,8 +63,12 @@ class Varga(Jaimini):
                 return "Panchamsha"
             case 9:
                 return "Navamsha"
-            case _:
-                return "Not yet implemented"
+            case -2:
+                return "Hora"
+            case -3:
+                return "Drekkana"
+            case _ if self.amsha() > 5:
+                return "parivritti"
 
     def amsha(self):
         return self._amsha

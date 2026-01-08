@@ -22,6 +22,12 @@ from libaditya import utils
 
 from .context import EphContext, Circle
 
+def even(n):
+    return n%2 == 0 
+
+def odd(n):
+    return n%2 == 1 
+
 class Longitude:
     """
     Longitude expects at minimum a longitude
@@ -207,6 +213,9 @@ class Longitude:
         other numbers are for special vargas (listed as implemented):
             -2 Hora -> the second half of a sign relates to the opposite sign
                         the first half of a sign is of that element, the second half of the other
+
+        these are called by functions in Longitude: .hora(), .drekkana(), etc.
+        this is where the actual calculation is done
         """
         if amsha == 1:
             return self.real_longitude()
@@ -219,7 +228,7 @@ class Longitude:
                 return self.drekkana()
             case _:
                 return "not yet implemented"
-        
+
     def hora(self):
         """
         in the hora, lord of first half of a male sign is the sun, of second half is the moon
@@ -234,11 +243,11 @@ class Longitude:
         real_sign = self.real_sign_index()+1 # +1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
-        base_longitude = (30*(real_sign-1))-self.aditya_offset
+        base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
         opposite_base_longitude = ((base_longitude+180)%360)
 
         # we need to 1) set the lord 2) return the amsha=-2 longitude
-        if real_sign%2 == 1 and real_in_sign < 15:
+        if odd(real_sign) and real_in_sign < 15:
             # first half of odd sign ->
             self._deity = "Sun"
             # stays in this sign
@@ -246,26 +255,53 @@ class Longitude:
             hora_elapsed = (real_in_sign/15)*30
             #            print(f"{self.real_longitude()=}\n{self.sign()=}\t{real_sign=}")
             return base_longitude+hora_elapsed
-        if real_sign%2 == 1 and real_in_sign >= 15:
+        if odd(real_sign) and real_in_sign >= 15:
             # second half of odd sign ->
             self._deity = "Moon"
             # goes to opposite sign
             hora_elapsed = ((real_in_sign-15)/15)*30
             return opposite_base_longitude+hora_elapsed
-        if real_sign%2 == 0 and real_in_sign < 15:
+        if even(real_sign) and real_in_sign < 15:
             # first half of even sign ->
             self._deity = "Moon"
             # stays in this sign
             # minus makes the sign number into an index
             hora_elapsed = (real_in_sign/15)*30
             return base_longitude+hora_elapsed
-        if real_sign%2 == 0 and real_in_sign >= 15:
+        if even(real_sign) and real_in_sign >= 15:
             # second half of odd sign ->
             self._deity = "Sun"
             # goes to opposite sign
             hora_elapsed = ((real_in_sign-15)/15)*30
             return opposite_base_longitude+hora_elapsed
 
+    def drekkana(self):
+        """
+        divide the sign into three: first 3rd remains as that sign, sign 1 from this sign (sign means Longitude(amsha), which implies a sign); narada
+                                    second 3rd goes to the next trine, the next sign of same element, different modality, sign 5 from here;  agastya
+                                    third 3rd goes to the next next trine, the next next sign of same element, different different modality, sign 9 from here; durvasas
+
+        this 1) returns the longitude of the planet in the hora
+             2) sets self._deity to the hora lord
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.real_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        # take care of it being aditya here, by adding self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC
+        base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
+        trine_longitude = (base_longitude+120)%360
+        trine_trine_longitude = (base_longitude+240)%360
+
+        if real_in_sign < 10:
+            self._deity = "Narada"
+            return base_longitude + (real_in_sign/10)*30
+        if real_in_sign >= 10 and real_in_sign < 20:
+            self._deity = "Agastya"
+            return trine_longitude + ((real_in_sign-10)/10)*30
+        if real_in_sign >= 20 and real_in_sign < 30:
+            self._deity = "Durvasas"
+            return trine_trine_longitude + ((real_in_sign-20)/10)*30
         
     def parvritti_varga(self, amsha):
         """

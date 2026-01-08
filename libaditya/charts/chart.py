@@ -34,6 +34,23 @@ class Chart:
     def __repr__(self):
         return self.__str__()
 
+    # jaimini and tajika
+    # these inherit from Chart, then Chart calls them here, which is why there is a local import statement
+    # the reason is that i like to have the syntax, e.g., chart.jaimini().pada()
+    # i could make a Mixin like with Varga and calc.Jaimini, then the syntax would be
+    # chart.jaimini_pada(), chart.tajika_vargas(); but for some reason, i want to be able to write, chart.tajika()
+    # really, if you want to really use that chart, then do tajika_chart = chart.tajika()
+    # jaimini and tajika really just contain wrappers and syntax for that functionality
+    # the calculation is also done lower, e.g., in Varga
+
+    def jaimini(self):
+        from libaditya.charts import Jaimini
+        return Jaimini(context=self.context)
+
+    def tajika(self):
+        from libaditya.charts import Tajika
+        return Tajika(context=self.context)
+
     def aditya(self, **kwargs):
         """
         take the current EphContext and change what is needed to make it a tropical Aditya chart
@@ -60,19 +77,19 @@ class Chart:
         """
         return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
 
-    def sidereal(self, **kwargs):
+    def sidereal(self, ayanamsa=27, **kwargs):
         """
         take the current EphContext and change what is needed to make it a sidereal zodiac chart
 
         sysflg=const.SID
         circle=Circle.ZODIAC
         names=replace(self.context.names,sign_names=const.zodiac)
-        ayanamsa=98/36 by default; use Chart.sidereal(ayanamsa=n) to set the ayanamsa
+        ayanamsa=27, True Citra ayanamsa by default; use Chart.sidereal(ayanamsa=n) to set the ayanamsa
 
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.SID,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
+        return Chart(context=replace(self.context,ayanamsa=ayanamsa,sysflg=const.SID,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
 
     def _new_chart(self, **kwargs):
         """
@@ -85,6 +102,9 @@ class Chart:
         """
         return Chart(context=replace(self.context,**kwargs))
 
+    def ayanamsa(self):
+        return self.context.ayanamsa
+
     def rashi(self):
         return self._Rashi
 
@@ -94,9 +114,14 @@ class Chart:
         you must pass an integer to get_varga
         Chart.get_varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
         is different in some respects...not sure if they should be or not, e.g., wrt to argala
+
+        1-N for positive integers make a parivritti varga of that amsha
+        special vargas have negative integer codes (updated here as implemeneted)
+        these vargas all have deities associated with the amsha in various ways
+        these can be accessed by Longitude.deity(). Longitude knows what amsha it is in. Longitude.lord() gives the
+        planetary lord for the sign Longitude inhabits in the amsha.
+            -2 Hora; Sun and Moon, same stays, opposite goes opposite
+            -3 Drekkana;
         """
         return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
 
-    def jaimini(self):
-        from libaditya.charts import Jaimini
-        return Jaimini(context=self.context)
