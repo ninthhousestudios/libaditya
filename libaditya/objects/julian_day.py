@@ -131,6 +131,9 @@ class JulianDay:
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"
 
+    def usrday(self):
+        return int(self.usrdatetime[2])
+
     def usrtime(self):
         return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self.timezone}"
 

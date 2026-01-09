@@ -105,14 +105,18 @@ def make_table(args,panch):
         sunset = panch.sunset()
         moonrise = panch.moonrise()
         moonset = panch.moonset()
-        if moonrise.day() != today_midnight.timeJD.day():
-            moonrise = "N/A"
-        else:
-            moonrise = moonrise.time()
-        if moonset.day() != today_midnight.timeJD.day():
-            moonset = "N/A"
-        else:
-            moonset = moonset.time()
+#        if moonrise.day() != today_midnight.timeJD.day():
+#            if utc:
+#                moonrise = "N/A"
+#            else:
+#                if moonrise.day() + 1 == moonrise.day():
+#                    moonrise = Panchanga(replace(panch.context,timeJD=panch.timeJD.shift('f','day',1))).moonrise()
+#        if moonset.day() != today_midnight.timeJD.day():
+#            if utc:
+#                moonset = "N/A"
+#            else:
+#                if moonset.day() + 1 == moonset.day():
+#                    moonset = Panchanga(replace(panch.context,timeJD=panch.timeJD.shift('f','day',1))).moonset()
 
         today_sunrise = Panchanga(replace(panch.context,timeJD=sunrise))
         if args.midnight:
@@ -125,8 +129,14 @@ def make_table(args,panch):
         if utc:
             row.append(f"{sunrise.time()}")
             row.append(f"{sunset.time()}")
-            row.append(f"{moonrise}")
-            row.append(f"{moonset}")
+            if moonrise.day() != today_midnight.timeJD.day():
+                row.append("N/A")
+            else:
+                row.append(f"{moonrise.time()}")
+            if moonset.day() != today_midnight.timeJD.day():
+                row.append("N/A")
+            else:
+                row.append(f"{moonset.time()}")
             row.append(f"{panch.vara()}")
             row.append(f"{panch.next_vara().timeJD.time()}")
             row.append(f"{panch.nakshatra()}")
@@ -138,10 +148,22 @@ def make_table(args,panch):
             row.append(f"{panch.yoga_name()}")
             row.append(f"{panch.next_yoga().timeJD.time()}")
         else:
-            row.append(f"{panch.sunrise().usrtime()}")
-            row.append(f"{panch.sunset().usrtime()}")
-            row.append(f"{panch.moonrise().usrtime()}")
-            row.append(f"{panch.moonset().usrtime()}")
+            row.append(f"{sunrise.usrtime()}")
+            row.append(f"{sunset.usrtime()}")
+            if moonrise.usrday() != today_midnight.timeJD.day():
+                # we have to go forward a day to make the calendar days line up between local and utc
+                moonrise = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1))).moonrise()
+                row.append(f"{moonrise.usrtime()}")
+            else:
+                row.append(f"{moonrise.usrtime()}")
+            if moonset.usrday() != today_midnight.timeJD.day():
+                moonset = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1))).moonset()
+                if moonset.day() == moonset.usrday():
+                    row.append("N/A")
+                else:
+                    row.append(f"{moonset.usrtime()}")
+            else:
+                row.append(f"{moonset.usrtime()}")
             row.append(f"{panch.vara()}")
             row.append(f"{panch.next_vara().timeJD.usrtime()}")
             row.append(f"{panch.nakshatra()}")
