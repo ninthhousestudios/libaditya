@@ -116,11 +116,16 @@ class JulianDay:
         else:
             return f"{utils.date2str(self.datetime)}"
 
-    def time(self, tz="utc"):
+    def time(self, tz="utc", print_tz=True):
+        ptz = ""
         if tz != "utc":
-            return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self._timezone}"
+            if print_tz: 
+                ptz = " " + self._timezone
+            return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))}{ptz}"
         else:
-            return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC"
+            if print_tz: 
+                ptz = " UTC"
+            return f"{utils.time2str(utils.dec2dms(self.datetime[3]))}{ptz}"
 
     def timedate(self):
         return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC on {utils.date2str(self.datetime)}"

@@ -34,12 +34,9 @@ from libaditya.calc import Panchanga
 def main():
     args = get_args()
 
-    timezone=""
     if args.location:
         lat, long, placename, utcoffset, timezone = parse_position(args.location)
         original_timezone = utils.mktimezone(utcoffset)
-        if isinstance(args.timezone_string,str):
-            timezone = args.timezone_string
         this_location = Location(lat,long,0,placename,original_timezone)
     else:
         utcoffset = 12
@@ -70,14 +67,11 @@ def main():
         print(f"Panchanga for {month}/{year}")
         print(f"{this_location}")
         print(f"Using {const.ayanamsa_name(ayanamsa)} ayanamsa")
+        print("All times relative to midnight")
         if args.utc:
-            print("All times UTC")
+            print(f"All times UTC")
         else:
-            print(f"All times {original_timezone}")
-        if args.midnight:
-            print("Times at midnight")
-        else:
-            print("All panchanga times at sunrise")
+            print(f"All times: {panch.timeJD.timezone()}")
 
         print(panch_str)
     snapshot = tracemalloc.take_snapshot()
@@ -107,6 +101,10 @@ def make_table(args,panch):
     else:
         tz = "usr"
 
+    ptz = False
+    if args.print_timezone:
+        ptz = True
+
     format = "text"
     if args.format:
         format = args.format
@@ -124,41 +122,36 @@ def make_table(args,panch):
         moonrise = panch.moonrise()
         moonset = panch.moonset()
 
-        today_sunrise = Panchanga(replace(panch.context,timeJD=sunrise))
-        if args.midnight:
-            panch = today_midnight
-        else:
-            panch = today_sunrise
         # build row for this day
         row = []
         row.append(day)
-        row.append(f"{sunrise.time(tz)}")
-        row.append(f"{sunset.time(tz)}")
+        row.append(f"{sunrise.time(tz,ptz)}")
+        row.append(f"{sunset.time(tz,ptz)}")
         # take care of moonrise and moonset
         if tz == "utc":
             if moonrise.day(tz) != day:
                 row.append("N/A")
             else:
-                row.append(f"{moonrise.time(tz)}")
+                row.append(f"{moonrise.time(tz,ptz)}")
             if moonset.day(tz) != day:
                 row.append("N/A")
             else:
-                row.append(f"{moonset.time(tz)}")
+                row.append(f"{moonset.time(tz,ptz)}")
         else:
             if moonrise.usrday() != today_midnight.timeJD.day():
                 # we have to go forward a day to make the calendar days line up between local and utc
                 moonrise = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1))).moonrise()
-                row.append(f"{moonrise.usrtime()}")
+                row.append(f"{moonrise.time("usr",ptz)}")
             else:
-                row.append(f"{moonrise.usrtime()}")
+                row.append(f"{moonrise.time("usr",ptz)}")
             if moonset.usrday() != today_midnight.timeJD.day():
                 moonset = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1))).moonset()
                 if moonset.day() == moonset.usrday():
                     row.append("N/A")
                 else:
-                    row.append(f"{moonset.usrtime()}")
+                    row.append(f"{moonset.time("usr",ptz)}")
             else:
-                row.append(f"{moonset.usrtime()}")
+                row.append(f"{moonset.time("usr",ptz)}")
         # now do the rest
         ptimes = []
         ptimes.append(panch.vara())
@@ -181,15 +174,7 @@ def make_table(args,panch):
             if t.day(tz) != day:
                 row.append("N/A")
                 continue
-            if args.midnight:
-                if t.time(tz) < panch.timeJD.time():
-                    row.append("N/A")
-                    continue
-            else:
-                if t.time(tz) < panch.timeJD.time(tz):
-                    row.append("N/A")
-                    continue
-            row.append(t.time(tz))
+            row.append(t.time(tz,ptz))
 
         output.add_row(row)
         output.add_divider()
@@ -245,8 +230,9 @@ def get_args():
     )
     parser.add_argument(
         "-z",
-        "--timezone-string",
-        help="set a timezone-string to make local time output more readable; e.g., using -z EST will make the table more readable, rather than having it print \"UTC-5.0\""
+        "--print-timezone",
+        action="store_true",
+        help="print timezone in each box; default is to just print at the top"
     )
     parser.add_argument(
         "-L",
