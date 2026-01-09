@@ -91,6 +91,16 @@ def time2str(time):
     """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
     return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"
 
+def mktimezone(offset,timezone="UTC"):
+    sign = ""
+    appendix = ""
+    if offset > 0:
+        sign = "+"
+    if offset == 0 or timezone != "UTC":
+        appendix = ""
+    else:
+        appendix = sign + f"{round(offset, 2)}"
+    return timezone + appendix
 
 def mktab(n):
     tab = ""

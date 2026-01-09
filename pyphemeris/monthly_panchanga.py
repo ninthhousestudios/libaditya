@@ -26,6 +26,7 @@ tracemalloc.start()
 
 import libaditya.read as read
 from libaditya import constants as const
+from libaditya import utils
 
 from libaditya.objects import JulianDay, EphContext, Location, Yamakoti, Names
 from libaditya.calc import Panchanga
@@ -36,9 +37,10 @@ def main():
     timezone=""
     if args.location:
         lat, long, placename, utcoffset, timezone = parse_position(args.location)
+        original_timezone = utils.mktimezone(utcoffset)
         if isinstance(args.timezone_string,str):
             timezone = args.timezone_string
-        this_location = Location(lat,long,0,placename,timezone)
+        this_location = Location(lat,long,0,placename,original_timezone)
     else:
         utcoffset = 12
         timezone = "YKT"
@@ -68,10 +70,14 @@ def main():
         print(f"Panchanga for {month}/{year}")
         print(f"{this_location}")
         print(f"Using {const.ayanamsa_name(ayanamsa)} ayanamsa")
+        if args.utc:
+            print("All times UTC")
+        else:
+            print(f"All times {original_timezone}")
         if args.midnight:
             print("Times at midnight")
         else:
-            print("Times at sunrise")
+            print("All panchanga times at sunrise")
 
         print(panch_str)
     snapshot = tracemalloc.take_snapshot()
@@ -84,7 +90,10 @@ def main():
 
 def make_table(args,panch):
     output = PrettyTable()
-    output.field_names = ["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"]
+    if args.long_names:
+        output.field_names = ["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"]
+    else:
+        output.field_names = ["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "V", "N.V.", "N", "N.N.", "T", "N.T.", "K.", "N.K.", "Y", "N.Y."]
 
     # so we can keep track of when the month ends
     _, this_month, day, _ = swe.revjul(panch.timeJD.jd_number())
@@ -93,30 +102,27 @@ def make_table(args,panch):
     if args.utc:
         utc = True
 
+    if utc:
+        tz = "utc"
+    else:
+        tz = "usr"
+
     format = "text"
     if args.format:
         format = args.format
 
     month = this_month
     while month == this_month:
+        # want every row to be a calendar day
+        # all times should occur within that calendar day
+        # if no such event happens during that calendar, replace with "N/A"
         today_midnight = panch
+        day = today_midnight.timeJD.day()
         # this is so that we change change the Panchanga to be at sunrise if desired
         sunrise = panch.sunrise()
         sunset = panch.sunset()
         moonrise = panch.moonrise()
         moonset = panch.moonset()
-#        if moonrise.day() != today_midnight.timeJD.day():
-#            if utc:
-#                moonrise = "N/A"
-#            else:
-#                if moonrise.day() + 1 == moonrise.day():
-#                    moonrise = Panchanga(replace(panch.context,timeJD=panch.timeJD.shift('f','day',1))).moonrise()
-#        if moonset.day() != today_midnight.timeJD.day():
-#            if utc:
-#                moonset = "N/A"
-#            else:
-#                if moonset.day() + 1 == moonset.day():
-#                    moonset = Panchanga(replace(panch.context,timeJD=panch.timeJD.shift('f','day',1))).moonset()
 
         today_sunrise = Panchanga(replace(panch.context,timeJD=sunrise))
         if args.midnight:
@@ -126,30 +132,19 @@ def make_table(args,panch):
         # build row for this day
         row = []
         row.append(day)
-        if utc:
-            row.append(f"{sunrise.time()}")
-            row.append(f"{sunset.time()}")
-            if moonrise.day() != today_midnight.timeJD.day():
+        row.append(f"{sunrise.time(tz)}")
+        row.append(f"{sunset.time(tz)}")
+        # take care of moonrise and moonset
+        if tz == "utc":
+            if moonrise.day(tz) != day:
                 row.append("N/A")
             else:
-                row.append(f"{moonrise.time()}")
-            if moonset.day() != today_midnight.timeJD.day():
+                row.append(f"{moonrise.time(tz)}")
+            if moonset.day(tz) != day:
                 row.append("N/A")
             else:
-                row.append(f"{moonset.time()}")
-            row.append(f"{panch.vara()}")
-            row.append(f"{panch.next_vara().timeJD.time()}")
-            row.append(f"{panch.nakshatra()}")
-            row.append(f"{panch.next_nakshatra().timeJD.time()}")
-            row.append(f"{panch.tithi()}")
-            row.append(f"{panch.next_tithi().timeJD.time()}")
-            row.append(f"{panch.karana()}")
-            row.append(f"{panch.next_karana().timeJD.time()}")
-            row.append(f"{panch.yoga_name()}")
-            row.append(f"{panch.next_yoga().timeJD.time()}")
+                row.append(f"{moonset.time(tz)}")
         else:
-            row.append(f"{sunrise.usrtime()}")
-            row.append(f"{sunset.usrtime()}")
             if moonrise.usrday() != today_midnight.timeJD.day():
                 # we have to go forward a day to make the calendar days line up between local and utc
                 moonrise = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1))).moonrise()
@@ -164,24 +159,48 @@ def make_table(args,panch):
                     row.append(f"{moonset.usrtime()}")
             else:
                 row.append(f"{moonset.usrtime()}")
-            row.append(f"{panch.vara()}")
-            row.append(f"{panch.next_vara().timeJD.usrtime()}")
-            row.append(f"{panch.nakshatra()}")
-            row.append(f"{panch.next_nakshatra().timeJD.usrtime()}")
-            row.append(f"{panch.tithi()}")
-            row.append(f"{panch.next_tithi().timeJD.usrtime()}")
-            row.append(f"{panch.karana()}")
-            row.append(f"{panch.next_karana().timeJD.usrtime()}")
-            row.append(f"{panch.yoga_name()}")
-            row.append(f"{panch.next_yoga().timeJD.usrtime()}")
+        # now do the rest
+        ptimes = []
+        ptimes.append(panch.vara())
+        ptimes.append(panch.next_vara().timeJD)
+        ptimes.append(panch.nakshatra())
+        ptimes.append(panch.next_nakshatra().timeJD)
+        ptimes.append(panch.tithi())
+        ptimes.append(panch.next_tithi().timeJD)
+        ptimes.append(panch.karana())
+        ptimes.append(panch.next_karana().timeJD)
+        ptimes.append(panch.yoga_name())
+        ptimes.append(panch.next_yoga().timeJD)
+        # now check all to make sure that are the right calendar day, otherwise print N/A
+        # .time
+        for n,t in enumerate(ptimes):
+            if not isinstance(t,JulianDay):
+                # not a time, so skip
+                row.append(t)
+                continue
+            if t.day(tz) != day:
+                row.append("N/A")
+                continue
+            if args.midnight:
+                if t.time(tz) < panch.timeJD.time():
+                    row.append("N/A")
+                    continue
+            else:
+                if t.time(tz) < panch.timeJD.time(tz):
+                    row.append("N/A")
+                    continue
+            row.append(t.time(tz))
 
         output.add_row(row)
         output.add_divider()
         # go forward one day
         panch = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1)))
-        _, month, day, _ = swe.revjul(panch.timeJD.jd_number())
+        month = panch.timeJD.month(tz)
 
-    return output.get_formatted_string(out_format=format,fields=["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"])
+    if args.long_names:
+        return output.get_formatted_string(out_format=format,fields=["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"])
+    else:
+        return output.get_formatted_string(out_format=format, fields=["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "V", "N.V.", "N", "N.N.", "T", "N.T.", "K.", "N.K.", "Y", "N.Y."])
 
 
 def parse_date(date):
@@ -200,7 +219,7 @@ def get_args():
     parser = argparse.ArgumentParser(
         prog="monthly_panchanga",
         usage="%(prog)s [options]",
-        description="get panchanga for month MM/YYYY",
+        description="get panchanga for month MM/YYYY; all rows are times that happen on the calendar \"Day\"; for all but sun/moonrise/set, all times times are related to midnight or sunrise; default is sunrise; use -m for midnight",
     )
     parser.add_argument(
         "-l",

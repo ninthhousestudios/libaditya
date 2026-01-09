@@ -246,7 +246,7 @@ class Planet(Longitude):
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
                 location.swe_location(),
-            )[1][0],self.timeJD.utcoffset,self.timeJD.timezone
+            )[1][0],self.timeJD.utcoffset,self.timeJD.timezone()
         )
 
     def nakshatra(self) -> Nakshatra:

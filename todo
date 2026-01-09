@@ -3,9 +3,12 @@ fix next_vara
 beginning of the vara, it will say the vara that is beginning, not the next one
 
 panchanga and monthly_panchanga
-    moonrise and moonset seem to work appropriately when doing utc but not local time
-    check against kala and maybe another source
-    but in utc, it seems like sunrise/sunset is off
+    seemed to fix moonrise and moonset just by some hacks; not sure how well
+they work for everything
+    need to look at nakshatra, tithi, yoga
+    also have issue like moonrise/set about date and utc/local
+    but also between Kala, mp and pyph -e i was getting three different times
+for the next nakshatra
 
 think about removing Names from EphContext
     they are only used in ephemeris mode in order to print to screen
@@ -32,21 +35,13 @@ think about implementing non-parivritti vargas
 
 check first strength in vargas
 
-contain Names within Chart
-    want each Chart to have a Names that is inherent to the Chart
-    right now, the names are passed along to each object in the Chart...every
-single one basically. seems like a lot of memory if they are copied all the
-time? especially considering performance of monthly_panchanga. write an altered
-version, then test of each works
 
 revamp .pyph file
 make interactive .pyph creator
 
 jaimini
     first source of strength
-    this sort of works
-    seems to always return 12 signs for the list now, so now need to fine tune
-        how it chooses
+    check my check, d27, mix up between 9 and 6 in fss
     argala
     vargas
 

@@ -60,7 +60,7 @@ class JulianDay:
             self.jd = jd
         self.datetime = swe.revjul(self.jd)
         self.utcoffset = utcoffset
-        self.timezone = self.mktimezone(timezone)
+        self._timezone = self.mktimezone(timezone)
         self.usrdatetime = self.usrdt()
 
     def __str__(self):
@@ -104,41 +104,71 @@ class JulianDay:
             appendix = sign + f"{round(self.utcoffset, 2)}"
         return timezone + appendix
 
+    def timezone(self):
+        return self._timezone
+
     def jd_number(self):
         return self.jd
 
-    def date(self):
-        return f"{utils.date2str(self.datetime)}"
+    def date(self, tz="utc"):
+        if tz != "utc":
+            return f"{utils.date2str(self.usrdatetime)}"
+        else:
+            return f"{utils.date2str(self.datetime)}"
 
-    def time(self):
-        return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC"
+    def time(self, tz="utc"):
+        if tz != "utc":
+            return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self._timezone}"
+        else:
+            return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC"
 
     def timedate(self):
         return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC on {utils.date2str(self.datetime)}"
 
-    def year(self):
-        return int(self.datetime[0])
+    def year(self, tz="utc"):
+        if tz != "utc:":
+            return self.usryear()
+        else:
+            return int(self.datetime[0])
 
-    def month(self):
-        return int(self.datetime[1])
+    def month(self, tz="utc"):
+        if tz != "utc:":
+            return self.usrmonth()
+        else:
+            return int(self.datetime[1])
 
-    def day(self):
-        return int(self.datetime[2])
+    def day(self, tz="utc"):
+        if tz != "utc":
+            return self.usrday()
+        else:
+            return int(self.datetime[2])
 
-    def hour(self):
-        return float(self.datetime[3])
+    def hour(self, tz="utc"):
+        if tz != "utc:":
+            return usrhour()
+        else:
+            return float(self.datetime[3])
 
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"
 
+    def usryear(self):
+        return int(self.usrdatetime[0])
+
+    def usrmonth(self):
+        return int(self.usrdatetime[1])
+
     def usrday(self):
         return int(self.usrdatetime[2])
 
+    def usrhour(self):
+        return float(self.usrdatetime[3])
+
     def usrtime(self):
-        return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self.timezone}"
+        return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self._timezone}"
 
     def usrtimedate(self):
-        return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self.timezone} on {utils.date2str(self.usrdatetime)}"
+        return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))} {self._timezone} on {utils.date2str(self.usrdatetime)}"
 
     def midnightjd(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
@@ -167,7 +197,7 @@ class JulianDay:
             sf = sf * self.oneyearjd
         else:
             print("given unit not recognized")
-        return JulianDay(self.jd + (number * sf),self.utcoffset,self.timezone)
+        return JulianDay(self.jd + (number * sf),self.utcoffset,self._timezone)
 
     def usrdt(self):
         """
