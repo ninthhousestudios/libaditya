@@ -37,7 +37,7 @@ def main():
     if args.location:
         lat, long, placename, utcoffset, timezone = parse_position(args.location)
         original_timezone = utils.mktimezone(utcoffset)
-        this_location = Location(lat,long,0,placename,original_timezone)
+        this_location = Location(lat,long,0,placename,timezone)
     else:
         utcoffset = 12
         timezone = "YKT"
@@ -63,9 +63,21 @@ def main():
             # in this case, midnight minus utcoffset will be the day before
             # but we want to start on calendar day 1, regardless of timezone
             day = 2
-        this_timeJD = JulianDay((year,month,day,0+utcoffset),utcoffset,timezone)
-        context = EphContext(timeJD=this_timeJD,location=this_location,ayanamsa=ayanamsa,names=names)
+        midnight_utcJD = JulianDay((year,month,day,0),utcoffset,timezone)
+        # use utc as if it is utc-5 by adding 5 to "time" slot above where 0 = midnight
+        # so at midnight est it is 5 utc (5 in 0-23)
+        # e.g., for indianapolis during eastern standard time, utcoffset=-5
+        # it is 5 hours behind utc; so to find utc at any est time, add 5 hours
+        # so 00 midnight est is 5 utc
+        midnight_usrJD = JulianDay((year,month,day,-utcoffset),0,timezone)
+        # default is to print usrJD
+        # but with -u it turns to utc
+        if args.utc:
+            context = EphContext(timeJD=midnight_usrJD,location=this_location,ayanamsa=ayanamsa,names=names)
+        else:
+            context = EphContext(timeJD=midnight_utcJD,location=this_location,ayanamsa=ayanamsa,names=names)
         panch = Panchanga(context)
+        print(f"{panch.timeJD.timezone()=} {panch.timeJD.utcoffset=}")
 
         panch_str = make_table(args,panch)
 
@@ -88,6 +100,10 @@ def main():
 
 
 def make_table(args,panch):
+    """
+    panch is at midnight either usr/utc
+    but panch only needs to know it is at midnight, not which midnight
+    """
     output = PrettyTable()
     if args.long_names:
         output.field_names = ["Day", "Sunrise", "Sunset", "Moonrise", "Moonset", "Vara", "Next Vara", "Nakshatra", "Next Nakshatra", "Tithi", "Next Tithi", "Karana", "Next Karana", "Yoga", "Next Yoga"]
@@ -107,7 +123,6 @@ def make_table(args,panch):
     # so we can keep track of when the month ends
     #_, this_month, day, _ = swe.revjul(panch.timeJD.jd_number())
     this_month = panch.timeJD.month()
-    day = panch.timeJD.day(tz)
 
     ptz = False
     if args.print_timezone:
@@ -119,11 +134,12 @@ def make_table(args,panch):
 
     month = this_month
     while month == this_month:
+        day = panch.timeJD.day(tz)
         # want every row to be a calendar day
         # all times should occur within that calendar day
         # if no such event happens during that calendar, replace with "N/A"
         today_midnight = panch
-        day = today_midnight.timeJD.day()
+        day = today_midnight.timeJD.day(tz)
         # this is so that we change change the Panchanga to be at sunrise if desired
         sunrise = panch.sunrise()
         sunset = panch.sunset()
@@ -148,12 +164,21 @@ def make_table(args,panch):
         ptimes.append(panch.next_karana().timeJD)
         ptimes.append(panch.yoga_name())
         ptimes.append(panch.next_yoga().timeJD)
+        # we want the times printed to be all within the range midnight to midnight of that calendar day
+        # sometimes there isn't an event on a calendar day, e.g., a nakshatra doesnt change during the period of that
+        # numbered midnight to midnight; so this skips those
         for t in ptimes:
             if not isinstance(t,JulianDay):
                 # not a time, so skip
                 row.append(t)
                 continue
-            row.append(t.time(tz,ptz))
+            # we want the time to be between the two midnights
+            # 24 hours if 1 julian day precisely, so midnight to midnight, no matter the timezone, is 1 julian day
+            # so if the julianday of this event/object is between those two julian days, then we print it; if not, not
+            if today_midnight.timeJD.jd_number() < t.jd_number() and t.jd_number() < today_midnight.timeJD.jd_number()+1:
+                row.append(t.time(tz,ptz))
+            else:
+                row.append("N/A")
 
         output.add_row(row)
         output.add_divider()
@@ -194,12 +219,6 @@ def get_args():
         "-a",
         "--ayanamsa",
         help="swiss epehemeris code for the ayanamsa you want; lahiri = 1; true citra = 27; dhruva gc equatorial = 98, ecliptic vedanga jyotisha = 99, equatorial vedanga jyotisha = 100",
-    )
-    parser.add_argument(
-        "-m",
-        "--midnight",
-        action="store_true",
-        help="display elements as they are as midnight; default is to display at the time of sunrise",
     )
     parser.add_argument(
         "-u",
