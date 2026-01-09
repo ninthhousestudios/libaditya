@@ -84,7 +84,10 @@ def main():
         print(f"Panchanga for {month}/{year}")
         print(f"{this_location}")
         print(f"Using {const.ayanamsa_name(ayanamsa)} ayanamsa")
-        print("All times relative to midnight")
+        if args.sunrise:
+            print("All times relative to sunrise")
+        else:
+            print("All times relative to midnight")
         if args.utc:
             print(f"All times UTC")
         else:
@@ -132,14 +135,18 @@ def make_table(args,panch):
     if args.format:
         format = args.format
 
+    if args.sunrise:
+        # move the first panchanga to sunrise, and does everything from there
+        panch = Panchanga(replace(panch.context,timeJD=panch.sunrise()))
+
     month = this_month
     while month == this_month:
         day = panch.timeJD.day(tz)
         # want every row to be a calendar day
         # all times should occur within that calendar day
         # if no such event happens during that calendar, replace with "N/A"
-        today_midnight = panch
-        day = today_midnight.timeJD.day(tz)
+        today_boundary = panch
+        day = today_boundary.timeJD.day(tz)
         # this is so that we change change the Panchanga to be at sunrise if desired
         sunrise = panch.sunrise()
         sunset = panch.sunset()
@@ -164,18 +171,18 @@ def make_table(args,panch):
         ptimes.append(panch.next_karana().timeJD)
         ptimes.append(panch.yoga_name())
         ptimes.append(panch.next_yoga().timeJD)
-        # we want the times printed to be all within the range midnight to midnight of that calendar day
+        # we want the times printed to be all within the range boundary to boundary of that calendar day
         # sometimes there isn't an event on a calendar day, e.g., a nakshatra doesnt change during the period of that
-        # numbered midnight to midnight; so this skips those
+        # numbered boundary to boundary; so this skips those
         for t in ptimes:
             if not isinstance(t,JulianDay):
                 # not a time, so skip
                 row.append(t)
                 continue
-            # we want the time to be between the two midnights
-            # 24 hours if 1 julian day precisely, so midnight to midnight, no matter the timezone, is 1 julian day
+            # we want the time to be between the two boundarys
+            # 24 hours if 1 julian day precisely, so boundary to boundary, no matter the timezone, is 1 julian day
             # so if the julianday of this event/object is between those two julian days, then we print it; if not, not
-            if today_midnight.timeJD.jd_number() < t.jd_number() and t.jd_number() < today_midnight.timeJD.jd_number()+1:
+            if today_boundary.timeJD.jd_number() < t.jd_number() and t.jd_number() < today_boundary.timeJD.jd_number()+1:
                 row.append(t.time(tz,ptz))
             else:
                 row.append("N/A")
@@ -183,7 +190,7 @@ def make_table(args,panch):
         output.add_row(row)
         output.add_divider()
         # go forward one day
-        panch = Panchanga(replace(today_midnight.context,timeJD=today_midnight.timeJD.shift('f','day',1)))
+        panch = Panchanga(replace(today_boundary.context,timeJD=today_boundary.timeJD.shift('f','day',1)))
         month = panch.timeJD.month()
 
     if args.long_names:
@@ -225,6 +232,12 @@ def get_args():
         "--utc",
         action="store_true",
         help="display times as utc; default is local timezone specified in .chtk file",
+    )
+    parser.add_argument(
+        "-s",
+        "--sunrise",
+        action="store_true",
+        help="print all times from sunrise on calendar day 'n'; default is midnight calendar day",
     )
     parser.add_argument(
         "-z",
