@@ -21,12 +21,18 @@ from enum import Enum
 from .julian_day import JulianDay
 from .location import Location
 from libaditya import constants as const
-from libaditya.hd import HDContext
+from libaditya.hd import constants as hdc
 
 class Circle(Enum):
     ADITYA = 1
     ZODIAC = 2
     SIDEREAL_ADITYA = ZODIAC
+
+@dataclass(frozen=True)
+class HDContext:
+    gate_one: float = hdc.gate_one
+    print_hexagrams: int = 0 # 0 for numbers, 1 for hexagrams
+    toround: (bool, int) = (True, 3)
         
 @dataclass(frozen=True)
 class Names:

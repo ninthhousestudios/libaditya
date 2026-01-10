@@ -21,7 +21,7 @@ from dataclasses import replace
 from typing import Self
 
 from libaditya import constants as const
-from libaditya.hd import HDContext, HDLongitude
+from libaditya.hd import HDLongitude
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -49,21 +49,16 @@ class Planet(Longitude):
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
-        if self._amsha == 1:
-            self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
-            # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
-            self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
-            self._amsha = 1
-        else:
-            self.longituDE = longitude # a Longitude class
-            self.long = self.longituDE.ecliptic_longitude()
-            self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
-            self._amsha = self.longituDE.amsha()
+        self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+        # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
+        self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
         # so that we only need only longitude() function with all the signizing and rounding or not
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self._amsha,self._context)
+        if self._amsha != 1:
+            self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
         self._hd = HDLongitude(self.ecliptic_longitude(),context=self._context.hdcontext)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
@@ -354,15 +349,15 @@ class Planet(Longitude):
             + f"{self.timeJD}\n"
         )
 
-    def __repr__(self):
-        print(f"{type(self)}")
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-        return (
-            f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-            + f"{self.timeJD}"
-        )
+#    def __repr__(self):
+#        print(f"{type(self)}")
+#        ayanamsa = ""
+#        if self.system == swe.FLG_SIDEREAL:
+#            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
+#        return (
+#            f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+#            + f"{self.timeJD}"
+#        )
 
 
 class Sun(Planet):
@@ -1268,7 +1263,7 @@ class Chiron(Planet):
     def is_graha(self):
         return False
 
-planets = {
+local_planets = {
     "Sun": Sun,
     "Moon": Moon,
     "Mars": Mars,
@@ -1286,7 +1281,7 @@ planets = {
 
 class Planets:
 
-    def __init__(self, context=EphContext(), planets=None):
+    def __init__(self, context=EphContext()):
         """
         initialize Planets
         planets default is for vargas > 1, which will pass
@@ -1296,14 +1291,12 @@ class Planets:
         """
         self.timeJD = context.timeJD  # the JulianDay class of this planet
         self.context = context
+        self._amsha = self.context.amsha
         self.jd = self.timeJD.jd
         self.ayanamsa = context.ayanamsa
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
-        if planets is None:
-            self._planets = self.init_Planets()
-        else:
-            self._planets = planets
+        self._planets = self.init_Planets()
         self.set_attributes()
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
@@ -1349,14 +1342,14 @@ class Planets:
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
-            planets.pop()
+            local_planets.pop()
 
         # add Earth if using barycentric or heliocentric
         if self.system == const.BARY or self.system == const.HELIO:
             # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-            planets["Earth"] = Earth
+            local_planets["Earth"] = Earth
 
-        for p,v in planets.items():
+        for p,v in local_planets.items():
             ret[p] = v(self.context)
 
 
@@ -1726,7 +1719,7 @@ class Planets:
         output.align["Speed"] = "r"
 
         for planet in self:
-            output.add_row([planet.name()] + planet.hd().row_definition() + [planet.speed()])
+            output.add_row([planet.name()] + planet.hd().row_state() + [planet.speed()])
 
         ret = output.get_string(
             fields=[

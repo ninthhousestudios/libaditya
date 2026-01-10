@@ -4,6 +4,5 @@ import pathlib
 
 base_path = os.path.dirname(pathlib.Path(__file__).parent)
 
-from .context import HDContext
 from .longitude import HDLongitude, YiLongitude
 from .constants import *

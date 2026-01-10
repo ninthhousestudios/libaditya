@@ -17,18 +17,19 @@
 from dataclasses import replace
 from typing import Self
 
-from libaditya.objects import EphContext, Planets
-
-from .context import HDContext
-from .calc import HDContext, unconscious_context
+from libaditya.objects import Planets
+from libaditya.hd import calc as hdcalc
 
 class Bodygraph:
     """
     by calculation, a bodygraph is simply a set of 
     """
 
-    def __init__(self, context=EphContext(hdcontext=HDContext())):
+    def __init__(self, context):
         self.context = context
         self._conscious_planets = Planets(self.context)
-        self._unconscious_context = unconscious_context(self.context)
-        self._unconscious_planets = Planets(self._unconscious_context)
+        self._unconscious_context = hdcalc.unconscious_context(self.context)
+        #self._unconscious_planets = Planets(self._unconscious_context)
+
+    def conscious_planets(self):
+        return self._conscious_planets

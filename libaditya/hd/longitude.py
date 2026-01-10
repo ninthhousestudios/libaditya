@@ -21,7 +21,6 @@ from prettytable import PrettyTable
 from libaditya import constants as const
 from libaditya import utils
 
-from libaditya.hd import HDContext
 from libaditya.hd import constants as hdc
 
 
@@ -93,7 +92,7 @@ class HDLongitude(YiLongitude):
     fundamental coordinates of human design, hexagram,line,color,tone, and base
     """
 
-    def __init__(self, longitude, context=HDContext()):
+    def __init__(self, longitude, context):
         self.context = context
         super().__init__(longitude)
 

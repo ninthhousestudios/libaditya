@@ -24,6 +24,7 @@ from libaditya.objects import EphContext, Planets, Cusps, Circle
 from libaditya.calc import Varga, Rashi
 
 from .api import API
+from .bodygraph import Bodygraph
 
 class Chart(API):
     """
@@ -61,6 +62,9 @@ class Chart(API):
 
     def rashi(self):
         return self._Rashi
+
+    def bodygraph(self):
+        return Bodygraph(self.context)
 
     def varga(self, amsha: int):
         """

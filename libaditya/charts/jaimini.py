@@ -22,6 +22,7 @@ class Jaimini(Chart):
 
     def __init__(self,  context=EphContext()):
         super().__init__(context)
+        self.ak = self.atmakaraka # so you can call chart.jaimini().ak()
 
     def pada(self, amsha=1):
         if amsha == 1:
@@ -43,6 +44,19 @@ class Jaimini(Chart):
         get the Jaimini karakas for this Chart/Jaimini
         """
         return self.rashi().planets().jaimini_karakas()
+
+    def atmakaraka(self):
+        return self.karakas()[0]
+
+    def svamsha(self):
+        return self.varga(9).signs()[self.atmakaraka().sign()]
+
+    def karakamsha(self):
+        return self.rashi().signs()[self.atmakaraka().sign()]
+
+    def darakaraka(self):
+        # there are 7 karakas, python is 0-indexed, so 6 is the 7th starting from 0
+        return self.karakas()[6]
 
     def first_strength(self, amsha=1):
         if amsha == 1:

@@ -17,9 +17,8 @@
 
 import swisseph as swe
 
-from libaditya.objects import EphContext
 
-def unconscious_context(context=EphContext()):
+def unconscious_context(context):
     """
     return an EphContext where the time is the hd unconscious "design" date, 88 degrees of the Sun's motion before the conscious "personality" date, i.e., the birth date and time
     """
