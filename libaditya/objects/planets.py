@@ -63,7 +63,7 @@ class Planet(Longitude):
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self._amsha,self._context)
-        self.hd = HDLongitude(self.real_longitude(),context=self._context.hdcontext)
+        self._hd = HDLongitude(self.real_longitude(),context=self._context.hdcontext)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
@@ -77,6 +77,9 @@ class Planet(Longitude):
 
     def amsha(self):
         return self._amsha
+    
+    def hd(self):
+        return self._hd
 
     def table_row(self):
         return (
@@ -189,6 +192,9 @@ class Planet(Longitude):
             return round(self.dist, self._context.toround[1])
         else:
             return self.dist
+
+    def speed(self):
+        return self.longitude_speed()
 
     def longitude_speed(self):
         if self._context.toround[0]:
@@ -416,6 +422,8 @@ class Sun(Planet):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
+        if next_long == self.real_longitude():
+            return self
         # % 360 help in case we are looking for the equinox, next_long = 0
         if round(self.real_longitude(),6)%360 == next_long:
             # if we dont go forward one second the longitude we are are will be
@@ -1623,6 +1631,11 @@ class Planets:
     def __repr__(self):
         return self.planets_complete_information()
 
+    def hd_planets(self):
+        definition = self.hd_planets_definition()
+        state = self.hd_planets_state()
+        return "Human Design Planets\n" + self.mkheader() + definition + "\n" + state
+
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"
@@ -1645,13 +1658,94 @@ class Planets:
             header += f"{self.context.location}"
         header += f"{self.timeJD}\n"
         return header
+
+    def hd_planets_definition(self):
+        output = PrettyTable()
+        output.field_names = [
+            "Planet",
+            "Longitude",
+            "Gate",
+            "Line",
+            "Color",
+            "Tone",
+            "Base",
+            "Speed",
+            "Sign"
+        ]
+        output.align["Planet"] = "l"
+        output.align["Longitude"] = "l"
+        output.align["Gate"] = "r"
+        output.align["Line"] = "r"
+        output.align["Color"] = "r"
+        output.align["Tone"] = "r"
+        output.align["Base"] = "r"
+        output.align["Speed"] = "r"
+        output.align["Sign"] = "r"
+
+        for planet in self:
+            output.add_row([planet.name()] + planet.hd().row_definition() + [planet.speed()] + [planet.signize()])
+
+        ret = output.get_string(
+            fields=[
+            "Planet",
+            "Longitude",
+            "Gate",
+            "Line",
+            "Color",
+            "Tone",
+            "Base",
+            "Speed",
+            "Sign"
+            ]
+        )
+        return ret
+
+    def hd_planets_state(self):
+        output = PrettyTable()
+        output.field_names = [
+            "Planet",
+            "Longitude",
+            "Gate Elapsed",
+            "Line Elapsed",
+            "Color Elapsed",
+            "Tone Elapsed",
+            "Base Elapsed",
+            "Speed"
+        ]
+        output.align["Planet"] = "l"
+        output.align["Longitude"] = "l"
+        output.align["Gate Elapsed"] = "r"
+        output.align["Line Elapsed"] = "r"
+        output.align["Color Elapsed"] = "r"
+        output.align["Tone Elapsed"] = "r"
+        output.align["Base Elapsed"] = "r"
+        output.align["Speed"] = "r"
+
+        for planet in self:
+            output.add_row([planet.name()] + planet.hd().row_definition() + [planet.speed()])
+
+        ret = output.get_string(
+            fields=[
+            "Planet",
+            "Longitude",
+            "Gate Elapsed",
+            "Line Elapsed",
+            "Color Elapsed",
+            "Tone Elapsed",
+            "Base Elapsed",
+            "Speed",
+            ]
+        )
+
+        return ret
     
 
 planet_dict = {
     "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],
     "grahas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu],
     "karakas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn],
-    "outer_planets": [Uranus, Neptune, Pluto]
+    "outer_planets": [Uranus, Neptune, Pluto],
+    "miscellaneous_planets": [Chiron]
 }
 
 karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]

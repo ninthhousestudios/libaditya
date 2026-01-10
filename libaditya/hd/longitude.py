@@ -16,6 +16,7 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from prettytable import PrettyTable
 
 from libaditya import constants as const
 from libaditya import utils
@@ -175,3 +176,63 @@ class HDLongitude:
 
     def base_elapsed(self):
         return round(self.base_in_longitude()/hdc.base*100,2)
+
+    def row(self):
+        """
+        return a list that can be part of a prettytable row
+        the calling function will provide the "Planet" name
+        output.align["Longitude"] = "l"
+        output.align["Gate"] = "r"
+        output.align["Gate Elapsed"] = "r"
+        output.align["Line"] = "r"
+        output.align["Line Elapsed"] = "r"
+        "Color"
+        "Color Elapsed"
+        "Tone"
+        "Tone Elapsed"
+        "Base"
+        "Base Elapsed"
+        """
+        return [str(self.raw_longitude()), str(self.hexagram()), str(str(self.gate_in_longitude())+f" ({self.gate_elapsed()} %)"), str(self.line()), str(str(self.line_in_longitude())+f" ({self.line_elapsed()} %)"), str(self.color()), str(str(self.color_in_longitude())+f" ({self.color_elapsed()} %)"), str(self.tone()), str(str(self.tone_in_longitude())+f" ({self.tone_elapsed()} %)"), str(self.base()), str(str(self.base_in_longitude())+str(f" ({self.base_elapsed()} %))"))]
+
+    def row_definition(self):
+        """
+        return a list that can be part of a prettytable row
+        the calling function will provide the "Planet" name
+        output.align["Longitude"] = "l"
+        output.align["Gate"] = "r"
+        output.align["Line"] = "r"
+        "Color"
+        "Tone"
+        "Base"
+        """
+        return [str(self.raw_longitude()), str(self.hexagram()), str(self.line()), str(self.color()), str(self.tone()), str(self.base())]
+
+    def row_state(self):
+        """
+        return a list that can be part of a prettytable row
+        the calling function will provide the "Planet" name
+        output.align["Longitude"] = "l"
+        output.align["Gate Elapsed"] = "r"
+        output.align["Line Elapsed"] = "r"
+        "Color Elapsed"
+        "Tone Elapsed"
+        "Base Elapsed"
+        """
+        return [str(self.raw_longitude()), str(str(self.gate_in_longitude())+f" ({self.gate_elapsed()} %)"), str(str(self.line_in_longitude())+f" ({self.line_elapsed()} %)"), str(str(self.color_in_longitude())+f" ({self.color_elapsed()} %)"), str(str(self.tone_in_longitude())+f" ({self.tone_elapsed()} %)"), str(str(self.base_in_longitude())+str(f" ({self.base_elapsed()} %))"))]
+
+    def __repr__(self):
+        """
+        bare representation of the attributes of this HDLongitude
+        """
+        return str(self.row_definition() + self.row_state())
+
+    def __str__(self):
+        ret = ""
+        ret += f"Longitude: {self.raw_longitude()}\n"
+        ret += f"Hexagram: {self.hexagram()}\n"
+        ret += f"Line: {self.line()}\n"
+        ret += f"Color: {self.color()}\n"
+        ret += f"Tone: {self.tone()}\n"
+        ret += f"Base: {self.base()}"
+        return ret
