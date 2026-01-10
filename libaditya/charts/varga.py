@@ -78,7 +78,7 @@ class Varga(Jaimini):
     def init_Planets(self, planets):
         retplanets = {}
         for name,planet in planets.items():
-            retplanets[name] = pdict[name](self.context,longitude=Longitude(planet.real_longitude(),amsha=self.amsha()))
+            retplanets[name] = pdict[name](self.context,longitude=Longitude(planet.ecliptic_longitude(),amsha=self.amsha()))
         return Planets(self.context,retplanets)
               
     def init_Cusps(self, cusps):
@@ -88,7 +88,7 @@ class Varga(Jaimini):
         """
         varga_cusps = []
         for cusp in cusps:
-            varga_cusps.append(Cusp(longitude=cusp.real_longitude(),amsha=self.amsha(),speed=cusp.speed(),number=cusp.number(),context=cusp.context))
+            varga_cusps.append(Cusp(longitude=cusp.ecliptic_longitude(),amsha=self.amsha(),speed=cusp.speed(),number=cusp.number(),context=cusp.context))
         return Cusps(self.context,cusps=varga_cusps)
 
     def planets(self):

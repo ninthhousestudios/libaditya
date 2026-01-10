@@ -55,7 +55,7 @@ class Planet(Longitude):
             self._amsha = 1
         else:
             self.longituDE = longitude # a Longitude class
-            self.long = self.longituDE.real_longitude()
+            self.long = self.longituDE.ecliptic_longitude()
             self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
             self._amsha = self.longituDE.amsha()
         # so that we only need only longitude() function with all the signizing and rounding or not
@@ -63,7 +63,7 @@ class Planet(Longitude):
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self._amsha,self._context)
-        self._hd = HDLongitude(self.real_longitude(),context=self._context.hdcontext)
+        self._hd = HDLongitude(self.ecliptic_longitude(),context=self._context.hdcontext)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
@@ -324,7 +324,7 @@ class Planet(Longitude):
         if self.sign() == planet.sign():
             # Y for yuti, conjunction
             return "Y"
-        diff = self.degrees_apart(planet.real_longitude())
+        diff = self.degrees_apart(planet.ecliptic_longitude())
         if diff <= 30 or diff >= 300:
             # within this orb planets do not aspect other planets
             return ""
@@ -422,10 +422,10 @@ class Sun(Planet):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
-        if next_long == self.real_longitude():
+        if next_long == self.ecliptic_longitude():
             return self
         # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.real_longitude(),6)%360 == next_long:
+        if round(self.ecliptic_longitude(),3)%360 == next_long:
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
@@ -440,7 +440,7 @@ class Sun(Planet):
         get the next equinox from the current timeJD
         """
         # between ascending and descending, so find descending
-        if self.real_longitude() > 0 and self.real_longitude() < 180:
+        if self.ecliptic_longitude() > 0 and self.ecliptic_longitude() < 180:
             return self.ingress(180)
         # otherwise, we are between descending and ascending, so find ascending
         else:
@@ -451,7 +451,7 @@ class Sun(Planet):
         get the next solstice from the current timeJD
         """
         # between norther and southern, so find southern
-        if self.real_longitude() > 90 and self.real_longitude() < 270:
+        if self.ecliptic_longitude() > 90 and self.ecliptic_longitude() < 270:
             return self.ingress(270)
         # otherwise, we are between southern and northern, so find northern
         else:
@@ -674,7 +674,7 @@ class Mars(Planet):
         if self.sign() == planet.sign():
             # Y for yuti, conjunction
             return "Y"
-        diff = self.degrees_apart(planet.real_longitude())
+        diff = self.degrees_apart(planet.ecliptic_longitude())
         if diff <= 30 or diff >= 300:
             # within this orb planets do not aspect other planets
             return ""
@@ -928,7 +928,7 @@ class Jupiter(Planet):
         if self.sign() == planet.sign():
             # Y for yuti, conjunction
             return "Y"
-        diff = self.degrees_apart(planet.real_longitude())
+        diff = self.degrees_apart(planet.ecliptic_longitude())
         if diff <= 30 or diff >= 300:
             # within this orb planets do not aspect other planets
             return ""
@@ -1040,7 +1040,7 @@ class Saturn(Planet):
         if self.sign() == planet.sign():
             # Y for yuti, conjunction
             return "Y"
-        diff = self.degrees_apart(planet.real_longitude())
+        diff = self.degrees_apart(planet.ecliptic_longitude())
         if diff <= 30 or diff >= 300:
             # within this orb planets do not aspect other planets
             return ""
@@ -1364,7 +1364,7 @@ class Planets:
         the other Planet-s to calculate first. so we init_Planets() above,
         then we can set_attributes() in __init__(), e.g., dignity
         """
-        moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().real_longitude()) <= 180 else "Malefic"
+        moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
         self.moon().set_attribute(dict({"nature": moon_nature}))
         digs = self.dignities()
         self.sun().set_attribute(dict({"dignity": digs[self.sun().list_index()]}))
@@ -1465,10 +1465,10 @@ class Planets:
         return list(ret.__reversed__())
 
     def is_moon_benefic(self):
-        return self.sun().degrees_apart(self.moon().real_longitude()) <= 180
+        return self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180
 
     def is_moon_malefic(self):
-        return self.sun().degrees_apart(self.moon().real_longitude()) > 180
+        return self.sun().degrees_apart(self.moon().ecliptic_longitude()) > 180
 
     def sun(self):
         return self._planets["Sun"]

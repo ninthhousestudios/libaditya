@@ -25,12 +25,21 @@ from libaditya.constants import *
 # gates of the hd i ching wheel in order
 wheel=[1,43,14,34,9,5,26,11,10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44]
 
+gate_one = 223+1/4
+
 # sizes of gates and lines along the ecliptic
 gate = 360/64
 line = gate/6
 color = line/6
 tone = color/6
 base = tone/5
+
+# how many of each there are
+how_many_gates = 64
+how_many_lines = how_many_gates*6
+how_many_colors = how_many_lines*6
+how_many_tone = how_many_colors*6
+how_many_base = how_many_tone*5
 
 # elements of tuples in entry
 # [0] = string representation of the gate number

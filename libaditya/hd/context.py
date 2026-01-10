@@ -17,8 +17,10 @@
 
 from dataclasses import dataclass
 
+from libaditya.hd import constants as hdc
+
 @dataclass(frozen=True)
 class HDContext:
-    gate_one: float = 223+1/4
+    gate_one: float = hdc.gate_one
     print_hexagrams: int = 0 # 0 for numbers, 1 for hexagrams
     toround: (bool, int) = (True, 3)

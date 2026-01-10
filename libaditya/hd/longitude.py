@@ -24,15 +24,26 @@ from libaditya import utils
 from libaditya.hd import HDContext
 from libaditya.hd import constants as hdc
 
-class HDLongitude:
+
+class YiLongitude:
     """
-    manages longitude functions for hd
+    YiLongitude is the most basic representation of the Human Design longitude
+    which is the ecliptic longitude and its subdivisions thereof into
+    hexagram, line, color, tone, and base
+    
+    note: this class takes no context, thus has no options
+    it is possible to do sidereal, true sidereal and other shifted HD,
+    but this most basic class those are built on will have this representation at the core
+    in any case, if you have the ecliptic_longitude you can easily use other libaditya functions to get the data you want
     """
 
-    def __init__(self, longitude, context=HDContext()):
-        self.context = context
-        self.gate_one = self.context.gate_one
-        self._real_longitude = longitude
+    # ok, obviously, if you change hdc.gate_one, you can make this whatever you want
+    # if there are weird bugs, check and make sure this is where you want it to be
+    # it should be 223+1/4 (13:15 of tropical Scorpio; that point on the ecliptic)
+    gate_one = hdc.gate_one
+
+    def __init__(self, longitude):
+        self._ecliptic_longitude = longitude
         # declaring variables that are initialized in self.init_gate()
         self._distance = 0
         self._hexagrams = 0
@@ -59,19 +70,41 @@ class HDLongitude:
         gates_from, self._line = divmod(self._lines,6)
         self._line += 1 # lines are numbered 1-6, not 0-5
         self._hexagram = hdc.wheel[gates_from]
-        self._hexagrams = int(self._hexagram)
+        self._hexagrams = int(gates_from)
         # gates are represented as a float, e.g., 12.1 = gate 12, line 1
         # easiest was to make a string "12.1", then convert to float
         return float(str(hdc.wheel[int(self._hexagram)])+'.'+str(int(self._line)))
 
-    def real_longitude(self):
-        return self._real_longitude
+class HDLongitude(YiLongitude):
+    """
+    manages longitude functions for hd
+
+    this is where we manage other systems, sidereal, true sidereal, other possibilities
+
+    i personally dont use those systems, but im building it into here because it is a fun challenge
+    to structure it appropriately
+
+    fundamentally, i believe hd should be based on ecliptic longitude, regardless of what you believe about stars
+    i dont really think it is meant to be used with signs primarily
+    i think, since signs are what were familiar, the voice used these as a marker, but it appears the hd as a system
+    itself does not use zodiac signs in any way. this also goes for various tropical systems, in particular "tropical and aditya"
+    this library was named as adityas, but i dont believe using adityas with the sign shift should be applied to hd. i think
+    gate 1 should be fixed at that point on the ecliptic; thus, that is how YiLongitude is implemented. It consists of the
+    fundamental coordinates of human design, hexagram,line,color,tone, and base
+    """
+
+    def __init__(self, longitude, context=HDContext()):
+        self.context = context
+        super().__init__(longitude)
+
+    def ecliptic_longitude(self):
+        return self._ecliptic_longitude
 
     def raw_longitude(self):
         if self.context.toround[0]:
-            return round(self.real_longitude(), self.context.toround[1])
+            return round(self.ecliptic_longitude(), self.context.toround[1])
         else:
-            return self.real_longitude()
+            return self.ecliptic_longitude()
 
     def gate(self) -> str:
         return float(self.hexagram() + "." + str(self.line()))
@@ -125,7 +158,7 @@ class HDLongitude:
         return self._bases
 
     def gate_in_longitude(self):
-        ginlong = (self.real_longitude()-(self.gate_one+(hdc.gate*hdc.wheel.index(self.gate_number()))))%360
+        ginlong = (self.ecliptic_longitude()-(self.gate_one+(hdc.gate*hdc.wheel.index(self.gate_number()))))%360
         if self.context.toround[0]:
             return round(ginlong,self.context.toround[1])
         else:
@@ -236,3 +269,4 @@ class HDLongitude:
         ret += f"Tone: {self.tone()}\n"
         ret += f"Base: {self.base()}"
         return ret
+

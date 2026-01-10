@@ -48,13 +48,13 @@ class Longitude:
         self.jd = self.context.timeJD.jd_number()
         # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
         self._longitude = longitude
-        self._real_index = int((self.real_longitude() % 360) / 30)
+        self._real_index = int((self.ecliptic_longitude() % 360) / 30)
         self._amsha_longitude = self.varga(amsha)
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
 
 
-    def real_longitude(self) -> float:
+    def ecliptic_longitude(self) -> float:
         return self._longitude
 
     def amsha_raw_longitude(self):
@@ -62,9 +62,9 @@ class Longitude:
 
     def raw_longitude(self) -> float:
         if self.context.toround[0]:
-            return round(self.real_longitude(), self.context.toround[1])
+            return round(self.ecliptic_longitude(), self.context.toround[1])
         else:
-            return self.real_longitude()
+            return self.ecliptic_longitude()
 
     def amsha_longitude(self) -> float:
         if self.context.toround[0]:
@@ -104,7 +104,7 @@ class Longitude:
 
     def get_rahu(self) -> float:
         """
-        return float of rahus "real_longitude"
+        return float of rahus "ecliptic_longitude"
         """
         if self.context.sysflg == const.DRAC:
             return swe.calc_ut(self.jd,swe.TRUE_NODE)[0][0] 
@@ -119,7 +119,7 @@ class Longitude:
         return utils.dec2dmsstr(inlong)
 
     def real_in_sign_longitude(self) -> float:
-        return self.real_longitude() % 30
+        return self.ecliptic_longitude() % 30
 
     def amsha_in_sign_longitude(self) -> float:
         if self.context.toround[0]:
@@ -165,12 +165,12 @@ class Longitude:
         how many degrees from this longitude to next_long going forward around the ecliptic
         """
         # we dont cross the equinox to find the difference
-        if next_long > self.real_longitude():
-            return next_long - self.real_longitude()
+        if next_long > self.ecliptic_longitude():
+            return next_long - self.ecliptic_longitude()
         # we have to cross the equinox, thus find the remainder in this cycle
         # plus the portion of the next cycle
         else:
-            return (360 - self.real_longitude()) + next_long
+            return (360 - self.ecliptic_longitude()) + next_long
 
     def signs_apart(self, other_sign):
         """
@@ -215,7 +215,7 @@ class Longitude:
         this is where the actual calculation is done
         """
         if amsha == 1:
-            return self.real_longitude()
+            return self.ecliptic_longitude()
         if amsha > 0:
             return self.parvritti_varga(amsha)
         match amsha:
@@ -252,7 +252,7 @@ class Longitude:
             # stays in this sign
             # minus makes the sign number into an index
             hora_elapsed = (real_in_sign/15)*30
-            #            print(f"{self.real_longitude()=}\n{self.sign()=}\t{real_sign=}")
+            #            print(f"{self.ecliptic_longitude()=}\n{self.sign()=}\t{real_sign=}")
             return base_longitude+hora_elapsed
         if odd(real_sign) and real_in_sign >= 15:
             # second half of odd sign ->
@@ -342,7 +342,7 @@ class Longitude:
         
     def parvritti_varga(self, amsha):
         """
-        return the "real" longitude for self.real_longitude() in
+        return the "real" longitude for self.ecliptic_longitude() in
         varga number "division"
         number 2-60 all refer to parvritti vargas
 
@@ -351,8 +351,8 @@ class Longitude:
         # self.aditya_offset is to take care of aditya/zodiac cirlce
         one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
         one_sign = 12.0 * one_amsha    # = 40 degrees exactly
-        signs_elapsed = (self.real_longitude()+self.aditya_offset) / one_sign
+        signs_elapsed = (self.ecliptic_longitude()+self.aditya_offset) / one_sign
         left = signs_elapsed % 1
         sign = int(left * 12)
-        in_sign_long = (((self.real_longitude()+self.aditya_offset)/one_amsha)%1)*30
+        in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
         return ((sign*30) + (in_sign_long)) - self.aditya_offset

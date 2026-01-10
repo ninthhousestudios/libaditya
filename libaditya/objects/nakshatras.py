@@ -26,7 +26,7 @@ class Nakshatra:
         self._occupant = occupant
         self.context = occupant.context
         self.timeJD = occupant.timeJD
-        self.base_long = self._occupant.real_longitude()
+        self.base_long = self._occupant.ecliptic_longitude()
         self.ayanamsa = self.context.ayanamsa
         # ashlong means the number of degrees from ashvini; in most cases, the sidereal longitude
         self.ash_long = self.init_ash_long()

@@ -114,7 +114,7 @@ class Panchanga:
         return self._moon.riseset(swe.CALC_SET, self.location)
 
     def init_tithi(self):
-        traw = ((self._moon.real_longitude() - self._sun.real_longitude()) % 360) / 12
+        traw = ((self._moon.ecliptic_longitude() - self._sun.ecliptic_longitude()) % 360) / 12
         remainder = traw % 1  # remainder shows how much has elapsed
         elapsed = remainder * 12  # degrees elapsed
         remaining = 12 - elapsed  # degrees remaining
@@ -136,7 +136,7 @@ class Panchanga:
         return round(self._tithi_remaining,3)
 
     def init_karana(self):
-        kraw = ((self._moon.real_longitude() - self._sun.real_longitude()) % 360) / 6
+        kraw = ((self._moon.ecliptic_longitude() - self._sun.ecliptic_longitude()) % 360) / 6
         remainder = kraw % 1  # remainder shows how much has elapsed
         elapsed = remainder * 6  # degrees elapsed
         remaining = 6 - elapsed  # degrees remaining
@@ -263,7 +263,7 @@ class Panchanga:
         if (self.tithi() != 30):  
             # if the tithi isnt 30, it cant be a new moon, so go forward 8 hours
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_new_moon()
-        if (self._sun.real_longitude() - self._moon.real_longitude()) <= 0.001:
+        if (self._sun.ecliptic_longitude() - self._moon.ecliptic_longitude()) <= 0.001:
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","second",10)))
         remaining = self.tithi_degrees_remaining()
         shift_factor = remaining*self._moon.lowest_hourly_speed()
@@ -277,8 +277,8 @@ class Panchanga:
         if (self.tithi() != 15):  
             # if the tithi isnt 30, it cant be a full moon, so go forward 8 hours
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_full_moon()
-        target = (self._sun.real_longitude() + 180) % 360
-        diff = abs(self._moon.real_longitude() - target)
+        target = (self._sun.ecliptic_longitude() + 180) % 360
+        diff = abs(self._moon.ecliptic_longitude() - target)
         if diff <= 0.0001:
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","second",10)))
         shift_factor = diff*self._moon.lowest_hourly_speed()
