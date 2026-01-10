@@ -1,6 +1,8 @@
 #
 
-make Varga take only a context
+do lowest_daily_speed for other planets
+
+hd.calc.dream_context is not working properly fix it
 
 #
 

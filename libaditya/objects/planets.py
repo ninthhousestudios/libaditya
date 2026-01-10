@@ -265,6 +265,23 @@ class Planet(Longitude):
     def context(self):
         return self._context
 
+    def ingress(self, next_long) -> Self:
+        """
+        return Planet for the JulianDay where Sun arrives at longitude next_long
+        """
+        # % 360 help in case we are looking for the equinox, next_long = 0
+        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+            # if we dont go forward one second the longitude we are are will be
+            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+        # difference between current longitude and desired longitude
+        diff = self.degrees_apart(next_long)
+        shift_factor = diff*self.lowest_daily_speed()
+        # get Planet class for this planet
+        planet = local_planets[self.identity()]
+        return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
+
     def _dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
@@ -343,6 +360,15 @@ class Planet(Longitude):
     def parashara_aspect_from(self, planet: Self | Cusp) -> float | str:
         return planet.parashara_aspect_to(self)
 
+    def lowest_hourly_speed(self) -> float:
+        return self.lowest_daily_speed()/24
+
+    def lowest_minutely_speed(self) -> float:
+        return self.lowest_hourly_speed()/60
+
+    def lowest_secondly_speed(self) -> float:
+        return self.lowest_minutely_speed()/60
+
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
@@ -402,14 +428,6 @@ class Sun(Planet):
         """
         return .9
 
-    def lowest_hourly_speed(self) -> float:
-        return self.lowest_daily_speed()/24
-
-    def lowest_minutely_speed(self) -> float:
-        return self.lowest_hourly_speed()/60
-
-    def lowest_secondly_speed(self) -> float:
-        return self.lowest_minutely_speed()/60
 
     def is_outer_planet(self):
         return False
@@ -426,25 +444,21 @@ class Sun(Planet):
         """
         return "Malefic"
 
-    def ingress(self, next_long) -> Self:
-        """
-        return Sun for the JulianDay where Sun arrives at longitude next_long
-        """
-        direction = "forward"
-        if next_long < 0:
-            direction = "backward"
-        if next_long == self.ecliptic_longitude():
-            return self
-        # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
-            # if we dont go forward one second the longitude we are are will be
-            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
-            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",1)))
-        # difference between current longitude and desired longitude
-        diff = self.degrees_apart(next_long)
-        shift_factor = diff*self.lowest_daily_speed()
-        return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"days",shift_factor))).ingress(next_long)
+
+#    def ingress(self, next_long) -> Self:
+#        """
+#        return Sun for the JulianDay where Sun arrives at longitude next_long
+#        """
+#        # % 360 help in case we are looking for the equinox, next_long = 0
+#        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+#            # if we dont go forward one second the longitude we are are will be
+#            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+#            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+#            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+#        # difference between current longitude and desired longitude
+#        diff = self.degrees_apart(next_long)
+#        shift_factor = diff*self.lowest_daily_speed()
+#        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
 
     def next_equinox(self):
         """
@@ -539,15 +553,6 @@ class Moon(Planet):
         x/24/60 = minute motion
         """
         return 11.0
-
-    def lowest_hourly_speed(self) -> float:
-        return self.lowest_daily_speed()/24
-
-    def lowest_minutely_speed(self) -> float:
-        return self.lowest_hourly_speed()/60
-
-    def lowest_secondly_speed(self) -> float:
-        return self.lowest_minutely_speed()/60
 
     def is_outer_planet(self):
         return False
