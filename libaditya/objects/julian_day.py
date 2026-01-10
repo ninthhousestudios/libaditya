@@ -116,16 +116,21 @@ class JulianDay:
         else:
             return f"{utils.date2str(self.datetime)}"
 
-    def time(self, tz="utc", print_tz=True):
+    def time(self, tz="utc", print_tz=True, debug=""):
+        tz="utc"
+        if debug:
+            debug=f" ({self.day(tz)})"
         ptz = ""
+        ret = ""
         if tz != "utc":
             if print_tz: 
                 ptz = " " + self._timezone
-            return f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))}{ptz}"
+            ret += f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))}{ptz}"
         else:
             if print_tz: 
                 ptz = " UTC"
-            return f"{utils.time2str(utils.dec2dms(self.datetime[3]))}{ptz}"
+            ret += f"{utils.time2str(utils.dec2dms(self.datetime[3]))}{ptz}"
+        return ret + debug
 
     def timedate(self):
         return f"{utils.time2str(utils.dec2dms(self.datetime[3]))} UTC on {utils.date2str(self.datetime)}"
@@ -178,6 +183,14 @@ class JulianDay:
     def midnightjd(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
+
+    def next_midnightjd(self):
+        """return the jd that is at next_midnight of this JulianDay's calendar day"""
+        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1
+
+    def next_midnightJD(self):
+        """return the jd that is at next_midnight of this JulianDay's calendar day"""
+        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1,self.utcoffset,self.timezone())
 
     def ecliptic_obliquity(self):
         return swe.calc(self.jd, swe.ECL_NUT)[0][0]

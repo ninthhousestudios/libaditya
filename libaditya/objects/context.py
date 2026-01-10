@@ -21,6 +21,7 @@ from enum import Enum
 from .julian_day import JulianDay
 from .location import Location
 from libaditya import constants as const
+from libaditya.hd import HDContext
 
 class Circle(Enum):
     ADITYA = 1
@@ -69,4 +70,5 @@ class EphContext:
     rashi_temporary_friendships: bool = True # other option is "Varga"
     rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
     names: Names = Names()
+    hdcontext: HDContext = HDContext()
 

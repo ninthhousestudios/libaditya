@@ -84,7 +84,7 @@ def main():
         print(f"Panchanga for {month}/{year}")
         print(f"{this_location}")
         print(f"Using {const.ayanamsa_name(ayanamsa)} ayanamsa")
-        if args.sunrise:
+        if args.savana:
             print("All times relative to sunrise")
         else:
             print("All times relative to midnight")
@@ -135,13 +135,13 @@ def make_table(args,panch):
     if args.format:
         format = args.format
 
-    if args.sunrise:
+    if args.savana:
         # move the first panchanga to sunrise, and does everything from there
-        panch = Panchanga(replace(panch.context,timeJD=panch.sunrise()))
+        sunrise = panch.sunrise().shift('b','hour',25)
+        panch = Panchanga(replace(panch.context,timeJD=sunrise))
 
     month = this_month
     while month == this_month:
-        day = panch.timeJD.day(tz)
         # want every row to be a calendar day
         # all times should occur within that calendar day
         # if no such event happens during that calendar, replace with "N/A"
@@ -156,8 +156,8 @@ def make_table(args,panch):
         # build row for this day
         row = []
         row.append(day)
-        row.append(f"{sunrise.time(tz,ptz)}")
-        row.append(f"{sunset.time(tz,ptz)}")
+        row.append(f"{sunrise.time(tz,ptz,debug=True)}")
+        row.append(f"{sunset.time(tz,ptz,debug=True)}")
         ptimes = []
         ptimes.append(moonrise)
         ptimes.append(moonset)
@@ -182,8 +182,25 @@ def make_table(args,panch):
             # we want the time to be between the two boundarys
             # 24 hours if 1 julian day precisely, so boundary to boundary, no matter the timezone, is 1 julian day
             # so if the julianday of this event/object is between those two julian days, then we print it; if not, not
-            if today_boundary.timeJD.jd_number() < t.jd_number() and t.jd_number() < today_boundary.timeJD.jd_number()+1:
-                row.append(t.time(tz,ptz))
+#            if args.calendar:
+#                # set cutoff at midnight of this calendar day
+#                # if boundary is midnight, we dont need to do anything
+#                # if boundary is sunrise, we need to move the outer bound from the next sunrise, to earlier, the next midnight
+#                # in terms of julian days, this is the next half number, since julian days start at noon utc
+#                if today_boundary.timeJD.jd_number() < t.jd_number()  and t.jd_number() < today_boundary.timeJD.next_midnightJD().jd_number():
+#                    row.append(t.time(tz,ptz,debug=True))
+#                else:
+#                    row.append("N/A")
+#                    continue
+            # this clause is for savana day, when the boundary is not midnight,
+            next_midnight = today_boundary.timeJD.next_midnightJD()
+            next_midnight = Panchanga(replace(panch.context,timeJD=next_midnight))
+            print(f"{today_boundary.timeJD.day(tz)} {today_boundary.timeJD.jd_number()=} {t.jd_number()=} {next_midnight.sunrise().jd_number()+1}")
+            if today_boundary.timeJD.jd_number() < t.jd_number() and t.jd_number() < next_midnight.sunrise().jd_number()+1:
+#                if today_boundary.timeJD.day(tz) != t.day(tz):
+#                    row.append("N/A")
+#                else:
+                row.append(t.time(tz,ptz,debug=True))
             else:
                 row.append("N/A")
 
@@ -235,9 +252,15 @@ def get_args():
     )
     parser.add_argument(
         "-s",
-        "--sunrise",
+        "--savana",
         action="store_true",
-        help="print all times from sunrise on calendar day 'n'; default is midnight calendar day",
+        help="print all times for the savana day that starts at sunrise",
+    )
+    parser.add_argument(
+        "-c",
+        "--calendar",
+        action="store_true",
+        help="use in conjunction with -s/--savana to print all times for the calendar day that holds sunrise; without -s, this is essentially the default for monthly_panchanga, it prints all times as being on the calendar day of that row",
     )
     parser.add_argument(
         "-z",

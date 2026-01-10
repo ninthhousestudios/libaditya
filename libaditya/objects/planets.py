@@ -21,6 +21,7 @@ from dataclasses import replace
 from typing import Self
 
 from libaditya import constants as const
+from libaditya.hd import HDContext, HDLongitude
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -62,6 +63,7 @@ class Planet(Longitude):
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
         super().__init__(self.long,self._amsha,self._context)
+        self.hd = HDLongitude(self.real_longitude(),context=self._context.hdcontext)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later

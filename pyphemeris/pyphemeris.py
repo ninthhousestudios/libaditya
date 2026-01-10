@@ -276,7 +276,7 @@ def print_jaimini(args,chart,amsha=1):
         print("First Strength")
         printf.print_jaimini_first_strength(chart.jaimini().first_strength(amsha))
     if jaimini_second_strength:
-        print("Second Strength")
+        print(f"Second Strength ({chart.jaimini().context.rashi_aspects})")
         printf.print_jaimini_second_strength(chart.jaimini().second_strength(amsha))
     if jaimini_argala:
         if amsha == 1:

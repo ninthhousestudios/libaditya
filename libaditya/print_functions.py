@@ -105,7 +105,7 @@ def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
     """
     for sign, strengths in ssd.items():
         fstr = ""
-        fstr += f"{sign.glyph()} {sign.sign()}\t"
+        fstr += f"({sign.sign()}) {sign.glyph()}\t"
         for strength in strengths:
             # strengh is a Planet class
             fstr+=f" {strength.abbreviation()} "
