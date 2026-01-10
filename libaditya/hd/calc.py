@@ -16,10 +16,23 @@
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from dataclasses import replace
 
+from libaditya.objects import Sun, EphContext
 
-def unconscious_context(context):
+def unconscious_context(context=EphContext()):
     """
     return an EphContext where the time is the hd unconscious "design" date, 88 degrees of the Sun's motion before the conscious "personality" date, i.e., the birth date and time
     """
-    pass
+    sun=Sun(context)
+    sought_longitude = (sun.ecliptic_longitude()-88)%360
+
+    # go back before 88 degrees
+    # Sun.ingress finds the next time the Sun is at the ecliptic_longitude passed to .ingress()
+    # so go before the time we need, and it will get the next time
+    past_sun = Sun(replace(sun.context,timeJD=sun.timeJD.shift('b','days',95)))
+    # unconscious sun
+    usun = past_sun.ingress(sought_longitude)
+
+    # we are returning an EphContext; not the unconscious sun, but the EphContext of the unconscious sun
+    return replace(context,timeJD=usun.timeJD)

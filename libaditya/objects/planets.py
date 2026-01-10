@@ -42,7 +42,7 @@ class Planet(Longitude):
         self._context = context
         self._amsha = self._context.amsha
         self.pnumber = pnumber
-        self.planet_name = context.names.planet_names[self.pnumber]
+        self.planet_name = self._context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
         self._ayanamsa = context.ayanamsa
         self.system = context.sysflg
@@ -52,6 +52,8 @@ class Planet(Longitude):
         self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
         # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
         self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
+        if isinstance(self,Ketu):
+            self.pnumber = 8
         # so that we only need only longitude() function with all the signizing and rounding or not
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
@@ -114,11 +116,12 @@ class Planet(Longitude):
 
     def set_attribute(self,attrs):
         """
-        attrs is a dictionary "attribute": value
+        attrs is a tuple ("attribute",value)
         add all of these to self.attributes
+        attritube is a string that will be a dictionary key for value
         """
-        for kind,value in attrs.items():
-            self.attributes[kind] = value
+        key,value=attrs
+        self.attributes[key] = value
 
     def dignity(self):
         """
@@ -142,9 +145,9 @@ class Planet(Longitude):
                 return 5
             case swe.SATURN:
                 return 6
-            case swe.RAHU:
+            case swe.TRUE_NODE:
                 return 7
-            case swe.KETU:
+            case swe.TRUE_NODE:
                 return 8
             case swe.URANUS:
                 return 9
@@ -346,6 +349,15 @@ class Planet(Longitude):
             ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
         return (
             f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+            + f"{self.timeJD}\n"
+        )
+
+    def __repr__(self):
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
+        return (
+            f"{self.planet_name}{self.retrostr()} {self.ecliptic_longitude()} degrees ({self.longitude()}) {self.system_name()} longitude{ayanamsa}\n"
             + f"{self.timeJD}\n"
         )
 
@@ -1362,21 +1374,21 @@ class Planets:
         then we can set_attributes() in __init__(), e.g., dignity
         """
         moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
-        self.moon().set_attribute(dict({"nature": moon_nature}))
+        self.moon().set_attribute(("nature",moon_nature))
         digs = self.dignities()
-        self.sun().set_attribute(dict({"dignity": digs[self.sun().list_index()]}))
-        self.moon().set_attribute(dict({"dignity": digs[self.moon().list_index()]}))
-        self.mars().set_attribute(dict({"dignity": digs[self.mars().list_index()]}))
-        self.mercury().set_attribute(dict({"dignity": digs[self.mercury().list_index()]}))
-        self.jupiter().set_attribute(dict({"dignity": digs[self.jupiter().list_index()]}))
-        self.venus().set_attribute(dict({"dignity": digs[self.venus().list_index()]}))
-        self.saturn().set_attribute(dict({"dignity": digs[self.saturn().list_index()]}))
-        self.rahu().set_attribute(dict({"dignity": digs[self.planets()[self.rahu().lord()].list_index()]}))
-        self.ketu().set_attribute(dict({"dignity": digs[self.planets()[self.ketu().lord()].list_index()]}))
-        self.uranus().set_attribute(dict({"dignity": "NA"}))
-        self.neptune().set_attribute(dict({"dignity": "NA"}))
-        self.pluto().set_attribute(dict({"dignity": "NA"}))
-        self.chiron().set_attribute(dict({"dignity": "NA"}))
+        # for the outer planets and miscellaneous_planets
+        digs+=["NA","NA","NA","NA","NA","NA"]
+        for planet in self:
+            if isinstance(planet,Rahu) or isinstance(planet,Ketu):
+                # these two will show the dignity of their lords in the complete list
+                # need the list index of the Rahus lord
+                # Rahu nows who is lord is, but does not have direct access to him
+                # i.e., Rahu cannot return the Planet class of his Lord...is that possible?
+                # more recursive structures?
+                # right now, this gets the Planet class from self.planets, then gets its list_index
+                planet.set_attribute(("dignity",digs[self.planets()[planet.lord()].list_index()]))
+            else:
+                planet.set_attribute(("dignity",digs[planet.list_index()]))
 
 
     def nakshatras(self) -> Nakshatras:

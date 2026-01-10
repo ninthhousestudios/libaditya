@@ -29,7 +29,10 @@ class Bodygraph:
         self.context = context
         self._conscious_planets = Planets(self.context)
         self._unconscious_context = hdcalc.unconscious_context(self.context)
-        #self._unconscious_planets = Planets(self._unconscious_context)
+        self._unconscious_planets = Planets(self._unconscious_context)
 
     def conscious_planets(self):
         return self._conscious_planets
+
+    def unconscious_planets(self):
+        return self._unconscious_planets

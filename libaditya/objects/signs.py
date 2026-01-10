@@ -449,7 +449,6 @@ class Signs:
             case (1,1):
                 return 3
 
-
     def rashi_aspect_to(self, sign1: Sign, sign2: Sign):
         """
         tells if there are rashi aspects between sign1 and sign2
