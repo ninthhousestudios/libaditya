@@ -130,3 +130,20 @@ def print_jaimini_argala(result: [Planet]):
     print(f"\nobstructed planets from the rashi:")
     for planet in result[2]:
         print(planet.identity())
+
+def print_jaimini_aspects(chart):
+    """
+    print all effective rashi aspects for this chart
+    """
+    print(f"Rashi aspects ({chart.context.rashi_aspects})")
+
+    s = chart.rashi().signs()
+    for sign in s:
+        print(f"{sign.name()}")
+        aspected = s.rashi_aspects_given_by(sign)
+        aspecting = s.rashi_aspects_given_to(sign)
+        for ap in aspected:
+            print(f"{sign.name()} -> {ap.name()}")
+        for ap in aspecting:
+            print(f"{sign.name()} <- {ap.name()}")
+        print("\n")

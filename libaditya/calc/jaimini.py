@@ -373,12 +373,12 @@ class Jaimini:
 
         for sign in self.signs():
             sourcels = [] # list to hold Planet-s that are conjunct or aspect this sign
-            jup_aspects = self.signs().rashi_aspect_to(jupiter_Sign,sign)
+            jup_aspects = self.signs().rashi_aspect_from_to(jupiter_Sign,sign)
             # 1 means jupiter aspects sign from jupiter_Sign; 0 not
-            mer_aspects = self.signs().rashi_aspect_to(mercury_Sign,sign)
+            mer_aspects = self.signs().rashi_aspect_from_to(mercury_Sign,sign)
             lord = self.planets()[sign.lord()]
             lords_Sign = self.signs()[lord.sign()]
-            lord_aspects = self.signs().rashi_aspect_to(lords_Sign,sign)
+            lord_aspects = self.signs().rashi_aspect_from_to(lords_Sign,sign)
             if jupiter_Sign == sign or jup_aspects: # the object itself should be the same; means they are in the same sign
                 sourcels.append(self.planets().jupiter())
             if mercury_Sign == sign or mer_aspects: # the object itself should be the same

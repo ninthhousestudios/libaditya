@@ -35,12 +35,16 @@ class Sign:
         self._sign_index = (number-1)%12
         self._sign_name = self.context.names.sign_names[self.sign_index()]
         self._id = number
+        # a dictionary that defines our rashi aspects, {int: (int,int,int)}
         
     def sign_index(self):
         return self._sign_index
 
     def sign_name(self):
         return self._sign_name
+
+    def name(self):
+        return self.sign_name()
 
     def sign(self):
         return self._id
@@ -369,6 +373,7 @@ class Signs:
         self._planets = planets
         self._cusps = cusps
         self.circle = self.context.circle
+        self.aspects = const.rashi_aspects[self.context.rashi_aspects]
         self._signs = self.init_Signs()
         self.sysflgstr = const.sysflgstr(context.sysflg)
 
@@ -437,8 +442,8 @@ class Signs:
         3 - both aspect each other
         i.e., sign1 aspects means that there is at least one graha in sign1 caring its aspect to sign2
         """
-        ltr = self.rashi_aspect_to(sign1,sign2)
-        rtl = self.rashi_aspect_to(sign2,sign1)
+        ltr = self.rashi_aspect_from_to(sign1,sign2)
+        rtl = self.rashi_aspect_from_to(sign2,sign1)
         match (ltr,rtl):
             case (0,0):
                 return 0
@@ -449,16 +454,14 @@ class Signs:
             case (1,1):
                 return 3
 
-    def rashi_aspect_to(self, sign1: Sign, sign2: Sign):
+    def rashi_aspect_from_to(self, sign1: Sign, sign2: Sign):
         """
         tells if there are rashi aspects between sign1 and sign2
         0 - none either way
         1 - sign1 aspects sign2
         i.e., sign1 aspects means that there is at least one graha in sign1 caring its aspect to sign2
         """
-        # a dictionary that defines our rashi aspects, {int: (int,int,int)}
-        aspects = const.rashi_aspects[self.context.rashi_aspects]
-        if not (sign2.sign() in aspects[sign1.sign()]):
+        if not (sign2.sign() in self.aspects[sign1.sign()]):
             # sign1 is the key to the aspects dictionary
             # the value is a tuple of integers, the signs which sign1 aspects
             # if sign2 is one of those signs, then sign1 can aspect, depending
@@ -466,11 +469,42 @@ class Signs:
             # so if not, return 0, meaning no aspect
             return 0
         # else: sign1 can aspect sign2; if sign1 does have a graha, it aspects, so return 1
-        if sign1.planets():
+        # needs to be grahas; not .planets(), that includes Uranus, etc.
+        if sign1.grahas():
             return 1
         else:
             # 0 means there is no aspect. there could be if there were a planet, but there isnt so no planet
             return 0
+
+    def rashi_aspects_given_by(self, sign: Sign) -> [Sign]:
+        """
+        get Signs that rashi aspect Sign sign
+        """
+        # sign aspects 3 signs
+        # those 3 signs aspect this sign
+        # for practical purposes, we want to know which of these 3 signs has grahas in them
+        # for this purpose, only the Sign-s of those three that grahas are returned
+        aspected_signs = self.aspects[sign.sign()]
+        ret = []
+        for aspected_sign in [self.signs()[each] for each in aspected_signs]:
+            if self.rashi_aspect_from_to(aspected_sign,sign):
+                ret.append(aspected_sign)
+        return ret
+
+    def rashi_aspects_given_to(self, sign: Sign) -> [Sign]:
+        """
+        get Signs that rashi aspect Sign sign
+        """
+        # sign aspects 3 signs
+        # those 3 signs aspect this sign
+        # for practical purposes, we want to know which of these 3 signs has grahas in them
+        # for this purpose, only the Sign-s of those three that grahas are returned
+        aspecting_signs = self.aspects[sign.sign()]
+        ret = []
+        for aspecting_sign in [self.signs()[each] for each in aspecting_signs]:
+            if self.rashi_aspect_from_to(aspecting_sign,sign):
+                ret.append(aspecting_sign)
+        return ret
 
     def lagna(self) -> Sign:
         """

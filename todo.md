@@ -1,5 +1,23 @@
 #
 
+consider binding together Planet and Planets
+if each Planet could access its Planets, that would make the api easier
+then we may not need to set_attributes? or it could be done differently
+
+likewise with Sign and Signs
+if there was recursion, i could write
+```
+chart.jaimini().svamsha().aspects_to()
+```
+
+right now, only Signs knows how rashi aspects
+so we have to do
+```
+chart.jaimini().rashi().signs().rashi_aspects_to(Sign)
+```
+
+#
+
 do lowest_daily_speed for other planets
 
 hd.calc.dream_context is not working properly fix it
