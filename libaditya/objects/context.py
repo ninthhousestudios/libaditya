@@ -69,6 +69,7 @@ class EphContext:
     print_outer_planets: bool = True
     rashi_temporary_friendships: bool = True # other option is "Varga"
     rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
+    amsha: int = 1 # amsha is the varga; default is 1
     names: Names = Names()
     hdcontext: HDContext = HDContext()
 

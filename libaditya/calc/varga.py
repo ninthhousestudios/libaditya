@@ -28,24 +28,36 @@ from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cus
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
 
-from libaditya.calc import Jaimini
+from .jaimini import Jaimini
 
 class Varga(Jaimini):
+    """
+    Varga is the main calculation interface
 
-    def __init__(self,amsha,planets,cusps,context,chart):
-        self.context = context
-        self._amsha = amsha
-        self._rashi_planets = planets
-        if amsha == 1:
-            self._planets = planets
+    important and special functions can be found or added to the API baseclass (Mixin) to Chart
+    i.e., if you want to know the ayanmsa => Chart.ayanamsa()
+
+    Chart itself does not have an ayanamsa, actually
+    it returns Rashi.ayanamsa()
+
+    this keeps the astrology interface distinct from the humandesign interace (through libaditya.hd)
+    for now i have put i have put an HDContext into EphContext
+    this actually makes it so that with object, an EphContext, i can calculate and text-display anything i want
+    """
+
+    def __init__(self,context,amsha=1):
+        if amsha != 1:
+            self.context = replace(context,amsha=amsha,print_nakshatras=False)
         else:
-            # dont print nakshatras in vargas not = 1
-            self.context = replace(context,print_nakshatras=False)
-            self._planets = self.init_Planets(planets)
-        self._cusps = self.init_Cusps(cusps)
+            self.context = replace(context,amsha=amsha)
+        self._amsha = self.context.amsha
+        self._planets = Planets(self.context)
+        self._cusps = Cusps(self.context)
+        self._signs = Signs(self._planets, self._cusps, self.context)
+        self._rashi_planets = Planets(replace(self._planets.context,amsha=1))
+        self._cusps = self.init_Cusps(self._cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
-        self.sysflgstr = const.sysflgstr(context.sysflg)
-        self.chart = chart
+        self.sysflgstr = const.sysflgstr(self.context.sysflg)
 
     def varga_name(self):
         match self._amsha:
@@ -130,7 +142,7 @@ class Varga(Jaimini):
         # we pass _rashi_planets to dignities so that it uses the rashi to calculate temporary relationships
         dignities = printf.dignity_table(self.dignities())
 
-        jaimini_karakas = printf.jaimini_karakas_str(self.chart.jaimini().karakas())
+        jaimini_karakas = printf.jaimini_karakas_str(self.planets().jaimini_karakas())
 
         output.add_row([f"{self.signs()[12]}", f"{self.signs()[1]}", f"{self.signs()[2]}", f"{self.signs()[3]}"])
         output.add_divider()
@@ -206,12 +218,8 @@ class Varga(Jaimini):
 
 class Rashi(Varga):
     
-    def __init__(self,planets,cusps,context,chart):
-        self.context = context
-        self._planets = planets
-        self._cusps = cusps
-        self._signs = Signs(self._planets,self._cusps,self.context)
-        super().__init__(amsha=1,planets=self._planets,cusps=self._cusps,context=self.context,chart=chart)
+    def __init__(self,context):
+        super().__init__(context=context,amsha=1)
 
     def planets(self):
         return self._planets
@@ -226,6 +234,8 @@ class Rashi(Varga):
         """
         this is Rashi() argala
         it returns a list a lists, where each sublist is the combinatino of the corresponding argala lists of lagna and seventh
+
+        this combines the argala formed to both 1st and 7th
         """
         lagna_arg = super().argala(self.signs().lagna())
         seventh_arg = super().argala(self.signs()[self.signs().lagna().astrological_signs_forward(7)])

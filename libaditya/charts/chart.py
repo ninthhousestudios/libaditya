@@ -14,21 +14,24 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
+
 from dataclasses import replace
 from typing import Self
 
 from libaditya import constants as const
 
 from libaditya.objects import EphContext, Planets, Cusps, Circle
-from libaditya.charts import Rashi, Varga
+from libaditya.calc import Varga, Rashi
 
-class Chart:
+from .api import API
+
+class Chart(API):
     """
     the primary interface into libaditya is the Chart
     Chart is a collection of vargas
 
     it explicity includes a Rashi chart Chart.rashi()
-    any implemented varga can gotten by Chart.get_varga(varga_code)
+    any implemented varga can gotten by Chart.varga(varga_code)
 
     can return a new Chart that has different options set
     aditya(),tropical(),sidereal() all have certain options they set, any others can be passed as keyword arguments, e.g., ayanamsa=27
@@ -48,7 +51,7 @@ class Chart:
 
     def __init__(self, context=EphContext()):
         self.context = context
-        self._Rashi = Rashi(Planets(self.context), Cusps(self.context), self.context, self)
+        self._Rashi = Rashi(self.context)
 
     def __str__(self):
         return f"{self.rashi()}" 
@@ -59,11 +62,11 @@ class Chart:
     def rashi(self):
         return self._Rashi
 
-    def get_varga(self, amsha: int):
+    def varga(self, amsha: int):
         """
         use Chart.rashi() for the rashi() chart
-        you must pass an integer to get_varga
-        Chart.get_varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
+        you must pass an integer to varga
+        Chart.varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
         is different in some respects...not sure if they should be or not, e.g., wrt to argala
 
         1-N for positive integers make a parivritti varga of that amsha
@@ -74,7 +77,7 @@ class Chart:
             -2 Hora; Sun and Moon, same stays, opposite goes opposite
             -3 Drekkana;
         """
-        return Varga(amsha,self.rashi().planets(),self.rashi().cusps(),self.context,self)
+        return Varga(self.context,amsha)
 
     # jaimini and tajika
     # these inherit from Chart, then Chart calls them here, which is why there is a local import statement
@@ -144,7 +147,5 @@ class Chart:
         """
         return Chart(context=replace(self.context,**kwargs))
 
-    def ayanamsa(self):
-        return self.context.ayanamsa
 
 

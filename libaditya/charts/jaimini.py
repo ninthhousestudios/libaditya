@@ -26,17 +26,17 @@ class Jaimini(Chart):
     def pada(self, amsha=1):
         if amsha == 1:
             return self.rashi().pada()
-        return self.get_varga(amsha).pada()
+        return self.varga(amsha).pada()
 
     def upapada(self, amsha=1):
         if amsha == 1:
             return self.rashi().upapada()
-        return self.get_varga(amsha).upapada()
+        return self.varga(amsha).upapada()
 
     def padas(self, amsha=1):
         if amsha == 1:
             return self.rashi().padas()
-        return self.get_varga(amsha).padas()
+        return self.varga(amsha).padas()
 
     def karakas(self):
         """
@@ -48,13 +48,13 @@ class Jaimini(Chart):
         if amsha == 1:
             return self.rashi().jaimini_first_strength()
         else:
-            return self.get_varga(amsha).jaimini_first_strength()
+            return self.varga(amsha).jaimini_first_strength()
 
     def second_strength(self, amsha=1):
         if amsha == 1:
             return self.rashi().jaimini_second_strength()
         else:
-            return self.get_varga(amsha).jaimini_second_strength()
+            return self.varga(amsha).jaimini_second_strength()
 
     def argala(self):
         """

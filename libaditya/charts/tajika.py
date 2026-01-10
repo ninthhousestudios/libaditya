@@ -30,5 +30,5 @@ class Tajika(Chart):
         """
         vargas = {}
         for n in range(1,13):
-            vargas[n] = self.get_varga(n)
+            vargas[n] = self.varga(n)
         return vargas

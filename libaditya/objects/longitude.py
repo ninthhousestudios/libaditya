@@ -21,6 +21,7 @@ from libaditya import constants as const
 from libaditya import utils
 
 from .context import EphContext, Circle
+from .extended_longitude import ExtendedLongitude
 
 def even(n):
     return n%2 == 0 
@@ -28,7 +29,7 @@ def even(n):
 def odd(n):
     return n%2 == 1 
 
-class Longitude:
+class Longitude(ExtendedLongitude):
     """
     Longitude expects at minimum a longitude
     

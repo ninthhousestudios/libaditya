@@ -14,21 +14,13 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
-from dataclasses import replace
-from typing import Self
 
-from libaditya.objects import EphContext, Planets
+import swisseph as swe
 
-from .context import HDContext
-from .calc import HDContext, unconscious_context
+from libaditya.objects import EphContext
 
-class Bodygraph:
+def unconscious_context(context=EphContext()):
     """
-    by calculation, a bodygraph is simply a set of 
+    return an EphContext where the time is the hd unconscious "design" date, 88 degrees of the Sun's motion before the conscious "personality" date, i.e., the birth date and time
     """
-
-    def __init__(self, context=EphContext(hdcontext=HDContext())):
-        self.context = context
-        self._conscious_planets = Planets(self.context)
-        self._unconscious_context = unconscious_context(self.context)
-        self._unconscious_planets = Planets(self._unconscious_context)
+    pass

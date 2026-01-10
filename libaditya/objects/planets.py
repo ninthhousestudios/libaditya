@@ -37,9 +37,10 @@ class Planet(Longitude):
     each Planet takes a planet number and a JulianDay class
     """
 
-    def __init__(self, pnumber, context=EphContext(), longitude=None):
+    def __init__(self, pnumber, context=EphContext()):
         self.timeJD = context.timeJD
         self._context = context
+        self._amsha = self._context.amsha
         self.pnumber = pnumber
         self.planet_name = context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
@@ -48,7 +49,7 @@ class Planet(Longitude):
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
-        if longitude is None:
+        if self._amsha == 1:
             self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
             # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
             self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
@@ -365,8 +366,8 @@ class Planet(Longitude):
 
 
 class Sun(Planet):
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.SUN, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.SUN, context)
         self._id = "Sun"
 
     def glyph(self):
@@ -422,18 +423,21 @@ class Sun(Planet):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
+        direction = "forward"
+        if next_long < 0:
+            direction = "backward"
         if next_long == self.ecliptic_longitude():
             return self
         # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.ecliptic_longitude(),3)%360 == next_long:
+        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",1)))
         # difference between current longitude and desired longitude
         diff = self.degrees_apart(next_long)
         shift_factor = diff*self.lowest_daily_speed()
-        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
+        return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"days",shift_factor))).ingress(next_long)
 
     def next_equinox(self):
         """
@@ -499,8 +503,8 @@ class Sun(Planet):
 
 
 class Moon(Planet):
-    def __init__(self, context=EphContext(), longitude=None, nature=None):
-        super().__init__(swe.MOON, context, longitude)
+    def __init__(self, context=EphContext(), nature=None):
+        super().__init__(swe.MOON, context)
         self._id = "Moon"
         self.attributes = {"nature": nature}
 
@@ -588,8 +592,8 @@ class Moon(Planet):
 
 class Mars(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.MARS, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.MARS, context)
         self._id = "Mars"
 
     def glyph(self):
@@ -697,8 +701,8 @@ class Mars(Planet):
 
 class Mercury(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.MERCURY, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.MERCURY, context)
         self._id = "Mercury"
 
     def glyph(self):
@@ -769,8 +773,8 @@ class Mercury(Planet):
 
 class Venus(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.VENUS, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.VENUS, context)
         self._id = "Venus"
 
     def glyph(self):
@@ -842,8 +846,8 @@ class Venus(Planet):
 
 class Jupiter(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.JUPITER, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.JUPITER, context)
         self._id = "Jupiter"
 
     def glyph(self):
@@ -954,8 +958,8 @@ class Jupiter(Planet):
 
 class Saturn(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.SATURN, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.SATURN, context)
         self._id = "Saturn"
 
     def glyph(self):
@@ -1064,8 +1068,8 @@ class Saturn(Planet):
 
 class Rahu(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.TRUE_NODE, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[10]
         self._id = "Rahu"
 
@@ -1099,8 +1103,8 @@ class Rahu(Planet):
 
 class Ketu(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.TRUE_NODE, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.TRUE_NODE, context)
         self.planet_name = context.names.planet_names[11]
         self._id = "Ketu"
         
@@ -1133,8 +1137,8 @@ class Ketu(Planet):
 
 
 class Uranus(Planet):
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.URANUS, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.URANUS, context)
         self._id = "Uranus"
 
     def glyph(self):
@@ -1160,8 +1164,8 @@ class Uranus(Planet):
 
 class Neptune(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.NEPTUNE, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.NEPTUNE, context)
         self._id = "Neptune"
 
     def glyph(self):
@@ -1188,8 +1192,8 @@ class Neptune(Planet):
 
 class Pluto(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.PLUTO, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.PLUTO, context)
         self._id = "Pluto"
 
     def glyph(self):
@@ -1214,8 +1218,8 @@ class Pluto(Planet):
         return False
 
 class Earth(Planet):
-    def __init__(self, context=EphContext(), longitude=None):
-        super().__init__(swe.EARTH, context, longitude)
+    def __init__(self, context=EphContext()):
+        super().__init__(swe.EARTH, context)
         self._id = "Earth"
 
     def glyph(self):
@@ -1241,9 +1245,9 @@ class Earth(Planet):
 
 class Chiron(Planet):
 
-    def __init__(self, context=EphContext(), longitude=None):
+    def __init__(self, context=EphContext()):
         self.planet_name = "Chiron"
-        super().__init__(swe.CHIRON, context, longitude)
+        super().__init__(swe.CHIRON, context)
         self._id = "Chiron"
 
     def type(self):

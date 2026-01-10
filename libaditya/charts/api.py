@@ -14,21 +14,14 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
+
 from dataclasses import replace
 from typing import Self
 
-from libaditya.objects import EphContext, Planets
-
-from .context import HDContext
-from .calc import HDContext, unconscious_context
-
-class Bodygraph:
+class API:
     """
-    by calculation, a bodygraph is simply a set of 
+    Mixin class for Chart api
     """
 
-    def __init__(self, context=EphContext(hdcontext=HDContext())):
-        self.context = context
-        self._conscious_planets = Planets(self.context)
-        self._unconscious_context = unconscious_context(self.context)
-        self._unconscious_planets = Planets(self._unconscious_context)
+    def ayanamsa(self):
+        return self.context.ayanamsa
