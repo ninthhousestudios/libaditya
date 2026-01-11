@@ -2,6 +2,12 @@
 
 split pyphemeris off from libaditya
 
+i changed pyproject.toml to use hatch
+it built and published libaditya correctly, with all the ephe files; it works, i checked
+it
+it didnt include pyphemeris because i didnt tell it to
+so then i can just move pyphemeris
+
 #
 
 consider binding together Planet and Planets

@@ -1,6 +1,6 @@
 [project]
 name = "libaditya"
-version = "0.2.3"
+version = "0.2.4"
 description = "Astrological calculation library for Adityas"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -17,9 +17,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.sdist]
 include = [
     "libaditya"
-#  "libaditya/*.py",
-#  "libaditya/*/.py",
-#  "libaditya/ephe/*",
 ]
 exclude = [
 #  "*.json",
