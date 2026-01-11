@@ -15,24 +15,15 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with pyphemeris.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
+# this sets __version__ for everyone
+
+import toml
+import os
 import pathlib
-from dataclasses import replace
 
-from libaditya.objects import *
-from libaditya.calc import *
-from libaditya.charts import * 
-from libaditya.hd import *
-from libaditya import constants as const
-from libaditya import utils
-from libaditya import read
-from libaditya import print_functions as printf
-
-# base_path means for libaditya src itself
-base_path = os.path.dirname(os.path.realpath(__file__))
-# the 
 package_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
 
-swe.set_ephe_path(base_path + "/ephe/")
+with open(package_path+"pyproject.toml", 'r') as f:
+    config = toml.load(f)
 
-from ._version import __version__
+__version__ = config["project"]["version"]
