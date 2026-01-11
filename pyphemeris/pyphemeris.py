@@ -169,6 +169,9 @@ def main():
     #     toround: (bool,int) = (True,3)
     #     print_nakshatras: bool = True
     #     print_outer_planets: bool = True
+    #     rashi_temporary_friendships: bool = True # other option is "Varga"
+    #     rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
+    #     amsha: int = 1 # amsha is the varga; default is 1
     #     names = Names = Names()
     #
     # @dataclass(frozen=True)
@@ -181,7 +184,7 @@ def main():
     #     varas: str = tuple(const.varas)
     #     yogas: str = tuple(const.yogas)
 
-    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,rashi_temporary_friendships,rashi_aspects,names)
+    context = EphContext(timeJD,location,const.TROP,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,rashi_temporary_friendships,rashi_aspects,1,names)
     # print kala information and exit
     if args.kala:
         print_kala(context)
