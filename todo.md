@@ -1,5 +1,9 @@
 #
 
+split pyphemeris off from libaditya
+
+#
+
 consider binding together Planet and Planets
 if each Planet could access its Planets, that would make the api easier
 then we may not need to set_attributes? or it could be done differently
