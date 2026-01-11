@@ -369,33 +369,26 @@ class Planet(Longitude):
     def lowest_secondly_speed(self) -> float:
         return self.lowest_minutely_speed()/60
 
+    def __repr__(self):
+        ret = ""
+        ayanamsa = ""
+        if self.system == swe.FLG_SIDEREAL:
+            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
+        if self.amsha() != 1:
+            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+        else:
+            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+        return ret
+
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:
             ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
         return (
-            f"{self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+            f"amsha {self.amsha()}\n{self.planet_name}{self.retrostr()} {self.ecliptic_longitude()} degrees ({self.longitude()}) {self.system_name()} longitude{ayanamsa}\n"
             + f"{self.timeJD}\n"
         )
 
-    def __repr__(self):
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-        return (
-            f"{self.planet_name}{self.retrostr()} {self.ecliptic_longitude()} degrees ({self.longitude()}) {self.system_name()} longitude{ayanamsa}\n"
-            + f"{self.timeJD}\n"
-        )
-
-#    def __repr__(self):
-#        print(f"{type(self)}")
-#        ayanamsa = ""
-#        if self.system == swe.FLG_SIDEREAL:
-#            ayanamsa = f" with {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-#        return (
-#            f"{self.planet_name}{self.retrostr()} at {self.raw_longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-#            + f"{self.timeJD}"
-#        )
 
 
 class Sun(Planet):
@@ -1652,6 +1645,7 @@ class Planets:
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
+        header += f"amsha {self._amsha}\n"
         header += f"{const.circle_name(self.context.circle)}\n"
         if self.system == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36

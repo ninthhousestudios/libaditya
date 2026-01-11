@@ -27,7 +27,7 @@ from .context import EphContext
 
 class Sign:
 
-    def __init__(self, number, planets, cusps, context):
+    def __init__(self, number, planets, cusps, context, master):
         self.context = context
         self._planets = planets
         self._cusps = cusps
@@ -35,6 +35,7 @@ class Sign:
         self._sign_index = (number-1)%12
         self._sign_name = self.context.names.sign_names[self.sign_index()]
         self._id = number
+        self.master = master
         # a dictionary that defines our rashi aspects, {int: (int,int,int)}
         
     def sign_index(self):
@@ -219,8 +220,8 @@ class Sign:
 
 class One(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(1,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(1,planets,cusps,context,master)
 
     def modality(self) -> str:
         return "Moveable"
@@ -230,8 +231,8 @@ class One(Sign):
 
 class Two(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(2,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(2,planets,cusps,context,master)
 
     def modality(self) -> str:
         return "Fixed"
@@ -241,8 +242,8 @@ class Two(Sign):
 
 class Three(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(3,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(3,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Dual"
@@ -252,8 +253,8 @@ class Three(Sign):
 
 class Four(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(4,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(4,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Moveable"
@@ -263,8 +264,8 @@ class Four(Sign):
 
 class Five(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(5,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(5,planets,cusps,context,master)
 
     def modality(self) -> str:
         return "Fixed"
@@ -275,8 +276,8 @@ class Five(Sign):
 
 class Six(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(6,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(6,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Dual"
@@ -286,8 +287,8 @@ class Six(Sign):
 
 class Seven(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(7,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(7,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Moveable"
@@ -297,8 +298,8 @@ class Seven(Sign):
 
 class Eight(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(8,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(8,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Fixed"
@@ -308,8 +309,8 @@ class Eight(Sign):
 
 class Nine(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(9,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(9,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Dual"
@@ -319,8 +320,8 @@ class Nine(Sign):
 
 class Ten(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(10,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(10,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Moveable"
@@ -330,8 +331,8 @@ class Ten(Sign):
 
 class Eleven(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(11,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(11,planets,cusps,context,master)
         
     def modality(self) -> str:
         return "Fixed"
@@ -341,8 +342,8 @@ class Eleven(Sign):
 
 class Twelve(Sign):
 
-    def __init__(self,planets,cusps,context):
-        super().__init__(12,planets,cusps,context)
+    def __init__(self,planets,cusps,context,master):
+        super().__init__(12,planets,cusps,context,master)
 
     def modality(self) -> str:
         return "Dual"
@@ -351,7 +352,7 @@ class Twelve(Sign):
         return "♓"
         
 
-signs = {
+local_Signs = {
     1: One,
     2: Two,
     3: Three,
@@ -427,7 +428,7 @@ class Signs:
             stmp[c.amsha_sign_index()][inner_index].append(c)
         retsigns={}
         for n, sign in enumerate(stmp):
-            retsigns[n+1] = signs[n+1](planets=sign[0],cusps=sign[1],context=self.context)
+            retsigns[n+1] = local_Signs[n+1](planets=sign[0],cusps=sign[1],context=self.context,master=self)
         return retsigns
 
     def signs(self):

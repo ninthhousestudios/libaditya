@@ -52,13 +52,13 @@ class Chart(API):
 
     def __init__(self, context=EphContext()):
         self.context = context
-        self._Rashi = Rashi(self.context)
-
-    def __str__(self):
-        return f"{self.rashi()}" 
+        self._Rashi = Rashi(self.context,self)
 
     def __repr__(self):
-        return self.__str__()
+        return repr(self.rashi())
+
+    def __str__(self):
+        return "Chart str"
 
     def rashi(self):
         return self._Rashi

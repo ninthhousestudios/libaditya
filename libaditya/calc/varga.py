@@ -28,6 +28,7 @@ from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cus
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
 
+
 from .jaimini import Jaimini
 
 class Varga(Jaimini):
@@ -135,7 +136,7 @@ class Varga(Jaimini):
         else:
             return self.planets().dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
         
-    def __str__(self):
+    def __repr__(self):
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
@@ -157,7 +158,7 @@ class Varga(Jaimini):
         return self.mkheader() + ret
 
 
-    def __repr__(self):
+    def __str__(self):
         """
         represents as a header with the chart information
         """
@@ -217,8 +218,9 @@ class Varga(Jaimini):
 
 
 class Rashi(Varga):
-    
-    def __init__(self,context):
+
+    def __init__(self,context,chart):
+        self.master = chart
         super().__init__(context=context,amsha=1)
 
     def planets(self):
@@ -230,6 +232,21 @@ class Rashi(Varga):
     def signs(self):
         return self._signs
 
+    def Master(self):
+        """
+        return the Chart that spawned it
+        """
+        return self.master
+
+    def panchanga(self):
+        """
+        panchanga is here because it has to do with the sun and moon, with time
+        that is the Rashi chart essentially
+        none of the other vargas really need a separate class, because they are really subsections of this class
+        which is why Rashi can hopefully reach all the Vargas
+        """
+
+    # special jaimini function that returns argala to both 1st and 7th; but maybe i should move it
     def argala(self) -> [[Planet],[Planet],[Planet]]:
         """
         this is Rashi() argala
@@ -247,26 +264,6 @@ class Rashi(Varga):
                 ret[n].append(planet)
         return ret
         # each arg has three elements; put all of lagna_arg[0] together with seventh_arg[0], etc.
-#        argala_first, third_argala, obstructed_first = super().argala(self.signs().lagna())
-#        argala_seventh, third_argala_seventh, obstructed_seventh = super().argala(self.signs()[self.signs().lagna().astrological_signs_forward(7)])
-#        print(f"argala to the first:")
-#        for planet in argala_first:
-#            print(planet.identity())
-#        print(f"\nmalefics causing argala from the third:")
-#        for planet in third_argala:
-#            print(planet.identity())
-#        print(f"\nobstructed planets from the first:")
-#        for planet in obstructed_first:
-#            print(planet.identity())
-#        print(f"\nargala to the seventh:")
-#        for planet in argala_seventh:
-#            print(planet.identity())
-#        print(f"\nmalefics causing argala from the third:")
-#        for planet in third_argala_seventh:
-#            print(planet.identity())
-#        print(f"\nobstructed planets from the seventh:")
-#        for planet in obstructed_seventh:
-#            print(planet.identity())
 
     def akriti_yogas(self):
         """

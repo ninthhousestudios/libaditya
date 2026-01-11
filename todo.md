@@ -1,5 +1,19 @@
 #
 
+Sign and Signs are now recursive
+so we can put all of the Signs functions in Sign
+
+#
+
+change Signs.__str__ and Signs.__repr__
+
+#
+
+where to add Panchanga; it currently isnt directly accesible
+Rashi, probably
+
+#
+
 split pyphemeris off from libaditya
 
 i changed pyproject.toml to use hatch
