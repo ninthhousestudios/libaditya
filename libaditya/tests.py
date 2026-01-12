@@ -1,4 +1,4 @@
-# tests from pyphemeris.py
+# tests from libaditya.py
 
 print(f"computing ephemeris for {name=}, {placename=}, {month=}, {day=}, {year=}, {timedec=}, {lat=}, {long=}, {utcoffset=}, {timezone=}")
 print(swe.fixstar(",SgrA*",2404506))

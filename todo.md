@@ -1,5 +1,10 @@
 #
 
+write sample scripts for going through a directory of .chtk files and doing something
+with the data
+
+#
+
 Sign and Signs are now recursive
 so we can put all of the Signs functions in Sign
 
