@@ -162,7 +162,7 @@ class Varga(Jaimini):
         """
         represents as a header with the chart information
         """
-        return self.mkheader()
+        return self.__repr__()
 
     def draw_sun_by_sign_table(self):
         """

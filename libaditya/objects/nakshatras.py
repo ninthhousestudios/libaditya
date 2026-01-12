@@ -47,7 +47,6 @@ class Nakshatra:
         nakshatra = f"{self.nakshatra()}\n"
         return nak + base_long + ash_long + ayana + nakshatra
 
-
     def occupant(self):
         return self._occupant.name()
 
@@ -192,6 +191,9 @@ class Nakshatra:
         if isinstance(self._occupant,Cusp):
             equlong = swe.cotrans((self.base_longitude(),0,1),self.timeJD.ecliptic_obliquity())[0]
         return (equlong+ashvini)%360
+
+class Ashvini(Nakshatra):
+    pass
 
 class Nakshatras:
 

@@ -1,82 +1,62 @@
-#
+## jaimini
 
+#
+vargas
+
+#
+jaimini first strength
+
+suzan-smadi.chtk, d16, last three get mixed up, seems clear from
+chart why Kala order is what it is
+
+check my check, d27, mix up between 9 and 6
+
+
+## interface
+
+#
 write sample scripts for going through a directory of .chtk files and doing something
 with the data
 
 #
-
-Sign and Signs are now recursive
-so we can put all of the Signs functions in Sign
-
-#
-
-change Signs.__str__ and Signs.__repr__
-
-#
-
 where to add Panchanga; it currently isnt directly accesible
 Rashi, probably
 
 #
+revamp .pyph file
+make interactive .pyph creator
 
-split pyphemeris off from libaditya
 
-i changed pyproject.toml to use hatch
-it built and published libaditya correctly, with all the ephe files; it works, i checked
-it
-it didnt include pyphemeris because i didnt tell it to
-so then i can just move pyphemeris
+## strucutre
 
 #
+nakshatras. update to have 28 derived classes for each nakshatra
+change Nakshatras to be a dictionary probably with integer keys
+maybe name keys, depending on dealing with abhijit
 
-consider binding together Planet and Planets
-if each Planet could access its Planets, that would make the api easier
-then we may not need to set_attributes? or it could be done differently
-
-likewise with Sign and Signs
-if there was recursion, i could write
-```
-chart.jaimini().svamsha().aspects_to()
-```
+#
+2025/12/01 - first part done strcuturally
+Sign and Signs are now recursive
+so we can put all of the Signs functions in Sign
 
 right now, only Signs knows how rashi aspects
 so we have to do
 ```
 chart.jaimini().rashi().signs().rashi_aspects_to(Sign)
 ```
+TODO: this->
+likewise with Sign and Signs
+if there was recursion, i could write
+```
+chart.jaimini().svamsha().aspects_to()
+```
 
 #
-
-do lowest_daily_speed for other planets
-
-hd.calc.dream_context is not working properly fix it
-
-#
-
-fix next_vara
-    it basically works. it is just that sometimes if it is literally at the
-beginning of the vara, it will say the vara that is beginning, not the next one
+consider binding together Planet and Planets
+if each Planet could access its Planets, that would make the api easier
+then we may not need to set_attributes? or it could be done differently
 
 #
-
-panchanga and monthly_panchanga
-    seemed to fix moonrise and moonset just by some hacks; not sure how well
-they work for everything
-    need to look at nakshatra, tithi, yoga
-    also have issue like moonrise/set about date and utc/local
-    but also between Kala, mp and pyph -e i was getting three different times
-for the next nakshatra
-
-
-#
-
-akriti yogas
-    the ones needing all planets in 7 houses need work
-    the same algorithm doesnt work for them as for the others
-    actually, relook at all of them because all probably need some work
-
-#
-
 think about removing Names from EphContext
     they are only used in ephemeris mode in order to print to screen
     in terms of calculation, they are not really needed
@@ -86,40 +66,31 @@ think about removing Names from EphContext
     screen, defaults that cant be changed
 
 #
-
 something way off with draconic coordinates. i wish it worked. try later
+restructure entire way of doing draconic
 
 #
-
-validate vargas with parivritti calculations
-
-#
-
-think about implementing non-parivritti vargas
-    started hora - mostly works with tropical
-    with my chart, Sun dignity in Hora says "None"
-    placement works with Adityas and Tropical; in my Aditya Hora, Sun and Moon
-        say "None"
+do lowest_daily_speed for other planets
 
 #
+fix next_vara
+    it basically works. it is just that sometimes if it is literally at the
+beginning of the vara, it will say the vara that is beginning, not the next one
 
-check first strength in vargas
-
-#
-
-revamp .pyph file
-make interactive .pyph creator
+## calculations
 
 #
-
-jaimini
-    first source of strength
-    check my check, d27, mix up between 9 and 6 in fss
-    argala
-    vargas
+akriti yogas
+    the ones needing all planets in 7 houses need work
+    the same algorithm doesnt work for them as for the others
+    actually, relook at all of them because all probably need some work
 
 #
-
 ucca bala
 chesta bala
 dig bala
+
+## hd
+
+#
+hd.calc.dream_context is not working properly fix it

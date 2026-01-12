@@ -58,7 +58,7 @@ class Chart(API):
         return repr(self.rashi())
 
     def __str__(self):
-        return "Chart str"
+        return self.__repr__()
 
     def rashi(self):
         return self._Rashi
