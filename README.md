@@ -27,16 +27,26 @@ written with python 3.13
 
 ## Installtion
 
-```sh
-git clone https://gitlab.com/j0sh4rp3/libaditya
-```
+```libaditya``` is now on pypi.org, so it can be installed with ```pip install
+libaditya```...I think. I use Arch (btw) and they do python packages differently (I
+think?...Python packaging is strange), so I use virtual environments through ```uv```.
 
-if using ```uv``` then:
-```
+In any case, at this point ```libaditya``` is not really mature enough to have a major
+version, so if you are interested in testing it out or changing it or working on it, I
+recommend installing is the following way, then you can pull changes as they come:
+
+```sh
+
+git clone https://gitlab.com/j0sh4rp3/libaditya
+
 uv venv
 source .venv/bin/activate
-uv pip install -e .
+uv add . --dev
 ```
+
+then, 1) if you dont change any of the code at all, then you can do ```git pull```, and
+it should update from the gitlab repo. 2) if you make changes to libaditya, im not really sure with
+how that would work in git from getting updates from libaditya and your own...
 
 ## Usage
 

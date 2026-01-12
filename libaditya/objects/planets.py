@@ -37,10 +37,11 @@ class Planet(Longitude):
     each Planet takes a planet number and a JulianDay class
     """
 
-    def __init__(self, pnumber, context=EphContext()):
+    def __init__(self, pnumber, context=EphContext(),master=None):
         self.timeJD = context.timeJD
         self._context = context
         self._amsha = self._context.amsha
+        self.master = master
         self.pnumber = pnumber
         self.planet_name = self._context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
@@ -392,8 +393,8 @@ class Planet(Longitude):
 
 
 class Sun(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.SUN, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.SUN, context,master)
         self._id = "Sun"
 
     def glyph(self):
@@ -517,8 +518,8 @@ class Sun(Planet):
 
 
 class Moon(Planet):
-    def __init__(self, context=EphContext(), nature=None):
-        super().__init__(swe.MOON, context)
+    def __init__(self, context=EphContext(),master=None, nature=None):
+        super().__init__(swe.MOON, context,master)
         self._id = "Moon"
         self.attributes = {"nature": nature}
 
@@ -597,8 +598,8 @@ class Moon(Planet):
 
 class Mars(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.MARS, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.MARS, context,master)
         self._id = "Mars"
 
     def glyph(self):
@@ -706,8 +707,8 @@ class Mars(Planet):
 
 class Mercury(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.MERCURY, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.MERCURY, context,master)
         self._id = "Mercury"
 
     def glyph(self):
@@ -778,8 +779,8 @@ class Mercury(Planet):
 
 class Venus(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.VENUS, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.VENUS, context,master)
         self._id = "Venus"
 
     def glyph(self):
@@ -851,8 +852,8 @@ class Venus(Planet):
 
 class Jupiter(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.JUPITER, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.JUPITER, context,master)
         self._id = "Jupiter"
 
     def glyph(self):
@@ -963,8 +964,8 @@ class Jupiter(Planet):
 
 class Saturn(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.SATURN, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.SATURN, context,master)
         self._id = "Saturn"
 
     def glyph(self):
@@ -1073,8 +1074,8 @@ class Saturn(Planet):
 
 class Rahu(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.TRUE_NODE, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.TRUE_NODE, context,master)
         self.planet_name = context.names.planet_names[10]
         self._id = "Rahu"
 
@@ -1108,8 +1109,8 @@ class Rahu(Planet):
 
 class Ketu(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.TRUE_NODE, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.TRUE_NODE, context,master)
         self.planet_name = context.names.planet_names[11]
         self._id = "Ketu"
         
@@ -1142,8 +1143,8 @@ class Ketu(Planet):
 
 
 class Uranus(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.URANUS, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.URANUS, context,master)
         self._id = "Uranus"
 
     def glyph(self):
@@ -1169,8 +1170,8 @@ class Uranus(Planet):
 
 class Neptune(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.NEPTUNE, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.NEPTUNE, context,master)
         self._id = "Neptune"
 
     def glyph(self):
@@ -1197,8 +1198,8 @@ class Neptune(Planet):
 
 class Pluto(Planet):
 
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.PLUTO, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.PLUTO, context,master)
         self._id = "Pluto"
 
     def glyph(self):
@@ -1223,8 +1224,8 @@ class Pluto(Planet):
         return False
 
 class Earth(Planet):
-    def __init__(self, context=EphContext()):
-        super().__init__(swe.EARTH, context)
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.EARTH, context,master)
         self._id = "Earth"
 
     def glyph(self):
@@ -1250,9 +1251,9 @@ class Earth(Planet):
 
 class Chiron(Planet):
 
-    def __init__(self, context=EphContext()):
+    def __init__(self, context=EphContext(),master=None):
         self.planet_name = "Chiron"
-        super().__init__(swe.CHIRON, context)
+        super().__init__(swe.CHIRON, context,master)
         self._id = "Chiron"
 
     def type(self):
@@ -1359,8 +1360,8 @@ class Planets:
             # add Earth to the planet_dict["planets"], after Pluto and before Chiron
             local_planets["Earth"] = Earth
 
-        for p,v in local_planets.items():
-            ret[p] = v(self.context)
+        for planet,constructor in local_planets.items():
+            ret[planet] = constructor(self.context,self)
 
 
         return ret

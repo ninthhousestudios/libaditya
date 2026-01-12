@@ -49,7 +49,7 @@ class Longitude(ExtendedLongitude):
         self.jd = self.context.timeJD.jd_number()
         # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
         self._longitude = longitude
-        self._real_index = int((self.ecliptic_longitude() % 360) / 30)
+        self._ecliptic_index = int((self.ecliptic_longitude() % 360) / 30)
         self._amsha_longitude = self.varga(amsha)
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
@@ -79,14 +79,21 @@ class Longitude(ExtendedLongitude):
         else:
             return self.amsha_longitude()
 
-    def real_index(self):
-        return self._real_index
+    def ecliptic_index(self):
+        return self._ecliptic_index
 
-    def real_sign_index(self):
+    def ecliptic_sign_index(self):
         if self.context.circle == Circle.ADITYA:
-            return (self.real_index() + 1) % 12
+            return (self.ecliptic_index() + 1) % 12
         else:
-            return self.real_index()
+            return self.ecliptic_index()
+
+    def ecliptic_sign(self):
+        """
+        ecliptic sign means the sign in the Rashi chart
+        this is the number of that sign
+        """
+        return self.ecliptic_sign_index()+1
 
     def amsha_index(self):
         return self._amsha_index
