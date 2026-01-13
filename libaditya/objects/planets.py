@@ -21,6 +21,7 @@ from dataclasses import replace
 from typing import Self
 
 from libaditya import constants as const
+from libaditya import utils
 from libaditya.hd import HDLongitude
 
 from .julian_day import JulianDay
@@ -390,6 +391,64 @@ class Planet(Longitude):
             + f"{self.timeJD}\n"
         )
 
+    def ucca_bala(self):
+        """
+        get ucca bala for Planet, not including Moon or Mercury
+        if a planets longitude is at their Planet.ucca, ucca_bala is 60 points
+        if it is at thier Planet.nica, it is 0 points
+        it is a proportion of 60 in accord with its proportion between the two points
+        """
+        if isinstance(self, Moon) or isinstance(self, Mercury):
+#            if isinstance(self,Moon):
+#                import pdb; pdb.set_trace()
+            return self._ucca_bala_mm()
+        # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
+        ucca = utils.sign_degree_longitude(self.ucca(),self.context)
+        nica = utils.sign_degree_longitude(self.nica(),self.context)
+
+        if self.amsha_longitude() == ucca:
+            return 60
+        if self.amsha_longitude() == nica:
+            return 0
+        # how many degrees forward around ecliptic to find the ucca point
+        from_ucca = self.amsha_degrees_apart(ucca) 
+        from_nica = self.amsha_degrees_apart(nica) 
+        if from_ucca < 180:
+            # we are between ucca and nica
+            # so find percent that long has gone towards ucca
+            return ((180-from_ucca)/180)*60
+        if from_nica < 180:
+            return (from_nica/180)*60
+
+    def _ucca_bala_mm(self):
+        """
+        get ucca bala for Moon or Mercury, not including Moon or Mercury
+        if a planets longitude is at their Planet.ucca, ucca_bala is 60 points
+        if it is at thier Planet.nica, it is 0 points
+        it is a proportion of 60 in accord with its proportion between the two points
+
+        you could use this in others vargas. the exaltation points would remaind the same
+        you could change it to move th exaltation point through the vargas as if it were another point
+        maybe will add that
+        """
+        # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
+        lower_ucca = utils.sign_degree_longitude(self.ucca()[0],self.context)
+        upper_ucca = utils.sign_degree_longitude(self.ucca()[1],self.context)
+        lower_nica = utils.sign_degree_longitude(self.nica()[0],self.context)
+        upper_nica = utils.sign_degree_longitude(self.nica()[1],self.context)
+
+        if self.amsha_longitude() >= lower_ucca and self.amsha_longitude() < upper_ucca:
+            return 60
+        if self.amsha_longitude() >= lower_nica and self.amsha_longitude() < upper_nica:
+            return 0
+
+        if self.between_on_this_amsha(upper_ucca,lower_nica):
+            from_ucca = (180-(upper_ucca-lower_ucca))-self.amsha_degrees_apart(lower_nica) 
+            return (from_ucca/180)*60
+        if self.between_on_this_amsha(upper_nica,lower_ucca):
+            from_nica = (180-(upper_nica-lower_nica))-self.amsha_degrees_apart(upper_ucca) 
+            return (from_nica/180)*60
+
 
 
 class Sun(Planet):
@@ -422,7 +481,6 @@ class Sun(Planet):
         """
         return .9
 
-
     def is_outer_planet(self):
         return False
 
@@ -437,22 +495,6 @@ class Sun(Planet):
         nature means benefic or malefic
         """
         return "Malefic"
-
-
-#    def ingress(self, next_long) -> Self:
-#        """
-#        return Sun for the JulianDay where Sun arrives at longitude next_long
-#        """
-#        # % 360 help in case we are looking for the equinox, next_long = 0
-#        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
-#            # if we dont go forward one second the longitude we are are will be
-#            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
-#            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-#            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
-#        # difference between current longitude and desired longitude
-#        diff = self.degrees_apart(next_long)
-#        shift_factor = diff*self.lowest_daily_speed()
-#        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
 
     def next_equinox(self):
         """
@@ -494,7 +536,6 @@ class Sun(Planet):
         else:
             return False
 
-
     def is_db(self):
         if self.sign() == 7:
             return True
@@ -515,6 +556,12 @@ class Sun(Planet):
                 return "E"
             case "Saturn":
                 return "E"
+
+    def ucca(self):
+        return (1,10)
+
+    def nica(self):
+        return (7,10)
 
 
 class Moon(Planet):
@@ -595,6 +642,12 @@ class Moon(Planet):
                 return "N"
             case "Saturn":
                 return "N"
+
+    def ucca(self):
+        return ((2,0),(2,3))
+
+    def nica(self):
+        return ((8,0),(8,3))
 
 class Mars(Planet):
 
@@ -705,6 +758,12 @@ class Mars(Planet):
         if diff > 30 and diff <= 60:
             return (diff - 30)/2
 
+    def ucca(self):
+        return (10,28)
+
+    def nica(self):
+        return  (4,28)
+
 class Mercury(Planet):
 
     def __init__(self, context=EphContext(),master=None):
@@ -777,77 +836,11 @@ class Mercury(Planet):
             case "Saturn":
                 return "N"
 
-class Venus(Planet):
+    def ucca(self):
+        return ((6,0),(6,15))
 
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.VENUS, context,master)
-        self._id = "Venus"
-
-    def glyph(self):
-        return "♀"
-
-    def abbreviation(self) -> str:
-        """
-        two letter representation of Planet's name
-        """
-        return "Ve"
-
-    def type(self):
-        return Venus
-
-    def nature(self) -> str:
-        """
-        nature means benefic or malefic
-        """
-        return "Benefic"
-
-    def is_outer_planet(self):
-        return False
-
-    def is_karaka(self):
-        return True
-
-    def is_graha(self):
-        return True
-
-    def is_ex(self):
-        if self.sign() == 12:
-            return True
-        else:
-            return False
-
-    def is_mt(self):
-        if self.sign() == 7 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 15):
-            return True
-        else:
-            return False
-
-    def is_oh(self):
-        if self.sign() == 2 or (self.sign() == 7 and self.real_in_sign_longitude() > 15):
-            return True
-        else:
-            return False
-
-    def is_db(self):
-        if self.sign() == 6:
-            return True
-        else:
-            return False
-
-    def natural_relationship_from(self, lord):
-        match lord.identity():
-            case "Sun":
-                return "E"
-            case "Moon":
-                return "E"
-            case "Mars":
-                return "N"
-            case "Mercury":
-                return "F"
-            case "Jupiter":
-                return "N"
-            case "Saturn":
-                return "F"
+    def nica(self):
+        return ((12,0),(12,15))
 
 
 class Jupiter(Planet):
@@ -961,6 +954,90 @@ class Jupiter(Planet):
         if diff > 30 and diff <= 60:
             return (diff - 30)/2
 
+    def ucca(self):
+        return (4,5)
+
+    def nica(self):
+        return (10,5)
+
+class Venus(Planet):
+
+    def __init__(self, context=EphContext(),master=None):
+        super().__init__(swe.VENUS, context,master)
+        self._id = "Venus"
+
+    def glyph(self):
+        return "♀"
+
+    def abbreviation(self) -> str:
+        """
+        two letter representation of Planet's name
+        """
+        return "Ve"
+
+    def type(self):
+        return Venus
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Benefic"
+
+    def is_outer_planet(self):
+        return False
+
+    def is_karaka(self):
+        return True
+
+    def is_graha(self):
+        return True
+
+    def is_ex(self):
+        if self.sign() == 12:
+            return True
+        else:
+            return False
+
+    def is_mt(self):
+        if self.sign() == 7 and (self.real_in_sign_longitude() >= 0 and self.real_in_sign_longitude() < 15):
+            return True
+        else:
+            return False
+
+    def is_oh(self):
+        if self.sign() == 2 or (self.sign() == 7 and self.real_in_sign_longitude() > 15):
+            return True
+        else:
+            return False
+
+    def is_db(self):
+        if self.sign() == 6:
+            return True
+        else:
+            return False
+
+    def natural_relationship_from(self, lord):
+        match lord.identity():
+            case "Sun":
+                return "E"
+            case "Moon":
+                return "E"
+            case "Mars":
+                return "N"
+            case "Mercury":
+                return "F"
+            case "Jupiter":
+                return "N"
+            case "Saturn":
+                return "F"
+
+    def ucca(self):
+        return (12,27)
+
+    def nica(self):
+        return (6,27)
+
 
 class Saturn(Planet):
 
@@ -1071,6 +1148,11 @@ class Saturn(Planet):
         if diff > 30 and diff <= 60:
             return (diff - 30)*2
 
+    def ucca(self):
+        return (7,20)
+
+    def nica(self):
+        return (1,20)
 
 class Rahu(Planet):
 

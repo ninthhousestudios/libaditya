@@ -42,7 +42,7 @@ class YiLongitude:
     gate_one = hdc.gate_one
 
     def __init__(self, longitude):
-        self._ecliptic_longitude = longitude
+        self._longitude = longitude
         # declaring variables that are initialized in self.init_gate()
         self._distance = 0
         self._hexagrams = 0
@@ -50,7 +50,7 @@ class YiLongitude:
         self._colors = 0
         self._tones = 0
         self._bases = 0
-        self._gate = self.init_gate(longitude) 
+        self._gate = self.init_gate(self._longitude) 
 
     def init_gate(self, longitude):
         # distance from gate 1 to the current gate in degrees
@@ -72,7 +72,7 @@ class YiLongitude:
         self._hexagrams = int(gates_from)
         # gates are represented as a float, e.g., 12.1 = gate 12, line 1
         # easiest was to make a string "12.1", then convert to float
-        return float(str(hdc.wheel[int(self._hexagram)])+'.'+str(int(self._line)))
+        return float(str(int(self._hexagram))+'.'+str(int(self._line)))
 
 class HDLongitude(YiLongitude):
     """
@@ -96,14 +96,14 @@ class HDLongitude(YiLongitude):
         self.context = context
         super().__init__(longitude)
 
-    def ecliptic_longitude(self):
-        return self._ecliptic_longitude
+    def longitude(self):
+        return self._longitude
 
     def raw_longitude(self):
         if self.context.toround[0]:
-            return round(self.ecliptic_longitude(), self.context.toround[1])
+            return round(self.longitude(), self.context.toround[1])
         else:
-            return self.ecliptic_longitude()
+            return self.longitude()
 
     def gate(self) -> str:
         return float(self.hexagram() + "." + str(self.line()))
@@ -157,7 +157,7 @@ class HDLongitude(YiLongitude):
         return self._bases
 
     def gate_in_longitude(self):
-        ginlong = (self.ecliptic_longitude()-(self.gate_one+(hdc.gate*hdc.wheel.index(self.gate_number()))))%360
+        ginlong = (self.longitude()-(self.gate_one+(hdc.gate*hdc.wheel.index(self.gate_number()))))%360
         if self.context.toround[0]:
             return round(ginlong,self.context.toround[1])
         else:

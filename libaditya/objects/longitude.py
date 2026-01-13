@@ -21,7 +21,6 @@ from libaditya import constants as const
 from libaditya import utils
 
 from .context import EphContext, Circle
-from .extended_longitude import ExtendedLongitude
 
 def even(n):
     return n%2 == 0 
@@ -29,7 +28,7 @@ def even(n):
 def odd(n):
     return n%2 == 1 
 
-class Longitude(ExtendedLongitude):
+class Longitude:
     """
     Longitude expects at minimum a longitude
     
@@ -180,7 +179,34 @@ class Longitude(ExtendedLongitude):
         else:
             return (360 - self.ecliptic_longitude()) + next_long
 
-    def signs_apart(self, other_sign):
+    def amsha_degrees_apart(self, next_long):
+        """
+        how many degrees from this longitude to next_long going forward around the ecliptic
+        """
+        # we dont cross the equinox to find the difference
+        if next_long > self.amsha_longitude():
+            return next_long - self.amsha_longitude()
+        # we have to cross the equinox, thus find the remainder in this cycle
+        # plus the portion of the next cycle
+        else:
+            return (360 - self.amsha_longitude()) + next_long
+
+    def between_on_this_amsha(self, long1: float, long2: float) -> bool:
+        """
+        is self between long1 and long2, going signwise around the ecliptic?
+
+        this method is doesnt need to know what "kind" of longitude long1 and long2 are
+        not even what amsha. "on" means in the same relative circle. 
+        """
+        # how far long1 is from 360
+        offset = 360 - long1
+        # this should = 0 mod 360
+        long1 = (long1+offset)%360
+        long2 = (long2+offset)%360
+        slong = (self.amsha_longitude()+offset)%360
+        return long1 <= slong and slong <= long2
+
+    def signs_apart(self, other_sign) -> int:
         """
         how many signs apart are this one sign and other_sign
         if self=12 and other=1 -> (1-12)%12 = 1

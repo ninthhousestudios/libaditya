@@ -6,7 +6,8 @@ vargas
 #
 jaimini first strength
 
-suzan-smadi.chtk, d16, last three get mixed up, seems clear from
+r2hHrGxbvS0CjjlporjPYrGDD9OTqLWmMW2EBbs5Y1s=
+****.chtk, d16, last three get mixed up, seems clear from
 chart why Kala order is what it is
 
 check my check, d27, mix up between 9 and 6
@@ -15,8 +16,14 @@ check my check, d27, mix up between 9 and 6
 ## interface
 
 #
+add a time element to Chart
+specifically something designed for rectification
+
+#
 write sample scripts for going through a directory of .chtk files and doing something
 with the data
+
+write the actual function to do this
 
 #
 where to add Panchanga; it currently isnt directly accesible
@@ -87,6 +94,11 @@ akriti yogas
 
 #
 ucca bala
+    almost works
+    add a method to Longitude that determines if one longitude is inbetween two other
+    moon and mercury not working
+longitudes on the circle
+
 chesta bala
 dig bala
 

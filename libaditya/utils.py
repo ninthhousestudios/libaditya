@@ -26,6 +26,19 @@ def dms2dec(dms):
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
+def sign_degree_longitude(sd: float, context):
+    """
+    sd is a float of the 10.28, i.e., 10th sign, 28th degree
+    now change to an ecliptic longitude based on which Circle we are using
+    """
+    from libaditya.objects import Circle
+    sign=int(sd[0])
+    degrees=float(sd[1])
+    if context.circle == Circle.ZODIAC:
+        return ((sign-1)*30) + degrees
+    else:
+        return (((sign-2)%12)*30) + degrees
+
 
 def signize(long, toround, names):
     """
