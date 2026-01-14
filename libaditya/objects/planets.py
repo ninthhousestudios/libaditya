@@ -1,4 +1,3 @@
-#    This file is part of libaditya.
 #
 #    Copyright (c) 2025 Josh Harper <humanhaven@substack.com>
 #
@@ -46,8 +45,8 @@ class Planet(Longitude):
         self.pnumber = pnumber
         self.planet_name = self._context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
-        self._ayanamsa = context.ayanamsa
-        self.system = context.sysflg
+        self._ayanamsa = self._context.ayanamsa
+        self.system = self._context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
@@ -563,6 +562,23 @@ class Sun(Planet):
     def nica(self):
         return (7,10)
 
+    def dig_bala(self):
+        """
+        we need a Sign to get this...really just a longitude
+        we can always just pass the longitude
+
+        : do not try to import Sign into this file; it will give an error;
+        anyway, that would only be to put a type hint. but that is really not needed
+        we just need the object
+        """
+
+
+    def dig_bala_cusp(self):
+        """
+        this is the cusp at which this Planet has digbala
+        """
+        return 10
+
 
 class Moon(Planet):
     def __init__(self, context=EphContext(),master=None, nature=None):
@@ -648,6 +664,9 @@ class Moon(Planet):
 
     def nica(self):
         return ((8,0),(8,3))
+
+    def dig_bala_cusp(self):
+        return 4
 
 class Mars(Planet):
 
@@ -764,6 +783,9 @@ class Mars(Planet):
     def nica(self):
         return  (4,28)
 
+    def dig_bala_cusp(self):
+        return 10
+
 class Mercury(Planet):
 
     def __init__(self, context=EphContext(),master=None):
@@ -841,6 +863,9 @@ class Mercury(Planet):
 
     def nica(self):
         return ((12,0),(12,15))
+
+    def dig_bala_cusp(self):
+        return 1
 
 
 class Jupiter(Planet):
@@ -960,6 +985,9 @@ class Jupiter(Planet):
     def nica(self):
         return (10,5)
 
+    def dig_bala_cusp(self):
+        return 1
+
 class Venus(Planet):
 
     def __init__(self, context=EphContext(),master=None):
@@ -1037,6 +1065,9 @@ class Venus(Planet):
 
     def nica(self):
         return (6,27)
+
+    def dig_bala_cusp(self):
+        return 4
 
 
 class Saturn(Planet):
@@ -1153,6 +1184,9 @@ class Saturn(Planet):
 
     def nica(self):
         return (1,20)
+
+    def dig_bala_cusp(self):
+        return 7
 
 class Rahu(Planet):
 
@@ -1454,9 +1488,12 @@ class Planets:
         the other Planet-s to calculate first. so we init_Planets() above,
         then we can set_attributes() in __init__(), e.g., dignity
         """
+        # moons nature
         moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
         self.moon().set_attribute(("nature",moon_nature))
-        digs = self.dignities()
+
+        # dignity
+        digs = self._dignities()
         # for the outer planets and miscellaneous_planets
         digs+=["NA","NA","NA","NA","NA","NA"]
         for planet in self:
@@ -1471,12 +1508,18 @@ class Planets:
             else:
                 planet.set_attribute(("dignity",digs[planet.list_index()]))
 
+        # digbala
+        #digbs = self._digbalas()
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
 
-    def dignities(self, temp_planets=None) -> [str]:
+    def _dignities(self, temp_planets=None) -> [str]:
         """
+        this method is superceded by Varga.dignities()
+        Varga.dignities() calls Planet.dignities() according to the options
+        if Varga.context, so you use the option EphContext(rashi_temporary_friends=True/False; default is True)
+
         return a list of dignities in the natural order
         Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
 
@@ -1495,8 +1538,6 @@ class Planets:
             # _dignity() takes two arguments: 1) itself in the rashi chart or this varga, depending on the options
             #                                 2) its lord in rashi or in this varga, depending on the option
             #                                 set with EphContext.rashi_temporary_friends True or False
-#            if planet.identity() == "Sun":
-#                import pdb; pdb.set_trace()
             dignities.append(planet._dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 

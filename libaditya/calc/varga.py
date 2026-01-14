@@ -132,9 +132,9 @@ class Varga(Jaimini):
         you must past d9Planets.dignites(temp_planets=d1Planets)
         """
         if self.context.rashi_temporary_friendships:
-            return self.planets().dignities(self._rashi_planets)
+            return self.planets()._dignities(self._rashi_planets)
         else:
-            return self.planets().dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
+            return self.planets()._dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
         
     def __repr__(self):
         output = PrettyTable()
@@ -193,6 +193,7 @@ class Varga(Jaimini):
         header += f"Varga {self._amsha} {self.varga_name()}\n"
         header += f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"
+        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
         digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
         header += f"Dignities based on {digplace}\n"
         header += f"{self.context.rashi_aspects} rashi aspects\n"

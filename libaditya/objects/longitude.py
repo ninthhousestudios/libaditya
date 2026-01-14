@@ -126,6 +126,15 @@ class Longitude:
         return utils.dec2dmsstr(inlong)
 
     def real_in_sign_longitude(self) -> float:
+        """
+        i changed real_longitude to ecliptic_longitude
+
+        it might be tempting to change this name, but it works
+        i think it is just in the vargas, so would have to change all of them
+
+        there is a formula using this that makes it more clear what is going on
+        so dont change it
+        """
         return self.ecliptic_longitude() % 30
 
     def amsha_in_sign_longitude(self) -> float:
@@ -273,7 +282,7 @@ class Longitude:
              2) sets self._deity to the hora lord
         """
         # just to make sure we are working with the rashi longitude
-        real_sign = self.real_sign_index()+1 # +1 to transform index into sign
+        real_sign = self.ecliptic_sign_index()+1 # +1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
         base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
@@ -319,7 +328,7 @@ class Longitude:
              2) sets self._deity to the hora lord
         """
         # just to make sure we are working with the rashi longitude
-        real_sign = 1 + self.real_sign_index() # + 1 to transform index into sign
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
         # take care of it being aditya here, by adding self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC
@@ -349,7 +358,7 @@ class Longitude:
              2) sets self._deity to the hora lord
         """
         # just to make sure we are working with the rashi longitude
-        real_sign = 1 + self.real_sign_index() # + 1 to transform index into sign
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
         # take care of it being aditya here, by adding self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC

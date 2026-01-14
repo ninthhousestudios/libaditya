@@ -25,6 +25,8 @@ class Jaimini:
     """
     this is calc.Jaimini
 
+    it is really a Varga, even though Varga inherits from here
+
     this class is a "Mixin"
     it has no __init__ functions and cannot instantiate anything
     it inherits unto Varga, giving Varga all of Jaimini capabilities
@@ -280,7 +282,7 @@ class Jaimini:
                             sorted_signs_lords_rashi = self.signs().where_is(sorted_signs_lord)
                             # now lets compare their rashis just as we did above
 
-                            has_higher = utils.compare_planets_dignities(self.planets().dignities()[signs_Lord.list_index()],self.planets().dignities()[sorted_signs_Lord.list_index()])
+                            has_higher = utils.compare_planets_dignities(self.planets()._dignities()[signs_Lord.list_index()],self.planets()._dignities()[sorted_signs_Lord.list_index()])
 
                             # compare the signs of the lords
 
