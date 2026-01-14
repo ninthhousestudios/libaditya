@@ -495,6 +495,26 @@ class Sun(Planet):
         """
         return "Malefic"
 
+    def ingress(self, next_long) -> Self:
+        """
+        return Sun for the JulianDay where Sun arrives at longitude next_long
+        """
+        direction = "forward"
+        if next_long < 0:
+            direction = "backward"
+        if next_long == self.ecliptic_longitude():
+            return self
+        # % 360 help in case we are looking for the equinox, next_long = 0
+        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+            # if we dont go forward one second the longitude we are are will be
+            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",1)))
+        # difference between current longitude and desired longitude
+        diff = self.degrees_apart(next_long)
+        shift_factor = diff*self.lowest_daily_speed()
+        return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"days",shift_factor))).ingress(next_long)
+
     def next_equinox(self):
         """
         get the next equinox from the current timeJD
