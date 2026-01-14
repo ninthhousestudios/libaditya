@@ -27,7 +27,7 @@ from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
 from .longitude import Longitude
-from .cusps import Cusp
+from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 
 
@@ -132,6 +132,17 @@ class Planet(Longitude):
         return the dignity that has been set by Planets.
         """
         return self.attributes["dignity"]
+
+    def dig_bala(self):
+        """
+        we need a Sign to get this...really just a longitude
+        we can always just pass the longitude
+
+        : do not try to import Sign into this file; it will give an error;
+        anyway, that would only be to put a type hint. but that is really not needed
+        we just need the object
+        """
+        return self.attributes["dig_bala"]
 
     def list_index(self):
         match self.pnumber:
@@ -283,7 +294,7 @@ class Planet(Longitude):
         diff = self.degrees_apart(next_long)
         shift_factor = diff*self.lowest_daily_speed()
         # get Planet class for this planet
-        planet = local_planets[self.identity()]
+        planet = natural_planets[self.identity()]
         return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
 
     def _dignity(self, self_in_rashi, lord: Self) -> str:
@@ -327,6 +338,24 @@ class Planet(Longitude):
                 return "GE"
             case ("N","N"):
                 return "N"
+
+    def _dig_bala(self, cusp: Cusp) -> float:
+        """
+        cusp is the Cusp of whereat Planet has digbala
+        """
+        if self.amsha_longitude() == cusp.amsha_longitude():
+            return 60
+        if self.amsha_longitude() == cusp.amsha_opposite():
+            return 0
+        # see if Planet is between 0 dig and 60 dig
+        if self.amsha_between(cusp.amsha_opposite(),cusp.amsha_longitude()):
+            how_far_into_this_cycle = ((self.amsha_longitude()-cusp.amsha_opposite())%360)/180
+            return how_far_into_this_cycle*60
+        # see if Planet is amsha_between 60 dig and 0 dig
+        if self.amsha_between(cusp.amsha_longitude(),cusp.amsha_opposite()):
+            how_close_to_opposite = ((cusp.amsha_opposite()-self.amsha_longitude())%360)/180
+            return how_close_to_opposite*60
+        return -1
 
     def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
         """
@@ -592,15 +621,6 @@ class Sun(Planet):
     def nica(self):
         return (7,10)
 
-    def dig_bala(self):
-        """
-        we need a Sign to get this...really just a longitude
-        we can always just pass the longitude
-
-        : do not try to import Sign into this file; it will give an error;
-        anyway, that would only be to put a type hint. but that is really not needed
-        we just need the object
-        """
 
 
     def dig_bala_cusp(self):
@@ -1420,7 +1440,7 @@ class Chiron(Planet):
     def is_graha(self):
         return False
 
-local_planets = {
+natural_planets = {
     "Sun": Sun,
     "Moon": Moon,
     "Mars": Mars,
@@ -1499,14 +1519,14 @@ class Planets:
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
-            local_planets.pop()
+            natural_planets.pop()
 
         # add Earth if using barycentric or heliocentric
         if self.system == const.BARY or self.system == const.HELIO:
             # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-            local_planets["Earth"] = Earth
+            natural_planets["Earth"] = Earth
 
-        for planet,constructor in local_planets.items():
+        for planet,constructor in natural_planets.items():
             ret[planet] = constructor(self.context,self)
 
 
@@ -1539,7 +1559,11 @@ class Planets:
                 planet.set_attribute(("dignity",digs[planet.list_index()]))
 
         # digbala
-        #digbs = self._digbalas()
+#        digbs = self._dig_balas()
+#        for n,planet in enumerate(self):
+#            if n == 8:
+#                break
+#            planet.set_attribute(("dig_bala",digbs[planet.list_index()]))
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
@@ -1547,8 +1571,8 @@ class Planets:
     def _dignities(self, temp_planets=None) -> [str]:
         """
         this method is superceded by Varga.dignities()
-        Varga.dignities() calls Planet.dignities() according to the options
-        if Varga.context, so you use the option EphContext(rashi_temporary_friends=True/False; default is True)
+        Varga.dignities() calls Planet._dignities() according to the options
+        in Varga.context, so you use the option EphContext(rashi_temporary_friends=True/False; default is True)
 
         return a list of dignities in the natural order
         Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
@@ -1570,6 +1594,18 @@ class Planets:
             #                                 set with EphContext.rashi_temporary_friends True or False
             dignities.append(planet._dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
+
+    def _dig_balas(self, cusps: Cusps) -> [float]:
+        """
+        cusps is a Cusps class
+
+        return list of float values, which are the digbalas of the planets in their natural order
+        """
+        ret = []
+        for karaka in self.karakas().values():
+            ret.append(karaka._dig_bala(cusps[karaka.dig_bala_cusp()]))
+            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
+        return ret
 
     def parashara_aspects(self):
         """

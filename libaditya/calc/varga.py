@@ -163,7 +163,6 @@ class Varga(Jaimini):
         represents as a header with the chart information
         """
         return self.__repr__()
-
         
     def mkheader(self):
         header = ""
@@ -200,6 +199,7 @@ class Rashi(Varga):
     def __init__(self,context,chart):
         self.master = chart
         super().__init__(context=context,amsha=1)
+        self._dig_balas = self.init_dig_balas()
 
     def planets(self):
         return self._planets
@@ -222,7 +222,11 @@ class Rashi(Varga):
         that is the Rashi chart essentially
         none of the other vargas really need a separate class, because they are really subsections of this class
         which is why Rashi can hopefully reach all the Vargas
+
+        Panchanga.__str__ prints the basic panchagna, and also the panchanga addendum
+        __repr__ prints only the basic time and panchanga information
         """
+        return Panchanga(self.context)
 
     # special jaimini function that returns argala to both 1st and 7th; but maybe i should move it
     def argala(self) -> [[Planet],[Planet],[Planet]]:
@@ -242,6 +246,13 @@ class Rashi(Varga):
                 ret[n].append(planet)
         return ret
         # each arg has three elements; put all of lagna_arg[0] together with seventh_arg[0], etc.
+
+    def init_dig_balas(self):
+        digbs = self.planets()._dig_balas(self.cusps())
+        return digbs
+
+    def dig_bala(self):
+        return self._dig_balas
 
     def akriti_yogas(self):
         """

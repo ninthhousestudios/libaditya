@@ -72,6 +72,9 @@ class Longitude:
         else:
             return self._amsha_longitude
 
+    def amsha_opposite(self):
+        return (self.amsha_longitude()+180)%360
+
     def longitude(self) -> float | str:
         if self.context.signize:
             return self.signize()
@@ -200,7 +203,7 @@ class Longitude:
         else:
             return (360 - self.amsha_longitude()) + next_long
 
-    def between_on_this_amsha(self, long1: float, long2: float) -> bool:
+    def amsha_between(self, long1: float, long2: float) -> bool:
         """
         is self between long1 and long2, going signwise around the ecliptic?
 

@@ -48,7 +48,7 @@ class Cusp(Longitude):
         return self.cusp_name + " at " + str(self.longitude()) + "\n"
 
     def __repr__(self):
-        return self.cusp_name + " at " + str(self.long) + "\n"
+        return self.cusp_name + " at " + str(self.amsha_longitude()) + "\n"
 
     def name(self):
         return self.cusp_name
