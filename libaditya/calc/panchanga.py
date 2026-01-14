@@ -269,7 +269,7 @@ class Panchanga:
         shift_factor = remaining*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_new_moon()
 
-    def next_full_moon(self):
+    def next_full_moon(self) -> Self:
         """
         return the Panchanga of the full moon that comes after
         self.timeJD

@@ -40,12 +40,13 @@ class Nakshatra:
         return nak + base_long + ash_long + ayana + nakshatra
 
     def __repr__(self):
-        nak = f"Nakshatra of {self.occupant()}\n"
-        base_long = f"base longitude: {self.base_longitude()}\n"
-        ash_long = f"Degrees from beginning of ashvini: {self.ashvini_longitude()}\n"
-        ayana = f"Using {self.ayanamsa_name()} ayanamsa\n"
-        nakshatra = f"{self.nakshatra()}\n"
-        return nak + base_long + ash_long + ayana + nakshatra
+        return f"{self.nakshatra()}"
+#        nak = f"Nakshatra of {self.occupant()}\n"
+#        base_long = f"base longitude: {self.base_longitude()}\n"
+#        ash_long = f"Degrees from beginning of ashvini: {self.ashvini_longitude()}\n"
+#        ayana = f"Using {self.ayanamsa_name()} ayanamsa\n"
+#        nakshatra = f"{self.nakshatra()}\n"
+#        return nak + base_long + ash_long + ayana + nakshatra
 
     def occupant(self):
         return self._occupant.name()

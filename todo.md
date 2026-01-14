@@ -16,14 +16,26 @@ check my check, d27, mix up between 9 and 6
 ## interface
 
 #
-add a time element to Chart
-specifically something designed for rectification
+.__dict__ is of the __repr__ of the object
+change those to what i want in the db and that will work to use .__dict__
+
+maybe started with longitude and see what we can build on from there
+e.g., Planet use Longitude.__repr__?
+i want to build .__dict__ having only the values i want and no repeat values like EphContext
+
+#
+for pyphemeris will be going through all the printing, doing it from Chart()
+so then will be going through all the __str__ and __repr__ functions
 
 #
 write sample scripts for going through a directory of .chtk files and doing something
 with the data
 
 write the actual function to do this
+
+started this in ladb, works pretty well
+some charts have weird problems and i have no idea what is wrong
+maybe i will just reenter them in kala
 
 #
 where to add Panchanga; it currently isnt directly accesible
@@ -101,10 +113,18 @@ akriti yogas
 
 #
 
+generalize algorithm for digbala
+
+chesta bala at least is based on same idea; one point is 60 points, the opposite 0
+points, so then find the proportion
+
 chesta bala
-dig bala
 
 ## hd
 
 #
 hd.calc.dream_context is not working properly fix it
+
+#
+trying to shift gate_one didnt work
+also consider sidereal

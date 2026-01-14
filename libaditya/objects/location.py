@@ -41,6 +41,9 @@ class Location:
     def place(self):
         return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
 
+    def __repr__(self):
+        return f"({self.lat},{self.long})"
+
     def swe_location(self):
         # swe argument order is long, lat, alt
         return (self.long, self.lat, self.alt)

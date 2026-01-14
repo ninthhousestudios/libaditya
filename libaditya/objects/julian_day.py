@@ -63,14 +63,14 @@ class JulianDay:
         self._timezone = self.mktimezone(timezone)
         self.usrdatetime = self.usrdt()
 
+    def __repr__(self):
+        return str(self.jd)
+
     def __str__(self):
         if self.utcoffset == 0:
             return f"{self.date()} at {self.time()}\n{self.jd}"
         else:
             return f"{self.date()} at {self.time()}\n{self.usrdate()} at {self.usrtime()}\n{self.jd}"
-
-    def __repr__(self):
-        return self.__str__()
 
     def __lt__(self, jd2):
         return self.jd < jd2.jd

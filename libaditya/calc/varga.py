@@ -136,7 +136,7 @@ class Varga(Jaimini):
         else:
             return self.planets()._dignities(self.planets()) # could pass self.planets(), but that is what Planets.dignities() will do without an argument
         
-    def __repr__(self):
+    def __str__(self):
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
@@ -158,11 +158,11 @@ class Varga(Jaimini):
         return self.mkheader() + ret
 
 
-    def __str__(self):
+    def __repr__(self):
         """
         represents as a header with the chart information
         """
-        return self.__repr__()
+        return self.__str__()
         
     def mkheader(self):
         header = ""

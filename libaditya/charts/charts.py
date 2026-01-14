@@ -15,12 +15,17 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from dataclasses import dataclass
+from dataclasses import replace
+from typing import Self
 
-from libaditya.hd import constants as hdc
+from libaditya.objects import EphContext
 
-@dataclass(frozen=True)
-class HDContext:
-    gate_one: float = hdc.gate_one
-    print_hexagrams: int = 0 # 0 for numbers, 1 for hexagrams
-    toround: (bool, int) = (True, 3)
+from .chart import Chart
+
+class Charts(Chart):
+
+    def __init__(self, context=EphContext()):
+        super().__init__(context)
+
+    def base(self):
+        return self.chart()

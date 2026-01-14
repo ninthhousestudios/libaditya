@@ -60,6 +60,9 @@ class Chart(API):
     def __str__(self):
         return self.__repr__()
 
+    def chart(self):
+        return self
+
     def rashi(self):
         return self._Rashi
 
@@ -140,6 +143,12 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,ayanamsa=ayanamsa,sysflg=const.SID,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
+    def shift(self, dir, unit, number):
+        """
+        calls self.JulianDay effectively and return a Chart with shifted JulianDay
+        """
+        return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number)))
+
     def _new_chart(self, **kwargs):
         """
         return a Chart replacing anything in this EphContext by **kwargs
@@ -150,6 +159,4 @@ class Chart(API):
         easily choose a combination of options that doesnt really make sense
         """
         return Chart(context=replace(self.context,**kwargs))
-
-
 

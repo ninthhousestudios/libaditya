@@ -41,3 +41,6 @@ class Bodygraph:
 
     def dream_planets(self):
         return self._dream_planets
+
+    def _new_bodygraph(self, **kwargs):
+        return Bodygraph(context=replace(self.context,**kwargs))

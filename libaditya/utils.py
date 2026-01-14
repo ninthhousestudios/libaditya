@@ -17,6 +17,7 @@
 
 import swisseph as swe
 import time as tmod
+import os
 
 from libaditya import constants as const
 
@@ -26,7 +27,7 @@ def dms2dec(dms):
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
 
-def sign_degree_longitude(sd: float, context):
+def sign_degree_to_longitude(sd: float, context):
     """
     sd is a float of the 10.28, i.e., 10th sign, 28th degree
     now change to an ecliptic longitude based on which Circle we are using
@@ -393,3 +394,19 @@ def compare_signs_modalities(sign1,sign2) -> int:
             return 2
         case ("Moveable", "Fixed"):
             return 2
+
+def copy_collect_charts(root,outdir="all-charts"):
+    """
+    will copy all .chtk files in root and down to outdir/*.chtk
+    will give errors if run again because the file is already there, but it works
+    """
+    import subprocess
+    ret = []
+    for root, sub, files in os.walk(root):
+        for file in files:
+            this_path = os.path.join(root, file)
+            res = subprocess.call(["cp", f"{this_path}", f"{outdir}/{file}"])
+            if res != 0:
+                print("cp command failed")
+
+    return ret

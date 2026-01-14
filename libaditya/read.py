@@ -82,7 +82,10 @@ def read_chtk(infile):
                 # someimtes it is just HH:MM
                 # sometimes it is just H, so deal with all of those
                 line = clean_line(line).split(":")
-                if len(line) == 1:
+                if line[0] == "UTC":
+                    utcoff = 0
+                    continue
+                elif len(line) == 1:
                     h = int(line[0])
                     m = s = 0
                 elif len(line) == 2:
@@ -195,9 +198,7 @@ def intize_line(line):
             del line[count]
             continue
         count += 1
-    retval = int("".join(line))
-    #    print(retval)
-    return retval
+    return int("".join(line))
 
 
 def clean_line(line):

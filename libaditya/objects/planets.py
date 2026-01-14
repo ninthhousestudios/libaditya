@@ -342,20 +342,25 @@ class Planet(Longitude):
     def _dig_bala(self, cusp: Cusp) -> float:
         """
         cusp is the Cusp of whereat Planet has digbala
+
+        uses Longitude.virupas_between(point), where point is where the Planet has 60 virupas
+        so this is generalized, can be used for digbala with a cusp
         """
-        if self.amsha_longitude() == cusp.amsha_longitude():
-            return 60
-        if self.amsha_longitude() == cusp.amsha_opposite():
-            return 0
-        # see if Planet is between 0 dig and 60 dig
-        if self.amsha_between(cusp.amsha_opposite(),cusp.amsha_longitude()):
-            how_far_into_this_cycle = ((self.amsha_longitude()-cusp.amsha_opposite())%360)/180
-            return how_far_into_this_cycle*60
-        # see if Planet is amsha_between 60 dig and 0 dig
-        if self.amsha_between(cusp.amsha_longitude(),cusp.amsha_opposite()):
-            how_close_to_opposite = ((cusp.amsha_opposite()-self.amsha_longitude())%360)/180
-            return how_close_to_opposite*60
-        return -1
+        return self.virupas_between(cusp.amsha_longitude())
+        # below was the original workiing out of .virupas_between()
+#        if self.amsha_longitude() == cusp.amsha_longitude():
+#            return 60
+#        if self.amsha_longitude() == cusp.amsha_opposite():
+#            return 0
+#        # see if Planet is between 0 dig and 60 dig
+#        if self.amsha_between(cusp.amsha_opposite(),cusp.amsha_longitude()):
+#            how_far_into_this_cycle = ((self.amsha_longitude()-cusp.amsha_opposite())%360)/180
+#            return how_far_into_this_cycle*60
+#        # see if Planet is amsha_between 60 dig and 0 dig
+#        if self.amsha_between(cusp.amsha_longitude(),cusp.amsha_opposite()):
+#            how_close_to_opposite = ((cusp.amsha_opposite()-self.amsha_longitude())%360)/180
+#            return how_close_to_opposite*60
+#        return -1
 
     def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
         """
@@ -404,13 +409,15 @@ class Planet(Longitude):
 
     def __repr__(self):
         ret = ""
-        ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
-            ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
-        if self.amsha() != 1:
-            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+        if self.retrostr() != "":
+            retrostr = " R"
         else:
-            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+            retrostr = ""
+        ret = f"{self.planet_name}{retrostr} {self.ecliptic_longitude()} {self.amsha()} {self.amsha_longitude()} {self.ayanamsa()}"
+#        if self.amsha() != 1:
+#            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
+#        else:
+#            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
         return ret
 
     def __str__(self):
@@ -424,7 +431,9 @@ class Planet(Longitude):
 
     def ucca_bala(self):
         """
-        get ucca bala for Planet, not including Moon or Mercury
+        this method will work in each Varga, given the "amsha_longitude()", the longitude in whatever amsha this is in
+
+        get ucca bala for Planet; note, Moon and Mercury have their own special method because they have ex/db ranges, not points
         if a planets longitude is at their Planet.ucca, ucca_bala is 60 points
         if it is at thier Planet.nica, it is 0 points
         it is a proportion of 60 in accord with its proportion between the two points
@@ -432,22 +441,24 @@ class Planet(Longitude):
         if isinstance(self, Moon) or isinstance(self, Mercury):
             return self._ucca_bala_mm()
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        ucca = utils.sign_degree_longitude(self.ucca(),self.context)
-        nica = utils.sign_degree_longitude(self.nica(),self.context)
+        ucca = utils.sign_degree_to_longitude(self.ucca(),self.context)
+        #nica = utils.sign_degree_to_longitude(self.nica(),self.context)
 
-        if self.amsha_longitude() == ucca:
-            return 60
-        if self.amsha_longitude() == nica:
-            return 0
-        # how many degrees forward around ecliptic to find the ucca point
-        from_ucca = self.amsha_degrees_apart(ucca) 
-        from_nica = self.amsha_degrees_apart(nica) 
-        if from_ucca < 180:
-            # we are between ucca and nica
-            # so find percent that long has gone towards ucca
-            return ((180-from_ucca)/180)*60
-        if from_nica < 180:
-            return (from_nica/180)*60
+        return self.virupas_between(ucca)
+        # below was the very first working out of this problem
+#        if self.amsha_longitude() == ucca:
+#            return 60
+#        if self.amsha_longitude() == nica:
+#            return 0
+#        # how many degrees forward around ecliptic to find the ucca point
+#        from_ucca = self.amsha_degrees_apart(ucca) 
+#        from_nica = self.amsha_degrees_apart(nica) 
+#        if from_ucca < 180:
+#            # we are between ucca and nica
+#            # so find percent that long has gone towards ucca
+#            return ((180-from_ucca)/180)*60
+#        if from_nica < 180:
+#            return (from_nica/180)*60
 
     def _ucca_bala_mm(self):
         """
@@ -461,10 +472,10 @@ class Planet(Longitude):
         maybe will add that
         """
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        lower_ucca = utils.sign_degree_longitude(self.ucca()[0],self.context)
-        upper_ucca = utils.sign_degree_longitude(self.ucca()[1],self.context)
-        lower_nica = utils.sign_degree_longitude(self.nica()[0],self.context)
-        upper_nica = utils.sign_degree_longitude(self.nica()[1],self.context)
+        lower_ucca = utils.sign_degree_to_longitude(self.ucca()[0],self.context)
+        upper_ucca = utils.sign_degree_to_longitude(self.ucca()[1],self.context)
+        lower_nica = utils.sign_degree_to_longitude(self.nica()[0],self.context)
+        upper_nica = utils.sign_degree_to_longitude(self.nica()[1],self.context)
 
         if self.amsha_longitude() >= lower_ucca and self.amsha_longitude() < upper_ucca:
             return 60
@@ -478,11 +489,11 @@ class Planet(Longitude):
         # this is the length that gets 60 proportional points
         calc_length = 180-(upper_ucca-lower_ucca)
 
-        if self.between_on_this_amsha(upper_ucca,lower_nica):
+        if self.amsha_between(upper_ucca,lower_nica):
             # 0-3 is the range of exaltation, so 60 points is divided into 177 degrees
             from_lower_nica = self.amsha_degrees_apart(lower_nica) 
             return (from_lower_nica/calc_length)*60
-        if self.between_on_this_amsha(upper_nica,lower_ucca):
+        if self.amsha_between(upper_nica,lower_ucca):
             from_lower_ucca = self.amsha_degrees_apart(lower_ucca) 
             from_upper_nica = calc_length-from_lower_ucca
             return (from_upper_nica/calc_length)*60
@@ -621,13 +632,17 @@ class Sun(Planet):
     def nica(self):
         return (7,10)
 
-
-
     def dig_bala_cusp(self):
         """
         this is the cusp at which this Planet has digbala
         """
         return 10
+
+    def chesta_bala(self):
+        """
+        sun has 60 points of chesta bala at the northern solstice, i.e., 90 degrees longitude
+        """
+        return self.virupas_between(90)
 
 
 class Moon(Planet):
@@ -717,6 +732,16 @@ class Moon(Planet):
 
     def dig_bala_cusp(self):
         return 4
+
+    def chesta_bala(self):
+        """
+        moon has 60 points of chesta bala at the full moon
+        """
+        from libaditya.calc import Panchanga
+        panch = Panchanga(self.context)
+        next_full_moon = panch.next_full_moon().moon()
+        return self.virupas_between(next_full_moon)
+
 
 class Mars(Planet):
 
@@ -1559,7 +1584,7 @@ class Planets:
                 planet.set_attribute(("dignity",digs[planet.list_index()]))
 
         # digbala
-#        digbs = self._dig_balas()
+#        digbs = self._dig_balas(self.cusps())
 #        for n,planet in enumerate(self):
 #            if n == 8:
 #                break
@@ -1602,7 +1627,9 @@ class Planets:
         return list of float values, which are the digbalas of the planets in their natural order
         """
         ret = []
-        for karaka in self.karakas().values():
+        for n,karaka in enumerate(self):
+            if n == 7:
+                break
             ret.append(karaka._dig_bala(cusps[karaka.dig_bala_cusp()]))
             karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
         return ret

@@ -16,6 +16,7 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+from typing import Self
 
 from libaditya import constants as const
 from libaditya import utils
@@ -53,6 +54,8 @@ class Longitude:
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
 
+    def Longitude(self):
+        return self
 
     def ecliptic_longitude(self) -> float:
         return self._longitude
@@ -217,6 +220,34 @@ class Longitude:
         long2 = (long2+offset)%360
         slong = (self.amsha_longitude()+offset)%360
         return long1 <= slong and slong <= long2
+
+    def virupas_between(self, point: float | Self) -> float:
+        """
+        cusp is the Cusp of whereat Planet has digbala
+        point is the longitude (Cusp,Planet, other point)
+
+        between one point?
+
+        between point and its opposite point
+        in that 180 degrees, where is it?
+
+        between were this Longitude.amsha_longitude()
+        """
+        if isinstance(point, float) or isinstance(point, int):
+            point = Longitude(point,1,self.context)
+        if self.amsha_longitude() == point.amsha_longitude():
+                return 60
+        if self.amsha_longitude() == point.amsha_opposite():
+            return 0
+        # see if Planet is between 0 dig and 60 dig
+        if self.amsha_between(point.amsha_opposite(),point.amsha_longitude()):
+            how_far_into_this_cycle = ((self.amsha_longitude()-point.amsha_opposite())%360)/180
+            return how_far_into_this_cycle*60
+        # see if Planet is amsha_between 60 dig and 0 dig
+        if self.amsha_between(point.amsha_longitude(),point.amsha_opposite()):
+            how_close_to_opposite = ((point.amsha_opposite()-self.amsha_longitude())%360)/180
+            return how_close_to_opposite*60
+        return -1
 
     def signs_apart(self, other_sign) -> int:
         """
@@ -402,3 +433,6 @@ class Longitude:
         sign = int(left * 12)
         in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
         return ((sign*30) + (in_sign_long)) - self.aditya_offset
+
+    def __repr__(self):
+        return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"
