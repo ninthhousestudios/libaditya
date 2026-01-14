@@ -91,6 +91,9 @@ beginning of the vara, it will say the vara that is beginning, not the next one
 ## calculations
 
 #
+checkout Planet.ingress vs. Sun.ingress
+
+#
 akriti yogas
     the ones needing all planets in 7 houses need work
     the same algorithm doesnt work for them as for the others

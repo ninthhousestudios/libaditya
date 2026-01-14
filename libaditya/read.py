@@ -340,6 +340,8 @@ def parse_position_argument(position):
 
 def init_names(langfile=const.base_path + "/dict/dict.mixed"):
     names = configparser.ConfigParser()
+    if "/" not in langfile:
+        langfile = const.base_path + f"/dict/{langfile}"
     names.read(langfile)
 
     # because of importing and such things

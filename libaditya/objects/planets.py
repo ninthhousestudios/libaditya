@@ -43,6 +43,8 @@ class Planet(Longitude):
         self._amsha = self._context.amsha
         self.master = master
         self.pnumber = pnumber
+        # below is what i want; effectively. const.names are globals
+        # self.planet_name = const.planet_names[self.pnumber]
         self.planet_name = self._context.names.planet_names[self.pnumber]
         self.jd = self.timeJD.jd
         self._ayanamsa = self._context.ayanamsa
@@ -441,12 +443,23 @@ class Planet(Longitude):
         if self.amsha_longitude() >= lower_nica and self.amsha_longitude() < upper_nica:
             return 0
 
+#        if isinstance(self, Mercury):
+#            import pdb; pdb.set_trace()
+        # these are the same, since the ex-db ranges are the same
+        # for the moon, each is 177, for mercury, each is 165
+        # ucca_length = 180-(upper_ucca - lower_ucca)
+        # nica_length = 180-(upper_nica - lower_nica)
+        # this is the length that gets 60 proportional points
+        calc_length = 180-(upper_ucca-lower_ucca)
+
         if self.between_on_this_amsha(upper_ucca,lower_nica):
-            from_ucca = (180-(upper_ucca-lower_ucca))-self.amsha_degrees_apart(lower_nica) 
-            return (from_ucca/180)*60
+            # 0-3 is the range of exaltation, so 60 points is divided into 177 degrees
+            from_lower_nica = self.amsha_degrees_apart(lower_nica) 
+            return (from_lower_nica/calc_length)*60
         if self.between_on_this_amsha(upper_nica,lower_ucca):
-            from_nica = (180-(upper_nica-lower_nica))-self.amsha_degrees_apart(upper_ucca) 
-            return (from_nica/180)*60
+            from_lower_ucca = self.amsha_degrees_apart(lower_ucca) 
+            from_upper_nica = calc_length-from_lower_ucca
+            return (from_upper_nica/calc_length)*60
 
 
 

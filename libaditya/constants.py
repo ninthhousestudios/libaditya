@@ -497,6 +497,20 @@ sign_names_abbreviated = adityas_abbreviated
 names = planet_names,sign_names,nakshatras,tithis,karanas,varas,yogas
 abbreviated_names = planet_names_abbreviated,sign_names_abbreviated,nakshatras_abbreviated,tithis_abbreviated,karanas_abbreviated,varas_abbreviated,yogas_abbreviated
 
+def get_constants_names(lang_file,circle,signnames="aditya"):
+    from libaditya import read
+    from libaditya.objects import Circle
+    if lang_file == "constants":
+        return
+    planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas = read.init_names(lang_file)
+    if circle == Circle.ADITYA or signnames == "aditya":
+        sign_names = adityas
+    elif circle == Circle.ZODIAC or signnames == "zodiac":
+        sign_names = zodiac
+    else:
+        pass
+    return planet_names, zodiac, tithis, karanas, nakshatras, varas, yogas, adityas, sign_names
+
 
 # template comment box
 
