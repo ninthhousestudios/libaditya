@@ -1884,7 +1884,7 @@ class Planets:
         header += f"{self.timeJD}\n"
         return header
 
-    def hd_planets_definition(self):
+    def hd_planets_definition(self) -> str:
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -1925,7 +1925,7 @@ class Planets:
         )
         return ret
 
-    def hd_planets_state(self):
+    def hd_planets_state(self) -> str:
         output = PrettyTable()
         output.field_names = [
             "Planet",

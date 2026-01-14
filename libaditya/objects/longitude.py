@@ -50,7 +50,7 @@ class Longitude:
         # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
         self._longitude = longitude
         self._ecliptic_index = int((self.ecliptic_longitude() % 360) / 30)
-        self._amsha_longitude = self.varga(amsha)
+        self._amsha_longitude = self.varga(amsha)%360
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
 
