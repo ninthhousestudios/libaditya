@@ -164,29 +164,6 @@ class Varga(Jaimini):
         """
         return self.__repr__()
 
-    def draw_sun_by_sign_table(self):
-        """
-        this prints nakshatras with the chart
-        """
-        output = PrettyTable()
-        # list of the sign names
-        output.field_names=list(["Object"] + list([sign for sign in [self.context.names.sign_names]][0]) + ["Nakshatra"] + ["Elapsed"])
-
-        # now rows
-        # first the planets, then cusps
-        # if the planet is in a sign, print its in_sign_longitude in the column, otherwise print nothing
-        for p in self._planets:
-            output.add_row([p.name(),*utils.construct_varga_row(p),p.nakshatra_name(),p.nakshatra().elapsed()])
-
-        for c in self._cusps:
-            output.add_row([c.name(),*utils.construct_varga_row(c),c.nakshatra_name(),c.nakshatra().elapsed()])
-
-        if isinstance(self, Rashi):
-            ret = output.get_string(fields=list(["Object"] + list([sign for sign in [self.context.names.sign_names]][0]) + ["Nakshatra"] + ["Elapsed"]))
-        else:
-            ret = output.get_string(fields=list(["Object"] + list([sign for sign in [self.context.names.sign_names]][0])))
-
-        return self.mkheader() + ret
         
     def mkheader(self):
         header = ""

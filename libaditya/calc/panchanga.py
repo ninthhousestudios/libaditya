@@ -127,7 +127,7 @@ class Panchanga:
         return self._tithi_number
 
     def tithi_type(self):
-        return self.context.names.tithis[(self.tithi()-1)%5]
+        return const.names[self.context.names_type]["tithis"][(self.tithi()-1)%5]
 
     def tithi_degrees_elapsed(self):
         return round(self._tithi_elapsed,3)
@@ -149,7 +149,7 @@ class Panchanga:
             return (self.tithi()-1,1)
 
     def karana(self):
-        return self.context.names.karanas[self.karana_index()[0]][self.karana_index()[1]]
+        return const.names[self.context.names_type]["karanas"][self.karana_index()[0]][self.karana_index()[1]]
 
     def karana_number(self):
         return self._karana_number
@@ -168,9 +168,9 @@ class Panchanga:
         ).isoweekday()  # 1 is Monday
         sunriseyk = self._sun.sunrise_yamakoti()
         if sunriseyk < self.context.timeJD:
-            return self.context.names.varas[(weekday + 1) % 7]
+            return const.names[self.context.names_type]["varas"][(weekday + 1) % 7]
         else:
-            return self.context.names.varas[weekday % 7]
+            return const.names[self.context.names_type]["varas"][weekday % 7]
 
     def nakshatra(self):
         return self._moon.nakshatra_name()
@@ -194,7 +194,7 @@ class Panchanga:
         return self.yoga_index()+1
 
     def yoga_name(self):
-        return self.context.names.yogas[self.yoga_index()]
+        return const.names[self.context.names_type]["yogas"][self.yoga_index()]
 
     def yoga(self):
         return f"{self.yoga_number()} {self.yoga_name()}"

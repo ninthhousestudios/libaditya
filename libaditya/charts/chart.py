@@ -111,7 +111,7 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ADITYA,names=replace(self.context.names,sign_names=const.adityas),**kwargs))
+        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ADITYA,sign_names="adityas",**kwargs))
 
     def tropical(self, **kwargs):
         """
@@ -124,7 +124,7 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
+        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
     def sidereal(self, ayanamsa=27, **kwargs):
         """
@@ -138,7 +138,7 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,ayanamsa=ayanamsa,sysflg=const.SID,circle=Circle.ZODIAC,names=replace(self.context.names,sign_names=const.zodiac),**kwargs))
+        return Chart(context=replace(self.context,ayanamsa=ayanamsa,sysflg=const.SID,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
     def _new_chart(self, **kwargs):
         """

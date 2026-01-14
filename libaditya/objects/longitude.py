@@ -107,7 +107,7 @@ class Longitude:
         return self.amsha_sign_index() + 1
 
     def sign_name(self) -> str:
-        return self.context.names.sign_names[self.amsha_sign_index()]
+        return const.names[self.context.names_type][self.context.sign_names][self.amsha_sign_index()]
 
     def get_rahu(self) -> float:
         """

@@ -45,7 +45,8 @@ class Planet(Longitude):
         self.pnumber = pnumber
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
-        self.planet_name = self._context.names.planet_names[self.pnumber]
+        # const.names[self.context.name_types]["planets"][self.pnumber]
+        self.planet_name = const.names[self._context.names_type]["planets"][self.pnumber]
         self.jd = self.timeJD.jd
         self._ayanamsa = self._context.ayanamsa
         self.system = self._context.sysflg
@@ -400,8 +401,6 @@ class Planet(Longitude):
         it is a proportion of 60 in accord with its proportion between the two points
         """
         if isinstance(self, Moon) or isinstance(self, Mercury):
-#            if isinstance(self,Moon):
-#                import pdb; pdb.set_trace()
             return self._ucca_bala_mm()
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
         ucca = utils.sign_degree_longitude(self.ucca(),self.context)
@@ -443,8 +442,6 @@ class Planet(Longitude):
         if self.amsha_longitude() >= lower_nica and self.amsha_longitude() < upper_nica:
             return 0
 
-#        if isinstance(self, Mercury):
-#            import pdb; pdb.set_trace()
         # these are the same, since the ex-db ranges are the same
         # for the moon, each is 177, for mercury, each is 165
         # ucca_length = 180-(upper_ucca - lower_ucca)
@@ -1225,7 +1222,7 @@ class Rahu(Planet):
 
     def __init__(self, context=EphContext(),master=None):
         super().__init__(swe.TRUE_NODE, context,master)
-        self.planet_name = context.names.planet_names[10]
+        self.planet_name = const.names[context.names_type]["planets"][10]
         self._id = "Rahu"
 
     def glyph(self):
@@ -1260,7 +1257,7 @@ class Ketu(Planet):
 
     def __init__(self, context=EphContext(),master=None):
         super().__init__(swe.TRUE_NODE, context,master)
-        self.planet_name = context.names.planet_names[11]
+        self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
         
     def glyph(self):

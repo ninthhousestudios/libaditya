@@ -100,11 +100,6 @@ akriti yogas
     actually, relook at all of them because all probably need some work
 
 #
-ucca bala
-    almost works
-    add a method to Longitude that determines if one longitude is inbetween two other
-    moon and mercury not working
-longitudes on the circle
 
 chesta bala
 dig bala

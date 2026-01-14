@@ -8,7 +8,7 @@ swe.set_ephe_path(base_path + "/ephe/")
 from .julian_day import JulianDay
 from .planets import *
 from .location import Location, Yamakoti
-from .context import Circle, Names, EphContext
+from .context import Circle, EphContext
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 from .signs import *

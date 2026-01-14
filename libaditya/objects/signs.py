@@ -33,7 +33,7 @@ class Sign:
         self._cusps = cusps
         self._objects = self.init_objects()
         self._sign_index = (number-1)%12
-        self._sign_name = self.context.names.sign_names[self.sign_index()]
+        self._sign_name = const.names[self.context.names_type][self.context.sign_names][self.sign_index()]
         self._id = number
         self.master = master
         # a dictionary that defines our rashi aspects, {int: (int,int,int)}

@@ -34,15 +34,6 @@ class HDContext:
     print_hexagrams: int = 0 # 0 for numbers, 1 for hexagrams
     toround: (bool, int) = (True, 3)
         
-@dataclass(frozen=True)
-class Names:
-    planet_names: str = tuple(const.planet_names)
-    sign_names: str = tuple(const.adityas)
-    nakshatras: str = tuple(const.nakshatras)
-    tithis: str =  tuple(const.tithis)
-    karanas: str = tuple(const.karanas)
-    varas: str = tuple(const.varas)
-    yogas: str = tuple(const.yogas)
 
 @dataclass
 class EphContext:
@@ -76,6 +67,21 @@ class EphContext:
     rashi_temporary_friendships: bool = True # other option is "Varga"
     rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
     amsha: int = 1 # amsha is the varga; default is 1
-    names: Names = Names()
+    names_type: str = "mixed" # mixed, eng, iast, deva; possible to create your own
+    sign_names: str = "adityas" # other option is zodiac
     hdcontext: HDContext = HDContext()
 
+
+# originally i passed the names around to every function and every object
+
+#@dataclass(frozen=True)
+#class Names:
+#    planet_names: str = tuple(const.planet_names)
+#    sign_names: str = tuple(const.adityas)
+#    nakshatras: str = tuple(const.nakshatras)
+#    tithis: str =  tuple(const.tithis)
+#    karanas: str = tuple(const.karanas)
+#    varas: str = tuple(const.varas)
+#    yogas: str = tuple(const.yogas)
+#    adityas: str = tuple(const.adityas)
+#    zodiac: str = tuple(const.zodiac)
