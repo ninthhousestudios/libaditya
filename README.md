@@ -117,7 +117,7 @@ this is the most useful for getting birth information without needing to do it m
 
 ```
 jhcontext = read.chtk_to_context("josh.cht")
-jhchart = Chart(jdcontext)
+jhchart = Chart(jhcontext)
 ```
 
 to change any of the options, do like this:
@@ -143,6 +143,28 @@ then tab twice, and you will see a list:
 ```
 >>> jhchart.
 jhchart.context     jhchart.get_varga(  jhchart.jaimini()   jhchart.rashi()  
+```
+
+actualy it will look different now
+you should see something like ```jhchart.sidereal()```
+you can use that to get a sidereal version of that chart. Default ayanamsa is 27.
+Ayanamsa are swiss ephemeris values, which will be elsewhere in this documentation
+eventually. Also, 98 for Dhruva GC mid-Mula, 99 for Ecliptic Vedanga Jyotisha and 100
+for Equatorial Vedanga Jyotisha
+Ayanamsa can be set by calling
+```
+jhchart.sidereal(ayanamsa=18)
+```
+
+if you working mostly with a sidereal chart, you can assign it to a variable
+```
+sidchart = jhchart.sidereal(ayanamsa=25)
+```
+
+then for the tropical or aditya versions of that chart, you could
+```
+sidchart.tropical()
+sidchart.aditya().rashi()
 ```
 
 a Chart is basically a collection of Vargas. The Rashi is the most important. You can
@@ -209,3 +231,52 @@ planets in normal Vedic order. So that is the data; it is use to you how to find
 
 in libaditya.printf (which you should be able to use as printf if you did ```from
 libaditya import *```), there are print functions for some things.
+
+for example
+```
+printf.print_dignity_table(chart.rashi().dignities())
+```
+
+you can get a varga with ```.varga(n)```
+
+get dignities in the navamsha
+```
+printf.print_dignity_table(chart.varga(9).dignities())
+```
+
+to find the chara karakas
+```
+printf.print_jaimini_karakas(chart.rashi().planets().jaimini_karakas())
+```
+
+so then you can find the AK in the d9
+```
+ak = chart.rashi().planets().jaimini_karakas()[0]
+```
+
+```Planets.jaimini_karakas()``` return a list of ```Planet``` classes. So if the AK is
+Venus, then ```ak``` would the ```Venus``` class of the Venus of the Rashi chart.
+
+get svamsha
+```
+svamsha = chart.varga(9).signs()[ak.sign()]
+```
+
+```Varga.signs()``` returns a dictionary, where the keys are integers 1-12, which
+correspond to signs 1-12. This is true regardless of the system we are using. The system
+is set by the ```sysflg``` and by the ```circle=Circle```. ```sysflg``` can be tropical
+or sidereal (footnote: some others that aren't well implemeneted yet, e.g., helio, bary,
+draconic, true sidereal) ```circle=Circle.ZODIAC``` or ```circle=Circle.ADITYA```. In
+the former, sign 1 = Aries (whether tropical or sidereal). In the later, sign 1 = Dhata,
+which is at 330 tropical ecliptic longitude.
+
+This takes care of all necessary tropical, Aditya, sidereal calculations.
+
+When accessed through ```Chart()``` all of these works as given by the ```EphContext```
+parameters ```sysflg``` and ```circle``` with the options as just explained, and of
+course ```ayanamsa```.
+
+To see all the options in ```EphContext```:
+```
+help(EphContext)
+```

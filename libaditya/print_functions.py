@@ -84,6 +84,9 @@ def jaimini_karakas_str(karakas) -> str:
 
     return output.get_string(fields=["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"])
 
+def print_jaimini_karakas(karakas):
+    print(jaimini_karakas_str(karakas))
+
 def print_padas(padas):
     """
     receive a dictionary of all the padas
