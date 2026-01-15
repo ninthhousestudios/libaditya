@@ -21,11 +21,12 @@ to print the requested data to ```stdout```.
 
 ## Dependencies
 
+automatically installed with ```uv```
 python, [pyswisseph](https://pypi.org/project/pyswisseph/), [python-prettytable](https://pypi.org/project/prettytable/)
 
 written with python 3.13
 
-## Installtion
+## Installation
 
 ```libaditya``` is now on pypi.org, so it can be installed with ```pip install
 libaditya```...I think. I use Arch (btw) and they do python packages differently (I

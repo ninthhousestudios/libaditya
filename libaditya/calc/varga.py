@@ -27,7 +27,7 @@ from libaditya import print_functions as printf
 from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as pdict
-
+from libaditya.calc import vimshottari
 
 from .jaimini import Jaimini
 
@@ -227,6 +227,10 @@ class Rashi(Varga):
         __repr__ prints only the basic time and panchanga information
         """
         return Panchanga(self.context)
+
+    def print_current_vimshottari_dasha(self,yrlen=const.dasha_years["saura"],levels=5):
+        vimshottari.print_current_vdasha(self.context,yrlen,levels)
+        return
 
     # special jaimini function that returns argala to both 1st and 7th; but maybe i should move it
     def argala(self) -> [[Planet],[Planet],[Planet]]:

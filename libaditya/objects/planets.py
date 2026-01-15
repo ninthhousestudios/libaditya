@@ -1733,6 +1733,29 @@ class Planets:
     def chiron(self):
         return self._planets["Chiron"]
 
+    def grahas_within_one_degree(self):
+        grahas = []
+        for graha_chosen in self.grahas().values():
+            for graha_line in self.grahas().values():
+                if graha_chosen == graha_line:
+                    continue
+                if abs(graha_chosen.amsha_longitude()-graha_line.amsha_longitude()) < 1:
+                    grahas.append((graha_chosen,graha_line))
+        return grahas
+
+#        for n,graha_chosen in enumerate(self):
+#            if n == 9:
+#                # 9 would be Uranus; we only want grahas
+#                return grahas
+#            for i,graha_line in enumerate(self):
+#                if n == 9:
+#                    continue
+#                if graha_chosen == graha_line:
+#                    continue
+#                if abs(graha_chosen.amsha_longitude()-graha_line.amsha_longitude()) < 1:
+#                    grahas.append((graha_chosen,graha_line))
+
+
     def __str__(self):
         if self.context.print_nakshatras:
             return self.planets_with_nakshatras()

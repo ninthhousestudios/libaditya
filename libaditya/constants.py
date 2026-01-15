@@ -53,7 +53,7 @@ def sysflgstr(sflg):
 
 
 def ayanamsa_name(ayanamsa):
-    if ayanamsa == -1:
+    if ayanamsa == -1 or ayanamsa == swe.FLG_TROPICAL:
         return "Tropical"
     if ayanamsa == 98:
         return "Dhruva GC mid-Mula Equatorial"
@@ -157,15 +157,16 @@ glyphs = {
 
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
 
-dasha_years = [
-    ("saura", 365.2422),
-    ("nakshatra", 359.0167),
-    ("savana", 360),
-    ("sidereal", 365.2564),
-    ("chandra", 364.2888),
-    ("lunar", 354.36708),
-]
+dasha_years = {
+    "saura": 365.2422,
+    "nakshatra": 359.0167,
+    "savana": 360,
+    "sidereal": 365.2564,
+    "chandra": 364.2888,
+    "lunar": 354.36708
+}
 
+# not sure if i use these or not; better leave them for now
 nak = 13 + (1 / 3)
 true_node = 11
 rahu = 11

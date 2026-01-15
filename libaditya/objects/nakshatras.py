@@ -40,7 +40,12 @@ class Nakshatra:
         return nak + base_long + ash_long + ayana + nakshatra
 
     def __repr__(self):
-        return f"{self.nakshatra()}"
+        """
+        return neutral string representation for database
+        returns the English name of this nakshatra, in hopes that everyone can type that on any keyboard
+        ...my terminal emunlator cannot properly disply devangari
+        """
+        return f"{self.identity()}"
 #        nak = f"Nakshatra of {self.occupant()}\n"
 #        base_long = f"base longitude: {self.base_longitude()}\n"
 #        ash_long = f"Degrees from beginning of ashvini: {self.ashvini_longitude()}\n"
@@ -62,6 +67,13 @@ class Nakshatra:
 
     def index(self):
         return int(self.ashvini_longitude()/self.naksize())%27
+
+    def identity(self):
+        """
+        return the English name to use as an all purpose nakshatras dictionary index
+        ['Ashvini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'P. Phalguni', 'U. Phalguni', 'Hasta', 'Chitra', 'Svati', 'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'P. Ashadha', 'U. Ashadha', 'Shravana', 'Danishtha', 'Shatabhisha', 'P. Bhadrapada', 'U. Bhadrapada', 'Revati'
+        """
+        return const.names["eng"]["nakshatras"][self.index()]
 
     def nakshatra(self):
         return const.names[self.context.names_type]["nakshatras"][self.index()]

@@ -36,9 +36,9 @@ def print_vimshottari_dasha(planet=Moon(),dlevels=1,yrlen=365.2422):
     print("\n\nVimshottari Dasha\n")
 
     # this is for the year length
-    for opt in const.dasha_years:
-        if yrlen == opt[1]:
-            yrstr = opt[0].capitalize()
+    for key,value in const.dasha_years.items():
+        if yrlen == value:
+            yrstr = key.capitalize()
 
     print(f"Based on the position of {planet.name()}")
     print(f"Using {planet.ayanamsa_name()}")
@@ -130,7 +130,7 @@ def print_next_dasha_level(dlist,dasha_time,level,dlevels,yrlen,age):
             this_dasha = (this_dasha+1)%9
 
 
-def calculate_vimshottari_dasha(planet=Moon(),dlevels=1,yrlen=const.dasha_years[0][1]):
+def calculate_vimshottari_dasha(planet=Moon(),dlevels=1,yrlen=const.dasha_years["saura"]):
     """
     calculate vimshottari dasha
     first initilaze the base condition
@@ -221,7 +221,7 @@ def pd(dlist,dasha,level,age):
         age += dasha[d][1]/365.2422
         this_dasha = (this_dasha+1)%9
 
-def current_vimshottari_dasha(planet=Moon(),nowtimeJD=JulianDay(),dlevels=3,yrlen=const.dasha_years[0][1]):
+def current_vimshottari_dasha(planet=Moon(),nowtimeJD=JulianDay(),dlevels=3,yrlen=const.dasha_years["saura"]):
     """
     find the dasha at nowtime for the dashas of someone born at btime down to dlevels levels
     returns a list [lord,lord,lord,...,next_dasha_startsJD]
@@ -333,3 +333,36 @@ def next_dasha_lords(lords):
         lords[0]=get_next_lord(lords[0])
 
     return list(lords.__reversed__())
+
+def print_current_vdasha(context,yrlen,levels):
+    """
+    print information on current vimshottari dasha
+    levels is a list of levels, e.g., [1,2,3]
+    it will print the information for all these levels
+    """
+    print("\n\nCurrent Vimshottari Dasha\n")
+
+    # this is for the year length
+    for key,value in const.dasha_years.items():
+        if yrlen == key:
+            yrlen = const.dasha_years[key]
+            yrstr = key.capitalize()
+
+    planet = Moon(context)
+    now = JulianDay("now")
+
+    print(f"Based on the position of {planet.name()}")
+    print(f"Using {planet.ayanamsa_name()}")
+    print(f"Using {yrstr} year length\n")
+
+    levels = [x for x in range(1,levels+1)]
+    
+    for level in levels:
+        current_dasha = current_vimshottari_dasha(planet,now,level,yrlen)
+        next_dasha_startsJD = current_dasha.pop()
+
+        print(f"Current dasha: {utils.mk_dasha_lord(current_dasha)}")
+        print(f"Next dasha: {utils.mk_dasha_lord(next_dasha_lords(current_dasha))}, starts at:")
+        print(f"{next_dasha_startsJD}")
+        print(f"in {utils.dec2ymd((next_dasha_startsJD.jd_number()-now.jd_number())/365.2422)}\n")
+    return

@@ -97,6 +97,19 @@ class Sign:
     def how_many_grahas(self):
         return len(self.grahas())
 
+    def objects(self):
+        return self._objects
+
+    def objects_within_one_degree(self):
+        objects = []
+        for object_chosen in self.objects():
+            for object_line in self.objects():
+                if object_chosen == object_line:
+                    continue
+                if abs(object_chosen.amsha_longitude()-object_line.amsha_longitude()) < 1:
+                    objects.append((object_chosen,object_line))
+        return objects
+
     def init_objects(self):
         if self.context.sysflg == const.BARY or self.context.sysflg == const.HELIO:
             return self._planets

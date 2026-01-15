@@ -1,3 +1,4 @@
+
 ## jaimini
 
 #
@@ -38,8 +39,8 @@ some charts have weird problems and i have no idea what is wrong
 maybe i will just reenter them in kala
 
 #
-where to add Panchanga; it currently isnt directly accesible
-Rashi, probably
+added one vimshottari
+add other vimshottari calculation options
 
 #
 revamp .pyph file

@@ -10,6 +10,7 @@ example*
 *.txt
 *.sbc
 *.pyph
+*.txt
 debnds.py
 copyright
 libaditya.egg-info
