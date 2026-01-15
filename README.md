@@ -1,15 +1,19 @@
 # README
 
 ```libaditya``` is an astrological calculation library meant to be easily understood in terms
-of what calculations are performed and how they are done. it includes a sample program
-called ```pyphemeris```.
+of what calculations are performed and how they are done. 
 
-```pyphemeris``` is meant to serve as an easily readable documentation on how
-the library works. Each function in libaditya itself is meant to return the requested
-data in a way that can then be presented in some way. Built into most ```libaditya```
-classes are functions to represent themselves as text through repr (__repr__) and
-```print```, i.e., through ```__str__```. ```pyphemeris``` makes use of these in order
-to print the requested data to ```stdout```.
+there is a companion program ```pyphemeris``` which is meant to serve as an easily
+readable documentation on how the library works. Each function in libaditya itself is
+meant to return the requested data in a way that can then be presented in some way.
+Built into most ```libaditya``` classes are functions to represent themselves as text
+through repr (__repr__) and ```print```, i.e., through ```__str__```. ```pyphemeris```
+makes use of these in order to print the requested data to ```stdout```.
+
+you can try ```pyphemeris``` by using ```uv``` to add it to your libaditya project:
+```
+uv add pyphemeris
+```
 
 ## Table of Contents
 
@@ -22,6 +26,7 @@ to print the requested data to ```stdout```.
 ## Dependencies
 
 automatically installed with ```uv```
+
 python, [pyswisseph](https://pypi.org/project/pyswisseph/), [python-prettytable](https://pypi.org/project/prettytable/)
 
 written with python 3.13
@@ -35,6 +40,8 @@ think?...Python packaging is strange), so I use virtual environments through ```
 In any case, at this point ```libaditya``` is not really mature enough to have a major
 version, so if you are interested in testing it out or changing it or working on it, I
 recommend installing is the following way, then you can pull changes as they come:
+
+I recommend using ```uv``` to install ```libaditya```. On MacOS, you can ```brew install uv```
 
 ```sh
 
