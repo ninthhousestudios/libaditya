@@ -74,7 +74,7 @@ class Planet(Longitude):
         self._nakshatra = Nakshatra(self)
 
     # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
-    def __lt__(self,p2: Self):
+    def __lt__(self,p2):
         return self.real_in_sign_longitude() < p2.real_in_sign_longitude()
 
     def amsha(self):
@@ -132,6 +132,9 @@ class Planet(Longitude):
         return the dignity that has been set by Planets.
         """
         return self.attributes["dignity"]
+
+    def Self(self):
+        return self
 
     def dig_bala(self):
         """
@@ -362,10 +365,10 @@ class Planet(Longitude):
 #            return how_close_to_opposite*60
 #        return -1
 
-    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+    def parashara_aspect_to(self, planet) -> float | str:
         """
         return the float of the precise parashara aspect between
-        self and planet
+        self and planet; planet can also be a cusp; any specific longitude, really
 
         this function does aspects for Sun, Moon, Mercury and Venus
         the other karakas have their own special aspects that are defined in their own classes
@@ -395,7 +398,7 @@ class Planet(Longitude):
         if diff > 30 and diff <= 60:
             return (diff - 30)/2
 
-    def parashara_aspect_from(self, planet: Self | Cusp) -> float | str:
+    def parashara_aspect_from(self, planet) -> float | str:
         return planet.parashara_aspect_to(self)
 
     def lowest_hourly_speed(self) -> float:
@@ -545,7 +548,7 @@ class Sun(Planet):
         """
         return "Malefic"
 
-    def ingress(self, next_long) -> Self:
+    def ingress(self, next_long):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
@@ -736,6 +739,9 @@ class Moon(Planet):
     def chesta_bala(self):
         """
         moon has 60 points of chesta bala at the full moon
+
+        this is not quite right, because it has 60 has full moon and 0 at new moon
+        but new full moon is not opposite full moon, so we can get use this algorithm
         """
         from libaditya.calc import Panchanga
         panch = Panchanga(self.context)
@@ -815,7 +821,7 @@ class Mars(Planet):
             case "Saturn":
                 return "N"
 
-    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+    def parashara_aspect_to(self, planet) -> float | str:
         """
         return the float of the precise parashara aspect between
         self and planet
@@ -1015,7 +1021,7 @@ class Jupiter(Planet):
             case "Saturn":
                 return "N"
 
-    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+    def parashara_aspect_to(self, planet) -> float | str:
         """
         return the float of the precise parashara aspect between
         self and planet
@@ -1217,7 +1223,7 @@ class Saturn(Planet):
             case "Venus":
                 return "F"
 
-    def parashara_aspect_to(self, planet: Self | Cusp) -> float | str:
+    def parashara_aspect_to(self, planet) -> float | str:
         """
         return the float of the precise parashara aspect between
         self and planet
@@ -1666,8 +1672,9 @@ class Planets:
 
         return ret
 
-    def jaimini_karakas(self) -> [Self]:
+    def jaimini_karakas(self):
         """
+        -> [Self]
         return a list of Planet classes where the first element is the ak, the second the amk, etc.
         """
         # we need to sort according to real in sign longitude
@@ -1997,3 +2004,15 @@ planet_dict = {
 }
 
 karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]
+
+class Lord(Planet):
+    """
+    a lord is a planet who has a sign
+    """
+
+    def __init__(self, planet, sign):
+        self._lord = planet
+        self._sign = sign
+        self._subjects = self._sign.objects()
+        self._planets = self._sign.planets()
+        self._cusps = self._sign.cusps()

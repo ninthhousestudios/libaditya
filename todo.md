@@ -43,6 +43,10 @@ added one vimshottari
 add other vimshottari calculation options
 
 #
+maybe a Lord class in Planets? that may be overkill
+or maybe it will help with implementing final dispositors and parivartana/chakra yogas
+
+#
 revamp .pyph file
 make interactive .pyph creator
 
@@ -120,6 +124,10 @@ chesta bala at least is based on same idea; one point is 60 points, the opposite
 points, so then find the proportion
 
 chesta bala
+    Moon needs work. new isnt opposite full
+
+#
+add dispositors, final dispositors, parivartana or chakra yogas
 
 ## hd
 

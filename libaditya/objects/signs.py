@@ -50,7 +50,7 @@ class Sign:
     def sign(self):
         return self._id
 
-    def Sign(self):
+    def Self(self):
         return self
 
     def planets(self) -> [Planet]:

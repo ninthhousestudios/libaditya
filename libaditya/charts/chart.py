@@ -20,7 +20,7 @@ from typing import Self
 
 from libaditya import constants as const
 
-from libaditya.objects import EphContext, Planets, Cusps, Circle
+from libaditya.objects import EphContext, Planets, Cusps, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
 
 from .api import API
@@ -148,6 +148,12 @@ class Chart(API):
         calls self.JulianDay effectively and return a Chart with shifted JulianDay
         """
         return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number)))
+
+    def now(self):
+        """
+        return a chart like this one but for right now
+        """
+        return Chart(context=replace(self.context,timeJD=JulianDay("now")))
 
     def _new_chart(self, **kwargs):
         """
