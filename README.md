@@ -51,18 +51,7 @@ how that would work in git from getting updates from libaditya and your own...
 
 ## Usage
 
-then you can run
-```
-uv run pyphemeris/pyphemeris.py
-```
-
-This will print a chart for right now at the time and place specified in
-```pyphemeris/defaults.py```. You can change any of the defaults in that file, and then
-most options have a flag, some of which are toggles. eventually, there will be
-documentation for the options ands for what exactly each does. what it says may not be
-100% accurate at the moment
-
-or you can go into the Python ```repl``` using
+then you can go into the Python ```repl``` using
 ```python```
 
 then
