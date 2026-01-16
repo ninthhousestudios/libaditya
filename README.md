@@ -280,3 +280,20 @@ To see all the options in ```EphContext```:
 ```
 help(EphContext)
 ```
+
+# Vargas
+
+Vargas can be accessed using ```Chart.varga(n)```.
+
+If ```n``` is positive, the corresponding parivritti varga of that number will be
+produced.
+
+Other vargas will have negative numbers to indicate them. Here are the vargas currently
+implemeneted:
+```
+-2 Hora
+-3 Drekkana
+-4 Chaturthamsha
+-240 Siddhamsha
+-24 Parashara Chaturvimshamsha
+```

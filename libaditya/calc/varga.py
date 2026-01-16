@@ -26,7 +26,7 @@ from libaditya import print_functions as printf
 
 from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps
 # to make it less confusing, pdict will be the dictionary of Planet classes
-from libaditya.objects import planets as pdict
+from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
 
 from .jaimini import Jaimini
@@ -85,6 +85,10 @@ class Varga(Jaimini,API):
                 return "Drekkana"
             case -4:
                 return "Chaturthamsha"
+            case -24:
+                return "Parashara Chaturvimshamsha"
+            case -240:
+                return "Siddhamsha (d24s)"
             case _ if self.amsha() > 5:
                 return "parivritti"
 
@@ -94,7 +98,7 @@ class Varga(Jaimini,API):
     def init_Planets(self, planets):
         retplanets = {}
         for name,planet in planets.items():
-            retplanets[name] = pdict[name](self.context,longitude=Longitude(planet.ecliptic_longitude(),amsha=self.amsha()))
+            retplanets[name] = planet_constructors[name](self.context,longitude=Longitude(planet.ecliptic_longitude(),amsha=self.amsha()))
         return Planets(self.context,retplanets)
               
     def init_Cusps(self, cusps):

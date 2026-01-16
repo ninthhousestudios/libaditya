@@ -150,6 +150,13 @@ class Longitude:
             inlong = self.amsha_longitude() % 30
         return utils.dec2dmsstr(inlong)
 
+    def amsha_raw_in_sign_longitude(self) -> float:
+        if self.context.toround[0]:
+            return round(self.amsha_longitude() % 30, self.context.toround[1])
+        else:
+            return self.amsha_longitude() % 30
+
+
     def amsha(self) -> int:
         return self._amsha
 
@@ -302,6 +309,10 @@ class Longitude:
                 return self.drekkana()
             case -4:
                 return self.chaturthamsha()
+            case -12:
+                return self.dvadashamsha()
+            case -24:
+                return self.d24_parashara()
             case -240:
                 return self.siddhamsha()
             case _:
@@ -435,6 +446,26 @@ class Longitude:
             self._deity = "Sanātana"
             return square_square_square_longitude + ((real_in_sign-3*fourth)/fourth)*30
 
+    def dvadashamsha(self):
+        """
+        -12
+        for this varga, each sign is divided up into 12 parts, with the first part corresponding to itself
+
+        so gemini is divided into 12, labelled: "gemini", "cancer", "leo", etc.
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
+
+        amsha=30/12 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
     def siddhamsha(self):
         """
         -240 is the code for this varga
@@ -463,6 +494,37 @@ class Longitude:
         if even(real_sign):
             base_longitude = base_longitude_even
             return base_longitude-(amsha_elapsed*30)+(current_in_amsha)*30
+
+    def d24_parashara(self):
+        """
+        -24
+        d24 as described in parashara
+        odd signs start at leo and go twice around
+        even signs starts at cancer and go twice around
+
+        implementatino is exaclty like for -240, except there is a plus instead of minus in the very last line for (amsha_elapsed*30)
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        # the base longitude for odd signs is leo/indra, sign 5
+        base_sign_odd = 5
+        base_longitude_odd = ((30*(base_sign_odd-1))-self.aditya_offset)%360
+        base_sign_even = 4
+        base_longitude_even = ((30*(base_sign_even-1))-self.aditya_offset)%360
+        
+        amsha=30/24 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if odd(real_sign):
+            base_longitude = base_longitude_odd
+            return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+        if even(real_sign):
+            base_longitude = base_longitude_even
+            return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
     def __repr__(self):
         return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"
