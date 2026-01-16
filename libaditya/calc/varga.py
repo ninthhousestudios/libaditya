@@ -30,6 +30,7 @@ from libaditya.objects import planets as pdict
 from libaditya.calc import vimshottari
 
 from .jaimini import Jaimini
+from .jaimini_get import JaiminiGet
 
 class Varga(Jaimini):
     """
@@ -194,7 +195,7 @@ class Varga(Jaimini):
 
 
 
-class Rashi(Varga):
+class Rashi(Varga,JaiminiGet):
 
     def __init__(self,context,chart):
         self.master = chart

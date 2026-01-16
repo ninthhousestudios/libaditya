@@ -44,6 +44,7 @@ add other vimshottari calculation options
 
 #
 maybe a Lord class in Planets? that may be overkill
+
 or maybe it will help with implementing final dispositors and parivartana/chakra yogas
 
 #

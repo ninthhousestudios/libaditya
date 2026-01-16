@@ -302,8 +302,28 @@ class Longitude:
                 return self.drekkana()
             case -4:
                 return self.chaturthamsha()
+            case -240:
+                print("siddhamsha implementation in progress")
+                return self.siddhamsha()
             case _:
                 return "not yet implemented"
+
+    def parvritti_varga(self, amsha):
+        """
+        return the "real" longitude for self.ecliptic_longitude() in
+        varga number "division"
+        number 2-60 all refer to parvritti vargas
+
+        this algorithm was adapted from pyjhora
+        """
+        # self.aditya_offset is to take care of aditya/zodiac cirlce
+        one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
+        one_sign = 12.0 * one_amsha    # = 40 degrees exactly
+        signs_elapsed = (self.ecliptic_longitude()+self.aditya_offset) / one_sign
+        left = signs_elapsed % 1
+        sign = int(left * 12)
+        in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
+        return ((sign*30) + (in_sign_long)) - self.aditya_offset
 
     def hora(self):
         """
@@ -416,23 +436,16 @@ class Longitude:
             self._deity = "Sanātana"
             return square_square_square_longitude + ((real_in_sign-3*fourth)/fourth)*30
 
-        
-    def parvritti_varga(self, amsha):
+    def siddhamsha(self):
         """
-        return the "real" longitude for self.ecliptic_longitude() in
-        varga number "division"
-        number 2-60 all refer to parvritti vargas
+        -240 is the code for this varga
+        a varga of 24 divisions
+        odd signs: start at leo and go around the circle in order twice
+        even: start at cancer and go twice around the circle in reverse order
+        """
+        pass
 
-        this algorithm was adapted from pyjhora
-        """
-        # self.aditya_offset is to take care of aditya/zodiac cirlce
-        one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
-        one_sign = 12.0 * one_amsha    # = 40 degrees exactly
-        signs_elapsed = (self.ecliptic_longitude()+self.aditya_offset) / one_sign
-        left = signs_elapsed % 1
-        sign = int(left * 12)
-        in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
-        return ((sign*30) + (in_sign_long)) - self.aditya_offset
+        
 
     def __repr__(self):
         return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"
