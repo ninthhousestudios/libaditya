@@ -150,3 +150,22 @@ def print_jaimini_aspects(chart):
         for ap in aspecting:
             print(f"{sign.name()} <- {ap.name()}")
         print("\n")
+
+def print_jaimini_spiritual_planets(splanets):
+    """
+    prints infomration returned by Rashi.get_spiritual_planets
+    """
+    print("Spiritual planets:")
+
+    for varga in splanets.keys():
+        if not isinstance(varga, int):
+            continue
+        print(f"d{varga}:")
+        print("Conjunctions")
+        for planet in splanets[varga][0]:
+            # planets that are conjunct
+            print(f"\t{planet.name()} ({planet.dignity()})")
+        print("Aspecting")
+        for sign in splanets[varga][1]:
+            for planet in sign:
+                print(f"\t{planet.name()} ({planet.dignity()})")

@@ -303,7 +303,6 @@ class Longitude:
             case -4:
                 return self.chaturthamsha()
             case -240:
-                print("siddhamsha implementation in progress")
                 return self.siddhamsha()
             case _:
                 return "not yet implemented"
@@ -415,7 +414,7 @@ class Longitude:
         real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
         real_in_sign = self.real_in_sign_longitude()
 
-        # take care of it being aditya here, by adding self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC
+        # take care of it being aditya here, by subtracting self.aditya_offset; 30 if using Circle.ADITYA: 0 if using Circle.ZODIAC
         base_longitude = ((30*(real_sign-1))-self.aditya_offset)%360
         square_longitude = (base_longitude+90)%360
         square_square_longitude = (base_longitude+180)%360
@@ -443,9 +442,27 @@ class Longitude:
         odd signs: start at leo and go around the circle in order twice
         even: start at cancer and go twice around the circle in reverse order
         """
-        pass
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
 
+        # the base longitude for odd signs is leo/indra, sign 5
+        base_sign_odd = 5
+        base_longitude_odd = ((30*(base_sign_odd-1))-self.aditya_offset)%360
+        base_sign_even = 4
+        base_longitude_even = ((30*(base_sign_even-1))-self.aditya_offset)%360
         
+        amsha=30/24 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if odd(real_sign):
+            base_longitude = base_longitude_odd
+            return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+        if even(real_sign):
+            base_longitude = base_longitude_even
+            return base_longitude-(amsha_elapsed*30)+(current_in_amsha)*30
 
     def __repr__(self):
         return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"

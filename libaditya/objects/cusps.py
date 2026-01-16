@@ -32,7 +32,7 @@ class Cusp(Longitude):
         self.jd = self.timeJD.jd
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
-        self.ayanamsa = self.context.ayanamsa
+        self._ayanamsa = self.context.ayanamsa
         super().__init__(longitude,amsha,self.context)
 #        self.longituDE = longitude # a Longitude class
 #        self.long = self.longituDE.amsha_raw_longitude()
@@ -48,7 +48,7 @@ class Cusp(Longitude):
         return self.cusp_name + " at " + str(self.longitude()) + "\n"
 
     def __repr__(self):
-        return self.cusp_name + " at " + str(self.amsha_longitude()) + "\n"
+        return f"{self.cusp_name} {self.ecliptic_longitude()} {self.amsha()} {self.amsha_longitude()} {self.ayanamsa()}"
 
     def name(self):
         return self.cusp_name
@@ -58,6 +58,9 @@ class Cusp(Longitude):
 
     def number(self):
         return self._number
+
+    def ayanamsa(self):
+        return self._ayanamsa
 
     def cusp_index(self):
         return self._cusp_index

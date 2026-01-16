@@ -27,6 +27,8 @@ class Jaimini:
 
     it is really a Varga, even though Varga inherits from here
 
+    these are calculations that can happen on any varga, in that varga
+
     this class is a "Mixin"
     it has no __init__ functions and cannot instantiate anything
     it inherits unto Varga, giving Varga all of Jaimini capabilities

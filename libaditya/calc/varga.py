@@ -32,7 +32,9 @@ from libaditya.calc import vimshottari
 from .jaimini import Jaimini
 from .jaimini_get import JaiminiGet
 
-class Varga(Jaimini):
+from .api import API
+
+class Varga(Jaimini,API):
     """
     Varga is the main calculation interface
 
