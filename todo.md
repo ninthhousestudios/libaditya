@@ -4,6 +4,9 @@
 #
 vargas
 
+fix parivritti deities
+d9 works but the others dont match up with kala
+
 #
 jaimini first strength
 

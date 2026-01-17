@@ -1684,7 +1684,7 @@ class Planets:
             # the following doesnt work if two planets have the same longitude!
             # longs[karaka.in_sign_longitude()] = karaka
             # below is better, but still, what if two planets have same longitude? doesnt work then
-            longs[karaka] = karaka.in_sign_longitude()
+            longs[karaka] = karaka.real_in_sign_longitude()
         ret = []
         # for long in sorted(longs.values())
         # sorted from least in sign longitude to to most

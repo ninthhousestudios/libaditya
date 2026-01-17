@@ -172,7 +172,7 @@ class Longitude:
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        if self.amsha() in self.varga_deities.keys() or self.amsha() < 0:
+        if self.amsha() < 0 or self.amsha() == 9:
             # if we have deities for this amsha, use them, otherwise, planetary lords
             # varga lord is set in Longitude.varga() when it finds the longitude
             return self._deity
@@ -311,6 +311,8 @@ class Longitude:
                 return self.dashamsha()
             case -12:
                 return self.dvadashamsha()
+            case -16:
+                return self.shodashamsha()
             case -240:
                 return self.siddhamsha()
             case -24:
@@ -319,9 +321,11 @@ class Longitude:
                 return "not yet implemented"
 
     varga_deities={
+        2: ["Sun", "Moon"],
         9: ["Deva","Nri","Rakshasa"],
         10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
         12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
+        16: ["Brahma", "Vishnu", "Shiva", "Sun"],
         24:["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"]
     }
 
@@ -333,6 +337,17 @@ class Longitude:
 
         this algorithm was adapted from pyjhora
         """
+#        # just to make sure we are working with the rashi longitude
+#        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+#        real_in_sign = self.real_in_sign_longitude()
+#        one_amsha = 30/amsha
+#        position = real_in_sign/one_amsha
+#        amsha_elapsed = int(position)
+#        current_in_amsha = position%1
+#        if amsha in self.varga_deities.keys():
+#            self._deity = self.varga_deities[amsha][amsha_elapsed%len(self.varga_deities[amsha])]
+#        return (amsha_elapsed*30)+(current_in_amsha*30)
+
         # self.aditya_offset is to take care of aditya/zodiac cirlce
         one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
         one_sign = 12.0 * one_amsha    # = 40 degrees exactly
@@ -341,7 +356,7 @@ class Longitude:
         sign = int(left * 12)
         in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
         if amsha in self.varga_deities.keys():
-            self._deity = self.varga_deities[amsha][int(self.real_in_sign_longitude()/amsha)%len(self.varga_deities[amsha])]
+            self._deity = self.varga_deities[amsha][(sign%len(self.varga_deities[amsha]))]
         return ((sign*30) + (in_sign_long)) - self.aditya_offset
 
     def hora(self):
@@ -510,6 +525,44 @@ class Longitude:
         current_in_amsha = position%1
 
         self._deity = self.varga_deities[12][amsha_elapsed%4]
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
+    def shodashamsha(self):
+        """
+        -16
+        for moveable, start from Aries
+        for fixed, start from Leo
+        for dual, start from Sagittarius
+        then the 16 amshas in the normal order from the starting point
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_sign_moveable = 1
+        base_longitude_moveable = ((30*(base_sign_moveable-1))-self.aditya_offset)%360
+        base_sign_fixed = 5
+        base_longitude_fixed = ((30*(base_sign_fixed-1))-self.aditya_offset)%360
+        base_sign_dual = 9
+        base_longitude_dual = ((30*(base_sign_dual-1))-self.aditya_offset)%360
+
+        amsha=30/16 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if real_sign in [1,4,7,10]:
+            base_longitude = base_longitude_moveable
+        if real_sign in [2,5,8,11]:
+            base_longitude = base_longitude_fixed
+        if real_sign in [3,6,9,12]:
+            base_longitude = base_longitude_dual
+
+        if odd(real_sign):
+            self._deity = self.varga_deities[16][amsha_elapsed%4]
+        else:
+            self._deity = list(self.varga_deities[16].__reversed__())[amsha_elapsed%4]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
