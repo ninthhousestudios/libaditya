@@ -69,6 +69,8 @@ class Varga(Jaimini,API):
                 return "Rashi"
             case 2:
                 return "Hora Parivritti"
+            case 30:
+                return "Trimshamsha (Parivritti)"
             case -2:
                 return "Hora"
             case 3:

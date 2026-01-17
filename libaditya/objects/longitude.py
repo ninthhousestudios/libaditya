@@ -717,6 +717,7 @@ class Longitude:
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
+
     def khavedamsha(self):
         """
         -40
