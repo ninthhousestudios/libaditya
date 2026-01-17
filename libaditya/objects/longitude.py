@@ -172,7 +172,7 @@ class Longitude:
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        if self.amsha() < 0 or self.amsha() == 9:
+        if self.amsha() < 0:
             # if we have deities for this amsha, use them, otherwise, planetary lords
             # varga lord is set in Longitude.varga() when it finds the longitude
             return self._deity
@@ -325,11 +325,14 @@ class Longitude:
                 return self.khavedamsha()
             case -45:
                 return self.akshavedamsha()
+            case -60:
+                return self.shashtyamsha()
             case _:
                 return "not yet implemented"
 
     varga_deities={
         2: ["Sun", "Moon"],
+        7: ["Kshara", "Kshira", "Dadhya", "Ajya", "Ikshurasa", "Madhya", "Shuddha Jala"],
         9: ["Deva","Nri","Rakshasa"],
         10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
         12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
@@ -344,7 +347,8 @@ class Longitude:
         # for -45 fixed signs
         46: ["Isha", "Acyuta", "Surajyeshta"],
         # for -45 dual signs
-        47: ["Vishnu", "Ka", "Isha"]
+        47: ["Vishnu", "Ka", "Isha"],
+        60: ["Ghora", "Rakshasa", "Deva", "Kubera", "Yaksha", "Kimnara", "Bhrashta", "Kulaghna", "Garala", "Vahni", "Maya", "Purishaka", "Apampathi", "Marut", "Kala", "Sarpa", "Amrita", "Indu", "Mridu", "Komala", "Heramba", "Brahma", "Vishnu", "Maheshwara", "Deva", "Ardra", "Kalinasha", "Kshitisha", "Kamalakara", "Gulika", "Mrityu", "Kala", "Davagni", "Ghora", "Yama", "Kantaka", "Sudha", "Amrita", "Purnachandra", "Vishadaghda", "Kulanasa", "Vamsakshaya", "Utpata", "Kala", "Saumya", "Komala", "Sitala", "Karaladamshtra", "Chandramukhi", "Pravina", "Kala Pavaka", "Dandayudha", "Nirmala", "Saumya", "Krura", "Atisitala", "Amrita", "Payodhi", "Bhramana", "Chandra Rekha"]
     }
 
     def parvritti_varga(self, amsha):
@@ -373,8 +377,6 @@ class Longitude:
         left = signs_elapsed % 1
         sign = int(left * 12)
         in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
-        if amsha in self.varga_deities.keys():
-            self._deity = self.varga_deities[amsha][(sign%len(self.varga_deities[amsha]))]
         return ((sign*30) + (in_sign_long)) - self.aditya_offset
 
     def hora(self):
@@ -791,6 +793,35 @@ class Longitude:
         self._deity = self.varga_deities[index][amsha_elapsed%3]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
+    def shashtyamsha(self):
+        """
+        -60
+        algorithm as described in santhanam's translation of bphs, vol. 1, page 83
+        deities are in order for odd signs, reverse for even signs
+        """
+        real_longitude = Longitude(self.ecliptic_longitude(), 1, self.context)
+        real_sign = real_longitude.sign()
+        real_in_sign = self.real_in_sign_longitude()
+        calc = int(real_in_sign*2)
+        _, remainder = divmod(calc,12)
+        # this is how many signs from real_sign the d60 sign is
+        from_amsha = remainder+1
+        sign = real_longitude.astrological_signs_foward(from_amsha)
+
+        base_longitude = ((30*(sign-1))-self.aditya_offset)%360
+
+        amsha=30/60 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if odd(real_sign):
+            self._deity = self.varga_deities[60][amsha_elapsed]
+        if even(real_sign):
+            self._deity = list(self.varga_deities[60].__reversed__())[amsha_elapsed]
+
+        return base_longitude+(current_in_amsha*30)
 
     def __repr__(self):
         return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"

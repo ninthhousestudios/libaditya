@@ -103,6 +103,8 @@ class Varga(Jaimini,API):
                 return "Khavedamsha"
             case -45:
                 return "Akshavedamsha"
+            case -60:
+                return "Shashtyamsha"
             case _ if self.amsha() > 5:
                 return "parivritti"
 
