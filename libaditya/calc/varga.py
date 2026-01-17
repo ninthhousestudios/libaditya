@@ -126,6 +126,17 @@ class Varga(Jaimini,API):
     def lagna(self):
         return self.signs().lagna()
 
+    def deities(self):
+        """
+        return varga deities for the nine grahas and the lagna in that order
+        """
+        to_get = self.planets().grahas()
+        to_get[1] = self.cusps()[1]
+        ret = []
+        for obj in to_get.values():
+            ret.append(obj.deity())
+        return ret
+
     def dignities(self) -> [str]:
         """
         return a list of dignities in the natural order

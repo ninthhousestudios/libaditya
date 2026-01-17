@@ -39,20 +39,33 @@ def dignity_table(dignities):
 def print_dignity_table(dignites):
     print(dignity_table(dignites))
 
+def varga_deities(deities):
+    """
+    takes a list of dignites from Planets.deities and output a string form
+    """
+    ret = ""
+    for n in range(0,9):
+        ret += f"{const.graha_glyphs[n]} :  {deities[n]}\n"
+    ret += f"Lg :  {deities[9]}\n"
+    return ret
+
+def print_varga_deities(deities):
+    print(varga_deities(deities))
+
 def parashara_aspect_table_planets(aspects):
     """
     aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects
     make a prettytable list of these values
     """
     output = PrettyTable()
-    output.field_names = [" "] + [glyph for glyph in const.grahas_glyphs]
+    output.field_names = [" "] + [glyph for glyph in const.graha_glyphs]
     output.align[" "] = "l"
 
     for n,row in enumerate(aspects):
         output.add_row(*[[const.karaka_glyphs[n]] + row]) 
         output.add_divider()
 
-    ret = output.get_string(fields=[" "] + [glyph for glyph in const.grahas_glyphs])
+    ret = output.get_string(fields=[" "] + [glyph for glyph in const.graha_glyphs])
 
     return ret
 

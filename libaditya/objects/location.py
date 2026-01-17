@@ -41,6 +41,12 @@ class Location:
     def place(self):
         return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
 
+    def latitude(self):
+        return self.lat
+
+    def longitude(self):
+        return self.long
+
     def __repr__(self):
         return f"({self.lat},{self.long})"
 
