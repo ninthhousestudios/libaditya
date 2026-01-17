@@ -313,10 +313,18 @@ class Longitude:
                 return self.dvadashamsha()
             case -16:
                 return self.shodashamsha()
+            case -20:
+                return self.vimshamsha()
             case -240:
                 return self.siddhamsha()
             case -24:
                 return self.siddhamsha(parashara=True)
+            case -27:
+                return self.bhamsha()
+            case -40:
+                return self.khavedamsha()
+            case -45:
+                return self.akshavedamsha()
             case _:
                 return "not yet implemented"
 
@@ -326,7 +334,17 @@ class Longitude:
         10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
         12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
         16: ["Brahma", "Vishnu", "Shiva", "Sun"],
-        24:["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"]
+        20: ["Daya", "Megha", "Chinnashirsha", "Pishachani", "Dhumavati", "Matangi", "Bala", "Bhadra", "Aruna", "Anala", "Pingala", "Chucchuka", "Ghora", "Varahi", "Vaishnavi", "Sita", "Bhuvanesvari", "Bhairavi", "Mangala", "Aparajita"],
+        # 21 is for odd signs in the -20
+        21: ["Kali", "Gauri", "Jaya", "Lakshmi", "Vijaya", "Vimala", "Sati", "Tara", "Jvalamukhi", "Shveta", "Lalita", "Bagalamukhi", "Pratyangira", "Sachi", "Raudri", "Bhavani", "Varada", "Jaya", "Tripura", "Sumukhi"],
+        24: ["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"],
+        27: ["Dastra", "Yama", "Agni", "Pitamaha", "Chandra", "Isha", "Aditi", "Jiva", "Ahi", "Pitara", "Bhaga", "Aryama", "Arka", "Tvashta", "Marut", "Shakragni", "Mitra", "Vasava", "Nirriti", "Varuna", "Vishvadeva", "Govinda", "Vasu", "Varuna", "Ajapa", "Ahirbudhanya", "Pusha"],
+        40: ["Vishnu", "Chandra", "Marichi", "Tvashta", "Dhata", "Shiva", "Ravi", "Yama", "Yaksha", "Gandharva", "Kala", "Varuna"],
+        45: ["Vidhi", "Isha", "Acyuta"],
+        # for -45 fixed signs
+        46: ["Isha", "Acyuta", "Surajyeshta"],
+        # for -45 dual signs
+        47: ["Vishnu", "Ka", "Isha"]
     }
 
     def parvritti_varga(self, amsha):
@@ -566,6 +584,45 @@ class Longitude:
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
+    def vimshamsha(self):
+        """
+        -20
+        divide each sign into 20 portions, starting with the first as follows:
+        for moveable signs: start from Aries
+        for fixed signs: start from Sagittarius
+        for dual signs: starts from Leo
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_sign_moveable = 1
+        base_longitude_moveable = ((30*(base_sign_moveable-1))-self.aditya_offset)%360
+        base_sign_fixed = 9
+        base_longitude_fixed = ((30*(base_sign_fixed-1))-self.aditya_offset)%360
+        base_sign_dual = 5
+        base_longitude_dual = ((30*(base_sign_dual-1))-self.aditya_offset)%360
+
+        amsha=30/20 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if real_sign in [1,4,7,10]:
+            base_longitude = base_longitude_moveable
+        if real_sign in [2,5,8,11]:
+            # real_sign is fixed, so start with sagittarius
+            base_longitude = base_longitude_fixed
+        if real_sign in [3,6,9,12]:
+            base_longitude = base_longitude_dual
+
+        if odd(real_sign):
+            self._deity = self.varga_deities[21][amsha_elapsed]
+        else:
+            self._deity = self.varga_deities[20][amsha_elapsed]
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
     def siddhamsha(self, parashara=False):
         """
         -240 is the code for this varga
@@ -588,10 +645,10 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        if even(real_sign):
-            self._deity = list(self.varga_deities[24].__reversed__())[amsha_elapsed%12]
         if odd(real_sign):
             self._deity = self.varga_deities[24][amsha_elapsed%12]
+        if even(real_sign):
+            self._deity = list(self.varga_deities[24].__reversed__())[amsha_elapsed%12]
 
         if odd(real_sign):
             base_longitude = base_longitude_odd
@@ -604,6 +661,136 @@ class Longitude:
                 sign = -1
             return base_longitude+(sign*amsha_elapsed*30)+(current_in_amsha)*30
 
+    def bhamsha(self):
+        """
+        -27
+        divide each sign into 27 equal parts
+        the first amsha of a sign is a moveable sign; the moveable signs go into order for starting
+        i.e., Aries starts with Aries, Taurus starts with Cancer, Gemini starts with Libra, Cancer starts with Capricorn
+              Leo starts with Aries, Virgo starts with Cancer, etc.
+        i.e., fire signs start at Aries
+              earth signs start at Cancer
+              air signs start at Libra
+              water signs start at Capricorn
+        deities are nakshatra deities
+        normal order for odd signs
+        reverse for even signs
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_sign_fire = 1
+        base_longitude_fire = ((30*(base_sign_fire-1))-self.aditya_offset)%360
+        base_sign_earth = 4
+        base_longitude_earth = ((30*(base_sign_earth-1))-self.aditya_offset)%360
+        base_sign_air = 7
+        base_longitude_air = ((30*(base_sign_air-1))-self.aditya_offset)%360
+        base_sign_water = 10
+        base_longitude_water = ((30*(base_sign_water-1))-self.aditya_offset)%360
+
+        amsha=30/27 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        match real_sign:
+            case 1 | 5 | 9:
+                # fire sign
+                base_longitude = base_longitude_fire
+            case 2 | 6 | 10:
+                # earth sign
+                base_longitude = base_longitude_earth
+            case 3 | 7 | 11:
+                # air sign
+                base_longitude = base_longitude_air
+            case 4 | 8 | 12:
+                # water sign
+                base_longitude = base_longitude_water
+
+        if odd(real_sign):
+            self._deity = self.varga_deities[27][amsha_elapsed]
+        if even(real_sign):
+            self._deity = list(self.varga_deities[27].__reversed__())[amsha_elapsed]
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
+    def khavedamsha(self):
+        """
+        -40
+        divide each sign into 40 equal sections
+        odd signs start at Aries
+        even signs start at Libra
+
+        deities go in same order for all signs
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_sign_odd = 1
+        base_longitude_odd = ((30*(base_sign_odd-1))-self.aditya_offset)%360
+        base_sign_even = 7
+        base_longitude_even = ((30*(base_sign_even-1))-self.aditya_offset)%360
+
+        amsha=30/40 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if odd(real_sign):
+            base_longitude = base_longitude_odd
+        if even(real_sign):
+            base_longitude = base_longitude_even
+    
+        self._deity = self.varga_deities[40][amsha_elapsed%12]
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+
+    def akshavedamsha(self):
+        """
+        -45
+        divide each sign into 45 portions
+        moveable signs start with Aries
+        fixed signs start with Leo
+        dual signs start with Sagittarius
+        Brahma, Shiva, Vishnu rules the portions
+        moveable: brahma, shiva, vishnu
+        fixed: shiva, vishnu, brahma
+        dual: vishnu, brahma, shiva
+        """
+        # just to make sure we are working with the rashi longitude
+        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
+        real_in_sign = self.real_in_sign_longitude()
+
+        base_sign_moveable = 1
+        base_longitude_moveable = ((30*(base_sign_moveable-1))-self.aditya_offset)%360
+        # index is for setting the deity
+        index = 45
+        base_sign_fixed = 5
+        base_longitude_fixed = ((30*(base_sign_fixed-1))-self.aditya_offset)%360
+        index = 46
+        base_sign_dual = 9
+        base_longitude_dual = ((30*(base_sign_dual-1))-self.aditya_offset)%360
+        index = 47
+
+        amsha=30/45 # length of one portion in this sign
+        position = real_in_sign/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        if real_sign in [1,4,7,10]:
+            # modality of real_sign and base_longitude are the same here
+            base_longitude = base_longitude_moveable
+        if real_sign in [2,5,8,11]:
+            # real_sign is fixed, so start with sagittarius
+            base_longitude = base_longitude_fixed
+        if real_sign in [3,6,9,12]:
+            base_longitude = base_longitude_dual
+
+        self._deity = self.varga_deities[index][amsha_elapsed%3]
+
+        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
     def __repr__(self):
         return f"({self.ecliptic_longitude()},{self.amsha_longitude()},{self.amsha()})"

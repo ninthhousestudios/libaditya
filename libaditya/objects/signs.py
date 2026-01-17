@@ -239,6 +239,9 @@ class One(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def element(self):
+        return "Fire"
+
     def glyph(self):
         return "♈"
 
@@ -249,6 +252,9 @@ class Two(Sign):
 
     def modality(self) -> str:
         return "Fixed"
+
+    def element(self):
+        return "Earth"
 
     def glyph(self):
         return "♉"
@@ -261,6 +267,9 @@ class Three(Sign):
     def modality(self) -> str:
         return "Dual"
 
+    def element(self):
+        return "Air"
+
     def glyph(self):
         return "♊"
 
@@ -272,6 +281,9 @@ class Four(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def element(self):
+        return "Water"
+
     def glyph(self):
         return "♋"
 
@@ -282,6 +294,9 @@ class Five(Sign):
 
     def modality(self) -> str:
         return "Fixed"
+
+    def element(self):
+        return "Fire"
 
     def glyph(self):
         return "♌️"
@@ -295,6 +310,9 @@ class Six(Sign):
     def modality(self) -> str:
         return "Dual"
 
+    def element(self):
+        return "Earth"
+
     def glyph(self):
         return "♍"
 
@@ -305,6 +323,9 @@ class Seven(Sign):
         
     def modality(self) -> str:
         return "Moveable"
+
+    def element(self):
+        return "Air"
 
     def glyph(self):
         return "♎"
@@ -317,6 +338,9 @@ class Eight(Sign):
     def modality(self) -> str:
         return "Fixed"
 
+    def element(self):
+        return "Water"
+
     def glyph(self):
         return "♏"
 
@@ -327,6 +351,9 @@ class Nine(Sign):
         
     def modality(self) -> str:
         return "Dual"
+
+    def element(self):
+        return "Fire"
 
     def glyph(self):
         return "♐"
@@ -339,6 +366,9 @@ class Ten(Sign):
     def modality(self) -> str:
         return "Moveable"
 
+    def element(self):
+        return "Earth"
+
     def glyph(self):
         return "♑"
 
@@ -350,6 +380,9 @@ class Eleven(Sign):
     def modality(self) -> str:
         return "Fixed"
 
+    def element(self):
+        return "Air"
+
     def glyph(self):
         return "♒"
 
@@ -360,6 +393,9 @@ class Twelve(Sign):
 
     def modality(self) -> str:
         return "Dual"
+
+    def element(self):
+        return "Water"
 
     def glyph(self):
         return "♓"

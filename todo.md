@@ -2,14 +2,14 @@
 ## jaimini
 
 #
-fix Planets.jaimini_karakas() to always print them as they are in the rashi, not
-according to a certain varga
-
-#
 vargas
 
 fix parivritti deities
 d9 works but the others dont match up with kala
+
+check d-45 deities
+
+add iast/deva versions of varga deities
 
 #
 jaimini first strength

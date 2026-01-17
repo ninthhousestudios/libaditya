@@ -85,10 +85,24 @@ class Varga(Jaimini,API):
                 return "Drekkana"
             case -4:
                 return "Chaturthamsha"
+            case -10:
+                return "Dashamsha"
+            case -12:
+                return "Dvadashamsha"
+            case -16:
+                return "Shodashamsha"
+            case -20:
+                return "Vimshamsha"
             case -24:
                 return "Parashara Chaturvimshamsha"
             case -240:
                 return "Siddhamsha (d24s)"
+            case -27:
+                return "Bhamsha"
+            case -40:
+                return "Khavedamsha"
+            case -45:
+                return "Akshavedamsha"
             case _ if self.amsha() > 5:
                 return "parivritti"
 
