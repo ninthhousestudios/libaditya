@@ -84,6 +84,13 @@ class JulianDay:
     def __ge__(self, jd2):
         return self.jd >= jd2.jd
 
+    def T(self):
+        """
+        T = (Julian Day - 2451545) / 36525
+        for use in chesta bala calculations
+        """
+        return (self.jd_number() - 2451545) / 36525
+
     def indent_print(self, n=1):
         """
         print like with __str__, but indenting each line n times

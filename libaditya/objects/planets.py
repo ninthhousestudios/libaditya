@@ -641,6 +641,10 @@ class Sun(Planet):
         """
         return 10
 
+    def mean_longitude(self):
+        t = self.context.timeJD.T()
+        return 280.466449 + (36000.7698231)*t + (0.00030368)*(t**2) + (0.000000021)*(t**3)
+
     def chesta_bala(self):
         """
         sun has 60 points of chesta bala at the northern solstice, i.e., 90 degrees longitude
@@ -745,8 +749,15 @@ class Moon(Planet):
         """
         from libaditya.calc import Panchanga
         panch = Panchanga(self.context)
-        next_full_moon = panch.next_full_moon().moon()
-        return self.virupas_between(next_full_moon)
+        if self.nature() == "Benefic":
+            # Moon is heading towards full which is where is has 60
+            next_full_moon = panch.next_full_moon().moon()
+            return self.virupas_between(next_full_moon)
+        else:
+            # Moon is malefic, heading towards new
+            # so the place is has 60 points is opposite where the new moon is
+            next_new_moon = panch.next_new_moon()
+            return self.virupas_between((next_new_moon.moon().ecliptic_longitude()+180)%360)
 
 
 class Mars(Planet):
@@ -866,6 +877,16 @@ class Mars(Planet):
 
     def dig_bala_cusp(self):
         return 10
+
+    def chesta_bala(self):
+        t = self.context.timeJD.T()
+        mean = 355.433275 + (19141.6964746)*t + (0.00031097)*(t**2) + (0.000000015)*(t**3)
+        average = (self.ecliptic_longitude()+mean)/2
+        apogee = Sun(self.context).mean_longitude()
+        reduce = abs(apogee - average)
+        if reduce > 180:
+            reduce = (360 - reduce)%360
+        return reduce/3
 
 class Mercury(Planet):
 
