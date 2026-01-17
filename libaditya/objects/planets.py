@@ -1676,7 +1676,11 @@ class Planets:
         """
         -> [Self]
         return a list of Planet classes where the first element is the ak, the second the amk, etc.
+
+        fixed so that it will calculate these always based on their positions in the rashi chart
         """
+#        if self._amsha != 1:
+#            import pdb; pdb.set_trace()
         # we need to sort according to real in sign longitude
         longs = {}
         for karaka in self.karakas().values():
@@ -1689,11 +1693,12 @@ class Planets:
         # for long in sorted(longs.values())
         # sorted from least in sign longitude to to most
         # sorted returns a list of Planet classes
-        karakas_reverse = sorted(longs.items())
+        karakas_reverse = {k: v for k, v in sorted(longs.items(), key=lambda item: item[1])}
+        #karakas_reverse = sorted(longs.items())
         # karakas_reverse is a list of tuples (Planet,in_sign_longitude)
-        ret = [karaka[0] for karaka in karakas_reverse]
+        #ret = [karaka[0] for karaka in karakas_reverse]
         # sorted() gives from least to most, but karakas are from most to least
-        return list(ret.__reversed__())
+        return list(karakas_reverse.__reversed__())
 
     def is_moon_benefic(self):
         return self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180

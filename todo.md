@@ -2,6 +2,10 @@
 ## jaimini
 
 #
+fix Planets.jaimini_karakas() to always print them as they are in the rashi, not
+according to a certain varga
+
+#
 vargas
 
 fix parivritti deities
