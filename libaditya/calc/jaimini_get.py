@@ -31,28 +31,40 @@ class JaiminiGet:
         get a dictionary of the spiritual planets
 
         varga -240 is siddhamsha, where even signs start with cancer and go in reverse order
+
+        returns a dictionary that can be converted to toml
         """
-        vargas = [1,9,d24]
+        vargas = ["1","9",f"{d24}"]
         ret = {
             "description": "12 from AK; 1,9,24",
-            "aspects": self.context.rashi_aspects,
-            vargas[0]: [],
-            vargas[1]: [],
-            vargas[2]: []
+            "aspect_type": self.context.rashi_aspects,
+            vargas[0]: {
+                "conjunction": [],
+                "aspecting": []
+            },
+            vargas[1]: {
+                "conjunction": [],
+                "aspecting": []
+            },
+            vargas[2]: {
+                "conjunction": [],
+                "aspecting": []
+            }
         }
         # for judging personal deity, want 12th from svamsha in d9, d24s, d1
         # get 12th from svamsha in d9,d24,d1
         ak = self.planets().jaimini_karakas()[0]
 
         for amsha in vargas:
-            varga = self.master.varga(amsha)
+            varga = self.master.varga(int(amsha))
             aksign = varga.where_is(ak.identity())
             sign = 1 if aksign.sign()%2 == 1 else -1
             twelfth_from_ak = varga.signs()[aksign.astrological_signs_forward(12*sign)]
             aspecting = varga.rashi_aspects_given_to(twelfth_from_ak)
             aspecting = [this_one.grahas() for this_one in aspecting]
-            ret[amsha].append(twelfth_from_ak.grahas())
-            ret[amsha].append(aspecting)
+            ret[amsha]["conjunction"].append([p.jaimini_info() for p in twelfth_from_ak.grahas()])
+            for sign in aspecting:
+                ret[amsha]["aspecting"].append([p.jaimini_info() for p in sign])
 
         return ret
 

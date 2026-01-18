@@ -423,6 +423,12 @@ class Planet(Longitude):
 #            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
         return ret
 
+    def jaimini_info(self):
+        """
+        return a string of planetary information that can be stored in a dictionary that can be convereted to toml
+        """
+        return f"{self.planet_name} ({self.dignity()})"
+
     def __str__(self):
         ayanamsa = ""
         if self.system == swe.FLG_SIDEREAL:

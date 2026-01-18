@@ -18,3 +18,4 @@ dist
 tests.py
 bak.pyproject.toml
 build/
+libaditya/test/
