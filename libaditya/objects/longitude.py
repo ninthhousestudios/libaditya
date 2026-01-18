@@ -299,7 +299,7 @@ class Longitude:
         if amsha == 1:
             return self.ecliptic_longitude()
         if amsha > 0:
-            return self.parvritti_varga(amsha)
+            return self.parivritti_varga(amsha)
         match amsha:
             case -2:
                 return self.hora() 
@@ -351,33 +351,25 @@ class Longitude:
         60: ["Ghora", "Rakshasa", "Deva", "Kubera", "Yaksha", "Kimnara", "Bhrashta", "Kulaghna", "Garala", "Vahni", "Maya", "Purishaka", "Apampathi", "Marut", "Kala", "Sarpa", "Amrita", "Indu", "Mridu", "Komala", "Heramba", "Brahma", "Vishnu", "Maheshwara", "Deva", "Ardra", "Kalinasha", "Kshitisha", "Kamalakara", "Gulika", "Mrityu", "Kala", "Davagni", "Ghora", "Yama", "Kantaka", "Sudha", "Amrita", "Purnachandra", "Vishadaghda", "Kulanasa", "Vamsakshaya", "Utpata", "Kala", "Saumya", "Komala", "Sitala", "Karaladamshtra", "Chandramukhi", "Pravina", "Kala Pavaka", "Dandayudha", "Nirmala", "Saumya", "Krura", "Atisitala", "Amrita", "Payodhi", "Bhramana", "Chandra Rekha"]
     }
 
-    def parvritti_varga(self, amsha):
+    def parivritti_varga(self, this_amsha):
         """
         return the "real" longitude for self.ecliptic_longitude() in
         varga number "division"
         number 2-60 all refer to parvritti vargas
-
-        this algorithm was adapted from pyjhora
         """
-#        # just to make sure we are working with the rashi longitude
-#        real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign
-#        real_in_sign = self.real_in_sign_longitude()
-#        one_amsha = 30/amsha
-#        position = real_in_sign/one_amsha
-#        amsha_elapsed = int(position)
-#        current_in_amsha = position%1
-#        if amsha in self.varga_deities.keys():
-#            self._deity = self.varga_deities[amsha][amsha_elapsed%len(self.varga_deities[amsha])]
-#        return (amsha_elapsed*30)+(current_in_amsha*30)
+        # just to make sure we are working with the rashi longitude
+        real_sign = self.ecliptic_sign_index()+1 # +1 to transform index into sign
+        real_longitude = self.ecliptic_longitude()+self.aditya_offset
 
-        # self.aditya_offset is to take care of aditya/zodiac cirlce
-        one_amsha = (360.0 / (12 * amsha))  # There are also 108 navamsas
-        one_sign = 12.0 * one_amsha    # = 40 degrees exactly
-        signs_elapsed = (self.ecliptic_longitude()+self.aditya_offset) / one_sign
-        left = signs_elapsed % 1
-        sign = int(left * 12)
-        in_sign_long = (((self.ecliptic_longitude()+self.aditya_offset)/one_amsha)%1)*30
-        return ((sign*30) + (in_sign_long)) - self.aditya_offset
+        amsha = 30/this_amsha
+        # position = which amsha
+        position = real_longitude/amsha
+        amsha_elapsed = int(position)
+        current_in_amsha = position%1
+
+        base_longitude = 0-self.aditya_offset
+
+        return base_longitude + (amsha_elapsed*30) + (current_in_amsha*30)
 
     def hora(self):
         """
