@@ -1,3 +1,5 @@
+#
+fix cardinal_points and print_cardinal_points
 
 ## jaimini
 

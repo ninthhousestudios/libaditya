@@ -362,9 +362,12 @@ class Longitude:
         real_longitude = self.ecliptic_longitude()+self.aditya_offset
 
         amsha = 30/this_amsha
-        # position = which amsha
+        # position = which amsha this is in
         position = real_longitude/amsha
         amsha_elapsed = int(position)
+        # which amsha out of all the amshas
+        # i.e., in 2, there are 24 portions, in 9, 108
+        self._which_amsha = amsha_elapsed+1
         current_in_amsha = position%1
 
         base_longitude = 0-self.aditya_offset

@@ -568,7 +568,7 @@ class Sun(Planet):
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",1)))
+            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",30)))
         # difference between current longitude and desired longitude
         diff = self.degrees_apart(next_long)
         shift_factor = diff*self.lowest_daily_speed()
