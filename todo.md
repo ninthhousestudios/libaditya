@@ -1,16 +1,14 @@
-#
-fix cardinal_points and print_cardinal_points
 
 ## jaimini
 
 #
 vargas
 
-fix parivritti deities
-d9 works but the others dont match up with kala
-
+for varga deities
+check 40
+check -45/45
+check 60
 check d-45 deities
-
 add iast/deva versions of varga deities
 
 #

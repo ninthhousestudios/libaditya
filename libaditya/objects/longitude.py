@@ -174,7 +174,7 @@ class Longitude:
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        if self.amsha() < 0 or self.amsha() in [2,3,4,9]:
+        if self.amsha() < 0 or self.amsha() in [2,3,4,7,9,10,12,16,20,24,27,30,40,60]:
             # if we have deities for this amsha, use them, otherwise, planetary lords
             # varga lord is set in Longitude.varga() when it finds the longitude
             return self._deity
@@ -311,6 +311,8 @@ class Longitude:
                 return self.chaturthamsha()
             case -10:
                 return self.dashamsha()
+            case -100:
+                return self.dashamsha(even_reversed=True)
             case -12:
                 return self.dvadashamsha()
             case -16:
@@ -335,13 +337,14 @@ class Longitude:
     varga_deities={
         2: ["Sun", "Moon"],
         3: ["Narada", "Agastya", "Durvasas"],
+        4: ["Sanaka", "Sananda", "Sanatkumāra", "Sanātana"],
         7: ["Kshara", "Kshira", "Dadhya", "Ajya", "Ikshurasa", "Madhya", "Shuddha Jala"],
         9: ["Deva","Nri","Rakshasa"],
         10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
         12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
         16: ["Brahma", "Vishnu", "Shiva", "Sun"],
         20: ["Daya", "Megha", "Chinnashirsha", "Pishachani", "Dhumavati", "Matangi", "Bala", "Bhadra", "Aruna", "Anala", "Pingala", "Chucchuka", "Ghora", "Varahi", "Vaishnavi", "Sita", "Bhuvanesvari", "Bhairavi", "Mangala", "Aparajita"],
-        # 21 is for odd signs in the -20
+        # 21 is for odd signs in the -20/20
         21: ["Kali", "Gauri", "Jaya", "Lakshmi", "Vijaya", "Vimala", "Sati", "Tara", "Jvalamukhi", "Shveta", "Lalita", "Bagalamukhi", "Pratyangira", "Sachi", "Raudri", "Bhavani", "Varada", "Jaya", "Tripura", "Sumukhi"],
         24: ["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"],
         27: ["Dastra", "Yama", "Agni", "Pitamaha", "Chandra", "Isha", "Aditi", "Jiva", "Ahi", "Pitara", "Bhaga", "Aryama", "Arka", "Tvashta", "Marut", "Shakragni", "Mitra", "Vasava", "Nirriti", "Varuna", "Vishvadeva", "Govinda", "Vasu", "Varuna", "Ajapa", "Ahirbudhanya", "Pusha"],
@@ -383,6 +386,7 @@ class Longitude:
         """
         set self._deity for parivritti vargas that have deities, i.e., the 15 vargas of the 16 vargas
         """
+        which_amsha = self._which_portion-1
         if this_amsha == 2:
             if odd(real_sign):
                 if odd(self._which_portion):
@@ -395,16 +399,75 @@ class Longitude:
                 if even(self._which_portion):
                     self._deity = "Sun"
         if this_amsha == 3:
-            self._deity = self.varga_deities[3][self._which_portion%3]
+            self._deity = self.varga_deities[3][which_amsha%3]
         if this_amsha == 4:
-            self._deity = self.varga_deities[4][self._which_portion%4]
+            self._deity = self.varga_deities[4][which_amsha%4]
         if this_amsha == 7:
             if odd(real_sign):
-                self._deity = self.varga_deities[7][self._which_portion%7]
+                self._deity = self.varga_deities[7][which_amsha%7]
             if even(real_sign):
-                self._deity = list(self.varga_deities[7].__reversed__())[self._which_portion%7]
+                self._deity = list(self.varga_deities[7].__reversed__())[which_amsha%7]
         if this_amsha == 9:
-            self._deity = self.varga_deities[9][self._which_portion%9]
+            self._deity = self.varga_deities[9][which_amsha%3]
+        if this_amsha == 10:
+            if odd(real_sign):
+                self._deity = self.varga_deities[10][which_amsha%10]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[10].__reversed__())[which_amsha%10]
+        if this_amsha == 12:
+            self._deity = self.varga_deities[12][which_amsha%4]
+        if this_amsha == 16:
+            if odd(real_sign):
+                self._deity = self.varga_deities[16][which_amsha%4]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[16].__reversed__())[which_amsha%4]
+        if this_amsha == 20:
+            # odd and even signs have different deities completely; 21 is for the odd signs, 20 for the even
+            if odd(real_sign):
+                self._deity = self.varga_deities[21][which_amsha%20]
+            if even(real_sign):
+                self._deity = self.varga_deities[20][which_amsha%20]
+        if this_amsha == 24:
+            if odd(real_sign):
+                self._deity = self.varga_deities[24][which_amsha%12]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[24].__reversed__())[which_amsha%12]
+        if this_amsha == 27:
+            if odd(real_sign):
+                self._deity = self.varga_deities[27][which_amsha%27]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[27].__reversed__())[which_amsha%27]
+        if this_amsha == 30:
+            real_in_sign = self.real_in_sign_longitude()
+            if odd(real_sign):
+                if real_in_sign >= 0 and real_in_sign < 5:
+                    self._deity = "Vahni/Mars"
+                if real_in_sign >= 5 and real_in_sign < 10:
+                    self._deity = "Samira/Saturn"
+                if real_in_sign >= 10 and real_in_sign < 18:
+                    self._deity = "Shakra/Jupiter"
+                if real_in_sign >= 18 and real_in_sign < 25:
+                    self._deity = "Dhanada/Mercury"
+                if real_in_sign >= 25 and real_in_sign < 30:
+                    self._deity = "Jalada/Venus"
+            if even(real_sign):
+                if real_in_sign >= 0 and real_in_sign < 5:
+                    self._deity = "Jalada/Venus"
+                if real_in_sign >= 5 and real_in_sign < 12:
+                    self._deity = "Dhanada/Mercury"
+                if real_in_sign >= 12 and real_in_sign < 20:
+                    self._deity = "Shakra/Jupiter"
+                if real_in_sign >= 20 and real_in_sign < 25:
+                    self._deity = "Samira/Saturn"
+                if real_in_sign >= 25 and real_in_sign < 30:
+                    self._deity = "Vahni/Mars"
+        if this_amsha == 40:
+            self._deity = self.varga_deities[40][which_amsha%12]
+        if this_amsha == 60:
+            if odd(real_sign):
+                self._deity = self.varga_deities[60][which_amsha%60]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[60].__reversed__())[which_amsha%60]
                 
 
 
@@ -520,11 +583,14 @@ class Longitude:
             return square_square_square_longitude + ((real_in_sign-3*fourth)/fourth)*30
 
 
-    def dashamsha(self):
+    def dashamsha(self, even_reversed=False):
         """
         -10
         odd signs start with themselves
         even signs start with the ninth from themselves
+
+        for -100
+        even signs start with the ninth from themselves but go in reverse
 
         odd signs ruled over by the 10 deities in order
         even signs ruled over by the 10 deities in reverse order
@@ -549,11 +615,15 @@ class Longitude:
         if odd(real_sign):
             self._deity = self.varga_deities[10][amsha_elapsed%12]
         
+        sign = 1
         if odd(real_sign):
             base_longitude = base_longitude_odd
         if even(real_sign):
             base_longitude = base_longitude_even
-        return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
+            if even_reversed:
+                sign = -1
+
+        return base_longitude+(sign*amsha_elapsed*30)+(current_in_amsha)*30
 
     def dvadashamsha(self):
         """
@@ -681,14 +751,13 @@ class Longitude:
         if even(real_sign):
             self._deity = list(self.varga_deities[24].__reversed__())[amsha_elapsed%12]
 
+        sign = 1
         if odd(real_sign):
             base_longitude = base_longitude_odd
             return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
         if even(real_sign):
             base_longitude = base_longitude_even
-            if parashara:
-                sign = 1
-            else:
+            if not parashara:
                 sign = -1
             return base_longitude+(sign*amsha_elapsed*30)+(current_in_amsha)*30
 
