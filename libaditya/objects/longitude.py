@@ -49,7 +49,9 @@ class Longitude:
         self.jd = self.context.timeJD.jd_number()
         # _longitude the ecliptic longitude of this longitude; i.e., in the rashi varga
         self._longitude = longitude
+        # below is the index of the sign in a 0-indexed list; add 1 to get the sign number
         self._ecliptic_index = int((self.ecliptic_longitude() % 360) / 30)
+        self._deity = "none"
         self._amsha_longitude = self.varga(amsha)%360
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
         self.rahu = self.get_rahu()
@@ -172,7 +174,7 @@ class Longitude:
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        if self.amsha() < 0:
+        if self.amsha() < 0 or self.amsha() in [2,3,4,9]:
             # if we have deities for this amsha, use them, otherwise, planetary lords
             # varga lord is set in Longitude.varga() when it finds the longitude
             return self._deity
@@ -332,6 +334,7 @@ class Longitude:
 
     varga_deities={
         2: ["Sun", "Moon"],
+        3: ["Narada", "Agastya", "Durvasas"],
         7: ["Kshara", "Kshira", "Dadhya", "Ajya", "Ikshurasa", "Madhya", "Shuddha Jala"],
         9: ["Deva","Nri","Rakshasa"],
         10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
@@ -367,12 +370,43 @@ class Longitude:
         amsha_elapsed = int(position)
         # which amsha out of all the amshas
         # i.e., in 2, there are 24 portions, in 9, 108
-        self._which_amsha = amsha_elapsed+1
+        self._which_portion = amsha_elapsed+1
         current_in_amsha = position%1
 
         base_longitude = 0-self.aditya_offset
 
+        self.set_parivritti_deities(this_amsha,real_sign)
+
         return base_longitude + (amsha_elapsed*30) + (current_in_amsha*30)
+
+    def set_parivritti_deities(self, this_amsha, real_sign):
+        """
+        set self._deity for parivritti vargas that have deities, i.e., the 15 vargas of the 16 vargas
+        """
+        if this_amsha == 2:
+            if odd(real_sign):
+                if odd(self._which_portion):
+                    self._deity = "Sun"
+                if even(self._which_portion):
+                    self._deity = "Moon"
+            if even(real_sign):
+                if odd(self._which_portion):
+                    self._deity = "Moon"
+                if even(self._which_portion):
+                    self._deity = "Sun"
+        if this_amsha == 3:
+            self._deity = self.varga_deities[3][self._which_portion%3]
+        if this_amsha == 4:
+            self._deity = self.varga_deities[4][self._which_portion%4]
+        if this_amsha == 7:
+            if odd(real_sign):
+                self._deity = self.varga_deities[7][self._which_portion%7]
+            if even(real_sign):
+                self._deity = list(self.varga_deities[7].__reversed__())[self._which_portion%7]
+        if this_amsha == 9:
+            self._deity = self.varga_deities[9][self._which_portion%9]
+                
+
 
     def hora(self):
         """
