@@ -69,10 +69,6 @@ class Varga(Jaimini,API):
                 return "Rashi"
             case 2:
                 return "Hora Parivritti"
-            case 30:
-                return "Trimshamsha (Parivritti)"
-            case -2:
-                return "Hora"
             case 3:
                 return "Drekkana Parivritti"
             case 4:
@@ -81,6 +77,8 @@ class Varga(Jaimini,API):
                 return "Panchamsha"
             case 9:
                 return "Navamsha"
+            case 30:
+                return "Trimshamsha (Parivritti)"
             case -2:
                 return "Hora"
             case -3:
@@ -89,6 +87,8 @@ class Varga(Jaimini,API):
                 return "Chaturthamsha"
             case -10:
                 return "Dashamsha"
+            case -100:
+                return "Dashamsha - Even Signs Reverse"
             case -12:
                 return "Dvadashamsha"
             case -16:

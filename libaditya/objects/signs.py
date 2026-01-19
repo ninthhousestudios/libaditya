@@ -190,6 +190,9 @@ class Sign:
             if obj.identity() == "Sun" and self.context.sysflg == const.HELIO:
                 # dont print sun with heliocentric coordinates
                 continue
+            if (obj.identity() == "Rahu" or obj.identity() == "Ketu") and (self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY):
+                # dont print Rahu or Ketu for helio/barycentric
+                continue
             ret += f"{obj.name()} "
             if self.context.signize:
                 ret += f"{obj.longitude().split(" ")[0]}\n" # remove the sign name here since we are printing in a south indian chart

@@ -92,10 +92,6 @@ chart.jaimini().svamsha().aspects_to()
 something way off with draconic coordinates. i wish it worked. try later
 restructure entire way of doing draconic
 
-# 
-
--Hc and -Bc dont work currently
-
 #
 do lowest_daily_speed for other planets
 

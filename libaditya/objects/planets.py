@@ -175,6 +175,8 @@ class Planet(Longitude):
                 return 11
             case swe.CHIRON:
                 return 12
+            case swe.EARTH:
+                return 13
 
     def system_name(self) -> str:
         return self.sysflgstr
@@ -1605,8 +1607,8 @@ class Planets:
 
         # dignity
         digs = self._dignities()
-        # for the outer planets and miscellaneous_planets
-        digs+=["NA","NA","NA","NA","NA","NA"]
+        # for the outer planets and miscellaneous_planets, including Earth for helio/bary
+        digs+=["NA","NA","NA","NA","NA","NA","NA"]
         for planet in self:
             if isinstance(planet,Rahu) or isinstance(planet,Ketu):
                 # these two will show the dignity of their lords in the complete list
