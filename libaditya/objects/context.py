@@ -38,38 +38,33 @@ class HDContext:
 @dataclass
 class EphContext:
     """
-    timeJD: the JulianDay for this situation
-    location: the Location for this situation
-    sysflg: const.TROP = const.ECL; const.SID; const.HELIO; const.BARY; const.EQU; const.DRAC; const.TOPO
-    ayanamsa: any swisseph ayanamsa, plug 98 for dhruva gc midmula equatorial, 99 ecliptic vedanga jyotisha, 100 equatorial vedanga jyotisha
-    hsys: any swisseph letter for a house system; treats the cusps of the system as independent points
-    circle:  Circle.ADITYA or Circle.ZODIAC or Circle.SIDEREAL_ADITYA, which will print as Circle.ZODIAC since it is equivalent, but
-    with sidereal coordinates. Aditya sequence is as which Ernsts system. If you passed for names Names(sign_names=sidereal_adityas) with sidereal_adityas
-    being a [str], list of strings of the names in the proper order starting from sign 1, then it might print correctly, if you want to experiement
-    with a difference Aditya order
-    signize:  True or False, print in_sign_longitude or ecliptic longitude
-    toround: (True/False,n), round output to n digits
-    print_nakshatras: True or False
-    print_outer_planets: True or False
-    rashi_temporary_friendships: bool; calculate temporary friendships for dignity in Rashi, True, or not
-    names: Names()
+    this is the base configuration device
+    this includes chart information, calculation options and display options
     """
+    # basic chart information
     timeJD: JulianDay = JulianDay()
     location: Location = Location()
+
+    # calculation options
     sysflg: int = const.ECL
+    amsha: int = 1 # amsha is the varga; default is 1
     ayanamsa: int = 98
     hsys: str = "C"
     circle: Circle = Circle.ADITYA
+    rashi_temporary_friendships: bool = True # other option is "Varga"
+    rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
+
+    # display options
+    names_type: str = "mixed" # mixed, eng, iast, deva; possible to create your own
+    sign_names: str = "adityas" # other option is zodiac
     signize: bool = True
     toround: (bool, int) = (True, 3)
     print_nakshatras: bool = True
     print_outer_planets: bool = True
-    rashi_temporary_friendships: bool = True # other option is "Varga"
-    rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
-    amsha: int = 1 # amsha is the varga; default is 1
-    names_type: str = "mixed" # mixed, eng, iast, deva; possible to create your own
-    sign_names: str = "adityas" # other option is zodiac
-    hdcontext: HDContext = HDContext()
+
+    # hd options
+    hd_gate_one: float = hdc.gate_one
+    hd_print_hexagrams: bool = False
 
 
 # originally i passed the names around to every function and every object

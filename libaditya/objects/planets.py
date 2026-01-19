@@ -39,17 +39,17 @@ class Planet(Longitude):
 
     def __init__(self, pnumber, context=EphContext(),master=None):
         self.timeJD = context.timeJD
-        self._context = context
-        self._amsha = self._context.amsha
+        self.context = context
+        self._amsha = self.context.amsha
         self.master = master
         self.pnumber = pnumber
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]
-        self.planet_name = const.names[self._context.names_type]["planets"][self.pnumber]
+        self.planet_name = const.names[self.context.names_type]["planets"][self.pnumber]
         self.jd = self.timeJD.jd
-        self._ayanamsa = self._context.ayanamsa
-        self.system = self._context.sysflg
+        self._ayanamsa = self.context.ayanamsa
+        self.system = self.context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
@@ -62,10 +62,10 @@ class Planet(Longitude):
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
-        super().__init__(self.long,self._amsha,self._context)
+        super().__init__(self.long,self._amsha,self.context)
         if self._amsha != 1:
             self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
-        self._hd = HDLongitude(self.ecliptic_longitude(),context=self._context.hdcontext)
+        self._hd = HDLongitude(self.ecliptic_longitude(),context=self.context)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
@@ -97,7 +97,7 @@ class Planet(Longitude):
         )
 
     def init_coords(self):
-        loc = self._context.location.swe_location()
+        loc = self.context.location.swe_location()
         if self.system == const.SID:
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
@@ -189,8 +189,8 @@ class Planet(Longitude):
         return self.identity()
 
     def latitude(self) -> float:
-        if self._context.toround[0]:
-            return round(self.lat, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(self.lat, self.context.toround[1])
         else:
             return self.lat
 
@@ -199,14 +199,14 @@ class Planet(Longitude):
         add declination so that is is always retrivable
         """
         declination = swe.calc_ut(self.timeJD.jd_number(),self.pnumber,swe.FLG_EQUATORIAL)[0][1]
-        if self._context.toround[0]:
-            return round(declination, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(declination, self.context.toround[1])
         else:
             return declination
 
     def distance(self):
-        if self._context.toround[0]:
-            return round(self.dist, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(self.dist, self.context.toround[1])
         else:
             return self.dist
 
@@ -214,20 +214,20 @@ class Planet(Longitude):
         return self.longitude_speed()
 
     def longitude_speed(self):
-        if self._context.toround[0]:
-            return round(self.long_speed, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(self.long_speed, self.context.toround[1])
         else:
             return self.long_speed
 
     def latitude_speed(self):
-        if self._context.toround[0]:
-            return round(self.lat_speed, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(self.lat_speed, self.context.toround[1])
         else:
             return self.lat_speed
 
     def distance_speed(self):
-        if self._context.toround[0]:
-            return round(self.dist_speed, self._context.toround[1])
+        if self.context.toround[0]:
+            return round(self.dist_speed, self.context.toround[1])
         else:
             return self.dist_speed
 
@@ -279,9 +279,6 @@ class Planet(Longitude):
 
     def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
-
-    def context(self):
-        return self._context
 
     def ingress(self, next_long) -> Self:
         """
@@ -507,6 +504,24 @@ class Planet(Longitude):
             from_upper_nica = calc_length-from_lower_ucca
             return (from_upper_nica/calc_length)*60
 
+    def mean_longitude(self):
+        t = self.context.timeJD.T()
+        return const.mean_longitude_formulas[self.identity()](t)
+
+    def cheshta_bala(self):
+        t = self.context.timeJD.T()
+        sun_mean_longitude = Sun(self.context).mean_longitude()
+        mean = const.mean_longitude_formulas[self.identity()](t)
+        average = (self.ecliptic_longitude()+mean)/2
+        if self.identity() == "Mercury" or self.identity() == "Venus":
+            apogee = mean
+            mean = sun_mean_longitude
+        else:
+            apogee = sun_mean_longitude
+        reduce = abs(apogee - average)
+        if reduce > 180:
+            reduce = (360 - reduce)%360
+        return reduce/3
 
 
 class Sun(Planet):
@@ -647,13 +662,10 @@ class Sun(Planet):
         """
         return 10
 
-    def mean_longitude(self):
-        t = self.context.timeJD.T()
-        return 280.466449 + (36000.7698231)*t + (0.00030368)*(t**2) + (0.000000021)*(t**3)
 
-    def chesta_bala(self):
+    def cheshta_bala(self):
         """
-        sun has 60 points of chesta bala at the northern solstice, i.e., 90 degrees longitude
+        sun has 60 points of cheshta bala at the northern solstice, i.e., 90 degrees longitude
         """
         return self.virupas_between(90)
 
@@ -746,9 +758,9 @@ class Moon(Planet):
     def dig_bala_cusp(self):
         return 4
 
-    def chesta_bala(self):
+    def cheshta_bala(self):
         """
-        moon has 60 points of chesta bala at the full moon
+        moon has 60 points of cheshta bala at the full moon
 
         this is not quite right, because it has 60 has full moon and 0 at new moon
         but new full moon is not opposite full moon, so we can get use this algorithm
@@ -884,15 +896,6 @@ class Mars(Planet):
     def dig_bala_cusp(self):
         return 10
 
-    def chesta_bala(self):
-        t = self.context.timeJD.T()
-        mean = 355.433275 + (19141.6964746)*t + (0.00031097)*(t**2) + (0.000000015)*(t**3)
-        average = (self.ecliptic_longitude()+mean)/2
-        apogee = Sun(self.context).mean_longitude()
-        reduce = abs(apogee - average)
-        if reduce > 180:
-            reduce = (360 - reduce)%360
-        return reduce/3
 
 class Mercury(Planet):
 

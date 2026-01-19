@@ -143,6 +143,39 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,ayanamsa=ayanamsa,sysflg=const.SID,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
+    def heliocentric(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a heliocentric chart
+
+        sysflg=const.HELIO
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.HELIO,**kwargs))
+
+    def barycentric(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a barycentric chart
+
+        sysflg=const.BARY
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.BARY,**kwargs))
+
+    def draconic(self, **kwargs):
+        """
+        take the current EphContext and change what is needed to make it a draconic chart
+
+        sysflg=const.DRAC
+
+        **kwargs can take any keyword argument that can be used for EphContext
+        so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
+        """
+        return Chart(context=replace(self.context,sysflg=const.DRAC,**kwargs))
+
     def shift(self, dir, unit, number):
         """
         calls self.JulianDay effectively and return a Chart with shifted JulianDay

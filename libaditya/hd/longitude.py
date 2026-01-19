@@ -41,7 +41,7 @@ class YiLongitude:
     # it should be 223+1/4 (13:15 of tropical Scorpio; that point on the ecliptic)
     gate_one = hdc.gate_one
 
-    def __init__(self, longitude):
+    def __init__(self, longitude, gate_one=hdc.gate_one):
         self._longitude = longitude
         # declaring variables that are initialized in self.init_gate()
         self._distance = 0
@@ -94,7 +94,7 @@ class HDLongitude(YiLongitude):
 
     def __init__(self, longitude, context):
         self.context = context
-        super().__init__(longitude)
+        super().__init__(longitude,self.context.hd_gate_one)
 
     def longitude(self):
         return self._longitude
@@ -109,7 +109,7 @@ class HDLongitude(YiLongitude):
         return float(self.hexagram() + "." + str(self.line()))
 
     def hexagram(self) -> str:
-        return hdc.gates[self._hexagram][self.context.print_hexagrams]
+        return hdc.gates[self._hexagram][self.context.hd_print_hexagrams]
 
     def gate_number(self) -> int:
         return self._hexagram
