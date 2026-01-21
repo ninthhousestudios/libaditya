@@ -20,6 +20,7 @@ from prettytable import PrettyTable
 from typing import Self
 
 from libaditya import constants as const
+from libaditya import utils
 
 from .planets import *
 from .cusps import Cusp, Cusps
@@ -65,6 +66,12 @@ class Sign:
 
     def lord(self) -> str:
         return const.lords[self.sign()]
+
+    def gender(self):
+        if utils.odd(self.sign()):
+            return "M"
+        if utils.even(self.sign()):
+            return "F"
 
     def karakas(self) -> [Planet]:
         """

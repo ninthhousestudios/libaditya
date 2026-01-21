@@ -23,11 +23,6 @@ from libaditya import utils
 
 from .context import EphContext, Circle
 
-def even(n):
-    return n%2 == 0 
-
-def odd(n):
-    return n%2 == 1 
 
 class Longitude:
     """
@@ -388,58 +383,58 @@ class Longitude:
         """
         which_amsha = self._which_portion-1
         if this_amsha == 2:
-            if odd(real_sign):
-                if odd(self._which_portion):
+            if utils.odd(real_sign):
+                if utils.odd(self._which_portion):
                     self._deity = "Sun"
-                if even(self._which_portion):
+                if utils.even(self._which_portion):
                     self._deity = "Moon"
-            if even(real_sign):
-                if odd(self._which_portion):
+            if utils.even(real_sign):
+                if utils.odd(self._which_portion):
                     self._deity = "Moon"
-                if even(self._which_portion):
+                if utils.even(self._which_portion):
                     self._deity = "Sun"
         if this_amsha == 3:
             self._deity = self.varga_deities[3][which_amsha%3]
         if this_amsha == 4:
             self._deity = self.varga_deities[4][which_amsha%4]
         if this_amsha == 7:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[7][which_amsha%7]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[7].__reversed__())[which_amsha%7]
         if this_amsha == 9:
             self._deity = self.varga_deities[9][which_amsha%3]
         if this_amsha == 10:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[10][which_amsha%10]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[10].__reversed__())[which_amsha%10]
         if this_amsha == 12:
             self._deity = self.varga_deities[12][which_amsha%4]
         if this_amsha == 16:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[16][which_amsha%4]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[16].__reversed__())[which_amsha%4]
         if this_amsha == 20:
             # odd and even signs have different deities completely; 21 is for the odd signs, 20 for the even
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[21][which_amsha%20]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = self.varga_deities[20][which_amsha%20]
         if this_amsha == 24:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[24][which_amsha%12]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[24].__reversed__())[which_amsha%12]
         if this_amsha == 27:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[27][which_amsha%27]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[27].__reversed__())[which_amsha%27]
         if this_amsha == 30:
             real_in_sign = self.real_in_sign_longitude()
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 if real_in_sign >= 0 and real_in_sign < 5:
                     self._deity = "Vahni/Mars"
                 if real_in_sign >= 5 and real_in_sign < 10:
@@ -450,7 +445,7 @@ class Longitude:
                     self._deity = "Dhanada/Mercury"
                 if real_in_sign >= 25 and real_in_sign < 30:
                     self._deity = "Jalada/Venus"
-            if even(real_sign):
+            if utils.even(real_sign):
                 if real_in_sign >= 0 and real_in_sign < 5:
                     self._deity = "Jalada/Venus"
                 if real_in_sign >= 5 and real_in_sign < 12:
@@ -464,9 +459,9 @@ class Longitude:
         if this_amsha == 40:
             self._deity = self.varga_deities[40][which_amsha%12]
         if this_amsha == 60:
-            if odd(real_sign):
+            if utils.odd(real_sign):
                 self._deity = self.varga_deities[60][which_amsha%60]
-            if even(real_sign):
+            if utils.even(real_sign):
                 self._deity = list(self.varga_deities[60].__reversed__())[which_amsha%60]
                 
 
@@ -489,7 +484,7 @@ class Longitude:
         opposite_base_longitude = ((base_longitude+180)%360)
 
         # we need to 1) set the lord 2) return the amsha=-2 longitude
-        if odd(real_sign) and real_in_sign < 15:
+        if utils.odd(real_sign) and real_in_sign < 15:
             # first half of odd sign ->
             self._deity = "Sun"
             # stays in this sign
@@ -497,20 +492,20 @@ class Longitude:
             hora_elapsed = (real_in_sign/15)*30
             #            print(f"{self.ecliptic_longitude()=}\n{self.sign()=}\t{real_sign=}")
             return base_longitude+hora_elapsed
-        if odd(real_sign) and real_in_sign >= 15:
+        if utils.odd(real_sign) and real_in_sign >= 15:
             # second half of odd sign ->
             self._deity = "Moon"
             # goes to opposite sign
             hora_elapsed = ((real_in_sign-15)/15)*30
             return opposite_base_longitude+hora_elapsed
-        if even(real_sign) and real_in_sign < 15:
+        if utils.even(real_sign) and real_in_sign < 15:
             # first half of even sign ->
             self._deity = "Moon"
             # stays in this sign
             # minus makes the sign number into an index
             hora_elapsed = (real_in_sign/15)*30
             return base_longitude+hora_elapsed
-        if even(real_sign) and real_in_sign >= 15:
+        if utils.even(real_sign) and real_in_sign >= 15:
             # second half of odd sign ->
             self._deity = "Sun"
             # goes to opposite sign
@@ -610,15 +605,15 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        if even(real_sign):
+        if utils.even(real_sign):
             self._deity = list(self.varga_deities[10].__reversed__())[amsha_elapsed%12]
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[10][amsha_elapsed%12]
         
         sign = 1
-        if odd(real_sign):
+        if utils.odd(real_sign):
             base_longitude = base_longitude_odd
-        if even(real_sign):
+        if utils.even(real_sign):
             base_longitude = base_longitude_even
             if even_reversed:
                 sign = -1
@@ -678,7 +673,7 @@ class Longitude:
         if real_sign in [3,6,9,12]:
             base_longitude = base_longitude_dual
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[16][amsha_elapsed%4]
         else:
             self._deity = list(self.varga_deities[16].__reversed__())[amsha_elapsed%4]
@@ -717,7 +712,7 @@ class Longitude:
         if real_sign in [3,6,9,12]:
             base_longitude = base_longitude_dual
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[21][amsha_elapsed]
         else:
             self._deity = self.varga_deities[20][amsha_elapsed]
@@ -746,16 +741,16 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[24][amsha_elapsed%12]
-        if even(real_sign):
+        if utils.even(real_sign):
             self._deity = list(self.varga_deities[24].__reversed__())[amsha_elapsed%12]
 
         sign = 1
-        if odd(real_sign):
+        if utils.odd(real_sign):
             base_longitude = base_longitude_odd
             return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
-        if even(real_sign):
+        if utils.even(real_sign):
             base_longitude = base_longitude_even
             if not parashara:
                 sign = -1
@@ -808,9 +803,9 @@ class Longitude:
                 # water sign
                 base_longitude = base_longitude_water
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[27][amsha_elapsed]
-        if even(real_sign):
+        if utils.even(real_sign):
             self._deity = list(self.varga_deities[27].__reversed__())[amsha_elapsed]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
@@ -839,9 +834,9 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             base_longitude = base_longitude_odd
-        if even(real_sign):
+        if utils.even(real_sign):
             base_longitude = base_longitude_even
     
         self._deity = self.varga_deities[40][amsha_elapsed%12]
@@ -915,9 +910,9 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        if odd(real_sign):
+        if utils.odd(real_sign):
             self._deity = self.varga_deities[60][amsha_elapsed]
-        if even(real_sign):
+        if utils.even(real_sign):
             self._deity = list(self.varga_deities[60].__reversed__())[amsha_elapsed]
 
         return base_longitude+(current_in_amsha*30)

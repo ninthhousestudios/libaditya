@@ -136,7 +136,12 @@ class Planet(Longitude,PlanetBala):
 
     def combined_relationship(self):
         """
-        return the combined_relationship that has been set by Planets.
+        return the "combined_relationship"
+        this is not really a good name for this
+        at the moment this is only used for saptavargajabala, where, if a planet is EX or DB,
+        then you use the combined relationships as if they were not
+        but for MT and OH, you use MT and OH
+        which is why "combined_relationship" is not really a good name
         """
         return self.attributes["combined_relationship"]
 
@@ -257,6 +262,27 @@ class Planet(Longitude,PlanetBala):
             return " (R)"
         else:
             return ""
+
+    def gender(self):
+        match self.identity():
+            case "Sun":
+                return "M"
+            case "Moon":
+                return "F"
+            case "Mars":
+                return "M"
+            case "Mercury":
+                return "N"
+            case "Jupiter":
+                return "M"
+            case "Venus":
+                return "F"
+            case "Saturn":
+                return "N"
+            case "Rahu":
+                return "F"
+            case "Ketu":
+                return "N"
 
     def daily_motion(self):
         """

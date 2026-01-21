@@ -69,6 +69,11 @@ def intize_date(date):
 
     return (month, day, year)
 
+def even(n):
+    return n%2 == 0 
+
+def odd(n):
+    return n%2 == 1 
 
 def intize_time(time):
     """

@@ -121,12 +121,17 @@ class RashiBala:
     a Mixin for libaditya.calc.vargas.Rashi which has shadbala methods that work best at the Rashi level
     """
 
+    # DIG BALA
+
     def init_dig_balas(self):
         digbs = self.planets()._dig_balas(self.cusps())
         return digbs
 
     def dig_balas(self):
         return self._dig_balas
+
+    # STHANA BALA
+    # note: ucca_bala is calculated in Planet, since a Planet can know its own ucca bala
 
     def saptavargaja_balas(self):
         """
@@ -154,6 +159,28 @@ class RashiBala:
             for varga in sapta_vargas:
                 dignity = varga.planets()[planet.identity()].combined_relationship()
                 this_total += points[dignity]
+            totals.append(this_total)
+
+        return totals
+
+    def sama_visama_balas(self):
+        """
+        each planet gets points based on the gender of their signs in the rashi and navamsha
+        if they coincide, they get 15 points (for each varga); if not, 0
+        in this case, N is treated as M, basically
+        """
+        vargas = [self,self.master.varga(9)]
+
+        totals = []
+
+        #import pdb; pdb.set_trace()
+        for planet in self.planets().karakas().values():
+            this_total = 0
+            for varga in vargas:
+                planet_gender = planet.gender()
+                sign_gender = varga.signs().where_is(planet.identity()).gender()
+                if planet_gender == sign_gender or (planet_gender == "N" and sign_gender == "M"):
+                    this_total += 15
             totals.append(this_total)
 
         return totals
