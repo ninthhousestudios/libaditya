@@ -101,6 +101,15 @@ class PlanetBala:
             from_upper_nica = calc_length-from_lower_ucca
             return (from_upper_nica/calc_length)*60
 
+    def saptavargaja_bala(self):
+        return self.attributes["saptavargaja_bala"]
+
+    def sama_visama_bala(self):
+        return self.attributes["sama_visama_bala"]
+
+    def kendradi_bala(self):
+        return self.attributes["kendradi_bala"]
+
     def drekkana_bala(self):
         """
         this is based on the gender of a planet and which third of the sign it is in
@@ -122,6 +131,9 @@ class PlanetBala:
                 return 15
             case _:
                 return 0
+
+    def sthana_bala(self):
+        return self.ucca_bala() + self.saptavargaja_bala() + self.sama_visama_bala() + self.kendradi_bala() + self.drekkana_bala()
 
     def mean_longitude(self):
         t = self.context.timeJD.T()
@@ -252,5 +264,10 @@ class RashiBala:
             balas.append(planet.drekkana_bala())
         return balas
 
-    def init_sthana_balas(self):
-        pass
+    def sthana_balas(self):
+        balas = []
+
+        for planet in self.planets().karakas().values():
+            balas.append(planet.sthana_bala())
+
+        return balas

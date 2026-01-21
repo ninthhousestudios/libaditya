@@ -246,7 +246,6 @@ class Rashi(Varga,JaiminiGet,RashiBala):
         self._saptavargaja_balas = self.init_saptavargaja_balas()
         self._sama_visama_balas = self.init_sama_visama_balas()
         self._kendradi_balas = self.init_kendradi_balas()
-        self._sthana_balas = self.init_sthana_balas()
 
     def planets(self):
         return self._planets
