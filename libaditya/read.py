@@ -126,7 +126,7 @@ def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
     timeJD = JulianDay((year,month,day,timedec))
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
-    return EphContext(timeJD,location,sysflg,ayanamsa,hsys,circle,signize,toround,print_nakshatras,print_outer_planets,names_type="mixed",sign_names="adityas")
+    return EphContext(timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,names_type="mixed",sign_names="adityas")
 
 
 

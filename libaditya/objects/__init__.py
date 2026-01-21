@@ -12,6 +12,7 @@ from .context import Circle, EphContext
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 from .signs import *
+from .shadbala import RashiBala
 
 from libaditya import constants as const
 

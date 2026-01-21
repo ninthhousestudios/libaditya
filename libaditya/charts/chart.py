@@ -86,6 +86,14 @@ class Chart(API):
         """
         return Varga(self.context,amsha)
 
+    def saptavargas(self):
+        """
+        return a list of of the saptaVargas
+        i.e., 1, -2, -3, 7, 9, -12, 30
+        """
+        saptavargas = [1,-2,-3,7,9,-12,30]
+        return [Varga(self.context,amsha) for amsha in saptavargas]
+
     # jaimini and tajika
     # these inherit from Chart, then Chart calls them here, which is why there is a local import statement
     # the reason is that i like to have the syntax, e.g., chart.jaimini().pada()

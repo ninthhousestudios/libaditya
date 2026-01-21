@@ -29,9 +29,10 @@ from .context import EphContext
 from .longitude import Longitude
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
+from .shadbala import PlanetBala
 
 
-class Planet(Longitude):
+class Planet(Longitude,PlanetBala):
     """
     this class has information and functions related to planets
     each Planet takes a planet number and a JulianDay class
@@ -69,7 +70,7 @@ class Planet(Longitude):
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
-        self.attributes = {"dignity": "NA"} # will hold attributes to be set post-init; dictionary, where "attribute" is the key, e.g., "dignity"
+        self.attributes = dict()
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -132,6 +133,12 @@ class Planet(Longitude):
         return the dignity that has been set by Planets.
         """
         return self.attributes["dignity"]
+
+    def combined_relationship(self):
+        """
+        return the combined_relationship that has been set by Planets.
+        """
+        return self.attributes["combined_relationship"]
 
     def Self(self):
         return self
@@ -299,7 +306,7 @@ class Planet(Longitude):
         planet = natural_planets[self.identity()]
         return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
 
-    def _dignity(self, self_in_rashi, lord: Self) -> str:
+    def _get_dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
         i.e, the combined relationship, so we need to know where the lord is
@@ -310,14 +317,8 @@ class Planet(Longitude):
         we need self_in_rashi to calculate temporary relationships based on the rashi chart
         so now we cant calculate temporary relationships based on the specific varga with this code
         """
-        if self.is_ex():
-            return "EX"
-        if self.is_mt():
-            return "MT"
-        if self.is_oh():
-            return "OH"
-        if self.is_db():
-            return "DB"
+        # for saptavargaja bala, if a planet is EX or DB, we need to use their dignity as if they were not
+        # EX or DB, thus we find the combined dignity and store it, and then find the actual dignity
         natural_relationship = self.natural_relationship_from(lord)
         distance = self_in_rashi.signs_apart(lord.sign())
         match distance:
@@ -327,42 +328,45 @@ class Planet(Longitude):
                 temporary_relationship = "E"
         match (natural_relationship,temporary_relationship):
             case ("F","F"):
-                return "GF"
+                self.attributes["combined_relationship"] = "GF"
+                self.attributes["dignity"] =  "GF"
             case ("N","F"):
-                return "F"
+                self.attributes["combined_relationship"] = "F"
+                self.attributes["dignity"] =  "F"
             case ("E","F"):
-                return "N"
+                self.attributes["combined_relationship"] = "N"
+                self.attributes["dignity"] =  "N"
             case ("F","E"):
-                return "N"
+                self.attributes["combined_relationship"] = "N"
+                self.attributes["dignity"] =  "N"
             case ("N","E"):
-                return "E"
+                self.attributes["combined_relationship"] = "E"
+                self.attributes["dignity"] =  "E"
             case ("E","E"):
-                return "GE"
+                self.attributes["combined_relationship"] = "GE"
+                self.attributes["dignity"] =  "GE"
             case ("N","N"):
-                return "N"
+                self.attributes["combined_relationship"] = "N"
+                self.attributes["dignity"] =  "N"
+        if self.is_ex():
+            self.attributes["dignity"] = "EX"
+            # Mercury exalts himself, so for saptavargajabala, that means EX=OH
+            if self.identity() == "Mercury":
+                self.attributes["combined_relationship"] = "OH"
+            return "EX"
+        if self.is_mt():
+            self.attributes["combined_relationship"] = "MT"
+            self.attributes["dignity"] =  "MT"
+            return "MT"
+        if self.is_oh():
+            self.attributes["combined_relationship"] = "OH"
+            self.attributes["dignity"] = "OH"
+            return "OH"
+        if self.is_db():
+            self.attributes["dignity"] = "DB"
+            return "DB"
+        return self.attributes["dignity"]
 
-    def _dig_bala(self, cusp: Cusp) -> float:
-        """
-        cusp is the Cusp of whereat Planet has digbala
-
-        uses Longitude.virupas_between(point), where point is where the Planet has 60 virupas
-        so this is generalized, can be used for digbala with a cusp
-        """
-        return self.virupas_between(cusp.amsha_longitude())
-        # below was the original workiing out of .virupas_between()
-#        if self.amsha_longitude() == cusp.amsha_longitude():
-#            return 60
-#        if self.amsha_longitude() == cusp.amsha_opposite():
-#            return 0
-#        # see if Planet is between 0 dig and 60 dig
-#        if self.amsha_between(cusp.amsha_opposite(),cusp.amsha_longitude()):
-#            how_far_into_this_cycle = ((self.amsha_longitude()-cusp.amsha_opposite())%360)/180
-#            return how_far_into_this_cycle*60
-#        # see if Planet is amsha_between 60 dig and 0 dig
-#        if self.amsha_between(cusp.amsha_longitude(),cusp.amsha_opposite()):
-#            how_close_to_opposite = ((cusp.amsha_opposite()-self.amsha_longitude())%360)/180
-#            return how_close_to_opposite*60
-#        return -1
 
     def parashara_aspect_to(self, planet) -> float | str:
         """
@@ -437,93 +441,6 @@ class Planet(Longitude):
             + f"{self.timeJD}\n"
         )
 
-    def ucca_bala(self):
-        """
-        this method will work in each Varga, given the "amsha_longitude()", the longitude in whatever amsha this is in
-
-        get ucca bala for Planet; note, Moon and Mercury have their own special method because they have ex/db ranges, not points
-        if a planets longitude is at their Planet.ucca, ucca_bala is 60 points
-        if it is at thier Planet.nica, it is 0 points
-        it is a proportion of 60 in accord with its proportion between the two points
-        """
-        if isinstance(self, Moon) or isinstance(self, Mercury):
-            return self._ucca_bala_mm()
-        # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        ucca = utils.sign_degree_to_longitude(self.ucca(),self.context)
-        #nica = utils.sign_degree_to_longitude(self.nica(),self.context)
-
-        return self.virupas_between(ucca)
-        # below was the very first working out of this problem
-#        if self.amsha_longitude() == ucca:
-#            return 60
-#        if self.amsha_longitude() == nica:
-#            return 0
-#        # how many degrees forward around ecliptic to find the ucca point
-#        from_ucca = self.amsha_degrees_apart(ucca) 
-#        from_nica = self.amsha_degrees_apart(nica) 
-#        if from_ucca < 180:
-#            # we are between ucca and nica
-#            # so find percent that long has gone towards ucca
-#            return ((180-from_ucca)/180)*60
-#        if from_nica < 180:
-#            return (from_nica/180)*60
-
-    def _ucca_bala_mm(self):
-        """
-        get ucca bala for Moon or Mercury, not including Moon or Mercury
-        if a planets longitude is at their Planet.ucca, ucca_bala is 60 points
-        if it is at thier Planet.nica, it is 0 points
-        it is a proportion of 60 in accord with its proportion between the two points
-
-        you could use this in others vargas. the exaltation points would remaind the same
-        you could change it to move th exaltation point through the vargas as if it were another point
-        maybe will add that
-        """
-        # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        lower_ucca = utils.sign_degree_to_longitude(self.ucca()[0],self.context)
-        upper_ucca = utils.sign_degree_to_longitude(self.ucca()[1],self.context)
-        lower_nica = utils.sign_degree_to_longitude(self.nica()[0],self.context)
-        upper_nica = utils.sign_degree_to_longitude(self.nica()[1],self.context)
-
-        if self.amsha_longitude() >= lower_ucca and self.amsha_longitude() < upper_ucca:
-            return 60
-        if self.amsha_longitude() >= lower_nica and self.amsha_longitude() < upper_nica:
-            return 0
-
-        # these are the same, since the ex-db ranges are the same
-        # for the moon, each is 177, for mercury, each is 165
-        # ucca_length = 180-(upper_ucca - lower_ucca)
-        # nica_length = 180-(upper_nica - lower_nica)
-        # this is the length that gets 60 proportional points
-        calc_length = 180-(upper_ucca-lower_ucca)
-
-        if self.amsha_between(upper_ucca,lower_nica):
-            # 0-3 is the range of exaltation, so 60 points is divided into 177 degrees
-            from_lower_nica = self.amsha_degrees_apart(lower_nica) 
-            return (from_lower_nica/calc_length)*60
-        if self.amsha_between(upper_nica,lower_ucca):
-            from_lower_ucca = self.amsha_degrees_apart(lower_ucca) 
-            from_upper_nica = calc_length-from_lower_ucca
-            return (from_upper_nica/calc_length)*60
-
-    def mean_longitude(self):
-        t = self.context.timeJD.T()
-        return const.mean_longitude_formulas[self.identity()](t)
-
-    def cheshta_bala(self):
-        t = self.context.timeJD.T()
-        sun_mean_longitude = Sun(self.context).mean_longitude()
-        mean = const.mean_longitude_formulas[self.identity()](t)
-        average = (self.ecliptic_longitude()+mean)/2
-        if self.identity() == "Mercury" or self.identity() == "Venus":
-            apogee = mean
-            mean = sun_mean_longitude
-        else:
-            apogee = sun_mean_longitude
-        reduce = abs(apogee - average)
-        if reduce > 180:
-            reduce = (360 - reduce)%360
-        return reduce/3
 
 
 class Sun(Planet):
@@ -964,6 +881,8 @@ class Mercury(Planet):
                 return "E"
             case "Mars":
                 return "N"
+            case "Mercury":
+                return "OH"
             case "Jupiter":
                 return "N"
             case "Venus":
@@ -1605,28 +1524,22 @@ class Planets:
         moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
         self.moon().set_attribute(("nature",moon_nature))
 
-        # dignity
-        digs = self._dignities()
-        # for the outer planets and miscellaneous_planets, including Earth for helio/bary
-        digs+=["NA","NA","NA","NA","NA","NA","NA"]
-        for planet in self:
-            if isinstance(planet,Rahu) or isinstance(planet,Ketu):
-                # these two will show the dignity of their lords in the complete list
-                # need the list index of the Rahus lord
-                # Rahu nows who is lord is, but does not have direct access to him
-                # i.e., Rahu cannot return the Planet class of his Lord...is that possible?
-                # more recursive structures?
-                # right now, this gets the Planet class from self.planets, then gets its list_index
-                planet.set_attribute(("dignity",digs[self.planets()[planet.lord()].list_index()]))
-            else:
-                planet.set_attribute(("dignity",digs[planet.list_index()]))
+#        # dignity
+#        digs = self._dignities()
+#        # for the outer planets and miscellaneous_planets, including Earth for helio/bary
+#        digs+=["NA","NA","NA","NA","NA","NA","NA"]
+#        for planet in self:
+#            if isinstance(planet,Rahu) or isinstance(planet,Ketu):
+#                # these two will show the dignity of their lords in the complete list
+#                # need the list index of the Rahus lord
+#                # Rahu nows who is lord is, but does not have direct access to him
+#                # i.e., Rahu cannot return the Planet class of his Lord...is that possible?
+#                # more recursive structures?
+#                # right now, this gets the Planet class from self.planets, then gets its list_index
+#                planet.set_attribute(("dignity",digs[self.planets()[planet.lord()].list_index()]))
+#            else:
+#                planet.set_attribute(("dignity",digs[planet.list_index()]))
 
-        # digbala
-#        digbs = self._dig_balas(self.cusps())
-#        for n,planet in enumerate(self):
-#            if n == 8:
-#                break
-#            planet.set_attribute(("dig_bala",digbs[planet.list_index()]))
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
@@ -1655,7 +1568,7 @@ class Planets:
             # _dignity() takes two arguments: 1) itself in the rashi chart or this varga, depending on the options
             #                                 2) its lord in rashi or in this varga, depending on the option
             #                                 set with EphContext.rashi_temporary_friends True or False
-            dignities.append(planet._dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
+            dignities.append(planet._get_dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 
     def _dig_balas(self, cusps: Cusps) -> [float]:

@@ -24,7 +24,7 @@ from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
 
-from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps
+from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps, RashiBala
 # to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
@@ -62,6 +62,8 @@ class Varga(Jaimini,API):
         self._cusps = self.init_Cusps(self._cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
         self.sysflgstr = const.sysflgstr(self.context.sysflg)
+        # we need to initalize dignities so that we can do saptavargaja bala on demand
+        self._dignities = self._get_dignities()
 
     def varga_name(self):
         match self._amsha:
@@ -75,6 +77,8 @@ class Varga(Jaimini,API):
                 return "Chaturthamsha Parivritti"
             case 5:
                 return "Panchamsha"
+            case 7:
+                return "Saptamsha"
             case 9:
                 return "Navamsha"
             case 30:
@@ -155,7 +159,10 @@ class Varga(Jaimini,API):
             ret.append(obj.deity())
         return ret
 
-    def dignities(self) -> [str]:
+    def dignities(self):
+        return self._dignities
+
+    def _get_dignities(self) -> [str]:
         """
         return a list of dignities in the natural order
         Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
@@ -230,7 +237,7 @@ class Varga(Jaimini,API):
 
 
 
-class Rashi(Varga,JaiminiGet):
+class Rashi(Varga,JaiminiGet,RashiBala):
 
     def __init__(self,context,chart):
         self.master = chart
@@ -287,12 +294,6 @@ class Rashi(Varga,JaiminiGet):
         return ret
         # each arg has three elements; put all of lagna_arg[0] together with seventh_arg[0], etc.
 
-    def init_dig_balas(self):
-        digbs = self.planets()._dig_balas(self.cusps())
-        return digbs
-
-    def dig_bala(self):
-        return self._dig_balas
 
     def akriti_yogas(self):
         """
