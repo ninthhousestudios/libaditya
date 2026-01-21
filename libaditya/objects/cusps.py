@@ -142,6 +142,20 @@ class Cusps:
         """
         return self.cusps[n-1]
 
+    def closest_cusp(self, longitude):
+        """
+        return the cusp that is closest to longitude
+        longitude can be float or Planet
+        """
+        if not isinstance(longitude, float) and not isinstance(longitude, int):
+            longitude = longitude.amsha_longitude()
+        dists = {}
+        for cusp in self:
+            dist = abs(cusp.amsha_longitude() - longitude)
+            dists[cusp.number()] = dist
+        dists = {k: v for k, v in sorted(dists.items(), key=lambda item: item[1])}
+        return list(dists)[0]
+
     def init_cusps(self):
         """
         find our house cusps

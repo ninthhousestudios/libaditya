@@ -153,7 +153,6 @@ class Longitude:
         else:
             return self.amsha_longitude() % 30
 
-
     def amsha(self) -> int:
         return self._amsha
 

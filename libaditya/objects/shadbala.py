@@ -20,6 +20,8 @@ shadbala is not an object, but these are all Mixin classes that go into classes 
 when i put these in calc/ there were import errors
 """
 
+from libaditya import utils
+
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .context import EphContext
@@ -41,6 +43,8 @@ class PlanetBala:
         so this is generalized, can be used for digbala with a cusp
         """
         return self.virupas_between(cusp.amsha_longitude())
+
+    # STHANA BALA
     
     def ucca_bala(self):
         """
@@ -51,7 +55,7 @@ class PlanetBala:
         if it is at thier Planet.nica, it is 0 points
         it is a proportion of 60 in accord with its proportion between the two points
         """
-        if isinstance(self, Moon) or isinstance(self, Mercury):
+        if self.identity() == "Moon" or self.identity() == "Mercury":
             return self._ucca_bala_mm()
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
         ucca = utils.sign_degree_to_longitude(self.ucca(),self.context)
@@ -97,6 +101,28 @@ class PlanetBala:
             from_upper_nica = calc_length-from_lower_ucca
             return (from_upper_nica/calc_length)*60
 
+    def drekkana_bala(self):
+        """
+        this is based on the gender of a planet and which third of the sign it is in
+        thus a Planet can know its own drekkana bala
+        """
+        which_third = 0
+        if self.amsha_raw_in_sign_longitude() < 10:
+            which_third = 1
+        elif self.amsha_raw_in_sign_longitude() >= 10 and self.amsha_raw_in_sign_longitude() < 20:
+            which_third = 2
+        else:
+            which_third = 3
+        match (self.gender(),which_third):
+            case ("M",1):
+                return 15
+            case ("N",2):
+                return 15
+            case ("F",3):
+                return 15
+            case _:
+                return 0
+
     def mean_longitude(self):
         t = self.context.timeJD.T()
         return const.mean_longitude_formulas[self.identity()](t)
@@ -131,9 +157,21 @@ class RashiBala:
         return self._dig_balas
 
     # STHANA BALA
-    # note: ucca_bala is calculated in Planet, since a Planet can know its own ucca bala
+    # also includes Planet.ucca_bala() and Planet.drekkana_bala()
 
     def saptavargaja_balas(self):
+        return self._saptavargaja_balas
+
+    def sama_visama_balas(self):
+        return self._sama_visama_balas
+
+    def kendradi_balas(self):
+        return self._kendradi_balas
+
+    # STHANA BALA
+    # note: ucca_bala is calculated in Planet, since a Planet can know its own ucca bala
+
+    def init_saptavargaja_balas(self):
         """
         find the saptavargaja bala for each karaka
         set them in their Planet class
@@ -159,11 +197,12 @@ class RashiBala:
             for varga in sapta_vargas:
                 dignity = varga.planets()[planet.identity()].combined_relationship()
                 this_total += points[dignity]
+            planet.set_attribute(("saptavargaja_bala",this_total))
             totals.append(this_total)
 
         return totals
 
-    def sama_visama_balas(self):
+    def init_sama_visama_balas(self):
         """
         each planet gets points based on the gender of their signs in the rashi and navamsha
         if they coincide, they get 15 points (for each varga); if not, 0
@@ -181,6 +220,37 @@ class RashiBala:
                 sign_gender = varga.signs().where_is(planet.identity()).gender()
                 if planet_gender == sign_gender or (planet_gender == "N" and sign_gender == "M"):
                     this_total += 15
+            planet.set_attribute(("sama_visama_bala",this_total))
             totals.append(this_total)
 
         return totals
+
+    def init_kendradi_balas(self):
+        """
+        in an angle, 60 points
+        in panaphara, 30 points
+        in apoklima, 15 points
+        """
+        balas = []
+        for planet in self.planets().karakas().values():
+            closest_cusp = self.cusps().closest_cusp(planet)
+            bala = 0
+            match closest_cusp:
+                case 1 | 4 | 7 | 10:
+                    bala = 60
+                case 2 | 5 | 8 | 11:
+                    bala = 30
+                case 3 | 6 | 9 | 12:
+                    bala = 15
+            planet.set_attribute(("kendradi_bala",bala))
+            balas.append(bala)
+        return balas
+
+    def drekkana_balas(self):
+        balas = []
+        for planet in self.planets().karakas().values():
+            balas.append(planet.drekkana_bala())
+        return balas
+
+    def init_sthana_balas(self):
+        pass

@@ -73,6 +73,31 @@ class Sign:
         if utils.even(self.sign()):
             return "F"
 
+    def rashis_from_lagna(self):
+        """
+        lagna can be a Sign class or a sign number
+        how many signs apart are this one sign and other_sign
+        if self=12 and other=1 -> (1-12)%12 = 1
+        used for temporary relationships
+        """
+        lagna = self.master.lagna().sign()
+        return ((self.sign() - lagna)%12)+1
+
+    def house_type(self):
+        """
+        is this an Angle, Panaphara, or Apoklima
+        this uses signs from lagna to determine this
+        """
+        lagna = self.master.lagna()
+        signs_from_lagna = self.rashis_from_lagna()
+        match signs_from_lagna:
+            case 1 | 4 | 7 | 10:
+                return "Angle"
+            case 2 | 5 | 8 | 11:
+                return "Panaphara"
+            case 3 | 6 | 9 | 12:
+                return "Apoklima"
+
     def karakas(self) -> [Planet]:
         """
         return a list of Planet classes of the karakas in this sign
