@@ -15,8 +15,11 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
+import pathlib
 from dataclasses import replace
 from typing import Self
+import swisseph as swe
 
 from libaditya import constants as const
 
@@ -25,6 +28,7 @@ from libaditya.calc import Varga, Rashi
 
 from .api import API
 from .bodygraph import Bodygraph
+
 
 class Chart(API):
     """
@@ -49,8 +53,11 @@ class Chart(API):
 
     not sure this syntax is really worth it? leaving it for now
     """
+    libaditya_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
+    ephe_path = libaditya_path + "ephe/"
 
     def __init__(self, context=EphContext()):
+        swe.set_ephe_path(self.ephe_path)
         self.context = context
         self._Rashi = Rashi(self.context,self)
 

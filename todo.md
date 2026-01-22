@@ -1,5 +1,8 @@
 #
-move dig_bala to RashiBala
+move vimshottari around
+put calc functions in Rashi and print functions in print_functions
+
+use this to test to make sure setting ephe_path in Chart.__init__() works
 
 ## jaimini
 
