@@ -37,10 +37,9 @@ class PlanetBala:
 
     def _dig_bala(self, cusp: Cusp) -> float:
         """
-        cusp is the Cusp of whereat Planet has digbala
+        cusp is the Cusp whereat Planet has digbala
 
         uses Longitude.virupas_between(point), where point is where the Planet has 60 virupas
-        so this is generalized, can be used for digbala with a cusp
         """
         return self.virupas_between(cusp.amsha_longitude())
 
@@ -162,8 +161,22 @@ class RashiBala:
     # DIG BALA
 
     def init_dig_balas(self):
-        digbs = self.planets()._dig_balas(self.cusps())
+        digbs = self._dig_balas()
         return digbs
+
+    def _dig_balas(self) -> [float]:
+        """
+        cusps is a Cusps class
+
+        return list of float values, which are the digbalas of the planets in their natural order
+        """
+        ret = []
+        for n,karaka in enumerate(self.planets().karakas().values()):
+            if n == 7:
+                break
+            ret.append(karaka._dig_bala(self.cusps()[karaka.dig_bala_cusp()]))
+            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
+        return ret
 
     def dig_balas(self):
         return self._dig_balas
@@ -182,6 +195,7 @@ class RashiBala:
 
     # STHANA BALA
     # note: ucca_bala is calculated in Planet, since a Planet can know its own ucca bala
+    # likewise for drekkana_bala
 
     def init_saptavargaja_balas(self):
         """
@@ -207,7 +221,10 @@ class RashiBala:
         for planet in self.planets().karakas().values():
             this_total = 0
             for varga in sapta_vargas:
-                dignity = varga.planets()[planet.identity()].combined_relationship()
+                planet_in_varga = varga.planets()[planet.identity()]
+                dignity = planet_in_varga.dignity()
+                if dignity == "EX" or dignity == "DB":
+                    dignity = planet_in_varga.combined_relationship()
                 this_total += points[dignity]
             planet.set_attribute(("saptavargaja_bala",this_total))
             totals.append(this_total)

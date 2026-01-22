@@ -381,11 +381,9 @@ class Planet(Longitude,PlanetBala):
                 self.attributes["combined_relationship"] = "OH"
             return "EX"
         if self.is_mt():
-            self.attributes["combined_relationship"] = "MT"
             self.attributes["dignity"] =  "MT"
             return "MT"
         if self.is_oh():
-            self.attributes["combined_relationship"] = "OH"
             self.attributes["dignity"] = "OH"
             return "OH"
         if self.is_db():
@@ -1597,19 +1595,6 @@ class Planets:
             dignities.append(planet._get_dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
         return dignities
 
-    def _dig_balas(self, cusps: Cusps) -> [float]:
-        """
-        cusps is a Cusps class
-
-        return list of float values, which are the digbalas of the planets in their natural order
-        """
-        ret = []
-        for n,karaka in enumerate(self):
-            if n == 7:
-                break
-            ret.append(karaka._dig_bala(cusps[karaka.dig_bala_cusp()]))
-            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
-        return ret
 
     def parashara_aspects(self):
         """
