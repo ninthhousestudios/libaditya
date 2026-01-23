@@ -127,9 +127,11 @@ class Cusps:
         self.ayanamsa = self.context.ayanamsa
         if cusps == None:
             self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
+            self._armc = self.ascmc[2]
         else:
             # this is for varga cusps, where we pass a list of Cusp classes that have the right cusps in them
             self.cusps = cusps
+            self._armc = 0
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
 
@@ -141,6 +143,9 @@ class Cusps:
         n-1 so that we can pass the cusp number, e.g., 1
         """
         return self.cusps[n-1]
+
+    def armc(self):
+        return self._armc
 
     def closest_cusp(self, longitude):
         """

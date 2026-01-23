@@ -49,7 +49,7 @@ class Jaimini(Chart):
         return self.karakas()[0]
 
     def svamsha(self):
-        return self.varga(9).signs()[self.atmakaraka().sign()]
+        return self.varga(9).signs()[self.varga(9).where_is(self.atmakaraka()).sign()]
 
     def karakamsha(self):
         return self.rashi().signs()[self.atmakaraka().sign()]

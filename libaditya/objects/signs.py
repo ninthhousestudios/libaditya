@@ -484,6 +484,9 @@ class Signs:
         """
         return self._signs.keys()
 
+    def amsha(self):
+        return self.context.amsha
+
     def __str__(self):
         ret = ""
         ret += self.mkheader()
@@ -603,6 +606,10 @@ class Signs:
         if object is str, a Planet id
         return the Sign class that has in it object
         """
+        if isinstance(object, Planet):
+            object = object.identity()
+        if isinstance(object, Cusp):
+            object = object.number()
         for sign in self:
             if isinstance(object, str):
                 for planet in sign.planets():

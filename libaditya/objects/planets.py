@@ -56,9 +56,15 @@ class Planet(Longitude,PlanetBala):
         # if a longitude is passed, we are in a varga not equal to 1
         self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
         # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
-        self.long = self.long if not isinstance(self,Ketu) else (self.long-180)%360
+        # this works because self.pnumber for Ketu is set to Rahu
+        # so at this point self.long with be Rahu's longitude, which we then change to Ketu's
         if isinstance(self,Ketu):
+            self.long = (self.long-180)%360
             self.pnumber = 8
+        # if we are not doing heliocentric or barycentric, then Earth will be opposite the Sun
+        # this is really for the purpose of HD, which uses Earth as opposite the Sun
+        if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
+            self.long = (self.long-180)%360
         # so that we only need only longitude() function with all the signizing and rounding or not
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
@@ -111,6 +117,8 @@ class Planet(Longitude,PlanetBala):
             swe.set_topo(loc[0], loc[1], loc[2])
         # for draconic charts i choose -8 to indicate that system
         # but swe doesnt accept that, so replace it if necessary
+        if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
+            return swe.calc_ut(self.jd, swe.SUN, self.sysflg if self.sysflg >= 0 else 0)[0]
         return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
 
     def name(self) -> str:
@@ -315,22 +323,22 @@ class Planet(Longitude,PlanetBala):
     def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
 
-    def ingress(self, next_long) -> Self:
-        """
-        return Planet for the JulianDay where Sun arrives at longitude next_long
-        """
-        # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
-            # if we dont go forward one second the longitude we are are will be
-            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
-            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
-        # difference between current longitude and desired longitude
-        diff = self.degrees_apart(next_long)
-        shift_factor = diff*self.lowest_daily_speed()
-        # get Planet class for this planet
-        planet = natural_planets[self.identity()]
-        return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
+#    def ingress(self, next_long) -> Self:
+#        """
+#        return Planet for the JulianDay where Sun arrives at longitude next_long
+#        """
+#        # % 360 help in case we are looking for the equinox, next_long = 0
+#        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+#            # if we dont go forward one second the longitude we are are will be
+#            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+#            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+#            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+#        # difference between current longitude and desired longitude
+#        diff = self.degrees_apart(next_long)
+#        shift_factor = diff*self.lowest_daily_speed()
+#        # get Planet class for this planet
+#        planet = natural_planets[self.identity()]
+#        return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
 
     def _get_dignity(self, self_in_rashi, lord: Self) -> str:
         """
@@ -1397,7 +1405,7 @@ class Pluto(Planet):
 
 class Earth(Planet):
     def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.EARTH, context,master)
+        super().__init__(swe.EARTH,context,master)
         self._id = "Earth"
 
     def glyph(self):
@@ -1448,6 +1456,7 @@ class Chiron(Planet):
 
 natural_planets = {
     "Sun": Sun,
+    "Earth": Earth,
     "Moon": Moon,
     "Mars": Mars,
     "Mercury": Mercury,
@@ -1459,7 +1468,7 @@ natural_planets = {
     "Uranus": Uranus,
     "Neptune": Neptune,
     "Pluto": Pluto,
-    "Chiron": Chiron
+    "Chiron": Chiron,
 }
 
 class Planets:
@@ -1527,14 +1536,13 @@ class Planets:
             # so if it is outside this range, get rid of Chiron
             natural_planets.pop()
 
-        # add Earth if using barycentric or heliocentric
-        if self.system == const.BARY or self.system == const.HELIO:
-            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-            natural_planets["Earth"] = Earth
+#        # add Earth if using barycentric or heliocentric
+#        if self.system == const.BARY or self.system == const.HELIO:
+#            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
+#            natural_planets["Earth"] = Earth
 
         for planet,constructor in natural_planets.items():
             ret[planet] = constructor(self.context,self)
-
 
         return ret
 
@@ -1548,21 +1556,6 @@ class Planets:
         moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
         self.moon().set_attribute(("nature",moon_nature))
 
-#        # dignity
-#        digs = self._dignities()
-#        # for the outer planets and miscellaneous_planets, including Earth for helio/bary
-#        digs+=["NA","NA","NA","NA","NA","NA","NA"]
-#        for planet in self:
-#            if isinstance(planet,Rahu) or isinstance(planet,Ketu):
-#                # these two will show the dignity of their lords in the complete list
-#                # need the list index of the Rahus lord
-#                # Rahu nows who is lord is, but does not have direct access to him
-#                # i.e., Rahu cannot return the Planet class of his Lord...is that possible?
-#                # more recursive structures?
-#                # right now, this gets the Planet class from self.planets, then gets its list_index
-#                planet.set_attribute(("dignity",digs[self.planets()[planet.lord()].list_index()]))
-#            else:
-#                planet.set_attribute(("dignity",digs[planet.list_index()]))
 
 
     def nakshatras(self) -> Nakshatras:
@@ -1593,6 +1586,10 @@ class Planets:
             #                                 2) its lord in rashi or in this varga, depending on the option
             #                                 set with EphContext.rashi_temporary_friends True or False
             dignities.append(planet._get_dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
+        # Planet._get_dignity sets Planet.attributes["dignity"], but we may also want to have dignities for Rahu and Ketu
+        # so we set them here
+        self.rahu().set_attribute(("dignity",self.planets()[self.rahu().lord()].dignity()))
+        self.ketu().set_attribute(("dignity",self.planets()[self.ketu().lord()].dignity()))
         return dignities
 
 
@@ -1635,8 +1632,6 @@ class Planets:
 
         fixed so that it will calculate these always based on their positions in the rashi chart
         """
-#        if self._amsha != 1:
-#            import pdb; pdb.set_trace()
         # we need to sort according to real in sign longitude
         longs = {}
         for karaka in self.karakas().values():
@@ -1700,6 +1695,9 @@ class Planets:
 
     def chiron(self):
         return self._planets["Chiron"]
+
+    def earth(self):
+        return self._planets["Earth"]
 
     def grahas_within_one_degree(self):
         grahas = []

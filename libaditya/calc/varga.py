@@ -56,10 +56,13 @@ class Varga(Jaimini,API):
             self.context = replace(context,amsha=amsha)
         self._amsha = self.context.amsha
         self._planets = Planets(self.context)
+        # this finds the physical cusps 
         self._cusps = Cusps(self.context)
+        if self._amsha != 1:
+            # if we are in a varga, self.init_Cusps will change them to that varga
+            self._cusps = self.init_Cusps(self._cusps)
         self._signs = Signs(self._planets, self._cusps, self.context)
         self._rashi_planets = Planets(replace(self._planets.context,amsha=1))
-        self._cusps = self.init_Cusps(self._cusps)
         self._signs = Signs(self._planets,self._cusps,self.context)
         self.sysflgstr = const.sysflgstr(self.context.sysflg)
         # we need to initalize dignities so that we can do saptavargaja bala on demand
@@ -255,6 +258,19 @@ class Rashi(Varga,JaiminiGet,RashiBala):
 
     def signs(self):
         return self._signs
+
+    def house_position(self, planet: str) -> float:
+        """
+        a wrapper for the function swe.house_pos()
+        planet is the Planet.identity(), i.e., the english name of the desired planet
+        """
+        armc = self.cusps().armc()
+        lat = self.context.location.latitude()
+        eo = self.context.timeJD.ecliptic_obliquity()
+        planet = self.planets()[planet]
+        planet_coords = (planet.ecliptic_longitude(),planet.latitude())
+        hsys = self.context.hsys.encode()
+        return swe.house_pos(armc,lat,eo,planet_coords,hsys)
 
     def Master(self):
         """

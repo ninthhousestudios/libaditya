@@ -126,6 +126,9 @@ add dispositors, final dispositors, parivartana or chakra yogas
 ## hd
 
 #
+i didnt include Earth in the planets! put it in there
+
+#
 hd.calc.dream_context is not working properly fix it
 
 #
