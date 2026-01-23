@@ -640,7 +640,16 @@ class Moon(Planet):
         return Moon
 
     def nature(self):
-        return  self.attributes["nature"]
+        return self.attributes["nature"]
+
+    def is_benefic(self):
+        if self.nature() == "Benefic":
+            return True
+        else:
+            return False
+
+    def is_malefic(self):
+        return not self.is_benefic()
 
     def lowest_daily_speed(self) -> float:
         """
@@ -1964,14 +1973,3 @@ planet_dict = {
 
 karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]
 
-class Lord(Planet):
-    """
-    a lord is a planet who has a sign
-    """
-
-    def __init__(self, planet, sign):
-        self._lord = planet
-        self._sign = sign
-        self._subjects = self._sign.objects()
-        self._planets = self._sign.planets()
-        self._cusps = self._sign.cusps()

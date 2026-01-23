@@ -20,14 +20,10 @@ shadbala is not an object, but these are all Mixin classes that go into classes 
 when i put these in calc/ there were import errors
 """
 
+from libaditya import constants as const
 from libaditya import utils
 
-from .julian_day import JulianDay
-from .location import Location, Yamakoti
-from .context import EphContext
-from .longitude import Longitude
-from .cusps import Cusp, Cusps
-from .nakshatras import Nakshatra, Nakshatras
+from .cusps import Cusp
 
 class PlanetBala:
     """
@@ -147,6 +143,13 @@ class PlanetBala:
         sun, mars, jupiter, venus have 60 at the northern solstice
         moon, saturn have 60 at the southern solstice
         mercury has 30 points on either equinox, and 60 points on either solstice
+
+        this is not exactly the algorithm bphs recommends
+        this algorithm makes all the motion proportional, i.e., every 3 degrees gains or loses 1 point
+        with the bphs style, a planet who likes the northern solstice will gain more slowly as it moves from
+        the southern solstice; e.g., with this algorithm, Jupiter 15 degrees past the southern solstice will have an
+        ayana bala of 5; with bphs, it will be about 2
+        is this difference really significant?
         """
         if self.identity() == "Mercury":
             # mercury at the equinoxes has 30 points, and at each solstice 60 points
@@ -175,19 +178,25 @@ class PlanetBala:
         return const.mean_longitude_formulas[self.identity()](t)
 
     def cheshta_bala(self):
+        from libaditya.objects import Sun
         t = self.context.timeJD.T()
         sun_mean_longitude = Sun(self.context).mean_longitude()
         mean = const.mean_longitude_formulas[self.identity()](t)
-        average = (self.ecliptic_longitude()+mean)/2
         if self.identity() == "Mercury" or self.identity() == "Venus":
             apogee = mean
             mean = sun_mean_longitude
         else:
             apogee = sun_mean_longitude
+        average = (self.ecliptic_longitude()+mean)/2
         reduce = abs(apogee - average)
         if reduce > 180:
             reduce = (360 - reduce)%360
         return reduce/3
+
+    # DRIG BALA
+
+    def drig_bala(self):
+        return self.attributes["drig_bala"]
 
 class RashiBala:
     """
@@ -336,5 +345,54 @@ class RashiBala:
 
         for planet in self.planets().karakas().values():
             balas.append(planet.ayana_bala())
+
+        return balas
+
+    # CHESHTA BALA
+
+    def cheshta_balas(self):
+        balas = []
+
+        for planet in self.planets().karakas().values():
+            balas.append(planet.cheshta_bala())
+
+        return balas
+
+    # DRIG BALA
+
+    def drig_balas(self):
+        return self._drig_balas
+
+    def init_drig_balas(self):
+        """
+        drig bala is aspect strength, using precise parashara aspect values
+        aspects of mercury and jupiter are added in full
+        aspects of other planets are combined to 1/4 of their strength
+        venus and benefic moon's values are added
+        values of sun, mars, saturn and malefic moon are subtracted
+        """
+        balas = []
+        # aspects is a list of list
+        # first list is aspects of sun to the grahas in order, second is aspects of moon to grahas in order, etc.
+        aspects = self.planets().parashara_aspects()
+
+        for this_planet_number,planet in enumerate(self.planets().karakas().values()):
+            this_total = 0
+            for aspecting_planet_number in range(0,7):
+                if not isinstance(aspects[aspecting_planet_number][this_planet_number], int):
+                    # this means either aspecting_plant is this planet, or conjunct this plant, or does not aspect this planet
+                    continue
+                # 3 is mercury and 4 is jupiter
+                # add there full aspect value
+                if aspecting_planet_number == 3 or aspecting_planet_number == 4:
+                    this_total += aspects[aspecting_planet_number][this_planet_number]
+                # if it is venus or benefic moon, add 1/4 of their aspect value
+                elif aspecting_planet_number == 5 or (aspecting_planet_number == 1 and self.planets().moon().is_benefic()):
+                    this_total += aspects[aspecting_planet_number][this_planet_number]*(1/4)
+                # otherwise it is a malefic aspect, so subtract 1/4 of the aspect value
+                else:
+                    this_total -= aspects[aspecting_planet_number][this_planet_number]*(1/4)
+                planet.set_attribute(("drig_bala",this_total))
+            balas.append(this_total)
 
         return balas
