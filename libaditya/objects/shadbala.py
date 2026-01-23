@@ -35,13 +35,6 @@ class PlanetBala:
     has most of them expect for class specific ones, e.g., Sun.cheshta_bala()
     """
 
-    def _dig_bala(self, cusp: Cusp) -> float:
-        """
-        cusp is the Cusp whereat Planet has digbala
-
-        uses Longitude.virupas_between(point), where point is where the Planet has 60 virupas
-        """
-        return self.virupas_between(cusp.amsha_longitude())
 
     # STHANA BALA
     
@@ -134,6 +127,49 @@ class PlanetBala:
     def sthana_bala(self):
         return self.ucca_bala() + self.saptavargaja_bala() + self.sama_visama_bala() + self.kendradi_bala() + self.drekkana_bala()
 
+    # DIG BALA
+
+    def _dig_bala(self, cusp: Cusp) -> float:
+        """
+        cusp is the Cusp whereat Planet has digbala
+
+        uses Longitude.virupas_between(point), where point is where the Planet has 60 virupas
+        """
+        return self.virupas_between(cusp.amsha_longitude())
+
+    # KALA BALA
+
+    # AYANA BALA
+
+    def ayana_bala(self):
+        """
+        ayana bala relates to the solstices as places where a planet can have 0 or 60 points
+        sun, mars, jupiter, venus have 60 at the northern solstice
+        moon, saturn have 60 at the southern solstice
+        mercury has 30 points on either equinox, and 60 points on either solstice
+        """
+        if self.identity() == "Mercury":
+            # mercury at the equinoxes has 30 points, and at each solstice 60 points
+            # so he has somewhere between 30 and 60 points
+            if self.ecliptic_longitude() >= 0 and self.ecliptic_longitude() < 90:
+                # if he is at 0, it will be 30
+                return self.virupas_between(90)
+            if self.ecliptic_longitude() >= 90 and self.ecliptic_longitude() < 180:
+                return self.virupas_between(90)
+            if self.ecliptic_longitude() >= 180 and self.ecliptic_longitude() < 270:
+                return self.virupas_between(270)
+            if self.ecliptic_longitude() >= 270 and self.ecliptic_longitude() < 0:
+                return self.virupas_between(270)
+        elif self.identity() == "Moon" or self.identity() == "Saturn":
+            # both have 60 points at the southern solstice, i.e., 270 degrees ecliptic longitude
+            return self.virupas_between(270)
+        else:
+            # all the others have 60 points at the northern solstice, i.e,, 90 degrees ecliptic longitude
+            return self.virupas_between(90)
+
+
+    # CHESHTA BALA
+
     def mean_longitude(self):
         t = self.context.timeJD.T()
         return const.mean_longitude_formulas[self.identity()](t)
@@ -158,28 +194,6 @@ class RashiBala:
     a Mixin for libaditya.calc.vargas.Rashi which has shadbala methods that work best at the Rashi level
     """
 
-    # DIG BALA
-
-    def init_dig_balas(self):
-        digbs = self._dig_balas()
-        return digbs
-
-    def _dig_balas(self) -> [float]:
-        """
-        cusps is a Cusps class
-
-        return list of float values, which are the digbalas of the planets in their natural order
-        """
-        ret = []
-        for n,karaka in enumerate(self.planets().karakas().values()):
-            if n == 7:
-                break
-            ret.append(karaka._dig_bala(self.cusps()[karaka.dig_bala_cusp()]))
-            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
-        return ret
-
-    def dig_balas(self):
-        return self._dig_balas
 
     # STHANA BALA
     # also includes Planet.ucca_bala() and Planet.drekkana_bala()
@@ -286,5 +300,41 @@ class RashiBala:
 
         for planet in self.planets().karakas().values():
             balas.append(planet.sthana_bala())
+
+        return balas
+
+    # DIG BALA
+
+    def init_dig_balas(self):
+        digbs = self._dig_balas()
+        return digbs
+
+    def _dig_balas(self) -> [float]:
+        """
+        cusps is a Cusps class
+
+        return list of float values, which are the digbalas of the planets in their natural order
+        """
+        ret = []
+        for n,karaka in enumerate(self.planets().karakas().values()):
+            if n == 7:
+                break
+            ret.append(karaka._dig_bala(self.cusps()[karaka.dig_bala_cusp()]))
+            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
+        return ret
+
+    def dig_balas(self):
+        return self._dig_balas
+
+    # KALA BALA
+
+
+    # AYANA BALA
+
+    def ayana_balas(self):
+        balas = []
+
+        for planet in self.planets().karakas().values():
+            balas.append(planet.ayana_bala())
 
         return balas
