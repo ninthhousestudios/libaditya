@@ -30,8 +30,8 @@ class Bodygraph:
         self._conscious_planets = Planets(self.context)
         self._unconscious_context = hdcalc.unconscious_context(self.context)
         self._unconscious_planets = Planets(self._unconscious_context)
-#        self._dream_context = hdcalc.dream_context(self.context)
-#        self._dream_planets = Planets(self._dream_context)
+        self._dream_context = hdcalc.dream_context(self.context)
+        self._dream_planets = Planets(self._dream_context)
 
     def conscious_planets(self):
         return self._conscious_planets.hd_planets()
@@ -40,7 +40,11 @@ class Bodygraph:
         return self._unconscious_planets.hd_planets()
 
     def dream_planets(self):
-        return self._dream_planets
+        """
+        these are the unconscious dream planets, since the conscious ones for the dreamgraph
+        are the same as the conscious ones for the bodygraph
+        """
+        return self._dream_planets.hd_planets()
 
     def _new_bodygraph(self, **kwargs):
         return Bodygraph(context=replace(self.context,**kwargs))

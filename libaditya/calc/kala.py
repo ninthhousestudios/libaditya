@@ -34,7 +34,7 @@ def lunar_new_year(year) -> Panchanga:
     solsticeSun = Sun(EphContext(timeJD=solstice_yearJD)).ingress(270)
 
     # now get a Panchanga for this time
-    panch = Panchanga(solsticeSun._context)
+    panch = Panchanga(solsticeSun.context)
 
     new_year = panch.next_new_moon().next_new_moon()
 

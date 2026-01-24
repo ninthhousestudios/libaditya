@@ -524,9 +524,6 @@ class Sun(Planet):
         """
         return Sun for the JulianDay where Sun arrives at longitude next_long
         """
-        direction = "forward"
-        if next_long < 0:
-            direction = "backward"
         if next_long == self.ecliptic_longitude():
             return self
         # % 360 help in case we are looking for the equinox, next_long = 0
@@ -534,11 +531,11 @@ class Sun(Planet):
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"seconds",30)))
+            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",30)))
         # difference between current longitude and desired longitude
         diff = self.degrees_apart(next_long)
         shift_factor = diff*self.lowest_daily_speed()
-        return Sun(replace(self.context,timeJD=self.timeJD.shift(direction,"days",shift_factor))).ingress(next_long)
+        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
 
     def next_equinox(self):
         """
@@ -721,9 +718,6 @@ class Moon(Planet):
     def cheshta_bala(self):
         """
         moon has 60 points of cheshta bala at the full moon
-
-        this is not quite right, because it has 60 has full moon and 0 at new moon
-        but new full moon is not opposite full moon, so we can get use this algorithm
         """
         from libaditya.calc import Panchanga
         panch = Panchanga(self.context)
@@ -736,6 +730,24 @@ class Moon(Planet):
             # so the place is has 60 points is opposite where the new moon is
             next_new_moon = panch.next_new_moon()
             return self.virupas_between((next_new_moon.moon().ecliptic_longitude()+180)%360)
+
+    def ingress(self, next_long):
+        """
+        return Moon for the JulianDay where Moon arrives at longitude next_long
+        """
+        #import pdb; pdb.set_trace()
+        if next_long == self.ecliptic_longitude():
+            return self
+        # % 360 help in case we are looking for the equinox, next_long = 0
+        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+            # if we dont go forward one second the longitude we are are will be
+            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
+            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
+            return Moon(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+        # difference between current longitude and desired longitude
+        diff = self.degrees_apart(next_long)
+        shift_factor = diff*(self.lowest_daily_speed()/24)
+        return Moon(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).ingress(next_long)
 
 
 class Mars(Planet):

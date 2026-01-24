@@ -17,7 +17,7 @@
 
 """
 shadbala is not an object, but these are all Mixin classes that go into classes in libaditya.objects
-when i put these in calc/ there were import errors
+when i put these in calc/ there were import errors, so they are here in objects/
 """
 
 from libaditya import constants as const

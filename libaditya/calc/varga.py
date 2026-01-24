@@ -260,7 +260,7 @@ class Rashi(Varga,JaiminiGet,RashiBala):
     def signs(self):
         return self._signs
 
-    def house_position(self, planet: str) -> float:
+    def house_position(self, planet: str, hsys=None) -> float:
         """
         a wrapper for the function swe.house_pos()
         planet is the Planet.identity(), i.e., the english name of the desired planet
@@ -270,8 +270,9 @@ class Rashi(Varga,JaiminiGet,RashiBala):
         eo = self.context.timeJD.ecliptic_obliquity()
         planet = self.planets()[planet]
         planet_coords = (planet.ecliptic_longitude(),planet.latitude())
-        hsys = self.context.hsys.encode()
-        return swe.house_pos(armc,lat,eo,planet_coords,hsys)
+        if hsys == None:
+            hsys = self.context.hsys
+        return swe.house_pos(armc,lat,eo,planet_coords,hsys.encode())
 
     def Master(self):
         """
@@ -295,16 +296,14 @@ class Rashi(Varga,JaiminiGet,RashiBala):
         vimshottari.print_current_vdasha(self.context,yrlen,levels)
         return
 
-    # special jaimini function that returns argala to both 1st and 7th; but maybe i should move it
-    def argala(self) -> [[Planet],[Planet],[Planet]]:
+    def rashi_argala(self) -> [[Planet],[Planet],[Planet]]:
         """
-        this is Rashi() argala
         it returns a list a lists, where each sublist is the combinatino of the corresponding argala lists of lagna and seventh
 
         this combines the argala formed to both 1st and 7th
         """
-        lagna_arg = super().argala(self.signs().lagna())
-        seventh_arg = super().argala(self.signs()[self.signs().lagna().astrological_signs_forward(7)])
+        lagna_arg = self.argala(self.signs().lagna())
+        seventh_arg = self.argala(self.signs()[self.signs().lagna().astrological_signs_forward(7)])
         ret = [[],[],[]]
         for n,arg in enumerate(lagna_arg):
             for planet in lagna_arg[n]:

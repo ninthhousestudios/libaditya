@@ -47,7 +47,7 @@ def dream_context(context=EphContext()):
     # go back before 88 degrees
     # Sun.ingress finds the next time the Sun is at the ecliptic_longitude passed to .ingress()
     # so go before the time we need, and it will get the next time
-    past_moon = Moon(replace(moon.context,timeJD=moon.timeJD.shift('b','days',10)))
+    past_moon = Moon(replace(moon.context,timeJD=moon.timeJD.shift('b','days',15)))
     # unconscious moon
     umoon = past_moon.ingress(sought_longitude)
 

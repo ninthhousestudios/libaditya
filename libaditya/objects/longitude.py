@@ -168,7 +168,7 @@ class Longitude:
         varga lord is set in Longitude.varga() when it finds the longitude
         amsha=1 can be passed if you want the lord of its sign in this varga
         """
-        if self.amsha() < 0 or self.amsha() in [2,3,4,7,9,10,12,16,20,24,27,30,40,60]:
+        if self.amsha() < 0 or self.amsha() in [2,3,4,7,9,10,12,16,20,24,27,30,40,45,60]:
             # if we have deities for this amsha, use them, otherwise, planetary lords
             # varga lord is set in Longitude.varga() when it finds the longitude
             return self._deity

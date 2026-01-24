@@ -51,7 +51,7 @@ class EphContext:
     ayanamsa: int = 98
     hsys: str = "C"
     circle: Circle = Circle.ADITYA
-    rashi_temporary_friendships: bool = True # other option is "Varga"
+    rashi_temporary_friendships: bool = True # other option is to base temporary friendships on the varga under consideration
     rashi_aspects: str = "quadrant" # options are "quadrant", "element", "conventional"
 
     # display options
