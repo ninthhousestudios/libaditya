@@ -1872,7 +1872,6 @@ class Planets:
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
-        header += f"amsha {self._amsha}\n"
         header += f"{const.circle_name(self.context.circle)}\n"
         if self.system == swe.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
