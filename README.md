@@ -294,6 +294,15 @@ implemeneted:
 -2 Hora
 -3 Drekkana
 -4 Chaturthamsha
--240 Siddhamsha
+-10 Dashamsha
+-100 Dashamsha with Even Rashis going in reverse
+-12 Dvadashamsha
+-16 Shodashamsha
+-20 Vimshamsha
 -24 Parashara Chaturvimshamsha
+-240 Siddhamsha
+-27 Bhamsha
+-40 Khdavedamsha
+-45 Akshavedamsha
+-60 Shashtyamsha
 ```
