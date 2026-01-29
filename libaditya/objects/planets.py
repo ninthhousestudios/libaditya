@@ -445,6 +445,16 @@ class Planet(Longitude,PlanetBala):
     def lowest_secondly_speed(self) -> float:
         return self.lowest_minutely_speed()/60
 
+    def ucca(self):
+        """
+        this is the (sign,degrees) of this Planets exaltation
+        storing it this ways means this information can be used just like this
+        for zodiac or aditya circles
+        """
+        # this is a doc string that will show in the repl's "help()" function for all objects that inherit from Planet
+        # so yes this method actually "does" something; well, it doesnt, but it has a value to it
+        pass
+
     def __repr__(self):
         ret = ""
         if self.retrostr() != "":
@@ -461,8 +471,11 @@ class Planet(Longitude,PlanetBala):
     def jaimini_info(self):
         """
         return a string of planetary information that can be stored in a dictionary that can be convereted to toml
+        separate attributes by a comma, in the proper order
+        current options:
+        name,dignity
         """
-        return f"{self.planet_name} ({self.dignity()})"
+        return f"{self.planet_name},{self.dignity()}"
 
     def __str__(self):
         ayanamsa = ""
@@ -1555,7 +1568,8 @@ class Planets:
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
-            natural_planets.pop()
+            if "Chiron" in natural_planets.keys():
+                natural_planets.pop("Chiron")
 
 #        # add Earth if using barycentric or heliocentric
 #        if self.system == const.BARY or self.system == const.HELIO:

@@ -83,6 +83,11 @@ fix next_vara
     it basically works. it is just that sometimes if it is literally at the
 beginning of the vara, it will say the vara that is beginning, not the next one
 
+the vara isnt working properly
+it currently uses a python library, but swe actually has its own function for day of the
+week, but is has Monday as 0, where as the python library has Monday as 1, so need to
+change everything and make it work correctly
+
 ## calculations
 
 

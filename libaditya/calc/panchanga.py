@@ -166,6 +166,9 @@ class Panchanga:
             self.timeJD.datetime[1],
             self.timeJD.datetime[2],
         ).isoweekday()  # 1 is Monday
+        # there is this nice function in swe actually...
+        # but for it Monday = 0 and Sunday = 6
+        #weekday = swe.day_of_week(self.context.timeJD.jd_number())
         sunriseyk = self._sun.sunrise_yamakoti()
         if sunriseyk < self.context.timeJD:
             return const.names[self.context.names_type]["varas"][(weekday + 1) % 7]

@@ -58,8 +58,9 @@ class JaiminiGet:
         for amsha in vargas:
             varga = self.master.varga(int(amsha))
             aksign = varga.where_is(ak.identity())
-            sign = 1 if aksign.sign()%2 == 1 else -1
-            twelfth_from_ak = varga.signs()[aksign.astrological_signs_forward(12*sign)]
+            # "sign" determines the direction we count in, 1 is forward, -1 is reverse
+            direction = 1 if aksign.sign()%2 == 1 else -1
+            twelfth_from_ak = varga.signs()[aksign.astrological_signs_forward(12*direction)]
             aspecting = varga.rashi_aspects_given_to(twelfth_from_ak)
             aspecting = [this_one.grahas() for this_one in aspecting]
             ret[amsha]["conjunction"].append([p.jaimini_info() for p in twelfth_from_ak.grahas()])
