@@ -109,6 +109,9 @@ it currently uses a python library, but swe actually has its own function for da
 week, but is has Monday as 0, where as the python library has Monday as 1, so need to
 change everything and make it work correctly
 
+this time doesnt work. says it is shukravara and that the next vara is shukravara
+2461071.2983680554
+
 ## calculations
 
 

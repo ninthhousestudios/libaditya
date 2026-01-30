@@ -47,7 +47,7 @@ class JulianDay:
         """
         initialize JulianDay class
         :jd - can be a float or a tuple(year, month, day, decimal_time)
-        :utcoffset - an integer
+        :utcoffset - a float
         :timezone - a string representing the timezone
         """
         if isinstance(jd, float):
