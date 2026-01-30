@@ -108,10 +108,9 @@ class Cusps:
     calculate house cusps for a certain place lat,long (NE both positive)
     with a certain house system hsys at a time JulianDay
     hsys is a letter; swisseph actually needs it as a byte, so it is encoded
-    with utf-8...you cant just pass a python string 'R';
+    with utf-8
 
-    however, the argument for this function should be a python string; so is the
-    default in pyphglobals; __init__ takes care of the encoding
+    Cusps.__init__() takes care of the encoding
 
     Campanus is the default house system, 'C'
     """
@@ -129,7 +128,7 @@ class Cusps:
             self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
             self._armc = self.ascmc[2]
         else:
-            # this is for varga cusps, where we pass a list of Cusp classes that have the right cusps in them
+            # this is for varga cusps, where we call this constructor with a list of Cusp classes ("cusps") that have the right cusps in them
             self.cusps = cusps
             self._armc = 0
         from .nakshatras import Nakshatras
@@ -145,6 +144,9 @@ class Cusps:
         return self.cusps[n-1]
 
     def armc(self):
+        """
+        right ascension of the midheaven
+        """
         return self._armc
 
     def closest_cusp(self, longitude):

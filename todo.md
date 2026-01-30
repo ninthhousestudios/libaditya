@@ -1,3 +1,24 @@
+## features
+
+#
+devanagari output in terminal
+
+greek names?
+
+#
+avasthas
+
+lajjitaadi
+baladi
+jagradadi
+deeptadi
+
+everything is in place to do this
+
+#
+fixed stars
+
+want to do "true sidereal", but also just, fixed stars in general
 
 ## jaimini
 

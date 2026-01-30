@@ -20,6 +20,7 @@ import swisseph as swe
 # how you find the true sidereal ayanamsa
 # swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 # use swe.get_ayanamsa(tjd) to get ayanamsa on julian day tjd
+# this is from the faq section of masteringthezodiac.com
 star_signs_sweflg = swe.SIDM_USER + swe.SIDBIT_USER_UT
 star_signs_ref_date = 2451545.0
 star_signs_ayanamsa = 31.2836
