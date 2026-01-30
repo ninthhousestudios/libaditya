@@ -25,7 +25,6 @@ from libaditya import utils
 from libaditya import print_functions as printf
 
 from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps, RashiBala
-# to make it less confusing, pdict will be the dictionary of Planet classes
 from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
 
@@ -212,6 +211,7 @@ class Varga(Jaimini,API):
         
     def mkheader(self):
         header = ""
+        header += f"{self.context.name}\n"
         header += f"Varga {self._amsha} {self.varga_name()}\n"
         header += f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"

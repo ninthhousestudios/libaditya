@@ -9,7 +9,7 @@ source = { editable = "." }
 dependencies = [
     { name = "more-itertools" },
     { name = "prettytable" },
-    { name = "pyswisseph" },
+    { name = "pysweph" },
     { name = "rich" },
     { name = "toml" },
 ]
@@ -23,7 +23,7 @@ dev = [
 requires-dist = [
     { name = "more-itertools", specifier = ">=10.8.0" },
     { name = "prettytable", specifier = ">=3.17.0" },
-    { name = "pyswisseph", specifier = ">=2.10.3.2" },
+    { name = "pysweph", specifier = ">=2.10.3.3" },
     { name = "rich", specifier = ">=14.3.1" },
     { name = "toml", specifier = ">=0.10.2" },
 ]
@@ -83,10 +83,12 @@ wheels = [
 ]
 
 [[package]]
-name = "pyswisseph"
-version = "2.10.3.2"
+name = "pysweph"
+version = "2.10.3.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/66/a6/db70d67a00dda42ebd033538c086879328f4c17f670eafe8aca2f11abfef/pyswisseph-2.10.3.2.tar.gz", hash = "sha256:c54c305e83dbd5d2b71e58d8a69d8ee41de24c4d3328ce09e2af860a3537624d", size = 6940913, upload-time = "2023-06-04T17:05:53.293Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2e/83/950e7faa09fb7b2a09ac8f3dc3b8f4d6dbcff1fd4914d35654520c17823b/pysweph-2.10.3.3-cp313-cp313-manylinux_2_34_x86_64.whl", hash = "sha256:b9c6b49d4df69f75e72fab492c57d7279f59f458e721e3a3cf9c8566e949c39d", size = 770439, upload-time = "2026-01-25T15:57:44.825Z" },
+]
 
 [[package]]
 name = "rich"

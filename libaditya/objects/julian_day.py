@@ -101,6 +101,9 @@ class JulianDay:
         )
 
     def mktimezone(self, timezone="UTC"):
+        """
+        this only kind of timezone libaditya uses is UTC and UTC +/- (some value)
+        """
         sign = ""
         appendix = ""
         if self.utcoffset > 0:

@@ -77,4 +77,4 @@ class Jaimini(Chart):
 
         the deepest python function for argala will be able to do it to any sign in any varga
         """
-        return self.rashi().argala()
+        return self.rashi().rashi_argala()

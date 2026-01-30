@@ -42,6 +42,7 @@ class EphContext:
     this includes chart information, calculation options and display options
     """
     # basic chart information
+    name: str = ""
     timeJD: JulianDay = JulianDay()
     location: Location = Location()
 

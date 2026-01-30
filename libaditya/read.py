@@ -128,7 +128,7 @@ def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
     timeJD = JulianDay((year,month,day,timedec),utcoffset)
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
-    return EphContext(timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
+    return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
 
 def chtk_to_toml(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
     """
@@ -153,6 +153,7 @@ def chtk_to_toml(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.AD
     timeJD = JulianDay((year,month,day,timedec),utcoffset)
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
     d=dict()
+    d["name"] = name
     d["timeJD"] = dict()
     d["timeJD"]["jd"]=timeJD.jd_number()
     d["timeJD"]["utcoffset"]=timeJD.utcoffset
@@ -164,11 +165,12 @@ def chtk_to_toml(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.AD
 def toml_to_context(infile):
     with open(infile, "r") as fd:
         d = toml.load(fd)
+    name = d["name"]
     timeJD = JulianDay(d["timeJD"]["jd"],d["timeJD"]["utcoffset"])
     # use unpacking of the dictionary values
     location = Location(*d["location"].values())
     # all other options are defaults
-    return EphContext(timeJD=timeJD,location=location)
+    return EphContext(name=name,timeJD=timeJD,location=location)
 
 def lat_to_float(lat):
     """

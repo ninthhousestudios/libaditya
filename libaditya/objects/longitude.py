@@ -328,28 +328,6 @@ class Longitude:
             case _:
                 return "not yet implemented"
 
-    varga_deities={
-        2: ["Sun", "Moon"],
-        3: ["Narada", "Agastya", "Durvasas"],
-        4: ["Sanaka", "Sananda", "Sanatkumāra", "Sanātana"],
-        7: ["Kshara", "Kshira", "Dadhya", "Ajya", "Ikshurasa", "Madhya", "Shuddha Jala"],
-        9: ["Deva","Nri","Rakshasa"],
-        10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
-        12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
-        16: ["Brahma", "Vishnu", "Shiva", "Sun"],
-        20: ["Daya", "Megha", "Chinnashirsha", "Pishachani", "Dhumavati", "Matangi", "Bala", "Bhadra", "Aruna", "Anala", "Pingala", "Chucchuka", "Ghora", "Varahi", "Vaishnavi", "Sita", "Bhuvanesvari", "Bhairavi", "Mangala", "Aparajita"],
-        # 21 is for odd signs in the -20/20
-        21: ["Kali", "Gauri", "Jaya", "Lakshmi", "Vijaya", "Vimala", "Sati", "Tara", "Jvalamukhi", "Shveta", "Lalita", "Bagalamukhi", "Pratyangira", "Sachi", "Raudri", "Bhavani", "Varada", "Jaya", "Tripura", "Sumukhi"],
-        24: ["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"],
-        27: ["Dastra", "Yama", "Agni", "Pitamaha", "Chandra", "Isha", "Aditi", "Jiva", "Ahi", "Pitara", "Bhaga", "Aryama", "Arka", "Tvashta", "Marut", "Shakragni", "Mitra", "Vasava", "Nirriti", "Varuna", "Vishvadeva", "Govinda", "Vasu", "Varuna", "Ajapa", "Ahirbudhanya", "Pusha"],
-        40: ["Vishnu", "Chandra", "Marichi", "Tvashta", "Dhata", "Shiva", "Ravi", "Yama", "Yaksha", "Gandharva", "Kala", "Varuna"],
-        45: ["Vidhi", "Isha", "Acyuta"],
-        # for -45 fixed signs
-        46: ["Isha", "Acyuta", "Surajyeshta"],
-        # for -45 dual signs
-        47: ["Vishnu", "Ka", "Isha"],
-        60: ["Ghora", "Rakshasa", "Deva", "Kubera", "Yaksha", "Kimnara", "Bhrashta", "Kulaghna", "Garala", "Vahni", "Maya", "Purishaka", "Apampathi", "Marut", "Kala", "Sarpa", "Amrita", "Indu", "Mridu", "Komala", "Heramba", "Brahma", "Vishnu", "Maheshwara", "Deva", "Ardra", "Kalinasha", "Kshitisha", "Kamalakara", "Gulika", "Mrityu", "Kala", "Davagni", "Ghora", "Yama", "Kantaka", "Sudha", "Amrita", "Purnachandra", "Vishadaghda", "Kulanasa", "Vamsakshaya", "Utpata", "Kala", "Saumya", "Komala", "Sitala", "Karaladamshtra", "Chandramukhi", "Pravina", "Kala Pavaka", "Dandayudha", "Nirmala", "Saumya", "Krura", "Atisitala", "Amrita", "Payodhi", "Bhramana", "Chandra Rekha"]
-    }
 
     def parivritti_varga(self, this_amsha):
         """
@@ -393,44 +371,44 @@ class Longitude:
                 if utils.even(self._which_portion):
                     self._deity = "Sun"
         if this_amsha == 3:
-            self._deity = self.varga_deities[3][which_amsha%3]
+            self._deity = const.varga_deities[3][which_amsha%3]
         if this_amsha == 4:
-            self._deity = self.varga_deities[4][which_amsha%4]
+            self._deity = const.varga_deities[4][which_amsha%4]
         if this_amsha == 7:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[7][which_amsha%7]
+                self._deity = const.varga_deities[7][which_amsha%7]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[7].__reversed__())[which_amsha%7]
+                self._deity = list(const.varga_deities[7].__reversed__())[which_amsha%7]
         if this_amsha == 9:
-            self._deity = self.varga_deities[9][which_amsha%3]
+            self._deity = const.varga_deities[9][which_amsha%3]
         if this_amsha == 10:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[10][which_amsha%10]
+                self._deity = const.varga_deities[10][which_amsha%10]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[10].__reversed__())[which_amsha%10]
+                self._deity = list(const.varga_deities[10].__reversed__())[which_amsha%10]
         if this_amsha == 12:
-            self._deity = self.varga_deities[12][which_amsha%4]
+            self._deity = const.varga_deities[12][which_amsha%4]
         if this_amsha == 16:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[16][which_amsha%4]
+                self._deity = const.varga_deities[16][which_amsha%4]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[16].__reversed__())[which_amsha%4]
+                self._deity = list(const.varga_deities[16].__reversed__())[which_amsha%4]
         if this_amsha == 20:
             # odd and even signs have different deities completely; 21 is for the odd signs, 20 for the even
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[21][which_amsha%20]
+                self._deity = const.varga_deities[21][which_amsha%20]
             if utils.even(real_sign):
-                self._deity = self.varga_deities[20][which_amsha%20]
+                self._deity = const.varga_deities[20][which_amsha%20]
         if this_amsha == 24:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[24][which_amsha%12]
+                self._deity = const.varga_deities[24][which_amsha%12]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[24].__reversed__())[which_amsha%12]
+                self._deity = list(const.varga_deities[24].__reversed__())[which_amsha%12]
         if this_amsha == 27:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[27][which_amsha%27]
+                self._deity = const.varga_deities[27][which_amsha%27]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[27].__reversed__())[which_amsha%27]
+                self._deity = list(const.varga_deities[27].__reversed__())[which_amsha%27]
         if this_amsha == 30:
             real_in_sign = self.real_in_sign_longitude()
             if utils.odd(real_sign):
@@ -456,12 +434,12 @@ class Longitude:
                 if real_in_sign >= 25 and real_in_sign < 30:
                     self._deity = "Vahni/Mars"
         if this_amsha == 40:
-            self._deity = self.varga_deities[40][which_amsha%12]
+            self._deity = const.varga_deities[40][which_amsha%12]
         if this_amsha == 60:
             if utils.odd(real_sign):
-                self._deity = self.varga_deities[60][which_amsha%60]
+                self._deity = const.varga_deities[60][which_amsha%60]
             if utils.even(real_sign):
-                self._deity = list(self.varga_deities[60].__reversed__())[which_amsha%60]
+                self._deity = list(const.varga_deities[60].__reversed__())[which_amsha%60]
                 
 
 
@@ -605,9 +583,9 @@ class Longitude:
         current_in_amsha = position%1
 
         if utils.even(real_sign):
-            self._deity = list(self.varga_deities[10].__reversed__())[amsha_elapsed%12]
+            self._deity = list(const.varga_deities[10].__reversed__())[amsha_elapsed%12]
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[10][amsha_elapsed%12]
+            self._deity = const.varga_deities[10][amsha_elapsed%12]
         
         sign = 1
         if utils.odd(real_sign):
@@ -637,7 +615,7 @@ class Longitude:
         amsha_elapsed = int(position)
         current_in_amsha = position%1
 
-        self._deity = self.varga_deities[12][amsha_elapsed%4]
+        self._deity = const.varga_deities[12][amsha_elapsed%4]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -673,9 +651,9 @@ class Longitude:
             base_longitude = base_longitude_dual
 
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[16][amsha_elapsed%4]
+            self._deity = const.varga_deities[16][amsha_elapsed%4]
         else:
-            self._deity = list(self.varga_deities[16].__reversed__())[amsha_elapsed%4]
+            self._deity = list(const.varga_deities[16].__reversed__())[amsha_elapsed%4]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -712,9 +690,9 @@ class Longitude:
             base_longitude = base_longitude_dual
 
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[21][amsha_elapsed]
+            self._deity = const.varga_deities[21][amsha_elapsed]
         else:
-            self._deity = self.varga_deities[20][amsha_elapsed]
+            self._deity = const.varga_deities[20][amsha_elapsed]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -741,9 +719,9 @@ class Longitude:
         current_in_amsha = position%1
 
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[24][amsha_elapsed%12]
+            self._deity = const.varga_deities[24][amsha_elapsed%12]
         if utils.even(real_sign):
-            self._deity = list(self.varga_deities[24].__reversed__())[amsha_elapsed%12]
+            self._deity = list(const.varga_deities[24].__reversed__())[amsha_elapsed%12]
 
         sign = 1
         if utils.odd(real_sign):
@@ -803,9 +781,9 @@ class Longitude:
                 base_longitude = base_longitude_water
 
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[27][amsha_elapsed]
+            self._deity = const.varga_deities[27][amsha_elapsed]
         if utils.even(real_sign):
-            self._deity = list(self.varga_deities[27].__reversed__())[amsha_elapsed]
+            self._deity = list(const.varga_deities[27].__reversed__())[amsha_elapsed]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -838,7 +816,7 @@ class Longitude:
         if utils.even(real_sign):
             base_longitude = base_longitude_even
     
-        self._deity = self.varga_deities[40][amsha_elapsed%12]
+        self._deity = const.varga_deities[40][amsha_elapsed%12]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -883,7 +861,7 @@ class Longitude:
         if real_sign in [3,6,9,12]:
             base_longitude = base_longitude_dual
 
-        self._deity = self.varga_deities[index][amsha_elapsed%3]
+        self._deity = const.varga_deities[index][amsha_elapsed%3]
 
         return base_longitude+(amsha_elapsed*30)+(current_in_amsha)*30
 
@@ -910,9 +888,9 @@ class Longitude:
         current_in_amsha = position%1
 
         if utils.odd(real_sign):
-            self._deity = self.varga_deities[60][amsha_elapsed]
+            self._deity = const.varga_deities[60][amsha_elapsed]
         if utils.even(real_sign):
-            self._deity = list(self.varga_deities[60].__reversed__())[amsha_elapsed]
+            self._deity = list(const.varga_deities[60].__reversed__())[amsha_elapsed]
 
         return base_longitude+(current_in_amsha*30)
 

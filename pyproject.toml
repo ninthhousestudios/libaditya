@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "more-itertools>=10.8.0",
     "prettytable>=3.17.0",
-    "pyswisseph>=2.10.3.2",
+    "pysweph>=2.10.3.3",
     "rich>=14.3.1",
     "toml>=0.10.2",
 ]

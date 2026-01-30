@@ -32,6 +32,8 @@ check 60
 check d-45 deities
 add iast/deva versions of varga deities
 
+add dignities in each varga for each Planet and in Rashi
+
 #
 jaimini first strength
 
@@ -60,10 +62,6 @@ move vimshottari around
 put calc functions in Rashi and print functions in print_functions
 
 use this to test to make sure setting ephe_path in Chart.__init__() works
-
-#
-revamp .pyph file
-make interactive .pyph creator
 
 
 ## strucutre
@@ -120,6 +118,9 @@ akriti yogas
     the ones needing all planets in 7 houses need work
     the same algorithm doesnt work for them as for the others
     actually, relook at all of them because all probably need some work
+
+was watching tsoding about creating a diff tool in python...levenshtein algorithm could
+be adapted to yogas if yogas are represented a certain way
 
 
 #
