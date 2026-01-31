@@ -242,17 +242,17 @@ class Sign:
         header = ""
         header += f"\n{self.sign()=} {self.sign_name()}\n"
         output = PrettyTable()
-        output.field_names = ["Object", "In Sign Longitude", "Real Longitude"]
+        output.field_names = ["Object", "In Amsha Longitude", "Ecliptic Longitude"]
         output.align["Object"] = "l"
         output.align["In Sign Longitude"] = "r"
-        output.align["Real Longitude"] = "r"
+        output.align["Ecliptic Longitude"] = "r"
 
         for p in self._planets:
-            output.add_row([p.name(),p.in_sign_longitude(),p.raw_longitude()])
+            output.add_row([p.name(),p.amsha_in_sign_longitude(),p.raw_longitude()])
         for c in self._cusps:
-            output.add_row([c.name(),c.in_sign_longitude(),c.raw_longitude()])
+            output.add_row([c.name(),c.amsha_in_sign_longitude(),c.raw_longitude()])
 
-        ret = output.get_string(fields=["Object", "In Sign Longitude", "Real Longitude"])
+        ret = output.get_string(fields=["Object", "In Amsha Longitude", "Ecliptic Longitude"])
 
         return header + ret
 

@@ -30,12 +30,13 @@ from .longitude import Longitude
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 from .shadbala import PlanetBala
+from .swe_functions import SWEPlanet
 
 
 class Planet(Longitude,PlanetBala):
     """
     this class has information and functions related to planets
-    each Planet takes a planet number and a JulianDay class
+    each Planet takes a planet number and an EphContext
     """
 
     def __init__(self, pnumber, context=EphContext(),master=None):

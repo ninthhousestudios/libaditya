@@ -55,4 +55,6 @@ class Location:
         return (self.long, self.lat, self.alt)
 
 
+# Yamakoti is an ancient prime meridian
+# this spot is used to calculate the vara, a savana day that is the same at once in the whole world
 Yamakoti = Location(0, 165.76666666666668, 0, "Yamakoti", "ykt")

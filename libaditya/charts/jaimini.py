@@ -49,6 +49,9 @@ class Jaimini(Chart):
         return self.karakas()[0]
 
     def svamsha(self):
+        """
+        returns the Sign that the AK is in in the navamsha
+        """
         return self.varga(9).signs()[self.varga(9).where_is(self.atmakaraka()).sign()]
 
     def karakamsha(self):

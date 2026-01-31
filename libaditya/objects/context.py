@@ -40,6 +40,14 @@ class EphContext:
     """
     this is the base configuration device
     this includes chart information, calculation options and display options
+
+    every object in libaditya has default values, so you can instantiate anything by, e.g.:
+    >>> e = EphContext()
+    >>> c = Chart()
+    >>> c
+    ...
+
+    for specific
     """
     # basic chart information
     name: str = ""

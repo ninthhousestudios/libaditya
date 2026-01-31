@@ -1,6 +1,14 @@
 ## features
 
 #
+implement all swisseph features in the appropriate place
+
+e.g., Planet.nod_aps_ut()
+
+#
+add Mean Node option
+
+#
 devanagari output in terminal
 
 greek names?

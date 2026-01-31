@@ -122,6 +122,10 @@ def read_chtk_location(infile):
     _, placename, _, _, _, _, lat, long, utcoff = read_chtk(infile)
     return placename, lat, long, utcoff
 
+def read_toml_location(infile):
+    con=toml_to_context(infile)
+    return con.location.placename, con.location.lat, con.location.long, con.timeJD.utcoffset
+
 
 # note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
 def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
@@ -130,7 +134,7 @@ def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
     return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
 
-def chtk_to_toml(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
+def chtk_to_toml(infile):
     """
     encodes with the least information needed
     outputs into an equivalent file, replacing .chtk by .toml
@@ -162,7 +166,7 @@ def chtk_to_toml(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.AD
         toml.dump(d,fd)
     return
 
-def toml_to_context(infile):
+def toml_to_context(infile) -> EphContext:
     with open(infile, "r") as fd:
         d = toml.load(fd)
     name = d["name"]
@@ -299,88 +303,70 @@ def intize_time(time):
     and return a float of that time
     """
     time = time.split(":")
-    return int(time[0]) + int(time[1]) / 60 + int(time[2]) / 3600
+    if len(time) == 2:
+        # no seconds
+        return float(time[0]) + float(time[1]) / 60
+    else:
+        return float(time[0]) + float(time[1]) / 60 + float(time[2]) / 3600
 
 
 def parse_position_argument(position):
     """
-    THIS DOES NOT WORK PROPERLY
+    i think this basically works now
 
     parse command line position argument
-    form is "latitude,longitude"
+    position is one position, either latitude or longitude
     either can be:
         float
         DD:MM(:SS)
-        DD(N/E/S/W)MM('SS)
+       (D)DD(N/E/S/W)MM('SS)
     return a float
     N and E are positive
     S and W are negative
     """
-    lat, long = position.split(",")
 
     # given as a decimal
-    if "." in lat:
-        lat = float(lat)
-    if "." in long:
-        long = float(long)
+    if "." in position and not any(char.isalpha() for char in position):
+        return float(position)
 
     # given in the form DD:MM(:SS)
-    if not isinstance(lat, float):
-        if ":" in lat:
-            latsign = -1 if "-" in lat else 1
-            lattmp = lat.split(":")
+    if not isinstance(position, float):
+        if ":" in position:
+            positiontmp = position.split(":")
             # if len == 2, HH:MM, otherwise, HH:MM:SS
-            if len(lattmp) == 2:
-                lat = latsign * (int(lattmp[0]) + int(lattmp[1]) / 60)
+            sign = 1
+            if "-" in positiontmp[0]:
+                sign = -1
+            if len(positiontmp) == 2:
+                position = sign * (abs(float(positiontmp[0])) + float(positiontmp[1]) / 60)
             else:
-                lat = latsign * (
-                    int(lattmp[0]) + int(lattmp[1]) / 60 + int(lattmp[2]) / 3600
-                )
+                position = sign * (abs(float(positiontmp[0])) + float(positiontmp[1]) / 60 + float(positiontmp[2]) / 3600)
+        return position
 
-    if not isinstance(long, float):
-        if ":" in long:
-            longsign = -1 if "-" in long else 1
-            longtmp = long.split(":")
-            # if len == 2, HH:MM, otherwise, HH:MM:SS
-            if len(longtmp) == 2:
-                long = longsign * (int(longtmp[0]) + int(longtmp[1]) / 60)
+    # given in Kala format DDD(DIR)MM('SS)
+    # longtiude is DDD, latitude it DD
+    if not isinstance(position, float):
+        if "N" in position or "S" in position or "W" in position or "E" in position:
+            if "N" in position:
+                positionsign = 1
+                positiontmp = position.split("N")
+            elif "E" in position:
+                positionsign = 1
+                positiontmp = position.split("E")
+            elif "S" in position:
+                positionsign = -1
+                positiontmp = position.split("S")
+            elif "W" in position:
+                positionsign = -1
+                positiontmp = position.split("W")
+            if "'" in positiontmp[1]:
+                min, sec = positiontmp[1].split("'")
+                position = positionsign * (int(positiontmp[0]) + int(min) / 60 + float(sec) / 3600)
             else:
-                long = longsign * (
-                    int(longtmp[0]) + int(longtmp[1]) / 60 + int(longtmp[2]) / 3600
-                )
+                position = positionsign * (int(positiontmp[0]) + int(positiontmp[1]) / 60)
+        return position
 
-    # given in Kala format DD(DIR)MM('SS)
-    if not isinstance(lat, float):
-        if "N" in lat or "S" in lat:
-            if "N" in lat:
-                latsign = 1
-                lattmp = lat.split("N")
-            if "S" in lat:
-                latsign = -1
-                lattmp = lat.split("S")
-            if "'" in lattmp[1]:
-                min, sec = lattmp[1].split("'")
-                lat = latsign * (int(lattmp[0]) + int(min) / 60 + int(sec) / 3600)
-            else:
-                lat = latsign * (int(lattmp[0]) + int(lattmp[1]) / 60)
 
-    if not isinstance(long, float):
-        if "E" in long or "W" in long:
-            if "E" in long:
-                longsign = 1
-                longtmp = long.split("E")
-            if "W" in long:
-                longsign = -1
-                longtmp = long.split("W")
-            if "'" in longtmp[1]:
-                min, sec = longtmp[1].split("'")
-                long = longsign * (
-                    int(longtmp[0]) + (int(min) / 60) + (int(sec) / 3600)
-                )
-            else:
-                long = longsign * (int(longtmp[0]) + int(longtmp[1]) / 60)
-
-    return lat, long
 
 
 #def init_names(langfile=const.base_path + "/dict/dict.mixed"):
