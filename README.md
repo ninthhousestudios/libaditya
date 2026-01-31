@@ -74,18 +74,64 @@ you can then use ```help()```, e.g.:
 ```
 
 and this will print info for Chart. I am trying to add documentation to each of these
-classes and function so that there is something helpuful printed. Basically all values
-have defaults, so you can also do this
+classes and function so that there is something helpuful printed. 
+
+### Defaults
+
+Basically all values have defaults, so you can also do this
 ```
 >>> c=Chart()
 >>> dir(c)
 ```
 to see all of what Chart has and can do.
 
+Chart is the main interface for any information, since Chart() is an instantiion of a
+particular time and/or location. You can try ```sun=Sun()```, for instance. This works
+and you can use it to explore Sun and what it can do, but in actual practice you want a
+particular Sun, so you should use chart.rashi().planets().sun() and then whatever you
+want to know, e.g., ```chart.rashi().planets().sun().dignity()```
+
 Most of this is meant to be self explanatory. The one thing I need to document better is
 how to input information. It is through EphContext, from libaditya.objects.context. It
 takes a JulianDay and a Location, then a bunch of options. All of these have defaults
 that should a chart for the current time more or less.
+
+### Entering a Chart
+
+It is now possible to enter chart information "interactively", not really, which will
+produce a ```.toml``` chart file.
+
+```
+>>> write.write_new_chart_interactive()
+```
+
+In order, it will expect:
+```
+name: str (optional)
+date: MM/DD/YYYY
+hour: (HH:MM(:SS)) (UTC)
+utcoffset: float
+lat: N is positive
+long: E is positive
+    three formats: 1) decimal
+                   2) DD:MM(:SS)
+                   # below is how Kala represents these in their .chtk file
+                   3) 0DD(E/W)MM'SS(.SS)
+                   3) DD(N/S)MM'SS(.SS)
+alt: float - meters
+placename: str (optional)
+```
+
+The file that will be written is "name", all lowercase, with any specials replaced by
+"-". Call the function with argument ```outfile="your-filename.toml```. 
+
+The only software I know of that does astrology like this is Kala, produced by Ernst
+Wilhelm and his wife; I believe she did the actual programming. I have been using it and
+thus the ```.chtk``` format. It is now possible to convert between them. However, the
+```.toml``` format has a place for altitude of the Location. The Kala format doesn't.
+Right now chtk_to_toml will write it as 0..need to change that.
+
+### ```.chtk``` files
 
 You can read a .chtk file into the repl like this:
 ```
@@ -116,7 +162,9 @@ circle=Circle.ZODIAC # circle starts where the zodiac starts; with Circle.ADITYA
 this is the most useful for getting birth information without needing to do it manually
 
 ```
-jhcontext = read.chtk_to_context("josh.cht")
+jhcontext = read.chtk_to_context("josh.chtk")
+(or)
+jhcontext = read.chtk_to_toml("josh.toml")
 jhchart = Chart(jhcontext)
 ```
 

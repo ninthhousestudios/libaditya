@@ -134,6 +134,40 @@ def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle
     location = Location(lat, long, 0, placename, timeJD.mktimezone())
     return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
 
+def context_to_chtk(context=EphContext(),outfile=None):
+    """
+    turn context into a list of strings
+
+    out = []
+    out.append(str(name)+"\n")
+    out.append(str(year)+"\n")
+    out.append(str(month)+"\n")
+    out.append(str(day)+"\n")
+    out.append(str(hour)+"\n")
+    out.append(str(min)+"\n")
+    out.append(str(sec)+"\n")
+    out.append(str(sex)+"\n")
+    out.append(str(country)+"\n")
+    out.append(str(city)+"\n")
+    out.append(float_to_long(long)+"\n")
+    out.append(float_to_lat(lat)+"\n")
+    out.append(f"{h:02d}:{m:02d}:{s:02d}\n")
+    out.append(str(dst)+"\n")
+    return out
+#   put below into a different function
+#    fout = open(foutname+"-test"+".chtk","w")
+#    fout.writelines(out)
+#    fout.close()
+    """
+    out = []
+    out.append(str(context.name)+"\n")
+    out.append(str(context.timeJD.year())+"\n")
+    out.append(str(context.timeJD.month())+"\n")
+    out.append(str(context.timeJD.day())+"\n")
+    out.append(str(context.timeJD.hour())+"\n")
+    out.append(str(context.timeJD.min())+"\n")
+    out.append(str(context.timeJD.sec())+"\n")
+
 def chtk_to_toml(infile):
     """
     encodes with the least information needed

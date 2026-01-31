@@ -27,8 +27,10 @@ class Tajika(Chart):
         """
         return a dictionary of tajika parivritti vargas
         1-12 in a dictionary {int: Sign}
+        also 30, since it is sometimes used
         """
         vargas = {}
         for n in range(1,13):
             vargas[n] = self.varga(n)
+        vargas[30] = self.varga(30)
         return vargas

@@ -25,3 +25,12 @@ class API:
 
     def ayanamsa(self):
         return self.context.ayanamsa
+
+    def ascendant(self):
+        return self.rashi().lagna()
+
+    def nakshatra(self):
+        """
+        this returns a Nakshatra object
+        """
+        return self.rashi().planets().moon().nakshatra()

@@ -150,7 +150,7 @@ class Chart(API):
 
         sysflg=const.SID
         circle=Circle.ZODIAC
-        names=replace(self.context.names,sign_names=const.zodiac)
+        sign_names=sign_names=const.zodiac
         ayanamsa=27, True Citra ayanamsa by default; use Chart.sidereal(ayanamsa=n) to set the ayanamsa
 
         **kwargs can take any keyword argument that can be used for EphContext
@@ -201,7 +201,7 @@ class Chart(API):
         """
         return a chart like this one but for right now
         """
-        return Chart(context=replace(self.context,timeJD=JulianDay("now")))
+        return Chart(context=replace(self.context,timeJD=JulianDay("now",self.context.timeJD.utcoffset)))
 
     def _new_chart(self, **kwargs):
         """

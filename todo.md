@@ -1,9 +1,21 @@
 ## features
 
 #
+draw
+hd and sbc
+
+#
 implement all swisseph features in the appropriate place
 
 e.g., Planet.nod_aps_ut()
+
+started swe.heliacal_ut() in objects/swe_functions.py as inheritor Mixin SWEPlanet
+added metar for weather data. from this can satisfy function arguments concerning place.
+this will be built-in to location. but the user must pass the correct "location" for
+this, which will be an ICAO identifier; basically, the nearest airport and the weather
+data there. need to implement finding relative humidity from dewpoint. also see about
+finding old metar data. i would like to have .next_heliacal_rising/setting work for
+whatever jds are reasonable
 
 #
 add Mean Node option
@@ -22,6 +34,8 @@ jagradadi
 deeptadi
 
 everything is in place to do this
+
+add "detriment" or "fall" for Western/Hellenistic
 
 #
 fixed stars
@@ -52,6 +66,7 @@ also same chart, look at fss in d9
 
 check my check, d27, mix up between 9 and 6
 
+irina-tweedie.chtk - multiple issues in first strength with tropical and aditya
 
 ## interface
 

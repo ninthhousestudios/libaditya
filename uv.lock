@@ -7,6 +7,7 @@ name = "libaditya"
 version = "0.3.1"
 source = { editable = "." }
 dependencies = [
+    { name = "metar" },
     { name = "more-itertools" },
     { name = "prettytable" },
     { name = "pysweph" },
@@ -21,6 +22,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "metar", specifier = ">=1.11.0" },
     { name = "more-itertools", specifier = ">=10.8.0" },
     { name = "prettytable", specifier = ">=3.17.0" },
     { name = "pysweph", specifier = ">=2.10.3.3" },
@@ -50,6 +52,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
+]
+
+[[package]]
+name = "metar"
+version = "1.11.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/9f/a3444d145b833699c603ed87b5565dcb2ebf9235d85f8229bb25c5047b37/metar-1.11.0.tar.gz", hash = "sha256:0e40e86eb03fdfafef71b14d74349e88e208bd4dc15e8734b3afcf129125378b", size = 213777, upload-time = "2023-07-13T16:19:44.346Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/61/54/5f2e3e1ecd8b3c5ee9298ce0b946fa72f418b353f0e77e5d98f9fea1f3c6/metar-1.11.0-py3-none-any.whl", hash = "sha256:feafbd79667aba547f2c36986c3fffa6a14fd2a20b2e57c59a213eaa9015085a", size = 201442, upload-time = "2023-07-13T16:19:41.343Z" },
 ]
 
 [[package]]

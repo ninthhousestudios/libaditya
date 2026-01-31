@@ -33,7 +33,7 @@ from .shadbala import PlanetBala
 from .swe_functions import SWEPlanet
 
 
-class Planet(Longitude,PlanetBala):
+class Planet(Longitude,PlanetBala,SWEPlanet):
     """
     this class has information and functions related to planets
     each Planet takes a planet number and an EphContext
@@ -84,6 +84,7 @@ class Planet(Longitude,PlanetBala):
     # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
     def __lt__(self,p2):
         return self.amsha_raw_in_sign_longitude() < p2.amsha_raw_in_sign_longitude()
+
 
     def amsha(self):
         return self._amsha
