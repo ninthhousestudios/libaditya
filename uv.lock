@@ -3,10 +3,19 @@ revision = 3
 requires-python = ">=3.13"
 
 [[package]]
+name = "drawsvg"
+version = "2.4.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bf/07/a2c3db84e6af6fa761de905b39109fe24eff2c8d52653c1bff968b6b965d/drawsvg-2.4.1-py3-none-any.whl", hash = "sha256:241ff024968e03542bc8685b41a285427303c17f81eae1933229d26bb65b7fda", size = 44067, upload-time = "2026-01-04T00:06:09.817Z" },
+]
+
+[[package]]
 name = "libaditya"
 version = "0.3.1"
 source = { editable = "." }
 dependencies = [
+    { name = "drawsvg" },
     { name = "metar" },
     { name = "more-itertools" },
     { name = "prettytable" },
@@ -22,6 +31,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "drawsvg", specifier = ">=2.4.1" },
     { name = "metar", specifier = ">=1.11.0" },
     { name = "more-itertools", specifier = ">=10.8.0" },
     { name = "prettytable", specifier = ">=3.17.0" },

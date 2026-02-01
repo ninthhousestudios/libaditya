@@ -1563,6 +1563,23 @@ class Planets:
                 "Ketu": self.ketu()
                 }
 
+    def hd13(self):
+        return {"Sun": self.sun(),
+                "Earth": self.earth(),
+                "Moon": self.moon(),
+                "Rahu": self.rahu(),
+                "Ketu": self.ketu(),
+                "Mercury": self.mercury(),
+                "Venus": self.venus(),
+                "Mars": self.mars(),
+                "Jupiter": self.jupiter(),
+                "Saturn": self.saturn(),
+                "Uranus": self.uranus(),
+                "Neptune": self.neptune(),
+                "Pluto": self.pluto()
+                }
+
+
     def init_Planets(self):
         ret = {}
 
@@ -1885,6 +1902,12 @@ class Planets:
         definition = self.hd_planets_definition()
         state = self.hd_planets_state()
         return "Human Design Planets\n" + self.mkheader() + definition + "\n" + state
+
+    def gates(self):
+        """
+        return a list of the float of each Planet.gate()
+        """
+        return [planet.hd().gate() for planet in self.hd13().values()]
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"

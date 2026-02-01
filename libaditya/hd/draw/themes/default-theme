@@ -1,0 +1,53 @@
+# defaults
+
+# default dream theme for a dream graph
+dream-background = grey
+
+# print planetary information to stdout
+print-planets = True
+
+# colors
+
+background = black
+
+# color with which to draw the lines of centers and boxes
+lines = #6b00ff
+
+undefined = white
+head = yellow
+ajna = green
+throat = #6f4e37
+ji = yellow
+sacral = red
+root = #6f4e37
+spleen = #6f4e37
+solar = #6f4e37
+will = red
+
+# how gates are displayed: numbers, or hexagrams
+gates = numbers
+
+# channel colors
+conscious = #00ff00
+unconscious = #6b00ff
+transit = #00ff00
+
+# text colors
+
+# information on left and right sides
+right-text = #00ff00
+left-text = #6b00ff
+
+
+# genekeys
+# defaults for genekeys profile
+
+circle = yellow
+sphere-line = #6b00ff
+sphere-fill = #6b00ff
+sphere-text = white
+path = yellow
+font-size = 14
+
+# draw star pearl spheres and lines; yes or no
+star-pearl = yes

@@ -75,6 +75,18 @@ class EphContext:
     hd_gate_one: float = hdc.gate_one
     hd_print_hexagrams: bool = False
 
+    # this is mostly used for pyhd
+    def get_info_str(self,xx=False,ayanamsa=""):
+        istr=""
+        istr+=self.name+"\n"
+        # for __str__ of JulianDay
+        istr+=f"{self.timeJD}"
+        if xx:
+            istr+="\ngate 1 = 193.25"
+        if ayanamsa:
+            istr+=f"\n{self.ayanamsa}"
+        return istr
+
 
 # originally i passed the names around to every function and every object
 

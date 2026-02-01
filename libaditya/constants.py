@@ -141,18 +141,18 @@ graha_glyphs = ["⨀","☾","♂","☿","♃","♀","♄","☊","☋"]
 
 glyphs = {
     "Sun": "⨀",
+    "Earth": "⨁",
     "Moon": "☾",
-    "ercury": "☿",
+    "Rahu": "☊",
+    "Ketu": "☋",
+    "Mercury": "☿",
     "Venus": "♀",
     "Mars": "♂",
     "Jupiter": "♃",
     "Saturn": "♄",
     "Uranus": "⛢",
     "Neptune": "♆",
-    "Pluto": "⯓",
-    "Rahu": "☊",
-    "Ketu": "☋",
-    "Earth": "⨁"
+    "Pluto": "⯓"
 }
 
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
@@ -182,6 +182,7 @@ calendardays = [
     "Saturday",
 ]
 
+# used for Planet.cheshta_bala()
 mean_longitude_formulas = {
     "Sun": (lambda t: (280.466449 + (36000.7698231)*t + (0.00030368)*(t**2) + (0.000000021)*(t**3))%360),
     "Mars": (lambda t: (355.433275 + (19141.6964746)*t + (0.00031097)*(t**2) + (0.000000015)*(t**3))%360),
@@ -541,6 +542,25 @@ varga_deities={
     47: ["Vishnu", "Ka", "Isha"],
     60: ["Ghora", "Rakshasa", "Deva", "Kubera", "Yaksha", "Kimnara", "Bhrashta", "Kulaghna", "Garala", "Vahni", "Maya", "Purishaka", "Apampathi", "Marut", "Kala", "Sarpa", "Amrita", "Indu", "Mridu", "Komala", "Heramba", "Brahma", "Vishnu", "Maheshwara", "Deva", "Ardra", "Kalinasha", "Kshitisha", "Kamalakara", "Gulika", "Mrityu", "Kala", "Davagni", "Ghora", "Yama", "Kantaka", "Sudha", "Amrita", "Purnachandra", "Vishadaghda", "Kulanasa", "Vamsakshaya", "Utpata", "Kala", "Saumya", "Komala", "Sitala", "Karaladamshtra", "Chandramukhi", "Pravina", "Kala Pavaka", "Dandayudha", "Nirmala", "Saumya", "Krura", "Atisitala", "Amrita", "Payodhi", "Bhramana", "Chandra Rekha"]
 }
+
+# used for pyhd and sbc themes
+# just initializes a dictionary
+# i guess it could be a .toml file?
+# this is same thing
+def init_theme(file=None):
+    input = open(file,'r')
+    
+    config = {} # empty dictionary
+
+    for line in input:
+       if not "=" in line or line.startswith('#'):
+           continue # either a comment or not a variable if line doesnt have =
+       field, value = line.split("=")
+       field = field.strip().lower()
+       value = value.strip()
+       config[field]=value 
+    input.close()
+    return config
 
 # template comment box
 

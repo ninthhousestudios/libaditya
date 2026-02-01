@@ -1,26 +1,33 @@
-#    This file is part of pyhd.
+#    This file is part of libaditya.
 #
 #    Copyright (c) 2025 Josh Harper <humanhaven@substack.com>
 #
-#    pyhd is free software: you can redistribute it and/or modify
+#    libaditya is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    pyhd is distributed in the hope that it will be useful,
+#    libaditya is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with pyhd.  If not, see <https://www.gnu.org/licenses/>.
+#    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
 import os
 import pathlib
 
+#import libaditya.constants as const
 from libaditya.constants import *
 
+# .../libaditya/libaditya/hd is the base_path
+base_path = os.path.dirname(os.path.realpath(__file__))
+theme_path = base_path + "/draw/themes/"
+default_theme = theme_path + "default-theme"
+
+hd_glyphs = [*glyphs.values()]
 
 # gates of the hd i ching wheel in order
 wheel=[1,43,14,34,9,5,26,11,10,58,38,54,61,60,41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44]
