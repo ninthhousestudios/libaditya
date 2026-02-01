@@ -139,6 +139,8 @@ rashi_aspects = {
 karaka_glyphs = ["⨀","☾","♂","☿","♃","♀","♄"]
 graha_glyphs = ["⨀","☾","♂","☿","♃","♀","♄","☊","☋"]
 
+# these glyphs are in order for hd
+# in hd.constants, use [*glyphs.values()]
 glyphs = {
     "Sun": "⨀",
     "Earth": "⨁",
@@ -152,7 +154,8 @@ glyphs = {
     "Saturn": "♄",
     "Uranus": "⛢",
     "Neptune": "♆",
-    "Pluto": "⯓"
+    "Pluto": "⯓",
+    "Chiron": "⚷"
 }
 
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]

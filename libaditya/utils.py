@@ -415,3 +415,11 @@ def copy_collect_charts(root,outdir="all-charts"):
                 print("cp command failed")
 
     return ret
+
+def toJD(ls,context):
+    """
+    take a list ls of julianday floats
+    return a list of JulianDay classes
+    """
+    from libaditya.objects import JulianDay
+    return [JulianDay(jd_number,context.timeJD.utcoffset) for jd_number in ls]

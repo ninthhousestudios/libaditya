@@ -1903,11 +1903,16 @@ class Planets:
         state = self.hd_planets_state()
         return "Human Design Planets\n" + self.mkheader() + definition + "\n" + state
 
-    def gates(self):
+    def gates(self, chiron=True):
         """
         return a list of the float of each Planet.gate()
+        if chiron is False, dont include his gate activation
+        this is for determining defined gates, because chiron does not activate a gate
         """
-        return [planet.hd().gate() for planet in self.hd13().values()]
+        planets = list(self.hd13().values())
+        if chiron:
+            planets.append(self.chiron())
+        return [planet.hd().gate() for planet in planets]
 
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"

@@ -182,3 +182,17 @@ def print_jaimini_spiritual_planets(splanets):
         for sign in splanets[varga]["aspecting"]:
             for planet in sign:
                 print(f"\t{planet}")
+
+def print_visible_times(times):
+    """
+    takes a list of three JulianDay classes
+    0 - start of visibility
+    1 - optimum visibility
+    2 - end of visibility
+    """
+    print("Start of visibility:")
+    print(times[0])
+    print("Optimum visibility:")
+    print(times[1])
+    print("End of visibility:")
+    print(times[2])

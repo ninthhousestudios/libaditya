@@ -16,6 +16,8 @@
 
 import swisseph as swe
 
+from libaditya import utils
+
 class SWEPlanet:
     """
     this class inherits unto Planet
@@ -30,9 +32,13 @@ class SWEPlanet:
     """
 
     def next_heliacal_rising(self):
+        """
+        swe.heliacal_ut() returns 3 jd numbers
+        start of visbility, optimum visbility, end of visbility
+        """
         if self.identity() == "Moon":
             return
-        return swe.heliacal_ut(
+        return utils.toJD(swe.heliacal_ut(
             self.timeJD.jd_number(),
             self.context.location.swe_location(),
             # need to figure out how to get current information for the place
@@ -46,12 +52,12 @@ class SWEPlanet:
             swe.HELIACAL_RISING,
             # this is the ephemeris flag, i think
             self.sysflg
-       )
+       ), self.context)
 
     def next_heliacal_setting(self):
         if self.identity() == "Moon":
             return
-        return swe.heliacal_ut(
+        return utils.toJD(swe.heliacal_ut(
             self.timeJD.jd_number(),
             self.context.location.swe_location(),
             # need to figure out how to get current information for the place
@@ -65,12 +71,12 @@ class SWEPlanet:
             swe.HELIACAL_SETTING,
             # this is the ephemeris flag, i think
             self.sysflg
-       )
+       ), self.context)
 
     def next_evening_first(self):
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
             return
-        return swe.heliacal_ut(
+        return utils.toJD(swe.heliacal_ut(
             self.timeJD.jd_number(),
             self.context.location.swe_location(),
             # need to figure out how to get current information for the place
@@ -84,12 +90,12 @@ class SWEPlanet:
             swe.EVENING_FIRST,
             # this is the ephemeris flag, i think
             self.sysflg
-       )
+       ), self.context)
 
     def next_morning_last(self):
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
             return
-        return swe.heliacal_ut(
+        return utils.toJD(swe.heliacal_ut(
             self.timeJD.jd_number(),
             self.context.location.swe_location(),
             # need to figure out how to get current information for the place
@@ -103,4 +109,4 @@ class SWEPlanet:
             swe.MORNING_LAST,
             # this is the ephemeris flag, i think
             self.sysflg
-       )
+       ), self.context)
