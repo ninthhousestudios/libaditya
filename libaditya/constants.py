@@ -23,6 +23,8 @@ from libaditya import utils
 
 # should be .../libaditya/libaditya
 base_path = os.path.dirname(os.path.realpath(__file__))
+ephe_path = base_path + "/ephe/"
+stars_file = ephe_path + "sefstars.txt"
 # themes are for drawing hd and sbc charts
 theme_path = base_path + "/draw/themes/"
 hd_default_theme = theme_path + "default-theme.hd"
@@ -1317,6 +1319,6 @@ names = {
             "Pi",
         ],
         "abhijit":
-        "ab",
+        "abh",
     },
 }

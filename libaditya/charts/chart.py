@@ -101,6 +101,8 @@ class Chart(API):
         saptavargas = [1,-2,-3,7,9,-12,30]
         return [Varga(self.context,amsha) for amsha in saptavargas]
 
+    # do the other groups of vargas, dasha, etc.
+
     # jaimini and tajika
     # these inherit from Chart, then Chart calls them here, which is why there is a local import statement
     # the reason is that i like to have the syntax, e.g., chart.jaimini().pada()
@@ -196,6 +198,15 @@ class Chart(API):
         calls self.JulianDay effectively and return a Chart with shifted JulianDay
         """
         return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number)))
+
+    def timejd(self, next_time):
+        """
+        shift the time only
+        current next_time only accepts a julianday number
+        carries along the timezone from this context
+        """
+        if isinstance(next_time, float):
+            return Chart(context=replace(self.context,timeJD=JulianDay(next_time,self.context.timeJD.utcoffset)))
 
     def now(self):
         """

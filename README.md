@@ -131,6 +131,15 @@ thus the ```.chtk``` format. It is now possible to convert between them. However
 ```.toml``` format has a place for altitude of the Location. The Kala format doesn't.
 Right now chtk_to_toml will write it as 0..need to change that.
 
+### reading a chart from a ```.toml``` file
+
+```read.toml_to_context()``` takes a ```toml``` file such as produced by
+```write_new_chart_interactive()```. You can use that to instantiate a Chart:
+```
+>>> context = read.toml_to_context("chart.toml")
+>>> chart = Chart(context)
+```
+
 ### ```.chtk``` files
 
 You can read a .chtk file into the repl like this:

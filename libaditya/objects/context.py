@@ -28,13 +28,6 @@ class Circle(Enum):
     ZODIAC = 2
     SIDEREAL_ADITYA = ZODIAC
 
-@dataclass(frozen=True)
-class HDContext:
-    gate_one: float = hdc.gate_one
-    print_hexagrams: int = 0 # 0 for numbers, 1 for hexagrams
-    toround: (bool, int) = (True, 3)
-        
-
 @dataclass
 class EphContext:
     """
@@ -55,7 +48,7 @@ class EphContext:
     location: Location = Location()
 
     # calculation options
-    sysflg: int = const.ECL
+    sysflg: int = const.ECL # | swe.SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
     amsha: int = 1 # amsha is the varga; default is 1
     ayanamsa: int = 98
     hsys: str = "C"
@@ -72,17 +65,21 @@ class EphContext:
     print_outer_planets: bool = True
 
     # hd options
+    # i dont acutally know if hd_gate_one works to change the gate
+    # Chart.bodygraph().draw_svg() can draw a bodygraph, not sure if hd_print_hexagrams works?
     hd_gate_one: float = hdc.gate_one
     hd_print_hexagrams: bool = False
 
     # this is mostly used for pyhd
-    def get_info_str(self,xx=False,ayanamsa=""):
+    # need to change the xx business
+    def get_info_str_hd(self):
         istr=""
         istr+=self.name+"\n"
         # for __str__ of JulianDay
         istr+=f"{self.timeJD}"
-        if xx:
-            istr+="\ngate 1 = 193.25"
+        # 223.25 is what hd_gate_one "should" be; if not, print what it is to show that it is not what is expected
+        if self.hd_gate_one != 223.25:
+            istr+="\ngate 1 = {self.hd_gate_one}"
         if ayanamsa:
             istr+=f"\n{self.ayanamsa}"
         return istr

@@ -49,10 +49,12 @@ class Longitude:
         self._deity = "none"
         self._amsha_longitude = self.varga(amsha)%360
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
-        self.rahu = self.get_rahu()
 
     def Longitude(self):
         return self
+
+    def ayanamsa(self):
+        return self.context.ayanamsa
 
     def ecliptic_longitude(self) -> float:
         return self._longitude

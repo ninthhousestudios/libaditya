@@ -343,6 +343,7 @@ def print_current_vdasha(context,yrlen,levels):
     print("\n\nCurrent Vimshottari Dasha\n")
 
     # this is for the year length
+    yrstr=""
     for key,value in const.dasha_years.items():
         if yrlen == key:
             yrlen = const.dasha_years[key]

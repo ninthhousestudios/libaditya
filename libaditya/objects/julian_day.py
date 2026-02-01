@@ -91,7 +91,7 @@ class JulianDay:
         """
         return (self.jd_number() - 2451545) / 36525
 
-    def indent_print(self, n=1):
+    def indent_print(self, n=1) -> None:
         """
         print like with __str__, but indenting each line n times
         """
@@ -100,7 +100,14 @@ class JulianDay:
             f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}"
         )
 
-    def mktimezone(self, timezone="UTC"):
+    def indent_print_str(self, n=1) -> str:
+        """
+        print like with __str__, but indenting each line n times
+        """
+        tab = utils.mktab(n)
+        return f"{tab}{self.date()} at {self.time()}\n{tab}{self.usrdate()} at {self.usrtime()}\n{tab}{self.jd}"
+
+    def mktimezone(self, timezone="UTC") -> str:
         """
         this only kind of timezone libaditya uses is UTC and UTC +/- (f: float)
         """

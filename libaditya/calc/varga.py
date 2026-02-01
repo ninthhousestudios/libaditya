@@ -27,6 +27,8 @@ from libaditya import print_functions as printf
 from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps, RashiBala
 from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
+from libaditya.calc.panchanga import Panchanga
+from libaditya.calc.swe_functions import SWERashi
 from libaditya.draw.draw_sbc import DrawSBC
 
 from .jaimini import Jaimini
@@ -241,7 +243,7 @@ class Varga(Jaimini,API):
 
 
 
-class Rashi(Varga,JaiminiGet,RashiBala,DrawSBC):
+class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC):
 
     def __init__(self,context,chart):
         self.master = chart
@@ -281,7 +283,7 @@ class Rashi(Varga,JaiminiGet,RashiBala,DrawSBC):
         """
         return self.master
 
-    def panchanga(self):
+    def panchanga(self, **kwargs):
         """
         panchanga is here because it has to do with the sun and moon, with time
         that is the Rashi chart essentially
@@ -291,9 +293,10 @@ class Rashi(Varga,JaiminiGet,RashiBala,DrawSBC):
         Panchanga.__str__ prints the basic panchagna, and also the panchanga addendum
         __repr__ prints only the basic time and panchanga information
         """
-        return Panchanga(self.context)
+        context = replace(self.context,**kwargs)
+        return Panchanga(context)
 
-    def print_current_vimshottari_dasha(self,yrlen=const.dasha_years["saura"],levels=5):
+    def print_current_vimshottari_dasha(self,yrlen="saura",levels=5):
         vimshottari.print_current_vdasha(self.context,yrlen,levels)
         return
 

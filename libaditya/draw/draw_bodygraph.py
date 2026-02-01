@@ -28,13 +28,16 @@ class DrawBodyGraph:
     def draw_svg(self, theme_file=hdc.default_theme, outfile=None):
         """
         output a .svg of this bodygraph
+
+        default outfile is name associated with the chart, all lowercase, spaces replaced with "-"
+        if there is no name and outfile=None, then it uses the julianday number as the file name
         """
         d = draw.Drawing(500, 500)
         # initialize the theme from the theme_file
         theme = const.init_theme(theme_file)
         theme["gates"] = self.gates_theme(theme["gates"])
         theme = self.get_defined_centers(theme,self.all_gates())
-        d = self.draw_bodygraph(d,theme,self.conscious_planets().gates(),self.unconscious_planets().gates(),self.context.get_info_str(),self.unconscious_planets().context.get_info_str())
+        d = self.draw_bodygraph(d,theme,self.conscious_planets().gates(),self.unconscious_planets().gates(),self.context.get_info_str_hd(),self.unconscious_planets().context.get_info_str_hd())
         # display to the correct output file 
         d.set_pixel_scale(1)
         if outfile == None:

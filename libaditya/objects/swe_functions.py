@@ -18,6 +18,8 @@ import swisseph as swe
 
 from libaditya import utils
 
+from libaditya.objects import JulianDay
+
 class SWEPlanet:
     """
     this class inherits unto Planet
@@ -92,7 +94,7 @@ class SWEPlanet:
             self.sysflg
        ), self.context)
 
-    def next_morning_last(self):
+    def next_morning_last(self) -> [JulianDay]:
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
             return
         return utils.toJD(swe.heliacal_ut(
@@ -110,3 +112,31 @@ class SWEPlanet:
             # this is the ephemeris flag, i think
             self.sysflg
        ), self.context)
+
+    def rise(self, bitflags=swe.BIT_HINDU_RISING) -> JulianDay:
+        """
+        next rising time for this planet (can do stars...need to add something for that)
+        """
+        timeJD = JulianDay(
+            swe.rise_trans(
+                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
+                self.swe_id(),
+                swe.CALC_RISE | bitflags,
+                self.context.location.swe_location(),
+            )[1][0],self.timeJD.utcoffset)
+        return timeJD
+
+    def set(self, bitflags=swe.BIT_HINDU_RISING) -> JulianDay:
+        """
+        next setting time for this planet (can do stars...need to add something for that)
+        """
+        timeJD = JulianDay(
+            swe.rise_trans(
+                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
+                self.swe_id(),
+                swe.CALC_SET | bitflags,
+                self.context.location.swe_location(),
+            )[1][0],self.timeJD.utcoffset)
+        return timeJD
+
+    # add meridian transits

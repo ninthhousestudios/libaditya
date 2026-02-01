@@ -25,14 +25,26 @@ from libaditya.objects import Circle
 class DrawSBC:
     """
     Mixin for drawing a sarvatobhadra chakra
+
+    meant to be used as Rashi.draw_sbc(english_letters: bool = False, **kwargs)
+
+    **kwargs is for any option in self.context
+    meant to be used for names_type (eng,iast,deva,mixed,abbrev) or sign_names (adityas,zodiac)
     """
 
-    def draw_sbc(self, english_letters=False, **kwargs):
+    def draw_sbc(self, english_letters=False) -> draw.Drawing:
         """
         draw this chart as an sbc in .svg format
+
+        **kwargs is for context; you can change any option you want
+        this is dangerous i guess, but it is really meant for names_type and sign_names
+        for controlling how these are displayed on the chakra
+
+        return a Drawing, d
+        can be saved with, e.g., d.save_svg("this-chart.svg")
+
+        you should probably call this like: Rashi.draw_sbc()
         """
-        # this is adjust any other options just for this, specifically for names
-        self.context=replace(self.context,**kwargs)
         # first, initilize a drawsvg.Drawing
         d = draw.Drawing(500, 500)
 
@@ -42,8 +54,34 @@ class DrawSBC:
         if english_letters:
             d = draw_english_letters(d)
 
+        # now the base is complete
+
+        # start drawing
+
+        # draw the rest of the chart stream of consciousness style
+        # display panchangas birth panchanga
+        bpanch = self.panchanga()
+        birth_panchanga = bpanch.info_string()
+        d.append(
+            draw.Rectangle(395, 450, 70, 45, rx="1", ry="1", stroke="black", fill="yellow")
+        )
+        d.append(draw.Text(birth_panchanga, font_size=6, x=400, y=450))
+
         return d
         
+# all of these where "assembled by hand"
+# guess at coordinates and seeing what look good and adjusting...
+
+# there are two set of coordinates
+
+# the sbc has 81 boxes, so there is a coordinate system for that
+# and then the coordinate system of Drawing itself, 500x500
+# the origin is in the top left
+# i think the 81 system works the same way
+# 0-indexed in the top left, 2-tuple (column,row)
+# i.e., (0,0) is the first column, first row
+# and,  (7,7) is the last column, last row
+# and,  (6,3) is the sixth column, third row
 
 def make_coords(x=40, y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row
@@ -484,8 +522,6 @@ def draw_chakra_base(d, context, themefile=const.sbc_default_theme):
         sign_names = adityas
     if context.sign_names == "zodiac":
         sign_names = zodiac
-
-    print(f"drawing these names: {adityas}")
 
     for n in range(12):
         thisx = adit_coords[n][0]

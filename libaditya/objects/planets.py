@@ -85,7 +85,6 @@ class Planet(Longitude,PlanetBala,SWEPlanet):
     def __lt__(self,p2):
         return self.amsha_raw_in_sign_longitude() < p2.amsha_raw_in_sign_longitude()
 
-
     def amsha(self):
         return self._amsha
     
@@ -324,23 +323,6 @@ class Planet(Longitude,PlanetBala,SWEPlanet):
 
     def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
-
-#    def ingress(self, next_long) -> Self:
-#        """
-#        return Planet for the JulianDay where Sun arrives at longitude next_long
-#        """
-#        # % 360 help in case we are looking for the equinox, next_long = 0
-#        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
-#            # if we dont go forward one second the longitude we are are will be
-#            # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
-#            # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-#            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
-#        # difference between current longitude and desired longitude
-#        diff = self.degrees_apart(next_long)
-#        shift_factor = diff*self.lowest_daily_speed()
-#        # get Planet class for this planet
-#        planet = natural_planets[self.identity()]
-#        return planet(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor)))
 
     def _get_dignity(self, self_in_rashi, lord: Self) -> str:
         """
@@ -625,7 +607,6 @@ class Sun(Planet):
         """
         return 10
 
-
     def cheshta_bala(self):
         """
         sun has 60 points of cheshta bala at the northern solstice, i.e., 90 degrees longitude
@@ -653,6 +634,17 @@ class Moon(Planet):
 
     def nature(self):
         return self.attributes["nature"]
+
+    def next_crossing_of_rahu(self) -> str:
+        """
+        JulianDay of the next time Moon is conjunct true node Rahu
+        """
+        jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(self.context.timeJD.jd_number())
+        crossJD = JulianDay(jd_cross,self.context.timeJD.utcoffset)
+        ret = ""
+        ret = f"{crossJD}\n"
+        ret += f"swe.{moon_longitude=} swe.{moon_latitude=}\n"
+        return ret
 
     def is_benefic(self):
         if self.nature() == "Benefic":

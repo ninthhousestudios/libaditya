@@ -22,6 +22,7 @@ from typing import Self
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya import print_functions as printf
 
 from libaditya.objects import Sun, Moon, EphContext, JulianDay
 
@@ -80,6 +81,20 @@ class Panchanga:
         panch += f"{const.ayanamsa_name(self.context.ayanamsa)}"
         panch += f"\n{self.context.timeJD}\n"
 
+        panch += f"\nAbsolute tithi: {self.tithi()}\n"
+        if self.tithi() > 15:
+            panch += f"Relative tithi: {self.tithi() - 15}\n"
+        panch += f"Type: {self.tithi_type()}\n"
+
+        panch += f"Karana: {self.karana()}\n"
+        panch += f"Vara: {self.vara()}\n"
+        panch += f"Nakshatra: {self.nakshatra()}\n"
+        panch += f"Yoga: {self.yoga()}\n"
+
+        return panch
+
+    def info_string(self):
+        panch = ""
         panch += f"\nAbsolute tithi: {self.tithi()}\n"
         if self.tithi() > 15:
             panch += f"Relative tithi: {self.tithi() - 15}\n"
@@ -220,15 +235,16 @@ class Panchanga:
         shift_factor = self.karana_degrees_remaining()*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_karana()
         
+    # doesnt work
     def next_vara(self) -> Self:
         # find sunrise at yamakoti on this day
         today_yamakotiJD = self._sun.sunrise_yamakoti()
         # if the current time is before sunrise at yamakoti, todayJD is the next varas
         if self.timeJD.jd_number() < today_yamakotiJD.jd_number():
-            return Panchanga(replace(self.context,timeJD=today_yamakotiJD.shift("f","second",5)))
+            return Panchanga(replace(self.context,timeJD=today_yamakotiJD.shift("f","minutes",5)))
         # if the current time is after sunrise at yamaktoi, go ahead one today
-        next_yamakotiJD = Sun(replace(self.context,timeJD=self.timeJD.shift("f","day",1)))
-        return Panchanga(replace(self.context,timeJD=next_yamakotiJD.timeJD.shift("f","second",5)))
+        next_yamakotiJD = Sun(replace(self.context,timeJD=self.timeJD.shift("f","day",1))).sunrise_yamakoti()
+        return Panchanga(replace(self.context,timeJD=next_yamakotiJD.timeJD.shift("f","minutes",5))).next_vara()
 
     def next_nakshatra(self):
         if self._moon.nakshatra().degrees_remaining() <= .00001:
@@ -242,13 +258,35 @@ class Panchanga:
         shift_factor = self.yoga_degrees_remaining()*self._moon.lowest_hourly_speed()
         return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).next_yoga()
 
+    def shift(self,dir,tunit,shift_factor):
+        return Panchanga(replace(self.context,timeJD=self.timeJD.shift(dir,tunit,shift_factor)))
+
     def print_next_new_moon(self):
+        """
+        an actual print() function
+
+        also prints previous last visibility and next first visibility of the moon around the "next_new_moon"
+        """
         next = self.next_new_moon()  # return the Panchanga of the next new moon
+        print(f"\n\tPrevious last visibility:")
+        next.shift("back","days",10).moon().next_morning_last()[1].indent_print(1)
         print("\nNext new moon at:")
         print(next.timeJD)
         print(f"At: {next._moon.longitude()}")
         print(f"Nakshatra: {next._moon.nakshatra_name()}")
-        next._moon.nakshatra().print_in_longitude()
+        next.moon().nakshatra().print_in_longitude()
+        print(f"\n\tNext visibility:")
+        # print the middle JulianDay of the return list, the "optimum" visibility as when you can first see it next
+        # JulianDay.indent_print() uses print() itself
+        next.moon().next_evening_first()[1].indent_print(1)
+        # use this but put it somewhere else as an option
+#        print(f"Next last morning visibility:")
+#        # Moon/Mercury/Venus.next_morning_last() returns a list of 3 JulianDay classes
+#        # earliest, best, latest visibility for that event
+#        printf.print_visible_times(next.moon().next_morning_last())
+#        print(f"Next evening first visibility:")
+#        printf.print_visible_times(next.moon().next_evening_first())
+
 
     def print_next_full_moon(self):
         next = self.next_full_moon()  # return the Panchanga of the next new moon

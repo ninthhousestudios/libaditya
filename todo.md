@@ -4,6 +4,11 @@
 draw
 hd and sbc
 
+can now draw hd bodygraph
+```
+chart.bodygraph().draw_svg()
+```
+
 #
 implement all swisseph features in the appropriate place
 
@@ -132,6 +137,8 @@ change everything and make it work correctly
 
 this time doesnt work. says it is shukravara and that the next vara is shukravara
 2461071.2983680554
+
+it just doesnt work. needs to be completely reworked
 
 ## calculations
 
