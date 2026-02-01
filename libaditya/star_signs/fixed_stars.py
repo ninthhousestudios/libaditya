@@ -74,6 +74,13 @@ class FixedStar(Longitude):
         # swe_id is the nomenclature name of the star
         # can pass it with or without comma
         self._swe_id = swe_id if "," in swe_id else ","+swe_id
+        try:
+            # if it works, the swe_id is valid
+            swe.fixstar2_ut(self._swe_id,self.context.timeJD.jd_number())
+        except:
+            # if not, assume it is a search
+            # so remove "," from beginning, add "%" to end for wildcard
+            self._swe_id = self._swe_id[1:]+"%"
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
@@ -98,6 +105,9 @@ class FixedStar(Longitude):
 
     def name(self):
         return self._name
+
+    def swe_id(self):
+        return self._swe_id
         
     def latitude(self) -> float:
         if self.context.toround[0]:
@@ -154,6 +164,9 @@ class FixedStar(Longitude):
             return round(self.dist_speed, self.context.toround[1])
         else:
             return self.dist_speed
+
+    def magnitude(self):
+        return swe.fixstar2_mag(self.swe_id())[0]
 
 
 class GalacticCenter(FixedStar):
