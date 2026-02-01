@@ -23,7 +23,7 @@ import libaditya.constants as const
 from libaditya.hd import calc as hdcalc
 from libaditya.hd import constants as hdc
 
-from libaditya.hd.draw.draw_bodygraph import DrawBodyGraph
+from libaditya.draw.draw_bodygraph import DrawBodyGraph
 
 
 class Bodygraph(DrawBodyGraph):

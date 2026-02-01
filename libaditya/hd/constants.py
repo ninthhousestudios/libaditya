@@ -20,12 +20,15 @@ import os
 import pathlib
 
 #import libaditya.constants as const
+# i dont remember why this is a star import
+# when if i changed it to "as const" like above, i got an import error
 from libaditya.constants import *
+import libaditya.constants as const
 
-# .../libaditya/libaditya/hd is the base_path
-base_path = os.path.dirname(os.path.realpath(__file__))
+# .../libaditya/libaditya/ is the base_path
+base_path = const.base_path
 theme_path = base_path + "/draw/themes/"
-default_theme = theme_path + "default-theme"
+default_theme = theme_path + "default-theme.hd"
 
 hd_glyphs = [*glyphs.values()]
 

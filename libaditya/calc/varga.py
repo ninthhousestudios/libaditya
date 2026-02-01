@@ -27,6 +27,7 @@ from libaditya import print_functions as printf
 from libaditya.objects import Sign, Signs, Longitude, Planet, Planets, Cusp, Cusps, RashiBala
 from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
+from libaditya.draw.draw_sbc import DrawSBC
 
 from .jaimini import Jaimini
 from .jaimini_get import JaiminiGet
@@ -240,7 +241,7 @@ class Varga(Jaimini,API):
 
 
 
-class Rashi(Varga,JaiminiGet,RashiBala):
+class Rashi(Varga,JaiminiGet,RashiBala,DrawSBC):
 
     def __init__(self,context,chart):
         self.master = chart
