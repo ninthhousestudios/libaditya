@@ -19,7 +19,8 @@ import swisseph as swe
 
 from libaditya import constants as const
 
-from libaditya.objects import Longitude, EphContext, Earth
+from libaditya.objects import Longitude, CelestialObject, EphContext, Earth
+from libaditya.hd.longitude import HDLongitude
 
 class TheStars:
 
@@ -65,7 +66,12 @@ class TheStars:
         print(f"Star: {name} appears at {information[0]} longitude on {self.context.timeJD}")
         print(f"{Longitude(information[0],1).longitude()}")
 
-class FixedStar(Longitude):
+    def print_the_stars(self) -> None:
+        for n,(nomen,trad) in enumerate(self.the_stars().items()):
+            print(f"{n}\t{nomen.strip()}\t{trad.strip()}")
+
+
+class FixedStar(Longitude,CelestialObject):
 
     def __init__(self, swe_id: str, context: EphContext = EphContext()):
         self.context = context
@@ -84,7 +90,8 @@ class FixedStar(Longitude):
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
-        self._name = self._name.split(",")[0]
+        self._name, self._swe_id = self._name.split(",")
+        # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1)
 
     def init_coords(self):
@@ -107,64 +114,11 @@ class FixedStar(Longitude):
         return self._name
 
     def swe_id(self):
-        return self._swe_id
+        return ","+self._swe_id
+
+    def identity(self):
+        return self.swe_id()
         
-    def latitude(self) -> float:
-        if self.context.toround[0]:
-            return round(self.lat, self.context.toround[1])
-        else:
-            return self.lat
-
-    def declination(self) -> float:
-        """
-        add declination so that is is always retrivable
-        """
-        declination = swe.calc_ut(self.timeJD.jd_number(),self.pnumber,swe.FLG_EQUATORIAL)[0][1]
-        if self.context.toround[0]:
-            return round(declination, self.context.toround[1])
-        else:
-            return declination
-
-    def distance(self):
-        """
-        distance returned by swe is in au
-        """
-        if self.context.toround[0]:
-            return round(self.dist, self.context.toround[1])
-        else:
-            return self.dist
-
-    def distance_lightyears(self):
-        """
-        distance returned by swe is in lightyears
-        """
-        dist = self.dist*swe.AUNIT_TO_LIGHTYEAR
-        if self.context.toround[0]:
-            return round(dist, self.context.toround[1])
-        else:
-            return dist
-
-    def speed(self):
-        return self.longitude_speed()
-
-    def longitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.long_speed, self.context.toround[1])
-        else:
-            return self.long_speed
-
-    def latitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.lat_speed, self.context.toround[1])
-        else:
-            return self.lat_speed
-
-    def distance_speed(self):
-        if self.context.toround[0]:
-            return round(self.dist_speed, self.context.toround[1])
-        else:
-            return self.dist_speed
-
     def magnitude(self):
         return swe.fixstar2_mag(self.swe_id())[0]
 

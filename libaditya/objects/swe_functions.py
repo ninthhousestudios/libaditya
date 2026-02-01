@@ -20,9 +20,9 @@ from libaditya import utils
 
 from libaditya.objects import JulianDay
 
-class SWEPlanet:
+class SWEFirstLast:
     """
-    this class inherits unto Planet
+    this class inherits unto Moon, Mercury, Venus
     contains all the relevant swe functions
 
     will document here as implemented
@@ -32,48 +32,6 @@ class SWEPlanet:
     next_evening_first()
     next_morning_last() -> both for Moon, Mercury, Venus only
     """
-
-    def next_heliacal_rising(self):
-        """
-        swe.heliacal_ut() returns 3 jd numbers
-        start of visbility, optimum visbility, end of visbility
-        """
-        if self.identity() == "Moon":
-            return
-        return utils.toJD(swe.heliacal_ut(
-            self.timeJD.jd_number(),
-            self.context.location.swe_location(),
-            # need to figure out how to get current information for the place
-            # relative humdity can do with metpy, but it is a lot of dependcies for just one thing that
-            # may not really be that important
-            # the 4-tuple of 0 sets atmospheric information to general values
-            (0,0,0,0),
-            # a 6-tuple of values relative to an observer and various observing situations
-            (0,0,0,0,0,0),
-            self.identity(),
-            swe.HELIACAL_RISING,
-            # this is the ephemeris flag, i think
-            self.sysflg
-       ), self.context)
-
-    def next_heliacal_setting(self):
-        if self.identity() == "Moon":
-            return
-        return utils.toJD(swe.heliacal_ut(
-            self.timeJD.jd_number(),
-            self.context.location.swe_location(),
-            # need to figure out how to get current information for the place
-            # relative humdity can do with metpy, but it is a lot of dependcies for just one thing that
-            # may not really be that important
-            # the 4-tuple of 0 sets atmospheric information to general values
-            (0,0,0,0),
-            # a 6-tuple of values relative to an observer and various observing situations
-            (0,0,0,0,0,0),
-            self.identity(),
-            swe.HELIACAL_SETTING,
-            # this is the ephemeris flag, i think
-            self.sysflg
-       ), self.context)
 
     def next_evening_first(self):
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
@@ -113,30 +71,5 @@ class SWEPlanet:
             self.sysflg
        ), self.context)
 
-    def rise(self, bitflags=swe.BIT_HINDU_RISING) -> JulianDay:
-        """
-        next rising time for this planet (can do stars...need to add something for that)
-        """
-        timeJD = JulianDay(
-            swe.rise_trans(
-                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
-                self.swe_id(),
-                swe.CALC_RISE | bitflags,
-                self.context.location.swe_location(),
-            )[1][0],self.timeJD.utcoffset)
-        return timeJD
-
-    def set(self, bitflags=swe.BIT_HINDU_RISING) -> JulianDay:
-        """
-        next setting time for this planet (can do stars...need to add something for that)
-        """
-        timeJD = JulianDay(
-            swe.rise_trans(
-                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
-                self.swe_id(),
-                swe.CALC_SET | bitflags,
-                self.context.location.swe_location(),
-            )[1][0],self.timeJD.utcoffset)
-        return timeJD
 
     # add meridian transits

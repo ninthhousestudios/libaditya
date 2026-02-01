@@ -25,15 +25,16 @@ from libaditya.hd import HDLongitude
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
+from .celestial_object import CelestialObject
 from .context import EphContext
 from .longitude import Longitude
 from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 from .shadbala import PlanetBala
-from .swe_functions import SWEPlanet
+from .swe_functions import SWEFirstLast
 
 
-class Planet(Longitude,PlanetBala,SWEPlanet):
+class Planet(Longitude,CelestialObject,PlanetBala):
     """
     this class has information and functions related to planets
     each Planet takes a planet number and an EphContext
@@ -73,7 +74,7 @@ class Planet(Longitude,PlanetBala,SWEPlanet):
         super().__init__(self.long,self._amsha,self.context)
         if self._amsha != 1:
             self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
-        self._hd = HDLongitude(self.ecliptic_longitude(),context=self.context)
+        #self._hd = HDLongitude(self.ecliptic_longitude(),context=self.context)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
@@ -87,9 +88,6 @@ class Planet(Longitude,PlanetBala,SWEPlanet):
 
     def amsha(self):
         return self._amsha
-    
-    def hd(self):
-        return self._hd
 
     def table_row(self):
         return (
@@ -210,49 +208,6 @@ class Planet(Longitude,PlanetBala,SWEPlanet):
 
     def key(self) -> str:
         return self.identity()
-
-    def latitude(self) -> float:
-        if self.context.toround[0]:
-            return round(self.lat, self.context.toround[1])
-        else:
-            return self.lat
-
-    def declination(self) -> float:
-        """
-        add declination so that is is always retrivable
-        """
-        declination = swe.calc_ut(self.timeJD.jd_number(),self.pnumber,swe.FLG_EQUATORIAL)[0][1]
-        if self.context.toround[0]:
-            return round(declination, self.context.toround[1])
-        else:
-            return declination
-
-    def distance(self):
-        if self.context.toround[0]:
-            return round(self.dist, self.context.toround[1])
-        else:
-            return self.dist
-
-    def speed(self):
-        return self.longitude_speed()
-
-    def longitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.long_speed, self.context.toround[1])
-        else:
-            return self.long_speed
-
-    def latitude_speed(self):
-        if self.context.toround[0]:
-            return round(self.lat_speed, self.context.toround[1])
-        else:
-            return self.lat_speed
-
-    def distance_speed(self):
-        if self.context.toround[0]:
-            return round(self.dist_speed, self.context.toround[1])
-        else:
-            return self.dist_speed
 
     def ayanamsa(self):
         return self._ayanamsa
@@ -614,7 +569,7 @@ class Sun(Planet):
         return self.virupas_between(90)
 
 
-class Moon(Planet):
+class Moon(Planet,SWEFirstLast):
     def __init__(self, context=EphContext(),master=None, nature=None):
         super().__init__(swe.MOON, context,master)
         self._id = "Moon"
@@ -876,7 +831,7 @@ class Mars(Planet):
         return 10
 
 
-class Mercury(Planet):
+class Mercury(Planet,SWEFirstLast):
 
     def __init__(self, context=EphContext(),master=None):
         super().__init__(swe.MERCURY, context,master)
@@ -1080,7 +1035,7 @@ class Jupiter(Planet):
     def dig_bala_cusp(self):
         return 1
 
-class Venus(Planet):
+class Venus(Planet,SWEFirstLast):
 
     def __init__(self, context=EphContext(),master=None):
         super().__init__(swe.VENUS, context,master)

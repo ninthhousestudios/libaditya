@@ -1,6 +1,9 @@
 ## features
 
 #
+have TheStars print all the stars and their information
+
+#
 draw
 hd and sbc
 
