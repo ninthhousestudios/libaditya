@@ -27,6 +27,12 @@ from .context import EphContext, Circle
 class Longitude:
     """
     Longitude expects at minimum a longitude
+
+    note: Longitude takes a floating longitude
+    this mean Longitude is not responsible for knowing if it is tropical or sidereal or topocentric, etc.
+    that is the job of CelestialObject and Cusp
+
+    Longitude does however initialize the varga longitude
     
     for vargas, pass the longitude in the rashi along with, e.g., amsha=9
     Longitude will know its original longitude, as well as the varga one
@@ -34,7 +40,7 @@ class Longitude:
     so that Longitude.longitude() will give the longitude in the navamsha
     """
 
-    def __init__(self, longitude, amsha, context=EphContext()):
+    def __init__(self, longitude: float, amsha, context=EphContext()):
         self.context = context
         if self.context.circle == Circle.ADITYA:
             self.aditya_offset = 30

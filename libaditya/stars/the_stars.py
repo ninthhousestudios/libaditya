@@ -20,13 +20,15 @@ FixedStars populated from ephe/sefstars.txt
 this is most of the stars in there
 some have more than one traditional name; in that case only one appears here
 unless I have manually added a different one
+
+my additions are first; not a lot of them
 """
 
 import swisseph as swe
 
 from libaditya.objects import EphContext
 
-from .fixed_stars import TheStars, FixedStar
+from .fixed_stars import FixedStar
 
 class GalacticCenter(FixedStar):
 

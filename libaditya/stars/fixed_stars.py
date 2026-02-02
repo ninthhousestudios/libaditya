@@ -16,11 +16,14 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+import os
 
 from libaditya import constants as const
 
 from libaditya.objects import Longitude, CelestialObject, EphContext, Earth
-from libaditya.hd.longitude import HDLongitude
+
+stars_path = os.path.dirname(os.path.realpath(__file__))
+the_stars_file = stars_path + "/the_stars.py"
 
 class TheStars:
 
@@ -41,12 +44,18 @@ class TheStars:
         """
         here we take self._the_stars_lines and create a dictionary
         "nomenclature_nature": "traditiona_name" -> self._the_stars
+
+        the_stars_file (.../stars/the_stars.py) has all the FixedStar classes for each star
+        read just the name of each class and pass as a dictionary key to use as a constructor
         """
+        with open(the_stars_file,"r") as starsfd:
+            lines = stars.readlines() 
         the_stars = dict()
-        for line in self._the_stars_lines.values():
-            parts = line.split(",")
-            # nomenclature is second, traditional is first in the file
-            the_stars[parts[1]] = parts[0]
+        for line in lines:
+            if not "class" in line:
+                continue
+            # line has the form: class Name(FixedStar):
+            value = line.split(" ")[1].split("(")[0]
         return the_stars
 
     def the_stars(self):
@@ -108,6 +117,9 @@ class FixedStar(Longitude,CelestialObject):
             swe.set_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
         return swe.fixstar2_ut(self._swe_id, self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
+
+    def __eq__(self, fs2):
+        return self.swe_id() == fs2.swe_id()
 
     # longitude is taken care of by inheritor, Longitude
 

@@ -19,7 +19,7 @@ import swisseph as swe
 
 from libaditya.objects import EphContext
 
-import libaditya.star_signs.stars
+import libaditya.stars.the_stars
 
 # how you find the true sidereal ayanamsa
 # swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
@@ -30,3 +30,5 @@ star_signs_ref_date = 2451545.0
 star_signs_ayanamsa = 31.2836
 
 
+def set_true_sidereal():
+    swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, star_signs_ref_date, star_signs_ayanamsa)

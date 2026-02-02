@@ -23,7 +23,7 @@ from libaditya.objects import *
 from libaditya.calc import *
 from libaditya.charts import * 
 from libaditya.hd import *
-from libaditya.star_signs import *
+from libaditya.stars import *
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
