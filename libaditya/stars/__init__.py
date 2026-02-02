@@ -1,1 +1,1 @@
-from .the_stars import TheStars
+from .the_stars import TheStars, natural_stars

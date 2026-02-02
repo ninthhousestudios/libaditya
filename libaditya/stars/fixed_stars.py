@@ -43,7 +43,7 @@ class FixedStar(Longitude,CelestialObject):
         self._name, self._swe_id = self._name.split(",")
         (self._right_ascension, self._declination, _,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         # now that we know which star this is, make sure it has the right swe_id()
-        super().__init__(self.long,1)
+        super().__init__(self.long,1,context)
 
     def init_coords(self):
         loc = self.context.location.swe_location()
