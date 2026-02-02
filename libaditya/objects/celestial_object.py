@@ -61,6 +61,15 @@ class CelestialObject:
         else:
             return self._declination
 
+    def equatorial_distance(self):
+        """
+        add equatorial_distance so that is is always retrivable
+        """
+        if self.context.toround[0]:
+            return round(self._equatorial_distance, self.context.toround[1])
+        else:
+            return self._equatorial_distance
+
     def distance(self):
         if self.context.toround[0]:
             return round(self.dist, self.context.toround[1])

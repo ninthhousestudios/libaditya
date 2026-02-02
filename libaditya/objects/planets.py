@@ -78,7 +78,7 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
-        (self._right_ascension, self._declination, _,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
+        (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
         self.attributes = dict()
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)

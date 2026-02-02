@@ -30,7 +30,7 @@ import swisseph as swe
 
 from libaditya.objects import EphContext
 
-from .fixed_stars import FixedStar
+from .fixed_star import FixedStar
 
 class GalacticCenter(FixedStar): # ,SgrA*
 
@@ -6798,7 +6798,9 @@ class TheStars:
 
     def __init__(self, context=EphContext(), stars_file=const.stars_file) -> dict:
         self.context = context
+        # used for ...strdict()
         self.stars_file = stars_file
+        # defined just above
         self._the_stars = natural_stars
 
     def __getitem__(self,key):
@@ -6819,6 +6821,16 @@ class TheStars:
 
 
     def search_star_interactive(self, bitflags=swe.FLG_TROPICAL) -> FixedStar:
+        """
+        this returns a FixedStar class of the specific star, if there is one, else error
+        e.g., to get Aldebaran:
+        >>>  aldebaran = TheStars().search_star_interactive()
+        enter "alde" (Enter)
+        this gives you the constructor
+        <class 'libaditya.stars.the_stars.Aldebaran'>
+        a star by itself needs a context; you can use Chart().context to pass it the information for any chart
+        you are working with and it will intialize accordingly
+        """
         pattern = input("Enter first few letters of traditional name as appears in .../ephe/sefstars.txt: ")
         if not "," in pattern:
             # then they are searching a traditional name, so include wildcard

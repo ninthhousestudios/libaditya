@@ -226,6 +226,20 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,**kwargs))
 
+    def stars(self,which=""):
+        """
+        implements both ",noMen" name and module.GalacticCenter()
+        for module ->
+        >>> chart().stars().GalacticCenter()
+        """
+        if not which:
+            # implements self.the_Stars().DenebKaitos(context)
+            # note: if you dont pass context to DenebKaitos, it will use default values
+            return stars.the_stars
+        else:
+            # self.the_stars() passes on self.context
+            return self.The_Stars()[which](self.context)
+
     def the_Stars(self):
         """
         this literally returns the module stars.the_stars
@@ -253,3 +267,10 @@ class Chart(API):
         this is about the object; they could be on different days, == only checks if swe_id() is the same
         """
         return stars.the_stars
+
+    def The_Stars(self):
+        """
+        this is TheStars, used when you know the nomenclature name of the star, the (,)noMen name, because they all look a bit like that
+        this is implemented so that you can choose or not to put the ","
+        """
+        return stars.TheStars(self.context)

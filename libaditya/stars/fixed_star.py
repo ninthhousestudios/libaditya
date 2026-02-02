@@ -41,12 +41,15 @@ class FixedStar(Longitude,CelestialObject):
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
         self._name, self._swe_id = self._name.split(",")
-        (self._right_ascension, self._declination, _,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
+        (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1,context)
 
     def init_coords(self):
         loc = self.context.location.swe_location()
+        # the if statements are returnless statements that initialize swe
+        # sysflg is definited in __init__; it is self.system + swe.FLG_SPEED
+        # so that we always get the speed
         if self.system == const.SID:
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
@@ -60,6 +63,10 @@ class FixedStar(Longitude,CelestialObject):
         return swe.fixstar2_ut(self._swe_id, self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
 
     def __eq__(self, fs2):
+        """
+        are these the same kind of object?
+        they could both be Aldebaran but 4000 years apart; they would still be == with this function
+        """
         return self.swe_id() == fs2.swe_id()
 
     # longitude is taken care of by inheritor, Longitude

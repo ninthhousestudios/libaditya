@@ -37,6 +37,7 @@ class Location:
         self.placename = placename
         self.timezone = timezone
         self.icao = icao
+        self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
 
     def __str__(self):
         return f"{self.placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
@@ -49,6 +50,15 @@ class Location:
 
     def longitude(self):
         return self.long
+
+    def atmospheric_pressure(self):
+        return self._atmospheric_pressure 
+
+    def atmospheric_temperature(self):
+        return self._atmospheric_temperature
+
+    def relative_humidity(self):
+        return self._relative_humidity
 
     def __repr__(self):
         return f"({self.lat},{self.long})"
@@ -87,6 +97,37 @@ class Location:
                 break
         if not report:
             print("No data for ", name, "\n\n")
+
+    def init_environment(self, icao=None):
+        """
+        ideally initialize environment from the weather report, from the metar data from
+        self.icao by way of get_metar()
+
+        relative humidity not current implemented; TODO
+
+        pressure and temperature can be gotten from metar
+        right now i can get the most recent one...not sure about historical?
+        """
+        # do this somehow
+        if icao is not None:
+            metar = self.get_metar(icao)
+            # since this is for swe, we use millibars and celsius
+            # metar...value() can do other units too
+            return (metar.press.value("mb"),metar.temp.value("c"),0)
+        return (0,0,0)
+
+    def swe_location_azalt(self, coords=swe.ECL2HOR):
+        """
+        return a tuple suitable for swe.azalt()
+        to compute azimuth and altitde at this Location and JulianDay
+
+        default coords is eclipitc to azimuthal
+        other option is swe.EQU2HOR
+        """
+        geopos = self.swe_location()
+        atpress = self.atmospheric_pressure()
+        attemp = self.atmospheric_temperature()
+
 
 
 # Yamakoti is an ancient prime meridian
