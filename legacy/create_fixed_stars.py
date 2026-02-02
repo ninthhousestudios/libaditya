@@ -25,15 +25,30 @@ def main():
         lines = []
         for key,value in thestars.the_stars().items():
             line = ""
-            name = name.strip()
+            name = value.replace(" ","")
+            name = value.replace("'","")
+            if not name:
+                name = key
             if any(char.isnumeric() for char in name):
                 # name has any numbers, they are at the beginning of the name
                 # so put them at the end; i did this manually for stars/the_stars.py
                 # now get the numbers and move them to the end
-                continue
-            if not name:
-                name = key
-            name = value.replace(" ","")
+                if name[:3].isnumeric():
+                    name = name[3:]+name[:3]
+                if name[:2].isnumeric():
+                    name = name[2:]+name[:2]
+                if name[:1].isnumeric():
+                    name = name[1:]+name[:1]
+            if any(char.isnumeric() for char in key):
+                # key has any numbers, they are at the beginning of the key
+                # so put them at the end; i did this manually for stars/the_stars.py
+                # now get the numbers and move them to the end
+                if key[:3].isnumeric():
+                    key = key[3:]+key[:3]
+                if key[:2].isnumeric():
+                    key = key[2:]+key[:2]
+                if key[:1].isnumeric():
+                    key = key[1:]+key[:1]
             name = name.replace("-","")
             name = name.replace(".","")
             line += f"class {name}(FixedStar): # ,{key}\n\n"
