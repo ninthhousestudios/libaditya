@@ -91,6 +91,7 @@ class FixedStar(Longitude,CelestialObject):
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
         self._name, self._swe_id = self._name.split(",")
+        (self._right_ascension, self._declination, _,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1)
 
@@ -122,8 +123,3 @@ class FixedStar(Longitude,CelestialObject):
     def magnitude(self):
         return swe.fixstar2_mag(self.swe_id())[0]
 
-
-class GalacticCenter(FixedStar):
-
-    def __init__(self, context = EphContext):
-        super().__init__(swe_id = ",SgrA*", context=context)

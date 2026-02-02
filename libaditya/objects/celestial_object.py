@@ -43,15 +43,23 @@ class CelestialObject:
         else:
             return self.lat
 
+    def right_ascension(self) -> float:
+        """
+        add declination so that is is always retrivable
+        """
+        if self.context.toround[0]:
+            return round(self._right_ascension, self.context.toround[1])
+        else:
+            return self._right_ascension
+
     def declination(self) -> float:
         """
         add declination so that is is always retrivable
         """
-        declination = swe.calc_ut(self.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0][1]
         if self.context.toround[0]:
-            return round(declination, self.context.toround[1])
+            return round(self._declination, self.context.toround[1])
         else:
-            return declination
+            return self._declination
 
     def distance(self):
         if self.context.toround[0]:

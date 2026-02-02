@@ -240,7 +240,7 @@ class Sign:
 
     def __repr__(self):
         header = ""
-        header += f"\n{self.sign()=} {self.sign_name()}\n"
+        header += f"\n{self.sign()=} {self.sign_name()}\t{self.amsha()}\n"
         output = PrettyTable()
         output.field_names = ["Object", "In Amsha Longitude", "Ecliptic Longitude"]
         output.align["Object"] = "l"
