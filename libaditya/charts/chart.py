@@ -26,6 +26,7 @@ from libaditya import constants as const
 from libaditya.objects import EphContext, Planets, Cusps, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
 import libaditya.stars as stars
+from libaditya.stars.stellarium import Stellarium
 
 from .api import API
 from .bodygraph import Bodygraph
@@ -239,6 +240,9 @@ class Chart(API):
         else:
             # self.the_stars() passes on self.context
             return self.The_Stars()[which](self.context)
+
+    def stellarium(self, ip="127.0.0.1", port="8090", password=""):
+        return Stellarium(self.context,ip,port,password) 
 
     def the_Stars(self):
         """

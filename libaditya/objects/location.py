@@ -29,14 +29,16 @@ class Location:
         alt=0,
         placename="Yamakoti",
         timezone="YKT",
-        icao=None
+        icao=None,
+        planet="Earth"
     ):
         self.lat = float(lat)
         self.long = float(long)
         self.alt = float(alt)
-        self.placename = placename
+        self._placename = placename
         self.timezone = timezone
         self.icao = icao
+        self._planet = planet
         self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
 
     def __str__(self):
@@ -44,6 +46,12 @@ class Location:
 
     def place(self):
         return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
+
+    def planet(self):
+        return self._planet
+
+    def placename(self):
+        return self._placename
 
     def latitude(self):
         return self.lat
@@ -113,6 +121,8 @@ class Location:
             metar = self.get_metar(icao)
             # since this is for swe, we use millibars and celsius
             # metar...value() can do other units too
+            # 0 is for relative humidity
+            # need to figure out how to calculate it from dewpoint, then it can go in here
             return (metar.press.value("mb"),metar.temp.value("c"),0)
         return (0,0,0)
 
@@ -127,7 +137,7 @@ class Location:
         geopos = self.swe_location()
         atpress = self.atmospheric_pressure()
         attemp = self.atmospheric_temperature()
-
+        return (geopos), atpress, attemp
 
 
 # Yamakoti is an ancient prime meridian
