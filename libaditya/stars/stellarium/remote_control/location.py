@@ -61,6 +61,10 @@ class Location:
         with the id. Else, the other parameters change the specific field of the current StelLocation.
         """
         params={}
+        # below we can pass "no id", effectively
+        # used so we can pass something for id saying there is no id
+        if id == 0:
+            id = None
         if not id == None:
             params["id"] = id
         else:

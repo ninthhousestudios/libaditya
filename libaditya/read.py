@@ -122,10 +122,17 @@ def read_chtk_location(infile):
     _, placename, _, _, _, _, lat, long, utcoff = read_chtk(infile)
     return placename, lat, long, utcoff
 
+def chtk_to_Location(infile):
+    context=chtk_to_context(infile)
+    return context.location
+
 def read_toml_location(infile):
     con=toml_to_context(infile)
     return con.location.placename, con.location.lat, con.location.long, con.timeJD.utcoffset
 
+def toml_to_Location(infile):
+    context=toml_to_context(infile)
+    return context.location
 
 # note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
 def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):

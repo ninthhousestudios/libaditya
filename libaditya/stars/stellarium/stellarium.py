@@ -21,6 +21,7 @@ from dataclasses import replace
 from typing import Self
 import swisseph as swe
 
+from libaditya.objects import Location
 from libaditya.stars.stellarium.remote_control import RemoteControl
 
 class Stellarium:
@@ -32,7 +33,7 @@ class Stellarium:
     i believe its license, MIT, is more permissive.
 
     this interface abstracts the main functions needed from stellarium for its use in libaditya
-    but the whole RemoteControl interface can be accessed through this object as well
+    but the whole RemoteControl interface can be accessed through this object as well, as self.rc()
     """
 
     def __init__(self, context, ip="127.0.0.1", port="8090", password=""):
@@ -76,9 +77,16 @@ class Stellarium:
         """
         self.rc().main.setTimeJD(self.context.timeJD.jd_number())
 
-    def set_location(self):
+    def set_location(self, location=None):
         """
         set the location in stellarium to Location self.context.location
         """
-        self.rc().location.setLocation(longitude=self.context.location.longitude(),latitude=self.context.location.latitude(),name=self.context.location.placename(),planet=self.context.location.planet())
+        if isinstance(location, Location):
+            # if a Location is passed, use that
+            self.rc().location.setLocation(*location.stellarium())
+            # self.rc().location.setLocation(longitude=location.longitude(),latitude=location.latitude(),name=location.placename(),planet=location.planet())
+        else:
+            # otherwise set it to the context
+            self.rc().location.setLocation(*self.context.location.stellarium())
+            # self.rc().location.setLocation(longitude=self.context.location.longitude(),latitude=self.context.location.latitude(),name=self.context.location.placename(),planet=self.context.location.planet())
 

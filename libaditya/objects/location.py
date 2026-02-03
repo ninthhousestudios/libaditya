@@ -42,7 +42,16 @@ class Location:
         self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
 
     def __str__(self):
-        return f"{self.placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
+        return f"{self.placename()} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
+
+    def stellarium(self):
+        """
+        so we could do self.rc().location.setLocation(*context.location.stellarium())
+        but we need the id...actually if there is an id, we dont need anything else
+
+        i changed RemoteControl.location.setLocation() to ignore id is it is set to 0
+        """
+        return [0,self.latitude(),self.longitude(),self.placename(),self.placename(),self.planet()]
 
     def place(self):
         return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
