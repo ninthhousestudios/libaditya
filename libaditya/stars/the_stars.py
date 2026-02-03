@@ -31,6 +31,7 @@ import swisseph as swe
 from libaditya.objects import EphContext
 
 from .fixed_star import FixedStar
+from .stellarium import Stellarium
 
 class GalacticCenter(FixedStar): # ,SgrA*
 
@@ -6788,6 +6789,28 @@ natural_stars = {
     ",HD168442": Gliese710,
 }
 
+# here are Stellarium FixedStars, that require an "rc", a RemoteControl
+
+class OmicronTauri(FixedStar): # HIP 15900
+
+    def __init__(self, context = EphContext(), rc=None): 
+        super().__init__(swe_id = "HIP 15900", context=context, rc=rc)
+
+class AndromedaGalaxy(FixedStar): # M 31
+
+    def __init__(self, context = EphContext(), rc=None): 
+        super().__init__(swe_id = "M 31", context=context, rc=rc)
+
+stellarium_stars = {
+    "OmiTau": OmicronTauri,
+    "HIP 15900": OmicronTauri,
+    "Andromeda": AndromedaGalaxy,
+    "M 31": AndromedaGalaxy
+}
+
+the_stars = natural_stars | stellarium_stars
+
+    
 
 class TheStars:
     """
@@ -6796,20 +6819,43 @@ class TheStars:
     but you can also use fixed_stars.FixedStar()
     """
 
-    def __init__(self, context=EphContext(), stars_file=const.stars_file) -> dict:
+    def __init__(self, context=EphContext(), stellarium=False) -> dict:
         self.context = context
-        # used for ...strdict()
-        self.stars_file = stars_file
         # defined just above
         self._natural_stars = natural_stars
+        self._stellarium_stars = stellarium_stars
+        self._the_stars = the_stars
+        if stellarium:
+            self.the_stellarium = self.init_Stellarium()
 
     def __getitem__(self,key):
         """
+        keys:
+        (,)noMen for swe objects
+        other for stellarium; best is to use HIP object has it
+
+        instantiate star denoted by key with this context
         so you can or not used "," for the (,)noMen name
+        (,)noMen name is used by swisseph (swe)
+        "HIP nnnnn" is used by Stellarium
+        also, names with spaces, e.g., "M 31", which is a galaxy, can be instantiated into a FixedStar
         """
-        if not "," in key:
+        if "HIP" in key or " " in key or key[0].isupper():
+            # all of these indicate objects that can be found with Stellarium().info(key)
+            # or in stars.the_stars.the_stars
+            if self.the_stellarium:
+                # the_stellarium is our Stellarium() object
+                # the key is a we want from Stellarium, so we have to pass the "phone", so to speak
+                if key in self._the_stars.keys():
+                    return self._the_stars[key](self.context,self.the_stellarium)
+                else:
+                    # return whatever object Stellarium finds
+                    return FixedStar(key,self.context,self.the_stellarium)
+            print("Stellarium not available...")
+            return
+        elif not "," in key:
             key = ","+key
-        return self._natural_stars[key]
+        return self._the_stars[key](self.context)
 
     def natural_stars(self):
         """
@@ -6842,12 +6888,28 @@ class TheStars:
         for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
             print(f"{n}\t{nomen}\t{constructor().name()}")
 
-    def stellarium(self, ip="127.0.0.1", port="8090", password=""):
+    def init_Stellarium(self, ip="127.0.0.1", port="8090", password=""):
         """
-        if you get an http error, it is because
+        if you are using this alot, assign the return value to a variable
+        if not, it will reconnect each time, making each operation very slow
+        so: not: chart(context).stars()["Andromeda"], chart(context).stars()["OmiTau"]
+        but: thestars=chart(context).stars(), then thestars["Andromeda"], etc.
+        note: both swe and stellarium objects can be instantiated using [] notation
+        it works for any key,object pair in the dictionary stars.the_stars.the_stars=TheStars._the_stars
+
+        if you get an http error, it is because stellarium is not on, or the RemoteControl plugin is not on
+        start stellarium, press F2, go the rightmost tab, Plugins. on the left, go down to "Remote Control"
+        bottom left of the information about the plugin:
+        Options
+        Load at startup
+        if "Load at startup" is not checked, then check it and restart stellarium
+        then go back to F2->Plugins->Remote Control
+        then click "Configure"
+        click "Server Enabled"; that will turn the server on, then you can use the default ip, port, and password options here
+        if you want it to load automatically, check "Enable automatically on startup"
         """
-        try: 
-            s = Stellarium(self.context,ip,port,password) 
-            return s
+        try:
+            return Stellarium(self.context,ip,port,password) 
         except:
-            return 0
+            print("Stellarium not available...")
+            return

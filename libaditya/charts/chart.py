@@ -227,36 +227,12 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,**kwargs))
 
-    def stars(self,which=""):
-        """
-        implements both ",noMen" name and module.GalacticCenter()
-        for module ->
-        >>> chart().stars().GalacticCenter()
-        """
-        if not which:
-            # implements self.the_Stars().DenebKaitos(context)
-            # note: if you dont pass context to DenebKaitos, it will use default values
-            return stars.the_stars
-        else:
-            # self.the_stars() passes on self.context
-            return self.The_Stars()[which](self.context)
-
-    def stellarium(self, ip="127.0.0.1", port="8090", password=""):
-        """
-        if you get an http error, it is because
-        """
-        try: 
-            s = Stellarium(self.context,ip,port,password) 
-            return s
-        except:
-            return 0
-
-    def the_stars(self):
+    def stars(self):
         """
         this is TheStars, used when you know the nomenclature name of the star, the (,)noMen name, because they all look a bit like that
         this is implemented so that you can choose or not to put the ","
         """
-        return stars.TheStars(self.context)
+        return stars.TheStars(self.context,stellarium=True)
 
     # this is sort of silly
     # if you want access to individual stars, use the module itself

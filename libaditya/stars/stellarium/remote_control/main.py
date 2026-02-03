@@ -6,8 +6,9 @@ class Main:
         self.port = port
         self.password = password
 
-    def getStatus(self):
-        r = requests.get(f"http://{self.ip}:{self.port}/api/main/status",auth=("",self.password))
+    def getStatus(self, format="json"):
+        params = {"format": format}
+        r = requests.get(f"http://{self.ip}:{self.port}/api/main/status",params=params,auth=("",self.password))
         try:
             return r.json()
         except requests.exceptions.JSONDecodeError:

@@ -1,5 +1,8 @@
 # former method fro class stars.the_stars.TheStars()
 
+# requires an argument
+# stars_file=const.stars_file
+# this was from the process of bootstrapping
     def stars_strdict(self):
         """
         here we take self._the_stars_lines and create a dictionary

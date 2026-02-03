@@ -21,14 +21,33 @@ from libaditya import constants as const
 
 from libaditya.objects import Longitude, CelestialObject, EphContext
 
+from libaditya.stars.stellarium import Stellarium
+
+
 class FixedStar(Longitude,CelestialObject):
 
-    def __init__(self, swe_id: str, context: EphContext = EphContext()):
+    def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None):
         self.context = context
         self.system = self.context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         # swe_id is the nomenclature name of the star
         # can pass it with or without comma
+        self._stellarium = False
+        if "HIP" in swe_id or (" " in swe_id and not "," in swe_id):
+            # swe_id = "st:Omi Tau"
+            # or "st: HIP 19500"
+            # indicates this is a stellarium star
+            self._swe_id = swe_id
+            self._stellarium = True
+            # called "rc", but is not a stellarium.remote_control.RemoteControl object
+            # it is a Stellarium object initialized by someone else to get this information
+            # initialized perhaps the TheStars()?
+            self.rc = rc
+            # now initialize all of the information
+            self.init_Stellarium()
+            super().__init__(self.long,1,context)
+            # done with this __init__
+            return
         self._swe_id = self.correct_nomen_name(swe_id)
         try:
             # if it works, the swe_id is valid
@@ -40,6 +59,7 @@ class FixedStar(Longitude,CelestialObject):
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
+        self.dist_ly = 0 # convert self.dist in AUs to LYs
         self._name, self.returned_swe_id = self._name.split(",")
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         # now that we know which star this is, make sure it has the right swe_id()
@@ -91,6 +111,9 @@ class FixedStar(Longitude,CelestialObject):
     def name(self):
         return self._name
 
+    def stellarium(self):
+        return self._stellarium
+
     def swe_id(self):
         return self._swe_id
 
@@ -100,3 +123,36 @@ class FixedStar(Longitude,CelestialObject):
     def magnitude(self):
         return swe.fixstar2_mag(self.swe_id())[0]
 
+    def init_Stellarium(self):
+        """
+        self.swe_id() should be a valid stellarium object, probably HIP
+
+        need to deal with sidereal in here, so we only get the ecliptic longitude
+        """
+        try:
+            info = self.rc.info(self.swe_id())        
+        except:
+            print("Stellarium not available...")
+            return
+        self.long = info["elong"]
+        self.lat = info["elat"]
+        try:
+            self.dist = info["distance-ly"]
+        except:
+            self.dist = 0
+        self.dist_ly = self.dist
+        self.long_speed = self.lat_speed = self.dist_speed = 0
+        self._name = info["name"]
+        self._right_ascension = info["ra"] 
+        self._declination = info["dec"]
+        self._equatorial_distance = self.dist
+        self._altitude = info["altitude"]
+        self._azimuth = info["azimuth"]
+        # these will be in local time, so think about time switching?
+        # make FixedStar.rise() which will catch Stellarium stars, if not, send them to CelestialObject.rise()
+        self._rise = info["rise"]
+        self._set = info["set"]
+        self._info = info
+
+    def info(self):
+        return self._info

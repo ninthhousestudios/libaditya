@@ -15,13 +15,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-import pathlib
-from dataclasses import replace
-from typing import Self
-import swisseph as swe
 
-from libaditya.objects import Location
+from libaditya.objects import EphContext, Location
 from libaditya.stars.stellarium.remote_control import RemoteControl
 
 class Stellarium:
@@ -36,7 +31,7 @@ class Stellarium:
     but the whole RemoteControl interface can be accessed through this object as well, as self.rc()
     """
 
-    def __init__(self, context, ip="127.0.0.1", port="8090", password=""):
+    def __init__(self, context=EphContext(), ip="127.0.0.1", port="8090", password=""):
         self.context = context
         self._rc = RemoteControl(ip,port,password)
         self.init_context()
@@ -77,7 +72,7 @@ class Stellarium:
         """
         self.rc().main.setTimeJD(self.context.timeJD.jd_number())
 
-    def set_location(self, location=None):
+    def set_location(self, location : Location = None):
         """
         set the location in stellarium to Location self.context.location
         """
@@ -90,3 +85,8 @@ class Stellarium:
             self.rc().location.setLocation(*self.context.location.stellarium())
             # self.rc().location.setLocation(longitude=self.context.location.longitude(),latitude=self.context.location.latitude(),name=self.context.location.placename(),planet=self.context.location.planet())
 
+    def info(self, object, format="json"):
+        """
+        object should be an objects "swe_id()", though  should be "stellarium(_id)"
+        """
+        return self.rc().objects.getInfo(object,format)

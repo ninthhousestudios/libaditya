@@ -116,12 +116,17 @@ class CelestialObject:
         """
         next rising time for this planet (can do stars...need to add something for that)
         """
+        # an object instantied by using Stellarium. it will have this information from that
+        if utils.is_stellarium_id(self.swe_id()):
+            return self._rise
         return self.rise_trans(bitflags=bitflags|swe.CALC_RISE,location=location)
 
     def set(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
         """
         next setting time for this planet (can do stars...need to add something for that)
         """
+        if utils.is_stellarium_id(self.swe_id()):
+            return self._set
         return self.rise_trans(bitflags=bitflags|swe.CALC_SET,location=location)
 
     def next_heliacal_event(self, atmosphere,observer,event=None):
@@ -158,3 +163,8 @@ class CelestialObject:
     def next_heliacal_setting(self, atmosphere=(0,0,0,0),observer=(0,0,0,0,0,0)):
         return self.next_heliacal_event(atmosphere,observer,event=swe.HELIACAL_SETTING)
 
+    def altitude(self):
+        return self._altitude
+
+    def azimuth(self):
+        return self._azimuth

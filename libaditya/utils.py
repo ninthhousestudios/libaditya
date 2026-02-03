@@ -423,3 +423,11 @@ def toJD(ls,context):
     """
     from libaditya.objects import JulianDay
     return [JulianDay(jd_number,context.timeJD.utcoffset) for jd_number in ls]
+
+def is_stellarium_id(swe_id):
+    """
+    find if swe_id is actually a stellarium id 
+    """
+    if isinstance(swe_id, int):
+        return False
+    return "HIP" in swe_id or " " in swe_id
