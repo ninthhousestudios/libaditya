@@ -99,8 +99,11 @@ class Location:
         url is taken from get_report.py from python-metar package
         """
         BASE_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations"
-        name = icao
-        url = "%s/%s.TXT" % (BASE_URL, name)
+        if icao is not None:
+            name = icao
+        else:
+            name = self.icao
+        url = f"{BASE_URL}/{name}.TXT"
         from urllib.request import urlopen
         urlh = urlopen(url)
         report = ""

@@ -268,7 +268,7 @@ class Panchanga:
         also prints previous last visibility and next first visibility of the moon around the "next_new_moon"
         """
         next = self.next_new_moon()  # return the Panchanga of the next new moon
-        print(f"\n\tPrevious last visibility:")
+        print(f"\n\tLast visibility:")
         next.shift("back","days",10).moon().next_morning_last()[1].indent_print(1)
         print("\nNext new moon at:")
         print(next.timeJD)

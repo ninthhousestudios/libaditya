@@ -6801,7 +6801,7 @@ class TheStars:
         # used for ...strdict()
         self.stars_file = stars_file
         # defined just above
-        self._the_stars = natural_stars
+        self._natural_stars = natural_stars
 
     def __getitem__(self,key):
         """
@@ -6809,16 +6809,15 @@ class TheStars:
         """
         if not "," in key:
             key = ","+key
-        return self._the_stars[key]
+        return self._natural_stars[key]
 
-    def the_stars(self):
+    def natural_stars(self):
         """
         this is the main interface here
         essentially is a dictionary, with the key being "nomenclature" name of the star
         the value is the traditional name of the star
         """
-        return self._the_stars
-
+        return self._natural_stars
 
     def search_star_interactive(self, bitflags=swe.FLG_TROPICAL) -> FixedStar:
         """
@@ -6840,91 +6839,15 @@ class TheStars:
         return self[name.split(",")[1]]
 
     def print_the_stars(self) -> None:
-        for n,(nomen,trad) in enumerate(self.the_stars().items()):
-            print(f"{n}\t{nomen.strip()}\t{trad.strip()}")
+        for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
+            print(f"{n}\t{nomen}\t{constructor().name()}")
 
-    def stars_strdict(self):
+    def stellarium(self, ip="127.0.0.1", port="8090", password=""):
         """
-        here we take self._the_stars_lines and create a dictionary
-        "nomenclature_nature": "traditiona_name" -> self._the_stars
+        if you get an http error, it is because
         """
-        with open(self.stars_file,"r") as stars_fd:
-            the_stars_lines = dict() 
-            the_lines = stars_fd.readlines()
-            for n,line in enumerate(the_lines):
-                if "#" in line:
-                    # a comment, continue
-                    continue
-                the_stars_lines[n] = line
-            self._the_stars_lines = the_stars_lines
-        the_stars = dict()
-        for line in self._the_stars_lines.values():
-            parts = line.split(",")
-            # nomenclature is second, traditional is first in the file
-            name = parts[0]
-            if name.replace(" ","") == "":
-                # if the name is empty
-                # make the key into the name
-                name = parts[1]
-                # manipulate it to be consistent
-                if any(char.isnumeric() for char in name):
-                    # name has any numbers, they are at the beginning of the name
-                    # so put them at the end; i did this manually for stars/the_stars.py
-                    # now get the numbers and move them to the end
-                    if name[:3].isnumeric():
-                        name = name[3:]+name[:3]
-                    if name[:2].isnumeric():
-                        name = name[2:]+name[:2]
-                    if name[:1].isnumeric():
-                        name = name[1:]+name[:1]
-            # this line sets the key value pair in the dictionary
-            the_stars[parts[1]] = name
-        return the_stars
-
-# _bootstrap_the_stars generate the natural_stars dictionary in the_stars.py
-# this is a dictionary of ",noMen": constructor type
-# you can access is through TheStars like this:
-# >>> TheStars()[",noMen"]()
-
-# below is paths for bootstrapping
-
-# stars_path = os.path.dirname(os.path.realpath(__file__))
-# the_stars_file = stars_path + "/the_stars.py"
-
-#    def _bootstrap_the_stars(self):
-#        """
-#        here we take self._the_stars_lines and create a dictionary
-#        "nomenclature_nature": "traditiona_name" -> self._the_stars
-#
-#        the_stars_file (.../stars/the_stars.py) has all the FixedStar classes for each star
-#        read just the name of each class and pass as a dictionary key to use as a constructor
-#
-#        if you run this again it will append to the_stars.py, so dont unless you really want to fix
-#        some errors by hand. there werent to many, but the scripts did miss somethings
-#        """
-#        input("Do you really want to bootstrap the files? It will append to ./the_stars.py:")
-#        with open(self.python_stars,"r") as starsfd:
-#            lines = starsfd.readlines() 
-#        the_stars = dict()
-#        for line in lines:
-#            if not "class" in line:
-#                continue
-#            # line has the form: class Name(FixedStar): # ,noMen (clature name)
-#            value = line.split(" ")[1].split("(")[0]
-#            key = line.split(" ")[3].strip()
-#            the_stars[key] = value
-#        # now we need to write a python file that can be loaded into the interpreter
-#        # it is a dictionary like libaditya.objects.natural_planets
-#        # "natural" here means "natural to python"; the value are constructors
-#        # so you can do natural_planets["Sun"](), which is the same as Sun()
-#        # I want to do that with fixed stars. There are 1113 named stars, so we are
-#        # using python to "bootstrap" being to use all these classes easily
-#        # eventually, TheStars()["alTau"] will return an "Aldebaran" class
-#        lines = []
-#        lines.append("natural stars = {\n")
-#        for key,constructor in the_stars.items():
-#            lines.append(f'    "{key}": {constructor},\n')
-#        lines.append("}\n")
-#        with open(self.python_stars,"a") as starsfd:
-#            starsfd.writelines(lines)
-#        return the_stars
+        try: 
+            s = Stellarium(self.context,ip,port,password) 
+            return s
+        except:
+            return 0

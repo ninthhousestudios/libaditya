@@ -5,12 +5,21 @@ description = "Astrological calculation library for Adityas. It is capable of ca
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    # for some legacy chart drawing the implemented before
+    # one is human design bodygraphs
+    # the other sarvatobhadra chakra
+    # Chart().bodygraph().draw_svg() can draw a bodygraph for one chart
+    # sbc can draw the base chakra image, nothing else yet
     "drawsvg>=2.4.1",
+    # for getting weather data
     "metar>=1.11.0",
     "more-itertools>=10.8.0",
     "prettytable>=3.17.0",
     "pysweph>=2.10.3.3",
-    "rich>=14.3.1",
+    # requests is for using stellarium through libaditya
+    # this requires the user to have open a running stellarium instance with the
+    # http server running through the RemoteControl plugin
+    "requests>=2.32.5",
     "toml>=0.10.2",
 ]
 
@@ -19,9 +28,7 @@ Homepage = "https://gitlab.com/j0sh4rp3/libaditya"
 Repository = "https://gitlab.com/j0sh4rp3/libaditya"
 
 [project.optional-dependencies]
-stellarium = [
-    "requests>=2.32.5",
-]
+stellarium = []
 
 [build-system]
 requires = ["hatchling"]

@@ -29,7 +29,7 @@ class FixedStar(Longitude,CelestialObject):
         self.sysflg = self.system | swe.FLG_SPEED
         # swe_id is the nomenclature name of the star
         # can pass it with or without comma
-        self._swe_id = swe_id if "," in swe_id else ","+swe_id
+        self._swe_id = self.correct_nomen_name(swe_id)
         try:
             # if it works, the swe_id is valid
             swe.fixstar2_ut(self._swe_id,self.context.timeJD.jd_number())
@@ -40,7 +40,7 @@ class FixedStar(Longitude,CelestialObject):
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
         (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
-        self._name, self._swe_id = self._name.split(",")
+        self._name, self.returned_swe_id = self._name.split(",")
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1,context)
@@ -60,7 +60,24 @@ class FixedStar(Longitude,CelestialObject):
         if self.system == (const.SID | const.TOPO):
             swe.set_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
-        return swe.fixstar2_ut(self._swe_id, self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
+        return swe.fixstar2_ut(self.swe_id(), self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
+
+    def correct_nomen_name(self, swe_id):
+        # take care of cases like ,And14
+        # the proper nomen name is ,14And
+        if "," in swe_id:
+            # remove initial comma if there
+            swe_id = swe_id.split(",")[1]
+        if swe_id[-3:].isnumeric():
+            return ","+swe_id[-3:]+swe_id[:-3]
+        if swe_id[-2:].isnumeric():
+            if swe_id[-2:] == "00":
+                # for GCRS00
+                return ","+swe_id
+            return ","+swe_id[-2:]+swe_id[:-2]
+        if swe_id[-1:].isnumeric():
+            return ","+swe_id[-1:]+swe_id[:-1]
+        return ","+swe_id
 
     def __eq__(self, fs2):
         """
@@ -75,7 +92,7 @@ class FixedStar(Longitude,CelestialObject):
         return self._name
 
     def swe_id(self):
-        return ","+self._swe_id
+        return self._swe_id
 
     def identity(self):
         return self.swe_id()
