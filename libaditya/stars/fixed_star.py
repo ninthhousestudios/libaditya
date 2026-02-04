@@ -30,18 +30,19 @@ class FixedStar(Longitude,CelestialObject):
         self.context = context
         self.system = self.context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
+        self._other_names = ""
         # swe_id is the nomenclature name of the star
         # can pass it with or without comma
         self._stellarium = False
-        if "HIP" in swe_id or (" " in swe_id and not "," in swe_id):
+        if "st:" in swe_id:
             # swe_id = "st:Omi Tau"
             # or "st: HIP 19500"
             # indicates this is a stellarium star
-            self._swe_id = swe_id
+            self._swe_id = swe_id.split(":")[1].strip()
             self._stellarium = True
             # called "rc", but is not a stellarium.remote_control.RemoteControl object
             # it is a Stellarium object initialized by someone else to get this information
-            # initialized perhaps the TheStars()?
+            # initialized by the TheStars()
             self.rc = rc
             # now initialize all of the information
             self.init_Stellarium()
@@ -62,6 +63,8 @@ class FixedStar(Longitude,CelestialObject):
         self.dist_ly = 0 # convert self.dist in AUs to LYs
         self._name, self.returned_swe_id = self._name.split(",")
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
+        if "%" in self._swe_id:
+            self._swe_id = self.returned_swe_id
         # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1,context)
 
@@ -106,6 +109,9 @@ class FixedStar(Longitude,CelestialObject):
         """
         return self.swe_id() == fs2.swe_id()
 
+    def other_names(self):
+        return self._other_names
+
     # longitude is taken care of by inheritor, Longitude
 
     def name(self):
@@ -130,6 +136,7 @@ class FixedStar(Longitude,CelestialObject):
         need to deal with sidereal in here, so we only get the ecliptic longitude
         """
         try:
+            self.rc.change_context(self.context)
             info = self.rc.info(self.swe_id())        
         except:
             print("Stellarium not available...")

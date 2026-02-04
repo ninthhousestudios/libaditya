@@ -50,7 +50,7 @@ class JulianDay:
         :utcoffset - a float
         :timezone - a string representing the timezone
         """
-        if isinstance(jd, float):
+        if isinstance(jd, float) or isinstance(jd, int):
             self.jd = jd
         elif isinstance(jd, tuple):
             self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3])
@@ -87,7 +87,7 @@ class JulianDay:
     def T(self):
         """
         T = (Julian Day - 2451545) / 36525
-        for use in chesta bala calculations
+        for use in cheshta bala calculations
         """
         return (self.jd_number() - 2451545) / 36525
 

@@ -52,6 +52,13 @@ class CelestialObject:
         else:
             return self._right_ascension
 
+    def ra(self) -> str:
+        """
+        return self.right_ascension() as hours,minutes,seconds
+        """
+        d,m,s = utils.dec2dms(self.right_ascension())
+        return f"{int(d):02d}h{int(m):02d}m{int(s):02d}s"
+
     def declination(self) -> float:
         """
         add declination so that is is always retrivable

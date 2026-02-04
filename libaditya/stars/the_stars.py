@@ -5023,6 +5023,12 @@ class Atirsagne(FixedStar): # ,omiTau
     def __init__(self, context = EphContext()):
         super().__init__(swe_id = ",omiTau", context=context)
 
+class OmicronTauri(FixedStar): # ,omiTau
+
+    def __init__(self, context = EphContext()):
+        super().__init__(swe_id = ",omiTau", context=context)
+        self._other_names = ("Atirsagne",Atirsagne)
+
 class taTau(FixedStar): # ,taTau
 
     def __init__(self, context = EphContext()):
@@ -6787,23 +6793,19 @@ natural_stars = {
     ",Test": Test,
     ",NGC4194": NGC4194,
     ",HD168442": Gliese710,
+    # these are additions to faciliate ease of use
+    # ,omiTau has the name "Atirsagne" in swe and i didnt like to search for omiTau
+    "HIP 15900": OmicronTauri,
 }
 
 # here are Stellarium FixedStars, that require an "rc", a RemoteControl
 
-class OmicronTauri(FixedStar): # HIP 15900
-
-    def __init__(self, context = EphContext(), rc=None): 
-        super().__init__(swe_id = "HIP 15900", context=context, rc=rc)
-
 class AndromedaGalaxy(FixedStar): # M 31
 
     def __init__(self, context = EphContext(), rc=None): 
-        super().__init__(swe_id = "M 31", context=context, rc=rc)
+        super().__init__(swe_id = "st: M 31", context=context, rc=rc)
 
 stellarium_stars = {
-    "OmiTau": OmicronTauri,
-    "HIP 15900": OmicronTauri,
     "Andromeda": AndromedaGalaxy,
     "M 31": AndromedaGalaxy
 }
@@ -6887,6 +6889,9 @@ class TheStars:
     def print_the_stars(self) -> None:
         for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
             print(f"{n}\t{nomen}\t{constructor().name()}")
+
+    def stellarium(self):
+        return self.the_stellarium
 
     def init_Stellarium(self, ip="127.0.0.1", port="8090", password=""):
         """

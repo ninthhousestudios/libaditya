@@ -195,11 +195,11 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,sysflg=const.DRAC,**kwargs))
 
-    def shift(self, dir, unit, number):
+    def shift(self, dir, unit, number, **kwargs):
         """
         calls self.JulianDay effectively and return a Chart with shifted JulianDay
         """
-        return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number)))
+        return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number),**kwargs))
 
     def timejd(self, next_time):
         """
