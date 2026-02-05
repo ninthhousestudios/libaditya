@@ -57,7 +57,7 @@ class CelestialObject:
         return self.right_ascension() as hours,minutes,seconds
         """
         d,m,s = utils.dec2dms(self.right_ascension())
-        return f"{int(d):02d}h{int(m):02d}m{int(s):02d}s"
+        return f"{int(d/15):02d}h{int(m):02d}m{int(s):02d}s"
 
     def declination(self) -> float:
         """
@@ -67,6 +67,13 @@ class CelestialObject:
             return round(self._declination, self.context.toround[1])
         else:
             return self._declination
+
+    def dec(self) -> str:
+        """
+        return self.declination() as degrees,minutes,seconds
+        """
+        d,m,s = utils.dec2dms(self.declination())
+        return f"{int(d):02d}h{int(m):02d}m{int(s):02d}s"
 
     def equatorial_distance(self):
         """

@@ -129,13 +129,14 @@ class Location:
         right now i can get the most recent one...not sure about historical?
         """
         # do this somehow
-        if icao is not None:
-            metar = self.get_metar(icao)
-            # since this is for swe, we use millibars and celsius
-            # metar...value() can do other units too
-            # 0 is for relative humidity
-            # need to figure out how to calculate it from dewpoint, then it can go in here
-            return (metar.press.value("mb"),metar.temp.value("c"),0)
+        # metar was suddenly giving an error
+#        if icao is not None:
+#            metar = self.get_metar(icao)
+#            # since this is for swe, we use millibars and celsius
+#            # metar...value() can do other units too
+#            # 0 is for relative humidity
+#            # need to figure out how to calculate it from dewpoint, then it can go in here
+#            return (metar.press.value("mb"),metar.temp.value("c"),0)
         return (0,0,0)
 
     def swe_location_azalt(self, coords=swe.ECL2HOR):

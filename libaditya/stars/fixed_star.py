@@ -160,6 +160,7 @@ class FixedStar(Longitude,CelestialObject):
         self._rise = info["rise"]
         self._set = info["set"]
         self._info = info
+        return
 
     def info(self):
         return self._info
