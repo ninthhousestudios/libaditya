@@ -60,8 +60,6 @@ def sysflgstr(sflg):
 
 
 def ayanamsa_name(ayanamsa):
-    if ayanamsa == -1 or ayanamsa == swe.FLG_TROPICAL:
-        return "Tropical"
     if ayanamsa == 98:
         return "Dhruva GC mid-Mula Equatorial"
     if ayanamsa == 99:

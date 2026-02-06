@@ -144,18 +144,6 @@ def dec2dmsstr(dd):
     return f"{int(degrees):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 
-def define_true_sidereal_hd_ayanamsa():
-    """
-    define a custom ayanamsha
-    this is from the faq at masteringthezodiac.com
-    • Ayanamsa: User Defined SVP
-    • Fixed Sidereal Vernal Point: 31.2836
-    • Yearly Incremental SVP: 0.00
-    • Reference Year: 2000
-    reference year means January 1, 2000
-    Then choose the true sidereal-M (Midpoint) setting
-    """
-    swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
 def dec2ymd(age: float) -> str:
     """
@@ -431,3 +419,46 @@ def is_stellarium_id(swe_id):
     if isinstance(swe_id, int):
         return False
     return "HIP" in swe_id or " " in swe_id
+
+def parse_simbad_ascii_response(response):
+    """
+    response is the http_response itself
+    """
+    txt = response.read().decode()
+    lines = txt.split("\n")
+    #import pdb; pdb.set_trace()
+    magV = None
+    parallax = None
+    for n,line in enumerate(lines):
+        match n:
+            case 2:
+                trad_name = str(line)
+            case 5:
+                names = line.split(" ")
+                # try to guess the ,noMen name
+                nomen_name = ","+names[2]+names[3]
+            case 7:
+                # icrs coordinates
+                icrs = line.split(" ")
+                ra_hour = icrs[1]
+                ra_minute = icrs[2]
+                ra_sec = icrs[3]
+                dec_degree = icrs[5]
+                dec_minute = icrs[6]
+                dec_sec = icrs[7]
+            case 11:
+                pm = line.split(" ")
+                pmra = pm[2]
+                pmde = pm[3]
+            case 13:
+                rad_vel = line.split(" ")
+                rad_vel = rad_vel[2]
+            case 12:
+                para = line.split(" ")
+                parallax = para[1]
+        if "Flux V" in line:
+            flux = line.split(" ")
+            magV = flux[3]
+    if not magV:
+        magV = 0
+    return trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV

@@ -42,7 +42,7 @@ class Location:
         self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
 
     def __str__(self):
-        return f"{self.placename()} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
+        return f"{self._placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
 
     def stellarium(self):
         """

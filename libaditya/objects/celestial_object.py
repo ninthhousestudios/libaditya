@@ -73,7 +73,7 @@ class CelestialObject:
         return self.declination() as degrees,minutes,seconds
         """
         d,m,s = utils.dec2dms(self.declination())
-        return f"{int(d):02d}h{int(m):02d}m{int(s):02d}s"
+        return f"{int(d):02d}d{int(m):02d}m{int(s):02d}s"
 
     def equatorial_distance(self):
         """

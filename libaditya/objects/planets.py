@@ -198,6 +198,9 @@ class Planet(Longitude,CelestialObject,PlanetBala):
             case swe.EARTH:
                 return 13
 
+    def number(self):
+        return self.list_index()+1
+
     def system_name(self) -> str:
         return self.sysflgstr
 
@@ -425,7 +428,6 @@ class Planet(Longitude,CelestialObject,PlanetBala):
             f"amsha {self.amsha()}\n{self.planet_name}{self.retrostr()} {self.ecliptic_longitude()} degrees ({self.longitude()}) {self.system_name()} longitude{ayanamsa}\n"
             + f"{self.timeJD}\n"
         )
-
 
 
 class Sun(Planet):
@@ -1277,6 +1279,9 @@ class Ketu(Planet):
         super().__init__(swe.TRUE_NODE, context,master)
         self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
+
+    def number(self):
+        return 9
         
     def glyph(self):
         return "☋"
@@ -1481,6 +1486,18 @@ class Planets:
         return iter(self._planets.values())
 
     def __getitem__(self,n):
+        """
+        self._planets (i.e., "self") is a dictionary of "Sun": Sun
+
+        if n is int, treat this as the natural number of the planet
+
+        returns a Planet class
+        """
+        if isinstance(n, int):
+            # if n is an integer, treat is like the planet's natrual vedic number
+            for planet in self._planets.values():
+                if planet.number() == n:
+                    return planet
         return self._planets[n]
 
     def planets(self):

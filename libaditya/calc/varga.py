@@ -232,12 +232,13 @@ class Varga(Jaimini,API):
                 header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
         elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
             if self.context.ayanamsa == 98:
-                self.context.ayanamsa = 36
-            header += f"{self.context.location}\n"
+                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+            header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
             header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
         else:
             header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        header += f"{self.context.location}\n"
+        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
         header += f"{self.context.timeJD}\n"
         return header
 

@@ -171,8 +171,8 @@ class JulianDay:
             return int(self.datetime[2])
 
     def hour(self, tz="utc"):
-        if tz != "utc:":
-            return usrhour()
+        if tz != "utc":
+            return self.usrhour()
         else:
             return float(self.datetime[3])
 

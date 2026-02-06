@@ -28,6 +28,31 @@ class Circle(Enum):
     ZODIAC = 2
     SIDEREAL_ADITYA = ZODIAC
 
+class Frame(Enum):
+    """
+    a frame is partly meant to be a stand-in for a few other options
+    but also to determine how things operate, perhaps
+    e.g., i just added to Planets() the possibility of doing Planets()[3] to get Mars,
+    since Mars is planet 3 in the natural order
+    but perhaps this doesnt work for Western, where they may want a different number
+    that is where the Frame would come in
+    if the Frame where Frame.WESTERN, then it would be something else;
+    i.e., you could do Planets()[3] and get Mercury (?, or whatever is the correct Planet)
+
+    sysflg
+    ayanamsa
+    hsys
+    circle
+    sign_names
+    names_type
+    """
+    SELF
+    TRADITIONAL_VEDIC
+    TROPICAL_VEDIC
+    ADITYA_VEDIC
+    WESTERN
+    HELLENISTIC
+
 @dataclass
 class EphContext:
     """
@@ -48,6 +73,9 @@ class EphContext:
     location: Location = Location()
 
     # calculation options
+
+    # frame: Frame = Frame.TROPICAL
+
     sysflg: int = const.ECL # | swe.SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
     amsha: int = 1 # amsha is the varga; default is 1
     ayanamsa: int = 98
