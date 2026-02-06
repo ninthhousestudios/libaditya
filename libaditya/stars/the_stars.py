@@ -4273,6 +4273,7 @@ class AlRescha(FixedStar): # ,alPsc
 
     def __init__(self, context = EphContext()):
         super().__init__(swe_id = ",alPsc", context=context)
+        self._name="AlRescha"
 
 class Samakah(FixedStar): # ,bePsc
 
@@ -5019,16 +5020,10 @@ class Ushakaron(FixedStar): # ,xiTau
     def __init__(self, context = EphContext()):
         super().__init__(swe_id = ",xiTau", context=context)
 
-class Atirsagne(FixedStar): # ,omiTau
-
-    def __init__(self, context = EphContext()):
-        super().__init__(swe_id = ",omiTau", context=context)
-
 class OmicronTauri(FixedStar): # ,omiTau
 
     def __init__(self, context = EphContext()):
         super().__init__(swe_id = ",omiTau", context=context)
-        self._other_names = ("Atirsagne",Atirsagne)
 
 class taTau(FixedStar): # ,taTau
 
@@ -6670,7 +6665,6 @@ natural_stars = {
     ",muTau": Kattupothu,
     ",nuTau": Furibundus,
     ",xiTau": Ushakaron,
-    ",omiTau": Atirsagne,
     ",taTau": taTau,
     ",rhTau": rhTau,
     ",ome-1Tau": ome1Tau,
@@ -6881,10 +6875,20 @@ class Constellation:
     find a midpoint between this constellation and thus next, and thus the sign boundary on the ecliptic
     """
 
-    def __init__(self, first_star: FixedStar, last_star: FixedStar, contains: [FixedStar], context=EphContext()):
+    def __init__(self, first_star: FixedStar, last_star: FixedStar, context=EphContext()):
         self._first_star = first_star
         self._last_star = last_star
-        self._contains = contains
+        self.attributes = dict()
+
+    def set_attribute(self, attrs):
+        """
+        attrs is a tuple ("attribute",value)
+        add all of these to self.attributes
+        attritube is a string that will be a dictionary key for value
+        """
+        key,value=attrs
+        self.attributes[key] = value
+        
 
     def first_star(self):
         return self._first_star
@@ -6898,107 +6902,221 @@ class Constellation:
     def constellation_index(self):
         return self._constellation_index
 
+    def constellation_number(self):
+        return self.constellation_index()+1
+
+    def beginning(self):
+        return self.attributes["beginning"]
+
+    def end(self):
+        return self.attributes["end"]
+
 class Aries(Constellation):
 
     def __init__(self, first_star = Mesarthim(), last_star = Botein(), context=EphContext()):
         self._name = "Aries"
         self._constellation_index = 0
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Taurus(Constellation):
 
     def __init__(self, first_star = OmicronTauri(), last_star = Tianguan(), context=EphContext()):
         self._name = "Taurus"
         self._constellation_index = 1
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Gemini(Constellation):
 
     def __init__(self, first_star = OneGeminorum(), last_star = KappaGeminorum(), context=EphContext()):
         self._name = "Gemini"
         self._constellation_index = 2
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Cancer(Constellation):
 
     def __init__(self, first_star = ChiCancri(), last_star = Acubens(), context=EphContext()):
         self._name = "Cancer"
         self._constellation_index = 3
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Leo(Constellation):
 
     def __init__(self, first_star = KappaLeonis(), last_star = Denebola(), context=EphContext()):
         self._name = "Leo"
         self._constellation_index = 4
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Virgo(Constellation):
 
     def __init__(self, first_star = NuVirginis(), last_star = RijlAlAwwa(), context=EphContext()):
         self._name = "Virgo"
         self._constellation_index = 5
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Libra(Constellation):
 
     def __init__(self, first_star = Zubenelgenubi(), last_star = Librae48(), context=EphContext()):
         self._name = "Libra"
         self._constellation_index = 6
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Scorpio(Constellation):
 
     def __init__(self, first_star = Dschubba(), last_star = Paikauhale(), context=EphContext()):
         self._name = "Scorpio"
         self._constellation_index = 7
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Ophiucus(Constellation):
 
     def __init__(self, first_star = Sabik(), last_star = Ophiuci45(), context=EphContext()):
         self._name = "Ophiucus"
         self._constellation_index = 8
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Sagittarius(Constellation):
 
     def __init__(self, first_star = Alnasl(), last_star = Terebellium(), context=EphContext()):
         self._name = "Sagittarius"
         self._constellation_index = 9
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Capricorn(Constellation):
 
     def __init__(self, first_star = Dabih(), last_star = DenebAlgedi(), context=EphContext()):
         self._name = "Capricorn"
         self._constellation_index = 10
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Aquarius(Constellation):
 
     def __init__(self, first_star = IotaAquarii(), last_star = PhiAquarii(), context=EphContext()):
         self._name = "Aquarius"
         self._constellation_index = 11 
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Pisces(Constellation):
 
     def __init__(self, first_star = GammaPiscium(), last_star = AlRescha(), context=EphContext()):
         self._name = "Pisces"
         self._constellation_index = 12
-        super().__init__(first_star,last_star,contains,context)
+        super().__init__(first_star,last_star,context)
 
 class Ecliptic:
 
+    number_to_name = {
+        1: "Aries",
+        2: "Taurus",
+        3: "Gemini",
+        4: "Cancer",
+        5: "Leo",
+        6: "Virgo",
+        7: "Libra",
+        8: "Scorpio",
+        9: "Ophiucus",
+        10: "Sagittarius",
+        11: "Capricorn",
+        12: "Aquarius",
+        13: "Pisces"
+    }
+
     def __init__(self, context = EphContext()):
         self.context = context
+        self.context.sysflg = const.SID
+        self.context.ayanamsa = 97
+        utils.set_swe_true_sidereal_ayanamsa()
         self._constellations = self.init_Constellations()
+        self._boundaries = self.init_boundaries()
+
+    def __iter__(self):
+        return iter(self._constellations.values())
+
+    def __getitem__(self,n):
+        if isinstance(n,int):
+            return self._constellations[self.number_to_name[n]]
+        return self._constellations[n] 
 
     def init_Constellations(self):
         """
         intialize the 13 Constellation classes that make up the ecliptic, starting with Aries
         """
+        consts = {}
+        consts["Aries"] = Aries(Mesarthim(self.context),Botein(self.context),self.context)
+        consts["Taurus"] = Taurus(OmicronTauri(self.context),Tianguan(self.context))
+        consts["Gemini"] = Gemini(OneGeminorum(self.context),KappaGeminorum(self.context),self.context)
+        consts["Cancer"] = Cancer(ChiCancri(self.context),Acubens(self.context),self.context)
+        consts["Leo"] = Leo(KappaLeonis(self.context),Denebola(self.context),self.context)
+        consts["Virgo"] = Virgo(NuVirginis(self.context),RijlAlAwwa(self.context),self.context)
+        consts["Libra"] = Libra(Zubenelgenubi(self.context),Librae48(self.context),self.context)
+        consts["Scorpio"] = Scorpio(Dschubba(self.context),Paikauhale(self.context),self.context)
+        consts["Ophiucus"] = Ophiucus(Sabik(self.context),Ophiuci45(self.context),self.context)
+        consts["Sagittarius"] = Sagittarius(Alnasl(self.context),Terebellium(self.context),self.context)
+        consts["Capricorn"] = Capricorn(Dabih(self.context),DenebAlgedi(self.context),self.context)
+        consts["Aquarius"] = Aquarius(IotaAquarii(self.context),PhiAquarii(self.context),self.context)
+        consts["Pisces"] = Pisces(GammaPiscium(self.context),AlRescha(self.context),self.context)
+        return consts
+
+    def init_boundaries(self) -> [float]:
+        """
+        find the boundaries according to the midpoint method
+
+        returns a list of boundaries, the beginning of Aries, of Taurus, etc.
+        """
+        # calculate in order, starting with the last start of Aries to first star of Taurus, etc.
+        # then put the last element to the front; the last element being last star of Pisces to first star of Aries,
+        # i.e., the beginning of the zodiac
+        ret = []
+        for constellation in self:
+            if constellation.name() == "Pisces":
+                next_star_key = "Aries"
+                next_star = self[next_star_key].first_star()
+                distance = constellation.last_star().degrees_apart(next_star.amsha_longitude())
+            else:
+                # how far the next star of next constellation is from last star of this constellation
+                next_star_key = self.number_to_name[constellation.constellation_number()+1]
+                next_star = self[next_star_key].first_star()
+                distance = constellation.last_star().degrees_apart(next_star.amsha_longitude())
+            # go forward half this distance from the star of this constellation; that is the end of this constellation
+            # and the beginning of the next constellation
+            midpoint = (constellation.last_star().amsha_longitude() + distance/2)%360
+            constellation.set_attribute(("end",midpoint))
+            self[next_star_key].set_attribute(("beginning",midpoint))
+            ret.append(midpoint)
+        # the last point between Pisces and Aries is actually the first, so put it there
+        return ret[-1:] + ret[:-1]
+
+    def boundaries(self):
+        return self._boundaries
+
+    def constellations(self):
+        return self._constellations
+    def aries(self):
+        return self.constellations()["Aries"]
+    def taurus(self):
+        return self.constellations()["Taurus"]
+    def gemini(self):
+        return self.constellations()["Gemini"]
+    def cancer(self):
+        return self.constellations()["Cancer"]
+    def leo(self):
+        return self.constellations()["Leo"]
+    def virgo(self):
+        return self.constellations()["Virgo"]
+    def libra(self):
+        return self.constellations()["Libra"]
+    def scorpio(self):
+        return self.constellations()["Scorpio"]
+    def ophiucus(self):
+        return self.constellations()["Ophiucus"]
+    def sagittarius(self):
+        return self.constellations()["Sagittarius"]
+    def capricorn(self):
+        return self.constellations()["Capricorn"]
+    def aquarius(self):
+        return self.constellations()["Aquarius"]
+    def pisces(self):
+        return self.constellations()["Pisces"]
+
 
 class TheStars:
     """
@@ -7075,18 +7193,6 @@ class TheStars:
         for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
             print(f"{n}\t{nomen}\t{constructor().name()}")
 
-    def set_true_sidereal_hd_ayanamsa(self):
-        """
-        define a custom ayanamsha
-        this is from the faq at masteringthezodiac.com
-        • Ayanamsa: User Defined SVP
-        • Fixed Sidereal Vernal Point: 31.2836
-        • Yearly Incremental SVP: 0.00
-        • Reference Year: 2000
-        reference year means January 1, 2000
-        Then choose the true sidereal-M (Midpoint) setting
-        """
-        swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
     def make_swe_star(self, names=[""]):
         """

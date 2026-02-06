@@ -88,3 +88,18 @@ def original_repr_Varga():
         output.add_row(row)
 
     ret = output.get_string(fields=list([sign for sign in [self.context.names.sign_names]][0]))
+
+
+# originally i passed the names around to every function and every object
+
+#@dataclass(frozen=True)
+#class Names:
+#    planet_names: str = tuple(const.planet_names)
+#    sign_names: str = tuple(const.adityas)
+#    nakshatras: str = tuple(const.nakshatras)
+#    tithis: str =  tuple(const.tithis)
+#    karanas: str = tuple(const.karanas)
+#    varas: str = tuple(const.varas)
+#    yogas: str = tuple(const.yogas)
+#    adityas: str = tuple(const.adityas)
+#    zodiac: str = tuple(const.zodiac)

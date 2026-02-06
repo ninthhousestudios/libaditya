@@ -462,3 +462,21 @@ def parse_simbad_ascii_response(response):
     if not magV:
         magV = 0
     return trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV
+
+
+def set_swe_true_sidereal_ayanamsa():
+    """
+    this is used by calling TheStars.set_true_sidereal_hd_ayanamsa()
+    this sets the swe ayanamsa to the true sidereal ayanamsa, so that when we intialize
+    our stars they have the appropriate coordinates for what we are doing
+
+    define a custom ayanamsha
+    this is from the faq at masteringthezodiac.com
+    • Ayanamsa: User Defined SVP
+    • Fixed Sidereal Vernal Point: 31.2836
+    • Yearly Incremental SVP: 0.00
+    • Reference Year: 2000
+    reference year means January 1, 2000
+    Then choose the true sidereal-M (Midpoint) setting
+    """
+    swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)

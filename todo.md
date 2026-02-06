@@ -1,7 +1,7 @@
 ## features
 
 #
-have TheStars print all the stars and their information
+fix Varga/Rashi header
 
 #
 draw
