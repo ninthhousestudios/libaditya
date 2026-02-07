@@ -6917,6 +6917,9 @@ class Constellation:
     def end(self):
         return self.attributes["end"]
 
+    def length(self):
+        return self.attributes["length"]
+
 class Aries(Constellation):
 
     def __init__(self, first_star = Mesarthim(), last_star = Botein(), context=EphContext()):
@@ -7050,6 +7053,7 @@ class Ecliptic:
         utils.set_swe_true_sidereal_ayanamsa()
         self._constellations = self.init_Constellations()
         self._boundaries = self.init_boundaries()
+        self.init_constellation_lengths()
         self._planets = self.init_Planets()
 
     def __iter__(self):
@@ -7115,6 +7119,22 @@ class Ecliptic:
         # the last point between Pisces and Aries is actually the first, so put it there
         return ret[-1:] + ret[:-1]
 
+    def init_constellation_lengths(self):
+        """
+        after finding the boundaries of each constellational, which can update them with their lengths
+        """
+        for constellation in self:
+            end = constellation.end()
+            begin = constellation.beginning()
+            if constellation.name() == "Aries" and begin > 359:
+                length = end+(360-begin)
+            elif constellation.name() == "Pisces" and begin < 1:
+                length = (360+end) - beginning
+            else:
+                length = end - begin
+            constellation.set_attribute(("length",length))
+        return
+
     def init_Planets(self):
         """
         put the Planets into their appropriate constellations
@@ -7134,12 +7154,18 @@ class Ecliptic:
         take a float longitude and return the name of its constellation
         """
         bounds = self.boundaries()
+        # so that if the beginning is 359.994 is changes to -.00599 so that "and" statements works in checking where the long is
+        if bounds[0] > 359:
+            bounds[0] = -(360-bounds[0])
         cnames = const.names["eng"]["zodiac"].copy()
         cnames.insert(8,const.names["eng"]["ophiucus"])
-        for n in range(0,len(bounds)-1):
-            if long >= bounds[n] and long < bounds[n+1]:
-                print(f"{n=} {cnames[n]=} {cnames[n+1]} {long=}")
-                return cnames[n+1]
+        for n in range(0,len(bounds)):
+            #print(f"l_to_c: {n=} {long=} {bounds[n]=} {bounds[(n+1)%13]=}")
+            if long >= bounds[n] and long < bounds[(n+1)%13]:
+                in_long = long - bounds[n]
+                if self.context.toround[0]:
+                    in_long = round(in_long, self.context.toround[1])
+                return f"{utils.dec2dmsstr(in_long)} {cnames[n]}"
 
     def boundaries(self):
         return self._boundaries

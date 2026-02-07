@@ -42,6 +42,8 @@ class CelestialObject:
         as in, the actual sky
         constellations according to "true sidereal", 13 sign astrology
         """
+        if "constellation" not in self.attributes.keys():
+            return "n/a"
         return self.attributes["constellation"]
 
     def latitude(self) -> float:

@@ -66,6 +66,7 @@ class FixedStar(Longitude,CelestialObject):
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
         if "%" in self._swe_id:
             self._swe_id = self.returned_swe_id
+        self.attributes = {"constellation": "n/a"}
         # now that we know which star this is, make sure it has the right swe_id()
         super().__init__(self.long,1,context)
 

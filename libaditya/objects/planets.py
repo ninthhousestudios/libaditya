@@ -46,6 +46,7 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         self._amsha = self.context.amsha
         self.master = master
         self.pnumber = pnumber
+        self.attributes = {"constellation": "n/a"}
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]
@@ -79,7 +80,6 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
-        self.attributes = {"constellation": "n/a"}
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -101,6 +101,7 @@ class Planet(Longitude,CelestialObject,PlanetBala):
             + [self.latitude_speed()]
             + [self.distance()]
             + [self.distance_speed()]
+            + [self.constellation()]
         )
 
     def init_coords(self):
@@ -1766,7 +1767,8 @@ class Planets:
             "Latitude",
             "Latitude Speed",
             "Distance",
-            "Distance Speed",
+            "Dist. Speed",
+            "Constellation"
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -1776,7 +1778,8 @@ class Planets:
         output.align["Latitude"] = "r"
         output.align["Latitude Speed"] = "r"
         output.align["Distance"] = "r"
-        output.align["Distance Speed"] = "r"
+        output.align["Dist. Speed"] = "r"
+        output.align["Constellation"] = "r"
 
         for p in self._planets.values():
             # dont print earth unless it is heliocentric or barycentric
@@ -1804,6 +1807,7 @@ class Planets:
                 "Nakshatra",
                 "Elapsed",
                 "Latitude",
+                "Constellation"
             ]
         )
 
@@ -1822,7 +1826,8 @@ class Planets:
             "Latitude",
             "Latitude Speed",
             "Distance",
-            "Distance Speed",
+            "Dist. Speed",
+            "Constellation"
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -1830,7 +1835,8 @@ class Planets:
         output.align["Latitude"] = "r"
         output.align["Latitude Speed"] = "r"
         output.align["Distance"] = "r"
-        output.align["Distance Speed"] = "r"
+        output.align["Dist. Speed"] = "r"
+        output.align["Constellation"] = "r"
 
         for p in self._planets.values():
             # dont print earth unless it is heliocentric or barycentric
@@ -1858,7 +1864,8 @@ class Planets:
                 "Latitude",
                 "Latitude Speed",
                 "Distance",
-                "Distance Speed"
+                "Dist. Speed",
+                "Constellation"
             ]
         )
 
