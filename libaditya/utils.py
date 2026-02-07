@@ -428,7 +428,23 @@ def parse_simbad_ascii_response(response: str):
     #import pdb; pdb.set_trace()
     magV = None
     parallax = None
+    hipid = "no hip id"
+    name = ""
     for n,line in enumerate(lines):
+        if n > 28:
+            # find HIP id so we can return it first as well
+            for n in range(28,50):
+                if "HIP" in lines[n]:
+                    line = lines[n].split()
+                    for i,element in enumerate(line):
+                        if element == "HIP":
+                            hipid = element+" "+line[i+1]
+                if "NAME" in lines[n]:
+                    line = lines[n].split()
+                    for i,element in enumerate(line):
+                        if element == "NAME":
+                            name = line[i+1]
+            break
         match n:
             case 2:
                 trad_name = str(line)
@@ -460,7 +476,7 @@ def parse_simbad_ascii_response(response: str):
             magV = flux[3]
     if not magV:
         magV = 0
-    return trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV
+    return [hipid,name],trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV
 
 
 def set_swe_true_sidereal_ayanamsa():
@@ -479,3 +495,40 @@ def set_swe_true_sidereal_ayanamsa():
     Then choose the true sidereal-M (Midpoint) setting
     """
     swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
+
+def make_swe_star(names=[""]) -> str:
+    """
+    make an entry for ephe/sefstars.txt to add star "name" to that file, and thus to swe
+    returns a list [sefstars.txt_entry,simbad_response_str]
+    """
+    import urllib
+    from string import Template
+    simbad_query = Template("https://simbad.cds.unistra.fr/simbad/sim-id?Ident=$swe_id&NbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit%20id&output.format=ASCII")
+    swe_star_entry = Template("$trad_name,$nomen_name,ICRS,$ra_hour,$ra_minute,$ra_sec,$dec_degree,$dec_minute,$dec_sec,$pmra,$pmde,$rad_vel,$parallax,$magnitude_V")
+    if not isinstance(names,list):
+        names=[names]
+    ret = []
+    for name in names:
+        name = name.replace(" ","+")
+        the_bytes = urllib.request.urlopen(simbad_query.substitute(swe_id=name))
+        ascii = the_bytes.read().decode()
+#            lines=the_bytes.read().decode().split("\n")
+#            for n,line in enumerate(lines):
+#                print(n,line)
+        # now parse bytes into all the variables needs for swe_star_entry
+        ids, trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = parse_simbad_ascii_response(ascii)
+        ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
+    return str(ids[1]+", "+ids[0]), ret, ascii
+
+
+def write_swe_stars(names=[""],outfile="new_sefstar_names.txt"):
+    lines=[]
+    for name in names:
+        ret=make_swe_star(name)
+        # comment line with name and hip id
+        lines.append("# "+ret[0]+"\n")
+        # swe star entry
+        lines.append(ret[1][0]+"\n")
+    with open(outfile,"a") as fd:
+        fd.writelines(lines)
+    return

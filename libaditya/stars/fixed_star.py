@@ -24,8 +24,27 @@ from libaditya.objects import Longitude, CelestialObject, EphContext
 
 from libaditya.stars.stellarium import Stellarium
 
+def correct_nomen_name(swe_id):
+    # take care of cases like ,And14
+    # the proper nomen name is ,14And
+    # these is only for names that have numbers in them
+    if "," in swe_id:
+        # remove initial comma if there
+        swe_id = swe_id.split(",")[1]
+    if swe_id[-3:].isnumeric():
+        return ","+swe_id[-3:]+swe_id[:-3]
+    if swe_id[-2:].isnumeric():
+        if swe_id[-2:] == "00":
+            # for GCRS00
+            return ","+swe_id
+        return ","+swe_id[-2:]+swe_id[:-2]
+    if swe_id[-1:].isnumeric():
+        return ","+swe_id[-1:]+swe_id[:-1]
+    return ","+swe_id
 
-class FixedStar(Longitude,CelestialObject):
+
+
+class FixedStar(CelestialObject,Longitude):
 
     def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None):
         self.context = context
@@ -46,11 +65,12 @@ class FixedStar(Longitude,CelestialObject):
             # initialized by the TheStars()
             self.rc = rc
             # now initialize all of the information
+            print(f"FixedStar initalizing Stellarium...")
             self.init_Stellarium()
             super().__init__(self.long,1,context)
             # done with this __init__
             return
-        self._swe_id = self.correct_nomen_name(swe_id)
+        self._swe_id = correct_nomen_name(swe_id)
         try:
             # if it works, the swe_id is valid
             swe.fixstar2_ut(self._swe_id,self.context.timeJD.jd_number())
@@ -68,7 +88,11 @@ class FixedStar(Longitude,CelestialObject):
             self._swe_id = self.returned_swe_id
         self.attributes = {"constellation": "n/a"}
         # now that we know which star this is, make sure it has the right swe_id()
+        # super() means Longitude. CelestialObject is a Mixin and has no __init__ method of its own
+        # it is basically just a holder for shared code between Planet and FixedStar
+        # ...things that apply to both of them as CelestialObjects
         super().__init__(self.long,1,context)
+
 
     def init_coords(self):
         loc = self.context.location.swe_location()
@@ -87,23 +111,6 @@ class FixedStar(Longitude,CelestialObject):
             swe.set_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
         return swe.fixstar2_ut(self.swe_id(), self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
-
-    def correct_nomen_name(self, swe_id):
-        # take care of cases like ,And14
-        # the proper nomen name is ,14And
-        if "," in swe_id:
-            # remove initial comma if there
-            swe_id = swe_id.split(",")[1]
-        if swe_id[-3:].isnumeric():
-            return ","+swe_id[-3:]+swe_id[:-3]
-        if swe_id[-2:].isnumeric():
-            if swe_id[-2:] == "00":
-                # for GCRS00
-                return ","+swe_id
-            return ","+swe_id[-2:]+swe_id[:-2]
-        if swe_id[-1:].isnumeric():
-            return ","+swe_id[-1:]+swe_id[:-1]
-        return ","+swe_id
 
     def __eq__(self, fs2):
         """

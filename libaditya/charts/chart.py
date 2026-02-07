@@ -226,7 +226,7 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,**kwargs))
 
-    def stars(self,stellarium=True):
+    def stars(self,stellarium=False):
         """
         this is TheStars, used when you know the nomenclature name of the star, the (,)noMen name, because they all look a bit like that
         this is implemented so that you can choose or not to put the ","

@@ -46,6 +46,10 @@ class CelestialObject:
             return "n/a"
         return self.attributes["constellation"]
 
+    def __repr__(self):
+        ret = f"{self.name()} {self.ecliptic_longitude()} {self.amsha()} {self.amsha_longitude()} {self.ayanamsa()}"
+        return ret
+
     def latitude(self) -> float:
         if self.context.toround[0]:
             return round(self.lat, self.context.toround[1])

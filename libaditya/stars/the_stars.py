@@ -31,6 +31,7 @@ import swisseph as swe
 
 from libaditya.objects import EphContext, Planet
 
+from .fixed_star import correct_nomen_name 
 from .fixed_star import FixedStar
 from .stellarium import Stellarium
 
@@ -6879,8 +6880,9 @@ class Constellation:
     def __init__(self, first_star: FixedStar, last_star: FixedStar, context=EphContext()):
         self._first_star = first_star
         self._last_star = last_star
-        self.attributes = dict()
-        self._planets = {"planets": []}
+        self.attributes = {"planets": [], "stars": []}
+        self.set_attribute(("stars",self.first_star()))
+        self.set_attribute(("stars",self.last_star()))
 
     def set_attribute(self, attrs):
         """
@@ -6889,12 +6891,21 @@ class Constellation:
         attritube is a string that will be a dictionary key for value
         """
         key,value=attrs
-        try:
+        if key == "planets" or key == "stars":
+            # the keys have values that are lists of Planet-s or FixedStar-s
             if isinstance(self.attributes[key],list):
                 self.attributes[key].append(value)
-        except:
+        else:
             self.attributes[key] = value
 
+    def planets(self):
+        return self.attributes["planets"]
+
+    def stars(self):
+        return self.attributes["stars"]
+
+    def objects(self):
+        return self.attributes["planets"] + self.attributes["stars"]
 
     def first_star(self):
         return self._first_star
@@ -6925,6 +6936,7 @@ class Aries(Constellation):
     def __init__(self, first_star = Mesarthim(), last_star = Botein(), context=EphContext()):
         self._name = "Aries"
         self._constellation_index = 0
+        self._stars_to_place = []
         super().__init__(first_star,last_star,context)
 
 class Taurus(Constellation):
@@ -7070,6 +7082,14 @@ class Ecliptic:
     def true_sidereal_master(self):
         return self._true_sidereal_master
 
+    def place(self, constellation: str, object: Planet | FixedStar):
+        """
+        place an object in a constellation, such that
+        Constellation().objects() will include object in the output
+        """
+        attr="planets" if isinstance(object, Planet) else "stars"
+        self[constellation].set_attribute((attr,object))
+
     def init_Constellations(self):
         """
         intialize the 13 Constellation classes that make up the ecliptic, starting with Aries
@@ -7088,6 +7108,10 @@ class Ecliptic:
         consts["Capricorn"] = Capricorn(Dabih(self.context),DenebAlgedi(self.context),self.context)
         consts["Aquarius"] = Aquarius(IotaAquarii(self.context),PhiAquarii(self.context),self.context)
         consts["Pisces"] = Pisces(GammaPiscium(self.context),AlRescha(self.context),self.context)
+        # these keys allow me to use the output from CelestialObject.constellation() easily
+        # it gives longitude as "DD:MM:SS Constellation"
+        # so using the return from this: ret.split()[1] gives the Constellation, which
+        # can be used as a key for "self"
         return consts
 
     def init_boundaries(self) -> [float]:
@@ -7139,15 +7163,25 @@ class Ecliptic:
         """
         put the Planets into their appropriate constellations
         tell the Planet so it knows
+        Planet-s are all in both self.master() and self.true_sidereal_master()
+        this way, self.master() can have any options, and yet they can all include
+        the true sidereal information
         """
         bounds = self.boundaries()
         parent_planets = self.master().rashi().planets()
         true_sidereal_planets = self.true_sidereal_master().rashi().planets()
         # find out which constellation each planet is in
         for planet in true_sidereal_planets:
+            # take the raw aries_longitude (i.e., ecliptic longitude with ayanamsa=97 and sysflg=const.SID)
+            # i.e., the longitude from the 0 point, the beginning of aries constellation
+            # and find the in-constellation longitude, e.g., 23:43:57 Taurus
+            # set this attribute in both parent_planets and true_sidereal_planets
             constellation = self.longitude_to_constellation(planet.ecliptic_longitude())
             parent_planets[planet.identity()].set_attribute(("constellation",constellation))
             true_sidereal_planets[planet.identity()].set_attribute(("constellation",constellation))
+            # now put the planets in their proper constellations
+            #print(f"{planet.name()} {constellation=}")
+            self.place(constellation.split()[1],planet)
 
     def longitude_to_constellation(self, long: float):
         """
@@ -7155,13 +7189,17 @@ class Ecliptic:
         """
         bounds = self.boundaries()
         # so that if the beginning is 359.994 is changes to -.00599 so that "and" statements works in checking where the long is
+        if bounds[0] < 1:
+            bounds.append(bounds[0]+360)
+        else:
+            bounds.append(bounds[0])
         if bounds[0] > 359:
             bounds[0] = -(360-bounds[0])
         cnames = const.names["eng"]["zodiac"].copy()
         cnames.insert(8,const.names["eng"]["ophiucus"])
         for n in range(0,len(bounds)):
             #print(f"l_to_c: {n=} {long=} {bounds[n]=} {bounds[(n+1)%13]=}")
-            if long >= bounds[n] and long < bounds[(n+1)%13]:
+            if long >= bounds[n] and long < bounds[n+1]:
                 in_long = long - bounds[n]
                 if self.context.toround[0]:
                     in_long = round(in_long, self.context.toround[1])
@@ -7212,6 +7250,7 @@ class TheStars:
         # defined just above
         self._natural_stars = natural_stars
         self._the_stars = the_stars
+        self.the_stellarium = None
         if stellarium:
             self.the_stellarium = self.init_Stellarium()
 
@@ -7227,7 +7266,7 @@ class TheStars:
         "HIP nnnnn" is used by Stellarium
         also, names with spaces, e.g., "M 31", which is a galaxy, can be instantiated into a FixedStar
         """
-        if "HIP" in key or " " in key or key[0].isupper():
+        if "st:" in key:
             # all of these indicate objects that can be found with Stellarium().info(key)
             # or in stars.the_stars.the_stars
             if self.the_stellarium:
@@ -7238,10 +7277,7 @@ class TheStars:
                 else:
                     # return whatever object Stellarium finds
                     return FixedStar(key,self.context,self.the_stellarium)
-            print("Stellarium not available...")
-            return
-        elif not "," in key:
-            key = ","+key
+        key = correct_nomen_name(key)
         return self._the_stars[key](self.context)
 
     def natural_stars(self):
@@ -7274,31 +7310,6 @@ class TheStars:
     def print_the_stars(self) -> None:
         for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
             print(f"{n}\t{nomen}\t{constructor().name()}")
-
-
-    def make_swe_star(names=[""]) -> str:
-        """
-        make an entry for ephe/sefstars.txt to add star "name" to that file, and thus to swe
-        returns a list [sefstars.txt_entry,simbad_response_str]
-        """
-        import urllib
-        from string import Template
-        simbad_query = Template("https://simbad.cds.unistra.fr/simbad/sim-id?Ident=$swe_id&NbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit%20id&output.format=ASCII")
-        swe_star_entry = Template("$trad_name,$nomen_name,ICRS,$ra_hour,$ra_minute,$ra_sec,$dec_degree,$dec_minute,$dec_sec,$pmra,$pmde,$rad_vel,$parallax,$magnitude_V")
-        if not isinstance(names,list):
-            names=[names]
-        ret = []
-        for name in names:
-            name = name.replace(" ","+")
-            the_bytes = urllib.request.urlopen(simbad_query.substitute(swe_id=name))
-            ascii = the_bytes.read().decode()
-#            lines=the_bytes.read().decode().split("\n")
-#            for n,line in enumerate(lines):
-#                print(n,line)
-            # now parse bytes into all the variables needs for swe_star_entry
-            trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = utils.parse_simbad_ascii_response(ascii)
-            ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
-        return ret, ascii
 
     def stellarium(self):
         return self.the_stellarium

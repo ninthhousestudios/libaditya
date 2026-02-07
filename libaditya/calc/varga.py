@@ -258,6 +258,9 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC):
     def planets(self):
         return self._planets
 
+    def ecliptic(self):
+        return self._ecliptic
+
     def cusps(self):
         return self._cusps
 

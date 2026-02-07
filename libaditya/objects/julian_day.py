@@ -222,8 +222,10 @@ class JulianDay:
             sf = -1
         if unit.startswith("s"):
             sf = sf * self.onesecjd
-        elif unit.startswith("m"):
+        elif unit.startswith("min"):
             sf = sf * self.oneminjd
+        elif unit.startswith("mon"):
+            sf = sf * self.onemonthjd
         elif unit.startswith("h"):
             sf = sf * self.onehrjd
         elif unit.startswith("d"):

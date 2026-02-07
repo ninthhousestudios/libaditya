@@ -34,7 +34,7 @@ from .shadbala import PlanetBala
 from .swe_functions import SWEFirstLast
 
 
-class Planet(Longitude,CelestialObject,PlanetBala):
+class Planet(CelestialObject,Longitude,PlanetBala):
     """
     this class has information and functions related to planets
     each Planet takes a planet number and an EphContext
@@ -402,19 +402,6 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         # this is a doc string that will show in the repl's "help()" function for all objects that inherit from Planet
         # so yes this method actually "does" something; well, it doesnt, but it has a value to it
         pass
-
-    def __repr__(self):
-        ret = ""
-        if self.retrostr() != "":
-            retrostr = " R"
-        else:
-            retrostr = ""
-        ret = f"{self.planet_name}{retrostr} {self.ecliptic_longitude()} {self.amsha()} {self.amsha_longitude()} {self.ayanamsa()}"
-#        if self.amsha() != 1:
-#            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-#        else:
-#            ret = f"amsha {self.amsha()} {self.planet_name}{self.retrostr()} at {self.longitude()} degrees {self.system_name()} longitude{ayanamsa}\n"
-        return ret
 
     def jaimini_info(self):
         """
