@@ -46,11 +46,12 @@ def correct_nomen_name(swe_id):
 
 class FixedStar(CelestialObject,Longitude):
 
-    def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None):
+    def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None, swe_string=""):
         self.context = context
         self.system = self.context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
         self._other_names = ""
+        self._swe_string = swe_string
         # swe_id is the nomenclature name of the star
         # can pass it with or without comma
         self._stellarium = False

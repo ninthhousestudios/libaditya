@@ -1,7 +1,18 @@
 ## features
 
 #
+use stellarium to help with rectification
+can poll the time
+
+of course, dont need stellarium for that
+
+steps; currently libaditya has no way to do steps
+plotting, data visualisation, etc.
+
+#
 stars
+
+add fixed stars to Ecliptic
 
 add nakshatras to fixed stars
 

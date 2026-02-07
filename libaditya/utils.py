@@ -517,11 +517,16 @@ def make_swe_star(names=[""]) -> str:
 #                print(n,line)
         # now parse bytes into all the variables needs for swe_star_entry
         ids, trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = parse_simbad_ascii_response(ascii)
+        if ids[0] != "":
+            # if simba returned a traditional name, use it
+            trad_name = ids[0]
+        else:
+            trad_name = name.strip().replace("+"," ")
         ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
     return str(ids[1]+", "+ids[0]), ret, ascii
 
 
-def write_swe_stars(names=[""],outfile="new_sefstar_names.txt"):
+def write_swe_stars(names=[""],outfile=f"{const.base_path}/stars/new_sefstars.txt"):
     lines=[]
     for name in names:
         ret=make_swe_star(name)
@@ -532,3 +537,75 @@ def write_swe_stars(names=[""],outfile="new_sefstar_names.txt"):
     with open(outfile,"a") as fd:
         fd.writelines(lines)
     return
+
+def swe_star_to_python(swe_star: str) -> str:
+    """
+    take a star line from ephe/sefstars.txt and produce a python object that inherits from FixedStar
+    this is written in a .py file that can then be loaded, and we can use any of these stars then by name
+    e.g., stars.the_stars.Fomalhaut(context)
+
+    swe_star is like this:
+
+    # Common Name, HIP ID
+    Galactic Center,SgrA*,ICRS,17,45,40.03599,-29,00,28.1699,-2.755718425, -5.547,  0.0,0.125,999.99,  0,    0
+
+    (traditional/common) name,(,noMen) nomenclature name, equinox, ra_hour, ra_minute, ra_second, dec_degree, dec_minute, dec_second,
+    ra of proper motion, dec of proper motion, radial velocity in km/s, annual parallax in .0001"", magnitude_V
+    an example of what this produces:
+
+    class GalacticCenter(FixedStar): # ,SgrA*
+
+        def __init__(self, context = EphContext()): 
+            super().__init__(swe_id = ",SgrA*", context=context)
+
+    for new stars, this is the template I am trying to use:
+
+    # Capella, HIP 24608
+    Alpha Auriga,alfAur,ICRS,05,16,41.35871,+45,59,52.7693,75.25,-426.89,29.19,76.20,0.08
+
+    class AlphaAuriga(FixedStar): # ,alfAur
+
+        def __init__(self, context = EphContext()): 
+            super().__init__(swe_id = ",alfAur", context=context, swe_string="Alpha Auriga,alfAur,ICRS,05,16,41.35871,+45,59,52.7693,75.25,-426.89,29.19,76.20,0.08")
+            self._other_names = ["Capella", "HIP 24608"]
+
+    Capella = AlphaAuriga
+
+    now, TheStars(context)["alfAur"] will return AlphaAuriga()
+    but you can also do stars.the_stars.Capella(context)
+    
+    """
+    lines=swe_star.split("\n")
+    common_name = ""
+    if len(lines) == 1:
+        swe_line = lines[0]
+        swe_split = lines[0].split(",")
+        hip_name = "" 
+    if len(lines) == 2:
+        # could "" if there is no common name
+        # all expect last character because .split() catches a comma
+        swe_line = lines[1]
+        swe_split = lines[1].split(",")
+        common_name = lines[0].split()[1][:-1]
+        hip_name = lines[0].split()[2]+lines[0].split()[3]
+    trad_name = swe_split[0].replace(" ","")
+    swe_id = ","+swe_split[1]
+    other_classes=""
+    if common_name != trad_name:
+        if common_name == "":
+            common_name = trad_name
+        else:
+            other_classes = f"{common_name} = {trad_name}"
+    ret=[]
+    ret.append(f"class {trad_name}(FixedStar): # {swe_id}")
+    ret.append(f"    def __init__(self, context = EphContext()):\n")
+    ret.append(f"        super().__init__(swe_id = \"{swe_id}\", context=context, swe_string=\"{swe_line}\")")
+    ret.append(f"        self._other_names = [\"{common_name}\", \"{hip_name if hip_name else ""}\"]\n")
+    ret.append(other_classes)
+    return ret
+
+def swe_stars_to_py(stars,outfile=f"{const.base_path}/stars/new_stars.py"):
+    """
+    take an input
+    """
+    #with open(outfile, "a") as fd:
