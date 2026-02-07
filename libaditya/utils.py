@@ -420,12 +420,11 @@ def is_stellarium_id(swe_id):
         return False
     return "HIP" in swe_id or " " in swe_id
 
-def parse_simbad_ascii_response(response):
+def parse_simbad_ascii_response(response: str):
     """
     response is the http_response itself
     """
-    txt = response.read().decode()
-    lines = txt.split("\n")
+    lines = response.split("\n")
     #import pdb; pdb.set_trace()
     magV = None
     parallax = None

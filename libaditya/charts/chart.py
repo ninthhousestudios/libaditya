@@ -26,7 +26,6 @@ from libaditya import constants as const
 from libaditya.objects import EphContext, Planets, Cusps, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
 import libaditya.stars as stars
-from libaditya.stars.stellarium import Stellarium
 
 from .api import API
 from .bodygraph import Bodygraph
@@ -234,38 +233,6 @@ class Chart(API):
         """
         return stars.TheStars(self.context,stellarium)
 
-    # this is sort of silly
-    # if you want access to individual stars, use the module itself
-    # in the repl:
-    # >>> stars.the_stars.Botein()
-    # >>> stars.the_stars. (double tab)
-    # will allow you to see the whole list of all the stars
-
-#    def the_Stars(self):
-#        """
-#        this literally returns the module stars.the_stars
-#
-#        this lets you do things like
-#        Chart().the_Stars().Erakis()
-#        this is good if you known specifically which FixedStar class you want; this gives access like that
-#
-#        the stand approach is to use the (,)noMen name with TheStars, e.g.,:
-#        >>> TheStars()["alTau"]
-#
-#        the other thing is that there are sometimes multiple long names for one noMen name
-#        TheStars() only has access to one of those
-#        e.g., TheStars()[",muCep"] returns TheGarnetStar()
-#        however, if we do:
-#        >>> TheStars()["muCep"]() ==  Chart().the_Stars().Erakis()
-#        True
-#        likewise
-#        >>> Chart().the_Stars().TheGarnetStar() ==  Chart().the_Stars().Erakis()
-#        True
-#        >>> Chart().the_Stars().TheGarnetStar ==  Chart().the_Stars().Erakis
-#        False
-#        this is because the constructors are different, but functionally they are the same
-#        any two objects that have the same swe_id() are the same in this sense
-#        this is about the object; they could be on different days, == only checks if swe_id() is the same
-#        """
-#        return stars.the_stars
-
+    def ecliptic(self):
+        self_true_sidereal = self.sidereal(ayanamsa=97,signize=False)
+        return stars.the_stars.Ecliptic(self_true_sidereal.context,master=self)

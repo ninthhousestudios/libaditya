@@ -60,6 +60,8 @@ def sysflgstr(sflg):
 
 
 def ayanamsa_name(ayanamsa):
+    if ayanamsa == 97:
+        return "True Sidereal"
     if ayanamsa == 98:
         return "Dhruva GC mid-Mula Equatorial"
     if ayanamsa == 99:
@@ -734,6 +736,8 @@ names = {
         ],
         "abhijit":
         "Abhijit",
+        "ophiucus":
+        "Ophiucus"
     },
     "iast": {
         "planets": [

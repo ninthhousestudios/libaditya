@@ -37,6 +37,13 @@ class CelestialObject:
         """
         return HDLongitude(self.ecliptic_longitude(),context=self.context)
 
+    def constellation(self):
+        """
+        as in, the actual sky
+        constellations according to "true sidereal", 13 sign astrology
+        """
+        return self.attributes["constellation"]
+
     def latitude(self) -> float:
         if self.context.toround[0]:
             return round(self.lat, self.context.toround[1])

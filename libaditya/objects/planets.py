@@ -79,7 +79,7 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
-        self.attributes = dict()
+        self.attributes = {"constellation": "n/a"}
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -104,16 +104,20 @@ class Planet(Longitude,CelestialObject,PlanetBala):
         )
 
     def init_coords(self):
+        """
+        i dont really like the way this function works
+
+        was one of the earliest i wrote for this; could be clearer i think
+        """
         loc = self.context.location.swe_location()
-        if self.system == const.SID:
+        if self.system == const.SID or self.system == (const.SID | const.TOPO):
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
                 self._ayanamsa = 36
             swe.set_sid_mode(self.ayanamsa())
-        if self.system == const.TOPO:
-            swe.set_topo(loc[0], loc[1], loc[2])
-        if self.system == (const.SID | const.TOPO):
-            swe.set_sid_mode(self.ayanamsa())
+            if self.ayanamsa() == 97:
+                utils.set_swe_true_sidereal_ayanamsa()
+        if self.system == const.TOPO or self.system == (const.SID | const.TOPO):
             swe.set_topo(loc[0], loc[1], loc[2])
         # for draconic charts i choose -8 to indicate that system
         # but swe doesnt accept that, so replace it if necessary

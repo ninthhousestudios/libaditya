@@ -29,7 +29,7 @@ my additions are first; not a lot of them
 
 import swisseph as swe
 
-from libaditya.objects import EphContext
+from libaditya.objects import EphContext, Planet
 
 from .fixed_star import FixedStar
 from .stellarium import Stellarium
@@ -5678,7 +5678,7 @@ class Gliese710(FixedStar): # ,HD168442
 class Librae48(FixedStar): # ,oneGem
 
     def __init__(self, context = EphContext()): 
-        super().__init__(swe_id = ",Lib48", context=context)
+        super().__init__(swe_id = ",48Lib", context=context)
 
 natural_stars = {
     ",SgrA*": GalacticCenter,
@@ -6795,6 +6795,7 @@ natural_stars = {
     ",HD168442": Gliese710,
     # these are additions to faciliate ease of use
     # ,omiTau has the name "Atirsagne" in swe and i didnt like to search for omiTau
+    ",omiTau": OmicronTauri,
     "HIP 15900": OmicronTauri,
     ",48Lib": Librae48
 }
@@ -6879,6 +6880,7 @@ class Constellation:
         self._first_star = first_star
         self._last_star = last_star
         self.attributes = dict()
+        self._planets = {"planets": []}
 
     def set_attribute(self, attrs):
         """
@@ -6887,8 +6889,12 @@ class Constellation:
         attritube is a string that will be a dictionary key for value
         """
         key,value=attrs
-        self.attributes[key] = value
-        
+        try:
+            if isinstance(self.attributes[key],list):
+                self.attributes[key].append(value)
+        except:
+            self.attributes[key] = value
+
 
     def first_star(self):
         return self._first_star
@@ -7020,13 +7026,31 @@ class Ecliptic:
         13: "Pisces"
     }
 
-    def __init__(self, context = EphContext()):
+    def __init__(self, context = EphContext(), master = None):
+        """
+        master is the Chart() to which this belongs
+        the import happens here in Ecliptic.__init__() because it causes circular import errors otherwise...
+        which is appropriate, since it is circular
+        this will let us set Planet attributes for true sidereal
+        and to interact with the same Planets from Ecliptic()...eventually
+        """
         self.context = context
+        # if this import is anywhere else there is a circular import error
+        from libaditya.charts import Chart
+        # this is effectively master: Chart = Chart()...but has to here due to circularity of importing Chart elswhere
+        # having master gives Ecliptic access to Planets and any other objects
+        # this is sidereal and includes an ayanamsa, but Chart() itself can be anything
+        # likewise, it doesnt matter if your Chart() is tropical, sidereal, or aditya, this true sidereal Ecliptic will be the same
+        if master == None:
+            master = Chart()
+        self._master = master
+        self._true_sidereal_master = self.master().sidereal(ayanamsa=97)
         self.context.sysflg = const.SID
         self.context.ayanamsa = 97
         utils.set_swe_true_sidereal_ayanamsa()
         self._constellations = self.init_Constellations()
         self._boundaries = self.init_boundaries()
+        self._planets = self.init_Planets()
 
     def __iter__(self):
         return iter(self._constellations.values())
@@ -7035,6 +7059,12 @@ class Ecliptic:
         if isinstance(n,int):
             return self._constellations[self.number_to_name[n]]
         return self._constellations[n] 
+
+    def master(self):
+        return self._master
+
+    def true_sidereal_master(self):
+        return self._true_sidereal_master
 
     def init_Constellations(self):
         """
@@ -7084,6 +7114,32 @@ class Ecliptic:
             ret.append(midpoint)
         # the last point between Pisces and Aries is actually the first, so put it there
         return ret[-1:] + ret[:-1]
+
+    def init_Planets(self):
+        """
+        put the Planets into their appropriate constellations
+        tell the Planet so it knows
+        """
+        bounds = self.boundaries()
+        parent_planets = self.master().rashi().planets()
+        true_sidereal_planets = self.true_sidereal_master().rashi().planets()
+        # find out which constellation each planet is in
+        for planet in true_sidereal_planets:
+            constellation = self.longitude_to_constellation(planet.ecliptic_longitude())
+            parent_planets[planet.identity()].set_attribute(("constellation",constellation))
+            true_sidereal_planets[planet.identity()].set_attribute(("constellation",constellation))
+
+    def longitude_to_constellation(self, long: float):
+        """
+        take a float longitude and return the name of its constellation
+        """
+        bounds = self.boundaries()
+        cnames = const.names["eng"]["zodiac"].copy()
+        cnames.insert(8,const.names["eng"]["ophiucus"])
+        for n in range(0,len(bounds)-1):
+            if long >= bounds[n] and long < bounds[n+1]:
+                print(f"{n=} {cnames[n]=} {cnames[n+1]} {long=}")
+                return cnames[n+1]
 
     def boundaries(self):
         return self._boundaries
@@ -7194,27 +7250,29 @@ class TheStars:
             print(f"{n}\t{nomen}\t{constructor().name()}")
 
 
-    def make_swe_star(self, names=[""]):
+    def make_swe_star(names=[""]) -> str:
         """
         make an entry for ephe/sefstars.txt to add star "name" to that file, and thus to swe
+        returns a list [sefstars.txt_entry,simbad_response_str]
         """
         import urllib
         from string import Template
         simbad_query = Template("https://simbad.cds.unistra.fr/simbad/sim-id?Ident=$swe_id&NbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit%20id&output.format=ASCII")
-        swe_star_entry = Template("$trad_name,$nomen_name,$ra_hour,$ra_minute,$ra_sec,$dec_degree,$dec_minute,$dec_sec,$pmra,$pmde,$rad_vel,$parallax,$magnitude_V")
+        swe_star_entry = Template("$trad_name,$nomen_name,ICRS,$ra_hour,$ra_minute,$ra_sec,$dec_degree,$dec_minute,$dec_sec,$pmra,$pmde,$rad_vel,$parallax,$magnitude_V")
         if not isinstance(names,list):
             names=[names]
         ret = []
         for name in names:
             name = name.replace(" ","+")
             the_bytes = urllib.request.urlopen(simbad_query.substitute(swe_id=name))
+            ascii = the_bytes.read().decode()
 #            lines=the_bytes.read().decode().split("\n")
 #            for n,line in enumerate(lines):
 #                print(n,line)
             # now parse bytes into all the variables needs for swe_star_entry
-            trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = utils.parse_simbad_ascii_response(the_bytes)
+            trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = utils.parse_simbad_ascii_response(ascii)
             ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
-        return ret
+        return ret, ascii
 
     def stellarium(self):
         return self.the_stellarium
