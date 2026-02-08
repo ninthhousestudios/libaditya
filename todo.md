@@ -12,6 +12,8 @@ plotting, data visualisation, etc.
 #
 stars
 
+finishing adding stars/star-wheel.png constellations to constants.grelat
+
 add fixed stars to Ecliptic
 
 add nakshatras to fixed stars
