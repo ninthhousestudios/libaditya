@@ -430,6 +430,7 @@ def parse_simbad_ascii_response(response: str):
     parallax = None
     hipid = "no hip id"
     name = ""
+    nomen_name = ",noMen"
     for n,line in enumerate(lines):
         if n > 28:
             # find HIP id so we can return it first as well
@@ -496,7 +497,7 @@ def set_swe_true_sidereal_ayanamsa():
     """
     swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
-def make_swe_star(names=[""]) -> str:
+def swe_make_star(names=[""]) -> str:
     """
     make an entry for ephe/sefstars.txt to add star "name" to that file, and thus to swe
     returns a list [sefstars.txt_entry,simbad_response_str]
@@ -517,23 +518,22 @@ def make_swe_star(names=[""]) -> str:
 #                print(n,line)
         # now parse bytes into all the variables needs for swe_star_entry
         ids, trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = parse_simbad_ascii_response(ascii)
-        if ids[0] != "":
-            # if simba returned a traditional name, use it
-            trad_name = ids[0]
-        else:
-            trad_name = name.strip().replace("+"," ")
+        trad_name = name.strip().replace("+"," ")
+        if trad_name == "" or trad_name != ids[1]:
+            ret.append(f"{ids[1]}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
         ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
     return str(ids[1]+", "+ids[0]), ret, ascii
 
 
-def write_swe_stars(names=[""],outfile=f"{const.base_path}/stars/new_sefstars.txt"):
+def swe_write_stars(names=[""],outfile=f"{const.base_path}/stars/new_sefstars.txt"):
     lines=[]
     for name in names:
-        ret=make_swe_star(name)
-        # comment line with name and hip id
-        lines.append("# "+ret[0]+"\n")
-        # swe star entry
-        lines.append(ret[1][0]+"\n")
+        returns=swe_make_star(name)
+        for ret in returns:
+            # comment line with name and hip id
+            lines.append("# "+ret[0]+"\n")
+            # swe star entry
+            lines.append(ret[1][0]+"\n")
     with open(outfile,"a") as fd:
         fd.writelines(lines)
     return
@@ -576,12 +576,13 @@ def swe_star_to_python(swe_star: str) -> str:
     
     """
     lines=swe_star.split("\n")
+    print(f"{swe_star=} {lines=}")
     common_name = ""
-    if len(lines) == 1:
+    if len(lines) == 2:
         swe_line = lines[0]
         swe_split = lines[0].split(",")
         hip_name = "" 
-    if len(lines) == 2:
+    if len(lines) == 3:
         # could "" if there is no common name
         # all expect last character because .split() catches a comma
         swe_line = lines[1]
@@ -590,22 +591,55 @@ def swe_star_to_python(swe_star: str) -> str:
         hip_name = lines[0].split()[2]+lines[0].split()[3]
     trad_name = swe_split[0].replace(" ","")
     swe_id = ","+swe_split[1]
-    other_classes=""
+    other_classes="\n"
     if common_name != trad_name:
         if common_name == "":
             common_name = trad_name
         else:
-            other_classes = f"{common_name} = {trad_name}"
+            other_classes += f"{common_name} = {trad_name}"
+            other_classes += "\n\n"
+    if trad_name.strip() == "":
+        trad_name = nomen_name.replace(",")
     ret=[]
-    ret.append(f"class {trad_name}(FixedStar): # {swe_id}")
+    ret.append(f"class {trad_name}(FixedStar): # {swe_id}\n")
+    ret.append("\n")
     ret.append(f"    def __init__(self, context = EphContext()):\n")
-    ret.append(f"        super().__init__(swe_id = \"{swe_id}\", context=context, swe_string=\"{swe_line}\")")
-    ret.append(f"        self._other_names = [\"{common_name}\", \"{hip_name if hip_name else ""}\"]\n")
+    ret.append(f"        super().__init__(swe_id = \"{swe_id}\", context=context, swe_string=\"{swe_line}\")\n")
+    ret.append(f"        self._other_names = [\"{common_name}\", \"{"" if (not hip_name) or (hip_name == "nohip") else hip_name}\"]\n")
     ret.append(other_classes)
-    return ret
+    return "".join(ret)
 
-def swe_stars_to_py(stars,outfile=f"{const.base_path}/stars/new_stars.py"):
+def swe_stars_to_py(infile=f"{const.base_path}/stars/new_sefstars.txt",outfile=f"{const.base_path}/stars/new_stars.py"):
     """
     take an input
     """
-    #with open(outfile, "a") as fd:
+    with open(infile, "r") as infd:
+        swe_stars = infd.readlines()
+
+    with open(outfile, "a") as outfd:
+        n = 0
+        while n < len(swe_stars):
+            # if line is blank
+            if not swe_stars[n]:
+                n+=1
+                continue
+            # if line has info for the next line
+            if "#" in swe_stars[n] and "#0#" not in swe_stars[n]:
+                n+=1
+                continue
+            star = swe_stars[n]
+            n+=1
+            if "#" in star:
+                star += swe_stars[n]
+                n+=1
+            outfd.write(swe_star_to_python(star))
+
+def nomen_to_long_form(nomen):
+    """
+    take a nomenclature of the kind
+    (,)greek_letter_abbrevConstellation_abbrev
+    (,)greekLatin
+    greek is lowercase greek letter, will use upper case in English
+    Latin is genitive of Latin constellation name
+    e.g., alfTau, Alpha Tauri, α Tauri
+    """

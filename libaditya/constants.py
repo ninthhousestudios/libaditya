@@ -1373,5 +1373,57 @@ greek_alphabet = {
     'phi': u'\u03C6',
     'chi': u'\u03C7',
     'psi': u'\u03C8',
-   'omega':  u'\u03C9'
+    'omega':  u'\u03C9'
+}
+
+grelat = {
+    "greek": {
+        # not all the letters of the greek alphabet
+        # just those used in Bayer designations
+        "alf": "Alpha",
+        "bet": "Beta",
+        "gam": "Gamma",
+        "del": "Delta",
+        "eps": "Epsilon",
+        "zet": "Zeta",
+        # "eta", "Eta", # but no stars with that letter
+        "tet": "Theta",
+        "iot": "Iota",
+        "kap": "Kappa",
+        "omi": "Omicron",
+        "sig": "Sigma",
+        "tau": "Tau",
+    },
+    "latin": {
+        "Ari": "Ari",
+        "Tau": "Tauri",
+        "Gem": "Geminorum",
+        "Cnc": "Cancri",
+        "Leo": "Leonis",
+        "Vir": "Virginis",
+        "Sco": "Scorpii",
+        "Sgr": "Sagittarii",
+        "Cap": "Capricorni",
+        "Eri": "Eridani",
+        "UMa": "Ursae Majoris",
+        "UMi": "Ursae Minoris",
+        "Aql": "Aquilae",
+        "Hyd": "Hydrae",
+        "Scu": "Scuti",
+        "Boo": "Bootis",
+        "Dra": "Draconis",
+        "Cyg": "Cygni",
+        "Ori": "Orionis",
+        "Cet": "Ceti",
+        "CMa": "Canis Majoris",
+        "CMi": "Canis Minors",
+        "Aur": "Aurigae",
+        "Car": "Carinae",
+        "Lyr": "Lyrae",
+        "CVn": "Canum Venaticorum",
+        "Ind": "Indi",
+        "Lup": "Lupi",
+        "Ser": "Serpentis",
+        "Tri": "Trianguli",
+    }
 }
