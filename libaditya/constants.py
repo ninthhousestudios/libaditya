@@ -1376,35 +1376,69 @@ greek_alphabet = {
     'omega':  u'\u03C9'
 }
 
-grelat = {
+# if swe_id is lllUll then it is a Bayer designation
+# where lll is a greek letter and Ull is a constellation abbreviation (for the Latin genitive)
+# U(ll) is for other things, e.g., VC for Virgo Cluster, HIP for Hipparcos Catalogue number, etc.
+# nnUll is a Flamsteed designation and will end up as ConstNN in Python
+# e.g., ,48Lib becomes Librae48()
+grelat_stars = {
     "greek": {
+        # note: simbad returns two-letter names with an additional "."
+        # e.g., "mu.Sgr"
         # not all the letters of the greek alphabet
         # just those used in Bayer designations
         "alf": "Alpha",
         "bet": "Beta",
         "gam": "Gamma",
+        # for one star that had some weird stuff happen to it
+        "g": "G",
         "del": "Delta",
+        # for dOph -> d Ophiuci? just because?
+        "d": "D",
         "eps": "Epsilon",
         "zet": "Zeta",
-        # "eta", "Eta", # but no stars with that letter
+        "eta": "Eta", # but no stars with that letter
         "tet": "Theta",
         "iot": "Iota",
         "kap": "Kappa",
+        "lam": "Lambda",
+        "mu": "Mu",
+        "nu": "Nu",
+        "ksi": "Xi",
         "omi": "Omicron",
+        # it seems simbad may use "pi." to have three letters?
+        "pi": "Pi",
+        "rho": "Rho",
         "sig": "Sigma",
         "tau": "Tau",
+        "ups": "Upsilon",
+        "phi": "Phi",
+        "chi": "Chi",
+        "ome": "Omega",
     },
     "latin": {
-        "Ari": "Ari",
+        "Ari": "Arietis",
         "Tau": "Tauri",
         "Gem": "Geminorum",
         "Cnc": "Cancri",
         "Leo": "Leonis",
         "Vir": "Virginis",
         "Sco": "Scorpii",
+        "Oph": "Ophiuci",
         "Sgr": "Sagittarii",
         "Cap": "Capricorni",
+        "Aqr": "Aquarii",
+        "And": "Andromedae",
+        "Ant": "Antilae",
+        "Aps": "Apodis", # Apus constellation
+        "Ara": "Arae",
+        "Psc": "Piscium",
         "Eri": "Eridani",
+        "Cae": "Caeli",
+        "Cam": "Camelopardalis",
+        "Cas": "Cassiopeiae",
+        "Cen": "Centauri",
+        "Cep": "Cephei",
         "UMa": "Ursae Majoris",
         "UMi": "Ursae Minoris",
         "Aql": "Aquilae",
@@ -1412,18 +1446,65 @@ grelat = {
         "Scu": "Scuti",
         "Boo": "Bootis",
         "Dra": "Draconis",
+        "Del": "Delphini",
+        "Dor": "Doradus",
+        "Equ": "Equulei",
+        "For": "Fornacis", # Fornax constellation
         "Cyg": "Cygni",
+        "Gru": "Gruis",
         "Ori": "Orionis",
         "Cet": "Ceti",
+        "Cha": "Chamaeleontis", # Chamaeleon constellation
+        "Cir": "Circini", # Circinus constellation
+        "Col": "Columbae",
+        "Com": "Comae Berenices",
+        "CrB": "Coronae Borealis",
+        "CrA": "Coronae Australis",
+        "Crt": "Craters",
+        "Cru": "Crucis",
+        "Crv": "Corvi",
+        "CVn": "Canum Venaticorum",
         "CMa": "Canis Majoris",
         "CMi": "Canis Minors",
         "Aur": "Aurigae",
         "Car": "Carinae",
         "Lyr": "Lyrae",
-        "CVn": "Canum Venaticorum",
+        "Men": "Mensae",
+        "Mic": "Microscopii",
+        "Mon": "Monocerotis",
+        "Mus": "Muscae",
+        "Nor": "Normae",
+        "Oct": "Octantis",
         "Ind": "Indi",
+        "Pav": "Pavonis",
+        "Peg": "Pegasi",
+        "Phe": "Phoenicis",
+        "LMi": "Leonis Minoris",
         "Lup": "Lupi",
+        "Lyn": "Lyncis",
         "Ser": "Serpentis",
+        "Tel": "Telescopium",
+        "TrA": "Trianguli Australis",
         "Tri": "Trianguli",
+        "Tuc": "Tucanae",
+        "Her": "Herculis",
+        "Hor": "Horologii",
+        "Hya": "Hydrae",
+        "Hyi": "Hydri",
+        "Lac": "Lacertae",
+        "Per": "Persei",
+        "Pic": "Pictoris",
+        "PsA": "Piscis Austrini",
+        "Pup": "Puppis",
+        "Pyx": "Pyxis",
+        "Ret": "Reticulum",
+        "Scl": "Sculptoris",
+        "Vel": "Velorum", # Vela, contains Vela supercluster
+        "Vol": "Volantis",
+        "Vul": "Vulpeculate",
+        "VC": "Virgo Cluster",
+        "M": "Messier Object",
+        "NGC": "NGC",
+        "HIP": "HIP",
     }
 }
