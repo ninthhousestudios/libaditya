@@ -81,7 +81,7 @@ class FixedStar(CelestialObject,Longitude):
             self._swe_id = self._swe_id[1:]+"%"
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
-        (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, _ = self.init_coords()
+        (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, self._retflags = self.init_coords()
         self.dist_ly = 0 # convert self.dist in AUs to LYs
         self._name, self.returned_swe_id = self._name.split(",")
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
@@ -122,6 +122,9 @@ class FixedStar(CelestialObject,Longitude):
 
     def other_names(self):
         return self._other_names
+
+    def retflags(self):
+        self._retflags
 
     # longitude is taken care of by inheritor, Longitude
 

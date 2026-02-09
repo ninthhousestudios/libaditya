@@ -435,6 +435,8 @@ def parse_simbad_ascii_response(response: str):
         if n > 28:
             # find HIP id so we can return it first as well
             for n in range(28,50):
+                if n >= len(lines):
+                    break
                 if "HIP" in lines[n]:
                     line = lines[n].split()
                     for i,element in enumerate(line):
@@ -477,7 +479,10 @@ def parse_simbad_ascii_response(response: str):
             magV = flux[3]
     if not magV:
         magV = 0
-    return [hipid,name],trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV
+    try:
+        return [hipid,name],trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV
+    except:
+        return response
 
 
 def set_swe_true_sidereal_ayanamsa():
@@ -517,23 +522,28 @@ def swe_make_star(names=[""]) -> str:
 #            for n,line in enumerate(lines):
 #                print(n,line)
         # now parse bytes into all the variables needs for swe_star_entry
-        ids, trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = parse_simbad_ascii_response(ascii)
-        trad_name = name.strip().replace("+"," ")
-        if trad_name == "" or trad_name != ids[1]:
-            ret.append(f"{ids[1]}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
-        ret.append(f"{trad_name}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}")
-    return str(ids[1]+", "+ids[0]), ret, ascii
+        response = parse_simbad_ascii_response(ascii)
+        try:
+            ids,trad_name,nomen_name,ra_hour,ra_minute,ra_sec,dec_degree,dec_minute,dec_sec,pmra,pmde,rad_vel,parallax,magV = response
+        except:
+            print("Error: \n")
+            print(response)
+            return
+        id_line = f"#0# {nomen_name.replace(",","")}, "
+        id_line += str(ids[1]+", "+ids[0]+"\n")
+        ret.append(id_line)
+        ret.append(f"{nomen_to_long_form(nomen_name)}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}\n")
+    return ret, ascii
 
 
-def swe_write_stars(names=[""],outfile=f"{const.base_path}/stars/new_sefstars.txt"):
+def swe_write_stars(names=[""],outfile=""):
     lines=[]
     for name in names:
-        returns=swe_make_star(name)
-        for ret in returns:
-            # comment line with name and hip id
-            lines.append("# "+ret[0]+"\n")
-            # swe star entry
-            lines.append(ret[1][0]+"\n")
+        returns, ascii=swe_make_star(name)
+#        print(f"sws: {returns[0]=} {returns[1]=}")
+        lines.append(returns[0])
+        lines.append(returns[1])
+#    print(f"{lines=}")
     with open(outfile,"a") as fd:
         fd.writelines(lines)
     return
@@ -546,7 +556,7 @@ def swe_star_to_python(swe_star: str) -> str:
 
     swe_star is like this:
 
-    # Common Name, HIP ID
+    #0# swe_id, Common Name, HIP ID
     Galactic Center,SgrA*,ICRS,17,45,40.03599,-29,00,28.1699,-2.755718425, -5.547,  0.0,0.125,999.99,  0,    0
 
     (traditional/common) name,(,noMen) nomenclature name, equinox, ra_hour, ra_minute, ra_second, dec_degree, dec_minute, dec_second,
@@ -560,7 +570,7 @@ def swe_star_to_python(swe_star: str) -> str:
 
     for new stars, this is the template I am trying to use:
 
-    # Capella, HIP 24608
+    #0# alfAur, Capella, HIP 24608
     Alpha Auriga,alfAur,ICRS,05,16,41.35871,+45,59,52.7693,75.25,-426.89,29.19,76.20,0.08
 
     class AlphaAuriga(FixedStar): # ,alfAur
@@ -576,40 +586,61 @@ def swe_star_to_python(swe_star: str) -> str:
     
     """
     lines=swe_star.split("\n")
-    print(f"{swe_star=} {lines=}")
-    common_name = ""
-    if len(lines) == 2:
-        swe_line = lines[0]
-        swe_split = lines[0].split(",")
-        hip_name = "" 
-    if len(lines) == 3:
-        # could "" if there is no common name
-        # all expect last character because .split() catches a comma
-        swe_line = lines[1]
-        swe_split = lines[1].split(",")
-        common_name = lines[0].split()[1][:-1]
-        hip_name = lines[0].split()[2]+lines[0].split()[3]
-    trad_name = swe_split[0].replace(" ","")
-    swe_id = ","+swe_split[1]
-    other_classes="\n"
-    if common_name != trad_name:
-        if common_name == "":
-            common_name = trad_name
-        else:
-            other_classes += f"{common_name} = {trad_name}"
-            other_classes += "\n\n"
-    if trad_name.strip() == "":
-        trad_name = nomen_name.replace(",")
+    # since swe_star[1] has a \n at the end, lines will have 3 elements, the last being ""
+    names = lines[0]
+    names_split = names.split(",")
+    common_names = []
+    hip_name = ""
+    # the swe_id, aka ",nomen" name
+    id_swe_id = ","+names_split[0].split()[1]
+    # dont need the first one anymore
+    names_split = names_split[1:]
+    for name in names_split:
+        name=name.strip()
+        if "HIP" in name:
+            hip_name = f"{name.strip()}"
+        if not "Messier" in names and not name.startswith("VC") and not name.startswith("NGC") and not name.startswith("HR") and not name.startswith("HD"):
+            # get all the common names
+            common_names.append(f"{name.strip()}")
+    other_names = common_names
+    if hip_name:
+        other_names = common_names + [hip_name]
+
+    swe_line = lines[1]
+    swe_split = lines[1].split(",")
+
+    long_form_name = swe_split[0].replace(" ","")
+    star_swe_id = ","+swe_split[1]
+
+    if id_swe_id != star_swe_id:
+        print(f"Error swe_ids do not match: {id_swe_id} != {star_swe_id}\nLines out of order")
+        return
+
+    other_classes=""
+    for common_name in common_names:
+        other_classes += f"{common_name.replace(" ","")} = {long_form_name}\n"
+    other_classes += "\n\n"
+
+    if other_names is not None:
+        tmp = []
+        for name in other_names:
+            if name in tmp:
+                continue
+            if name == "" or name == '""':
+                continue
+            tmp.append(name.replace("'",""))
+        other_names = tmp
+
     ret=[]
-    ret.append(f"class {trad_name}(FixedStar): # {swe_id}\n")
+    ret.append(f"class {long_form_name}(FixedStar): # {id_swe_id}\n")
     ret.append("\n")
     ret.append(f"    def __init__(self, context = EphContext()):\n")
-    ret.append(f"        super().__init__(swe_id = \"{swe_id}\", context=context, swe_string=\"{swe_line}\")\n")
-    ret.append(f"        self._other_names = [\"{common_name}\", \"{"" if (not hip_name) or (hip_name == "nohip") else hip_name}\"]\n")
+    ret.append(f"        super().__init__(swe_id = \"{star_swe_id}\", context=context, swe_string=\"{swe_line}\")\n")
+    ret.append(f"        self._other_names = {other_names}\n\n")
     ret.append(other_classes)
     return "".join(ret)
 
-def swe_stars_to_py(infile=f"{const.base_path}/stars/new_sefstars.txt",outfile=f"{const.base_path}/stars/new_stars.py"):
+def swe_stars_to_py(infile,outfile):
     """
     take an input
     """
@@ -629,17 +660,99 @@ def swe_stars_to_py(infile=f"{const.base_path}/stars/new_sefstars.txt",outfile=f
                 continue
             star = swe_stars[n]
             n+=1
-            if "#" in star:
+            if "#0#" in star:
                 star += swe_stars[n]
                 n+=1
             outfd.write(swe_star_to_python(star))
 
-def nomen_to_long_form(nomen):
+def convert_sefstars(infile,outfile):
     """
-    take a nomenclature of the kind
-    (,)greek_letter_abbrevConstellation_abbrev
-    (,)greekLatin
+    convert ephe/sefstars.txt to a different format
+    i already manually changed all 2-letter greek abbreviations to 3-letter abbreviations manually
+    so that is accounted for in this function
+    """
+    with open(infile, "r") as infd:
+        inlines = infd.readlines()
+
+    outlines = []
+    for inline in inlines:
+        if inline.startswith("#"):
+            outlines.append(inline)
+            continue
+        star = inline.split(",")
+        trad_name = star[0]
+        nomen_name = star[1].replace("-","0")
+        star[1] = nomen_name
+        long_form_name = nomen_to_long_form(nomen_name)
+        star[0]=long_form_name
+        outlines.append(f"#0# {nomen_name}, {trad_name}\n")
+        outlines.append(",".join(star).strip()+"\n")
+
+    with open(outfile,"a") as outfd:
+        outfd.writelines(outlines)
+
+
+def nomen_to_long_form(nomen: str):
+    """
+    turn a nomenclature name into a long form version of itself
+    nomenclature names, any of these designations:
+    Bayer, Falmsteed, HIP, NGC, HD, HR, M (Messer Object)
     greek is lowercase greek letter, will use upper case in English
     Latin is genitive of Latin constellation name
     e.g., alfTau, Alpha Tauri, α Tauri
     """
+    if nomen[0] == ",":
+        nomen = nomen[1:]
+    if nomen[0].isnumeric():
+        # this means it is Flamsteed 
+        # easiest to do this first
+        number=""
+        n=0
+        while nomen[n].isnumeric():
+            number+=nomen[n]
+            n+=1
+        constellation=""
+        while n < len(nomen):
+            constellation+=nomen[n]
+            n+=1
+        return const.star_names_short_to_long["constellations"][constellation]+number
+    # check if this is a "special constellation"
+    # not really constellations, but fill the same place in the nomen name, so are treated the same for this purpose
+    special_constellations = ["VC","HD","HR","HIP","NGC"]
+    # doesnt include "M" because that throws off other checks
+    special = None
+    for constellation in special_constellations:
+        number=""
+        if constellation in nomen.upper() or nomen.upper().startswith("M"):
+            # if one of these special tags is here, special will show us that it is
+            if nomen.upper().startswith("M"):
+                special = "M"
+                number = nomen[1:]
+            else:
+                special = constellation
+                # the rest of the string except the "constellation" names
+                number = nomen[(len(special)):]
+            break
+    if number != "":
+        return const.star_names_short_to_long["constellations"][special]+f" {number.strip()}"
+    if number == "":
+        if special == "VC":
+            return const.star_names_short_to_long["constellations"][special]
+    # now assume it is a Bayer designation
+    # some in the original sefstars.txt have a hyphen "-" in the name
+    # replace that with 0
+    # first three letters are the greek
+    greek = nomen[:3]
+    # last three are the Latin constellation
+    latin = nomen[3:]
+    # sometimes there are two stars with the same name basically, one is, e.g., gam01Sgr, the other, gam02Sgr
+    # this will be Gamma Sagittarii 1 and Gamma Sagittarii 2
+    number = ""
+    if latin[:2].isnumeric():
+        number = latin[:2]
+        latin = latin[2:]
+    if not greek.islower():
+        return nomen
+    if number:
+        return const.star_names_short_to_long["greek"][greek]+" "+const.star_names_short_to_long["constellations"][latin]+f" {number}"
+    return const.star_names_short_to_long["greek"][greek]+" "+const.star_names_short_to_long["constellations"][latin]

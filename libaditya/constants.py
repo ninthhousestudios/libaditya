@@ -1325,7 +1325,7 @@ names = {
     },
 }
 
-greek_alphabet = {
+greek_alphabet_internet_original = {
     'Alpha': u'\u0391' ,
     'Beta': u'\u0392',
     'Gamma': u'\u0393',
@@ -1376,12 +1376,66 @@ greek_alphabet = {
     'omega':  u'\u03C9'
 }
 
+greek_alphabet = {
+    "Alpha": u"\u0391" ,
+    "Beta": u"\u0392",
+    "Gamma": u"\u0393",
+    "Delta": u"\u0394",
+    "Epsilon": u"\u0395",
+    "Zeta": u"\u0396",
+    "Eta": u"\u0397",
+    "Theta": u"\u0398",
+    "Iota": u"\u0399",
+    "Kappa": u"\u039A",
+    "Lamda": u"\u039B",
+    "Mu": u"\u039C",
+    "Nu": u"\u039D",
+    "Xi": u"\u039E",
+    "Omicron": u"\u039F",
+    "Pi": u"\u03A0",
+    "Rho": u"\u03A1",
+    "Sigma": u"\u03A3",
+    "Tau": u"\u03A4",
+    "Upsilon": u"\u03A5",
+    "Phi": u"\u03A6",
+    "Chi": u"\u03A7",
+    "Psi": u"\u03A8",
+    "Omega": u"\u03A9",
+}
+
+greek_alphabet_lowercase = {
+    "Alpha": u"\u03B1",
+    "Beta": u"\u03B2",
+    "Gamma": u"\u03B3",
+    "Delta": u"\u03B4",
+    "Epsilon": u"\u03B5",
+    "Zeta": u"\u03B6",
+    "Eta": u"\u03B7",
+    "Theta": u"\u03B8",
+    "Iota": u"\u03B9",
+    "Kappa": u"\u03BA",
+    "Lamda": u"\u03BB",
+    "Mu": u"\u03BC",
+    "Nu": u"\u03BD",
+    "Xi": u"\u03BE",
+    "Omicron": u"\u03BF",
+    "Pi": u"\u03C0",
+    "Rho": u"\u03C1",
+    "Sigma": u"\u03C3",
+    "Tau": u"\u03C4",
+    "Upsilon": u"\u03C5",
+    "Phi": u"\u03C6",
+    "Chi": u"\u03C7",
+    "Psi": u"\u03C8",
+    "Omega":  u"\u03C9"
+}
+
 # if swe_id is lllUll then it is a Bayer designation
 # where lll is a greek letter and Ull is a constellation abbreviation (for the Latin genitive)
 # U(ll) is for other things, e.g., VC for Virgo Cluster, HIP for Hipparcos Catalogue number, etc.
 # nnUll is a Flamsteed designation and will end up as ConstNN in Python
 # e.g., ,48Lib becomes Librae48()
-grelat_stars = {
+star_names_short_to_long = {
     "greek": {
         # note: simbad returns two-letter names with an additional "."
         # e.g., "mu.Sgr"
@@ -1391,10 +1445,10 @@ grelat_stars = {
         "bet": "Beta",
         "gam": "Gamma",
         # for one star that had some weird stuff happen to it
-        "g": "G",
+        "g": "Gamma",
         "del": "Delta",
         # for dOph -> d Ophiuci? just because?
-        "d": "D",
+        "d": "Delta",
         "eps": "Epsilon",
         "zet": "Zeta",
         "eta": "Eta", # but no stars with that letter
@@ -1402,27 +1456,29 @@ grelat_stars = {
         "iot": "Iota",
         "kap": "Kappa",
         "lam": "Lambda",
-        "mu": "Mu",
-        "nu": "Nu",
+        "mu.": "Mu",
+        "nu.": "Nu",
         "ksi": "Xi",
         "omi": "Omicron",
         # it seems simbad may use "pi." to have three letters?
-        "pi": "Pi",
+        "pi.": "Pi",
         "rho": "Rho",
         "sig": "Sigma",
         "tau": "Tau",
         "ups": "Upsilon",
         "phi": "Phi",
         "chi": "Chi",
+        "psi": "Psi",
         "ome": "Omega",
     },
-    "latin": {
+    "constellations": {
         "Ari": "Arietis",
         "Tau": "Tauri",
         "Gem": "Geminorum",
         "Cnc": "Cancri",
         "Leo": "Leonis",
         "Vir": "Virginis",
+        "Lib": "Librae",
         "Sco": "Scorpii",
         "Oph": "Ophiuci",
         "Sgr": "Sagittarii",
@@ -1443,7 +1499,9 @@ grelat_stars = {
         "UMi": "Ursae Minoris",
         "Aql": "Aquilae",
         "Hyd": "Hydrae",
-        "Scu": "Scuti",
+        "Sct": "Scuti",
+        "Sex": "Sextantis",
+        "Sge": "Sagittae",
         "Boo": "Bootis",
         "Dra": "Draconis",
         "Del": "Delphini",
@@ -1469,6 +1527,7 @@ grelat_stars = {
         "Aur": "Aurigae",
         "Car": "Carinae",
         "Lyr": "Lyrae",
+        "Lep": "Leporis",
         "Men": "Mensae",
         "Mic": "Microscopii",
         "Mon": "Monocerotis",
@@ -1501,10 +1560,12 @@ grelat_stars = {
         "Scl": "Sculptoris",
         "Vel": "Velorum", # Vela, contains Vela supercluster
         "Vol": "Volantis",
-        "Vul": "Vulpeculate",
+        "Vul": "Vulpeculae",
         "VC": "Virgo Cluster",
         "M": "Messier Object",
-        "NGC": "NGC",
-        "HIP": "HIP",
+        "NGC": "New General Catalogue",
+        "HIP": "Hipparcos Catalogue",
+        "HR": "Bright Star Catalogue",
+        "HD": "Henry Draper Catalogue",
     }
 }
