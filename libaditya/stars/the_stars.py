@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+from functools import partial
+
 from libaditya import constants as const
 from libaditya import utils
 
@@ -35,10 +37,6 @@ from .fixed_star import correct_nomen_name
 from .fixed_star import FixedStar
 from .stellarium import Stellarium
 
-
-# if you want a Stellarium star
-# in clude "st:" at the beginning of swe_id
-# and pass "rc", a stars.stellarium.stellarium.Stellarium instance, which is the connection to Stellarium
 
 
 class Constellation:
@@ -104,7 +102,7 @@ class Constellation:
 
 class Aries(Constellation):
 
-    def __init__(self, first_star = Mesarthim(), last_star = Botein(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("gamAri"), last_star = FixedStar("delAri"), context=EphContext()):
         self._name = "Aries"
         self._constellation_index = 0
         self._stars_to_place = []
@@ -112,84 +110,84 @@ class Aries(Constellation):
 
 class Taurus(Constellation):
 
-    def __init__(self, first_star = OmicronTauri(), last_star = Tianguan(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("omiTau"), last_star = FixedStar("zetTau"), context=EphContext()):
         self._name = "Taurus"
         self._constellation_index = 1
         super().__init__(first_star,last_star,context)
 
 class Gemini(Constellation):
 
-    def __init__(self, first_star = OneGeminorum(), last_star = KappaGeminorum(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("1Gem"), last_star = FixedStar("kapGem"), context=EphContext()):
         self._name = "Gemini"
         self._constellation_index = 2
         super().__init__(first_star,last_star,context)
 
 class Cancer(Constellation):
 
-    def __init__(self, first_star = ChiCancri(), last_star = Acubens(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("chiCnc"), last_star = FixedStar("alfCnc"), context=EphContext()):
         self._name = "Cancer"
         self._constellation_index = 3
         super().__init__(first_star,last_star,context)
 
 class Leo(Constellation):
 
-    def __init__(self, first_star = KappaLeonis(), last_star = Denebola(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("kapLeo"), last_star = FixedStar("betLeo"), context=EphContext()):
         self._name = "Leo"
         self._constellation_index = 4
         super().__init__(first_star,last_star,context)
 
 class Virgo(Constellation):
 
-    def __init__(self, first_star = NuVirginis(), last_star = RijlAlAwwa(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("nu.Vir"), last_star = FixedStar("mu.Vir"), context=EphContext()):
         self._name = "Virgo"
         self._constellation_index = 5
         super().__init__(first_star,last_star,context)
 
 class Libra(Constellation):
 
-    def __init__(self, first_star = Zubenelgenubi(), last_star = Librae48(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("alf02Lib"), last_star = FixedStar("48Lib"), context=EphContext()):
         self._name = "Libra"
         self._constellation_index = 6
         super().__init__(first_star,last_star,context)
 
 class Scorpio(Constellation):
 
-    def __init__(self, first_star = Dschubba(), last_star = Paikauhale(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("delSco"), last_star = FixedStar("tauSco"), context=EphContext()):
         self._name = "Scorpio"
         self._constellation_index = 7
         super().__init__(first_star,last_star,context)
 
 class Ophiucus(Constellation):
 
-    def __init__(self, first_star = Sabik(), last_star = Ophiuci45(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("etaOph"), last_star = FixedStar("45Oph"), context=EphContext()):
         self._name = "Ophiucus"
         self._constellation_index = 8
         super().__init__(first_star,last_star,context)
 
 class Sagittarius(Constellation):
 
-    def __init__(self, first_star = Alnasl(), last_star = Terebellium(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("gam02Sgr"), last_star = FixedStar("omeSgr"), context=EphContext()):
         self._name = "Sagittarius"
         self._constellation_index = 9
         super().__init__(first_star,last_star,context)
 
 class Capricorn(Constellation):
 
-    def __init__(self, first_star = Dabih(), last_star = DenebAlgedi(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("betCap"), last_star = FixedStar("delCap"), context=EphContext()):
         self._name = "Capricorn"
         self._constellation_index = 10
         super().__init__(first_star,last_star,context)
 
 class Aquarius(Constellation):
 
-    def __init__(self, first_star = IotaAquarii(), last_star = PhiAquarii(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("iotAqr"), last_star = FixedStar("phiAqr"), context=EphContext()):
         self._name = "Aquarius"
         self._constellation_index = 11 
         super().__init__(first_star,last_star,context)
 
 class Pisces(Constellation):
 
-    def __init__(self, first_star = GammaPiscium(), last_star = AlRescha(), context=EphContext()):
+    def __init__(self, first_star = FixedStar("gamPsc"), last_star = FixedStar("alfPsc"), context=EphContext()):
         self._name = "Pisces"
         self._constellation_index = 12
         super().__init__(first_star,last_star,context)
@@ -266,19 +264,19 @@ class Ecliptic:
         intialize the 13 Constellation classes that make up the ecliptic, starting with Aries
         """
         consts = {}
-        consts["Aries"] = Aries(Mesarthim(self.context),Botein(self.context),self.context)
-        consts["Taurus"] = Taurus(OmicronTauri(self.context),Tianguan(self.context))
-        consts["Gemini"] = Gemini(OneGeminorum(self.context),KappaGeminorum(self.context),self.context)
-        consts["Cancer"] = Cancer(ChiCancri(self.context),Acubens(self.context),self.context)
-        consts["Leo"] = Leo(KappaLeonis(self.context),Denebola(self.context),self.context)
-        consts["Virgo"] = Virgo(NuVirginis(self.context),RijlAlAwwa(self.context),self.context)
-        consts["Libra"] = Libra(Zubenelgenubi(self.context),Librae48(self.context),self.context)
-        consts["Scorpio"] = Scorpio(Dschubba(self.context),Paikauhale(self.context),self.context)
-        consts["Ophiucus"] = Ophiucus(Sabik(self.context),Ophiuci45(self.context),self.context)
-        consts["Sagittarius"] = Sagittarius(Alnasl(self.context),Terebellium(self.context),self.context)
-        consts["Capricorn"] = Capricorn(Dabih(self.context),DenebAlgedi(self.context),self.context)
-        consts["Aquarius"] = Aquarius(IotaAquarii(self.context),PhiAquarii(self.context),self.context)
-        consts["Pisces"] = Pisces(GammaPiscium(self.context),AlRescha(self.context),self.context)
+        consts["Aries"] = Aries(FixedStar("gamAri",self.context),FixedStar("delAri",self.context),self.context)
+        consts["Taurus"] = Taurus(FixedStar("omiTau",self.context),FixedStar("zetTau",self.context))
+        consts["Gemini"] = Gemini(FixedStar("1Gem",self.context),FixedStar("kapGem",self.context),self.context)
+        consts["Cancer"] = Cancer(FixedStar("chiCnc",self.context),FixedStar("alfCnc",self.context),self.context)
+        consts["Leo"] = Leo(FixedStar("kapLeo",self.context),FixedStar("betLeo",self.context),self.context)
+        consts["Virgo"] = Virgo(FixedStar("nu.Vir",self.context),FixedStar("mu.Vir",self.context),self.context)
+        consts["Libra"] = Libra(FixedStar("alf02Lib",self.context),FixedStar("48Lib",self.context),self.context)
+        consts["Scorpio"] = Scorpio(FixedStar("delSco",self.context),FixedStar("tauSco",self.context),self.context)
+        consts["Ophiucus"] = Ophiucus(FixedStar("etaOph",self.context),FixedStar("45Oph",self.context),self.context)
+        consts["Sagittarius"] = Sagittarius(FixedStar("gam02Sgr",self.context),FixedStar("omeSgr",self.context),self.context)
+        consts["Capricorn"] = Capricorn(FixedStar("betCap",self.context),FixedStar("delCap",self.context),self.context)
+        consts["Aquarius"] = Aquarius(FixedStar("iotAqr",self.context),FixedStar("phiAqr",self.context),self.context)
+        consts["Pisces"] = Pisces(FixedStar("gamPsc",self.context),FixedStar("alfPsc",self.context),self.context)
         # these keys allow me to use the output from CelestialObject.constellation() easily
         # it gives longitude as "DD:MM:SS Constellation"
         # so using the return from this: ret.split()[1] gives the Constellation, which
@@ -316,7 +314,7 @@ class Ecliptic:
 
     def init_constellation_lengths(self):
         """
-        after finding the boundaries of each constellational, which can update them with their lengths
+        after finding the boundaries of each constellation, we can update them with their lengths
         """
         for constellation in self:
             end = constellation.end()
@@ -338,7 +336,6 @@ class Ecliptic:
         this way, self.master() can have any options, and yet they can all include
         the true sidereal information
         """
-        bounds = self.boundaries()
         parent_planets = self.master().rashi().planets()
         true_sidereal_planets = self.true_sidereal_master().rashi().planets()
         # find out which constellation each planet is in
@@ -358,7 +355,7 @@ class Ecliptic:
         """
         take a float longitude and return the name of its constellation
         """
-        bounds = self.boundaries()
+        bounds = self.boundaries().copy()
         # so that if the beginning is 359.994 is changes to -.00599 so that "and" statements works in checking where the long is
         if bounds[0] < 1:
             bounds.append(bounds[0]+360)
@@ -374,7 +371,7 @@ class Ecliptic:
                 in_long = long - bounds[n]
                 if self.context.toround[0]:
                     in_long = round(in_long, self.context.toround[1])
-                return f"{utils.dec2dmsstr(in_long)} {cnames[n]}"
+                return f"{utils.dec2dmsstr(in_long)} {cnames[n]} ({round((in_long/self[cnames[n]].length())*100,3)} %)"
 
     def boundaries(self):
         return self._boundaries
@@ -419,8 +416,6 @@ class TheStars:
     def __init__(self, context=EphContext(), stellarium=False) -> dict:
         self.context = context
         # defined just above
-        self._natural_stars = natural_stars
-        self._the_stars = the_stars
         self.the_stellarium = None
         if stellarium:
             self.the_stellarium = self.init_Stellarium()
@@ -443,21 +438,10 @@ class TheStars:
             if self.the_stellarium:
                 # the_stellarium is our Stellarium() object
                 # the key is a we want from Stellarium, so we have to pass the "phone", so to speak
-                if key in self._the_stars.keys():
-                    return self._the_stars[key](self.context,self.the_stellarium)
-                else:
-                    # return whatever object Stellarium finds
-                    return FixedStar(key,self.context,self.the_stellarium)
+                # return whatever object Stellarium finds
+                return FixedStar(key,self.context,self.the_stellarium)
         key = correct_nomen_name(key)
-        return self._the_stars[key](self.context)
-
-    def natural_stars(self):
-        """
-        this is the main interface here
-        essentially is a dictionary, with the key being "nomenclature" name of the star
-        the value is the traditional name of the star
-        """
-        return self._natural_stars
+        return FixedStar(key,self.context)
 
     def search_star_interactive(self, bitflags=swe.FLG_TROPICAL) -> FixedStar:
         """
@@ -477,10 +461,6 @@ class TheStars:
         information, name, retflags = swe.fixstar2_ut(pattern,self.context.timeJD.jd_number(),bitflags)
         print(f"Star: {name} appears at {information[0]} longitude on {self.context.timeJD}")
         return self[name.split(",")[1]]
-
-    def print_the_stars(self) -> None:
-        for n,(nomen,constructor) in enumerate(self.natural_stars().items()):
-            print(f"{n}\t{nomen}\t{constructor().name()}")
 
     def stellarium(self):
         return self.the_stellarium

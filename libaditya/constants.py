@@ -1519,7 +1519,7 @@ star_names_short_to_long = {
         "CrB": "Coronae Borealis",
         "CrA": "Coronae Australis",
         "TCrB": "TCoronae Borealis",
-        "Crt": "Craters",
+        "Crt": "Crateris",
         "Cru": "Crucis",
         "Crv": "Corvi",
         "CVn": "Canum Venaticorum",

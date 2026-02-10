@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+from libaditya import constants as const
+
 def parse_simbad_ascii_response(response: str):
     """
     response is the http_response itself
@@ -300,7 +302,7 @@ def nomen_to_long_form(nomen: str):
     special = None
     for constellation in special_constellations:
         number=""
-        if constellation in nomen.upper() or nomen.upper().startswith("M"):
+        if constellation in nomen.upper() or (nomen.upper().startswith("M") and "mu." not in nomen):
             # if one of these special tags is here, special will show us that it is
             if nomen.upper().startswith("M"):
                 special = "M"

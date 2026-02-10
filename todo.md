@@ -12,7 +12,13 @@ plotting, data visualisation, etc.
 #
 stars
 
-finishing adding stars/star-wheel.png constellations to constants.grelat
+rewrite initialization of FixedStar. rewrite TheStars.__getitem__()
+abstract them so they are the same
+need to get other names from ephe/sefstars.txt
+-> mostly works. Messier Objects do not return correct object at all
+likewise other designations besides Bayer do not work through FixedStar
+
+perhaps change TheStars.search_star_interactive() to search names in info field? #0#
 
 add fixed stars to Ecliptic
 
@@ -20,9 +26,6 @@ add nakshatras to fixed stars
 
 make __repr__ and __str__ for Ecliptic
 checkout rich?
-
-write "script" to transform new sefstars.txt entries into python classes
-i.e., a new bootstrapping function
 
 #
 fix Varga/Rashi header

@@ -30,7 +30,8 @@ def correct_nomen_name(swe_id):
     # these is only for names that have numbers in them
     if "," in swe_id:
         # remove initial comma if there
-        swe_id = swe_id.split(",")[1]
+        swe_id = swe_id[1:]
+    # the next lines transform a Flamsteed designation of Namennn to nnnName, where there are 1-3 n's in [0,9]
     if swe_id[-3:].isnumeric():
         return ","+swe_id[-3:]+swe_id[:-3]
     if swe_id[-2:].isnumeric():
@@ -40,11 +41,47 @@ def correct_nomen_name(swe_id):
         return ","+swe_id[-2:]+swe_id[:-2]
     if swe_id[-1:].isnumeric():
         return ","+swe_id[-1:]+swe_id[:-1]
+    # make sure there is a comma for swe
     return ","+swe_id
 
 
+# if you want a Stellarium star
+# include "st:" at the beginning of swe_id
+# and pass "rc", a stars.stellarium.stellarium.Stellarium instance, which is the connection to Stellarium
 
 class FixedStar(CelestialObject,Longitude):
+    """
+    initialize a FixedStar through the Swiss Ephemeris
+    all available stars are listed in libaditya/ephe/sefstars.txt
+    swe_id must be the "nomenclature" name
+    each star has a one-line entry in sefstars.txt
+    the nomenclature name is the second entry, e.g.,:
+    Alpha Canis Majoris,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+    
+    alfCMa is the "nomenclature" name that you should use to initialize FixedStar
+
+    in the original sefstars.txt, the first field is a "traditional" name, in this case Sirius
+    the swe fixed star function can "search" this field. So if it doesn't find a star based on the nomenclature name, then it
+    will find the first star the matches what was input
+
+    you can call FixedStar this way
+    right now, all the "traditional" names have been change to long form forms of the nomenclature names
+
+    most of the nomenclature names are the Bayer designation, which consists of a greek letter and a Latin gentitive for the constellation
+    some other designations are used as the swe_id/nomenclature name, and these expand to long form names as well, e.g., "HIP" into "Hipparcos Catalogue"
+
+    in sefstars.txt, there is now a line above each star entry that contains other names of this star
+    so a complete entry looks like this:
+
+    #0# alfCMa,  Alpha Canis Major,  Sirius,  HIP 32349
+    Alpha Canis Majoris,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+
+    soon, FixedStar will parse the names of the info line that begins with #0# and add those names to itself,
+    which will be retrievable through FixedStar().other_names()
+    and maybe there will be a way to initialize FixedStar through the use of those names, but not right now
+
+    stars can be added by using the script libaditya/ephe/make_swe_star.py
+    """
 
     def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None, swe_string=""):
         self.context = context

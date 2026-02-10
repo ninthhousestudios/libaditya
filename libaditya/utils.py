@@ -421,7 +421,6 @@ def is_stellarium_id(swe_id):
     return "HIP" in swe_id or " " in swe_id
 
 
-
 def set_swe_true_sidereal_ayanamsa():
     """
     this is used by calling TheStars.set_true_sidereal_hd_ayanamsa()
