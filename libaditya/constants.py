@@ -1518,6 +1518,7 @@ star_names_short_to_long = {
         "Com": "Comae Berenices",
         "CrB": "Coronae Borealis",
         "CrA": "Coronae Australis",
+        "TCrB": "TCoronae Borealis",
         "Crt": "Craters",
         "Cru": "Crucis",
         "Crv": "Corvi",
