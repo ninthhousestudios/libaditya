@@ -40,4 +40,7 @@ package_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
 
 swe.set_ephe_path(base_path + "/ephe/")
 
+console = Console()
+
 from ._version import __version__
+
