@@ -99,6 +99,13 @@ class EphContext:
     hd_gate_one: float = hdc.gate_one
     hd_print_hexagrams: bool = False
 
+    # cot options
+    # ew teaches that the card changes at the time of sunrise on the equator
+    # i.e., at sunrise on the equator, the savana day changes for the whole 180 degrees of line of longitude
+    # if cot_savana_day is False, will use calendar days, so card changes at midnight local
+    cot_savana_day: bool = True # not yet implemented
+    cot_planet_order: str = "vedic" # not yet, implemented, other option is "solar_system"
+
     # this is mostly used for pyhd
     # need to change the xx business
     def get_info_str_hd(self):

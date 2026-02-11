@@ -14,93 +14,36 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from libaditya.objects import EphContext, Sun
+from libaditya.cards import cards_constants as cardsc
 
-from libaditya.cards import Deck
+def getindex(card):
+    """Get the index number of the birth card from the Jack Quadration"""
+    return cardsc.cards.index(card)
 
+class CoT:
+    """
+    CoT is a class of static methods that provide most of the basic cot calculation functionality
 
-# utility function for quadration
-def topthree(quad):
-    """Return the top three cards on the deck"""
-    pile = []
-    for i in range(3):
-        pile.append(quad.pop(0))
-    return pile
+    this is a Mixin, having no __init__() method
 
-deck = Deck()
-# this is the jack quadration, 1 through 52
-# 1 is the Ace of Hearts, 52 is the King of Spades...we'll see how that turns out later
-jackquad = list(range(0,52))
-# the first bc starting 01/01/2026 at sunrise is KS
-# at next sunrise switches to QS
-# etc.: goes in reverse order; but each month starts with a different card
-birth_card_order = list(deck.deck().__reversed__())
-# first card of the month is as follows, starting with January
-# then each day goes in order according to calendar day number, based on the savana day at the equator for a given longitude
-# e.g., February 29 after sunrise will be
-first_card_of_the_month = [birth_card_order.index(card) for card in ["KS","JS","9S","7S","5S","3S","AS","QD","TD","8D","3D","4D"]]
+    you can use these methods through CoT, the class this inherits unto, e.g.,:
+    >>> CoT.queen_quadration()
+    """
 
-class CardsOfTruth:
+    @staticmethod
+    def jack_quadration():
+        return cardsc.jackquad
 
-    def __init__(self, context=EphContext(), master=None):
-        self.context = context
-        self._master = master
-        self._jack_quadration = jackquad
-        self._queen_quadration = self.quadrate(self._jack_quadration)
-        self._king_quadration = self.quadrate(self._queen_quadration)
+    @staticmethod
+    def queen_quadration():
+        return CoT.quadrate(cardsc.jackquad)
 
-    def master(self):
-        return self._master
+    @staticmethod
+    def king_quadration():
+        return CoT.quadrate(CoT.queen_quadration())
 
-    def birth_card(self):
-        """
-        find the birth card
-        first, find the time the sunrises at longitude of the persons place of birth, but on the equator
-        """
-        sunrise_location = self.context.location.nearest_equatorial_crossing()
-        sunrise_time = Sun(EphContext(timeJD=self.context.timeJD.midnightJD(),location=sunrise_location)).rise()
-        if self.context.timeJD.jd_number() >= sunrise_time.jd_number():
-            # after sunrise on this day
-            # so use card associated with this calendar day 
-            card_day = [self.context.timeJD.usrmonth(),self.context.timeJD.usrday()]
-        else:
-            # before sunrise on this day
-            # so use card associated with previous calendar day
-            # so we go back, but need to make everything switches back properly, i.e., the month or year
-            print(f"Born before sunrising...")
-            card_day = [0,0]
-        # minus 1 since months are 1-12 but python is 0-indexed
-        start_card = first_card_of_the_month[card_day[0]-1]
-        # go forward the number of days from that card to find the birth card
-        birth_card = birth_card_order[start_card+(card_day[1]-1)]
-        return birth_card
-
-    def birth_spread(self):
-        birth_card = self.birth_card()
-        return get_birthspread_from_quadration(birth_card,queenquad)
-
-    def get_birthspread_from_quadration(birthcard,quad):
-        """birthcard is two characters that indicate the birth card, eg., 'AS', ace of spades"""
-        """so we need to get that card and the next 13 cards from the Queen Quadration"""
-        bc=quad.index(getindex(birthcard))
-        bspread=[]
-        for x in range(bc,bc+14):
-            bspread.append(quad[x%52])
-        return bspread
-
-    def deck(self):
-        return self._deck
-
-    def jack_quadration(self):
-        return self._jack_quadration
-
-    def queen_quadration(self):
-        return self._queen_quadration
-
-    def king_quadration(self):
-        return self._king_quadration
-
-    def quadrate(self, tquad):
+    @staticmethod
+    def quadrate(tquad):
         """
         tquad is the deck that you want to quadrate
         """
@@ -116,10 +59,10 @@ class CardsOfTruth:
         pile4 = []
         # the new pile needs to go on, i.e., the last element of the new next to the first element of the bottom one
         while len(quad) > 4: 
-            pile1 = topthree(quad)+pile1
-            pile2 = topthree(quad)+pile2
-            pile3 = topthree(quad)+pile3
-            pile4 = topthree(quad)+pile4
+            pile1 = cardsc.topthree(quad)+pile1
+            pile2 = cardsc.topthree(quad)+pile2
+            pile3 = cardsc.topthree(quad)+pile3
+            pile4 = cardsc.topthree(quad)+pile4
             
         pile1=[quad.pop(0)]+pile1
         pile2=[quad.pop(0)]+pile2
@@ -152,3 +95,48 @@ class CardsOfTruth:
         
         return quad
 
+    @staticmethod
+    def quadraten(nquad,n):
+        while n:
+            nquad=CoT.quadrate(nquad.copy())
+            n=n-1
+        return nquad
+
+
+    @staticmethod
+    def getbspreadwxcfromquad(card,pos,quad):
+        """get the birth spread from quad where card is in pos"""
+        """0 is the birth card position, 1 is the sun card, 9 is rahu card, 13 is pluto card, etc."""
+        cindex=quad.index(getindex(card)) # this is where the card is in the quadration
+        # we want to get the birth spread for which card is in pos
+        # so if pos is 0, we can simply call getbirthspreadfromquad(card,quad)
+        # if pos is not 0, we want to find the card that would be in the 0 pos in quad
+        # say pos is 4, then 4-4=0 is the birth card
+        # cindex is the index of the desired card in the quad
+        # so cindex-pos is the index of the birth card
+        # if cindex-pos>=0 this is fine, we can call getbirthspreadfromquad(cindex-pos,quad)
+        # otherwise, if cindex-pos=-1, then the index is actually 51, i.e, 52-1
+        if cindex-pos>=0:
+            return CoT.get_birthspread_from_quadration(cardsc.cards[quad[cindex-pos]],quad)
+        else:
+            return CoT.get_birthspread_from_quadration(cardsc.cards[quad[52-(cindex-pos)]],quad)
+
+    @staticmethod
+    def get_birth_spread_with_card_in_position(card,pos):
+        """
+        get a birth spread where card is in pos#
+        0 is the birth card, 2 is the moon card, 7 is the saturn card, etc.
+        """
+        return CoT.getbspreadwxcfromquad(card,pos,CoT.queen_quadration())
+
+    @staticmethod
+    def get_birthspread_from_quadration(birthcard,quad=None):
+        """birthcard is two characters that indicate the birth card, eg., 'AS', ace of spades"""
+        """so we need to get that card and the next 13 cards from the Queen Quadration"""
+        if quad is None:
+            quad = CoT.queen_quadration()
+        bc=quad.index(getindex(birthcard))
+        bspread=[]
+        for x in range(bc,bc+14):
+            bspread.append(quad[x%52])
+        return bspread

@@ -197,8 +197,8 @@ def print_visible_times(times):
     print("End of visibility:")
     print(times[2])
 
-from libaditya.cards import Deck
-cards=Deck.cards
+from libaditya.cards import cards_constants as cardsc
+cards=cardsc.cards
 
 def print_cot_quadration(pquad):
     """Print a quadration"""
@@ -219,7 +219,7 @@ def print_cot_quadration(pquad):
     print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[48]], cards[pquad[47]], cards[pquad[46]], cards[pquad[45]],
                                         cards[pquad[44]], cards[pquad[43]], cards[pquad[42]]))
 
-def print_cot_birth_spread(bspread):
+def print_cot_basic_spread(bspread):
     """print a birth spread"""
     print('         {}         '.format(cards[bspread[0]]))
     print('{} {} {} {} {} {} {}'.format(cards[bspread[7]],cards[bspread[6]],

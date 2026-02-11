@@ -20,6 +20,7 @@ dependencies = [
     # this requires the user to have open a running stellarium instance with the
     # http server running through the RemoteControl plugin
     "requests>=2.32.5",
+    "rich>=14.3.2",
     "toml>=0.10.2",
 ]
 
