@@ -32,15 +32,15 @@ def correct_nomen_name(swe_id):
         # remove initial comma if there
         swe_id = swe_id[1:]
     # the next lines transform a Flamsteed designation of Namennn to nnnName, where there are 1-3 n's in [0,9]
-    if swe_id[-3:].isnumeric():
-        return ","+swe_id[-3:]+swe_id[:-3]
-    if swe_id[-2:].isnumeric():
-        if swe_id[-2:] == "00":
-            # for GCRS00
-            return ","+swe_id
-        return ","+swe_id[-2:]+swe_id[:-2]
-    if swe_id[-1:].isnumeric():
-        return ","+swe_id[-1:]+swe_id[:-1]
+#    if swe_id[-3:].isnumeric():
+#        return ","+swe_id[-3:]+swe_id[:-3]
+#    if swe_id[-2:].isnumeric():
+#        if swe_id[-2:] == "00":
+#            # for GCRS00
+#            return ","+swe_id
+#        return ","+swe_id[-2:]+swe_id[:-2]
+#    if swe_id[-1:].isnumeric():
+#        return ","+swe_id[-1:]+swe_id[:-1]
     # make sure there is a comma for swe
     return ","+swe_id
 
@@ -103,7 +103,6 @@ class FixedStar(CelestialObject,Longitude):
             # initialized by the TheStars()
             self.rc = rc
             # now initialize all of the information
-            print(f"FixedStar initalizing Stellarium...")
             self.init_Stellarium()
             super().__init__(self.long,1,context)
             # done with this __init__

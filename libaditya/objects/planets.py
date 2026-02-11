@@ -132,15 +132,6 @@ class Planet(CelestialObject,Longitude,PlanetBala):
     def swe_id(self):
         return self.pnumber
 
-    def set_attribute(self,attrs):
-        """
-        attrs is a tuple ("attribute",value)
-        add all of these to self.attributes
-        attritube is a string that will be a dictionary key for value
-        """
-        key,value=attrs
-        self.attributes[key] = value
-
     def dignity(self):
         """
         return the dignity that has been set by Planets.

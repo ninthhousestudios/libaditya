@@ -17,6 +17,17 @@
 
 from libaditya import constants as const
 
+def read_swe_ids():
+    with open(const.stars_file,"r") as infd:
+        lines = infd.readlines()
+
+    ids=[]
+    for line in lines:
+        if line.startswith("#"):
+            continue
+        ids.append(line.split(",")[1])
+    return ids
+
 def parse_simbad_ascii_response(response: str):
     """
     response is the http_response itself

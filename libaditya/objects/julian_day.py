@@ -201,6 +201,10 @@ class JulianDay:
         """return the jd that is at midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
 
+    def midnightJD(self):
+        """return the jd that is at midnight of this JulianDay's calendar day"""
+        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),self.utcoffset)
+
     def next_midnightjd(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1

@@ -25,6 +25,7 @@ from libaditya import constants as const
 
 from libaditya.objects import EphContext, Planets, Cusps, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
+from libaditya.cards import CardsOfTruth
 import libaditya.stars as stars
 
 from .api import API
@@ -182,6 +183,12 @@ class Chart(API):
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
         return Chart(context=replace(self.context,sysflg=const.BARY,**kwargs))
+
+    def cot(self, **kwargs):
+        """
+        create a CardsOfTruth instantce for this context
+        """
+        return CardsOfTruth(context=replace(self.context,**kwargs),master=self.rashi())
 
     def draconic(self, **kwargs):
         """

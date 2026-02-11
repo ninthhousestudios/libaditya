@@ -196,3 +196,35 @@ def print_visible_times(times):
     print(times[1])
     print("End of visibility:")
     print(times[2])
+
+from libaditya.cards import Deck
+cards=Deck.cards
+
+def print_cot_quadration(pquad):
+    """Print a quadration"""
+    # remember that lists are indexed starting with 0
+    print('        {}  {}  {}      '.format(cards[pquad[51]], cards[pquad[50]], cards[pquad[49]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[6]], cards[pquad[5]], cards[pquad[4]],
+                                        cards[pquad[3]], cards[pquad[2]], cards[pquad[1]], cards[pquad[0]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[13]], cards[pquad[12]], cards[pquad[11]], cards[pquad[10]],
+                                        cards[pquad[9]], cards[pquad[8]], cards[pquad[7]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[20]], cards[pquad[19]], cards[pquad[18]], cards[pquad[17]],
+                                        cards[pquad[16]], cards[pquad[15]], cards[pquad[14]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[27]], cards[pquad[26]], cards[pquad[25]], cards[pquad[24]],
+                                        cards[pquad[23]], cards[pquad[22]], cards[pquad[21]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[34]], cards[pquad[33]], cards[pquad[32]],
+                                        cards[pquad[31]], cards[pquad[30]], cards[pquad[29]], cards[pquad[28]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[41]], cards[pquad[40]], cards[pquad[39]], cards[pquad[38]],
+                                        cards[pquad[37]], cards[pquad[36]], cards[pquad[35]]))
+    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[48]], cards[pquad[47]], cards[pquad[46]], cards[pquad[45]],
+                                        cards[pquad[44]], cards[pquad[43]], cards[pquad[42]]))
+
+def print_cot_birth_spread(bspread):
+    """print a birth spread"""
+    print('         {}         '.format(cards[bspread[0]]))
+    print('{} {} {} {} {} {} {}'.format(cards[bspread[7]],cards[bspread[6]],
+                                        cards[bspread[5]],cards[bspread[4]],cards[bspread[3]],
+                                        cards[bspread[2]],cards[bspread[1]]))
+    print('      {}    {}      '.format(cards[bspread[9]],cards[bspread[8]]))
+    print('         {}         '.format(cards[bspread[10]]))
+    print('      {} {} {}      '.format(cards[bspread[13]],cards[bspread[12]],cards[bspread[11]]))

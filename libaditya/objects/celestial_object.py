@@ -30,6 +30,15 @@ class CelestialObject:
     has all the functions that these share, and that they dont share with Cusp
     all three inherit from Longitude, but only Planet and FixedStar from CelestialObject
     """
+
+    def set_attribute(self,attrs):
+        """
+        attrs is a tuple ("attribute",value)
+        add all of these to self.attributes
+        attritube is a string that will be a dictionary key for value
+        """
+        key,value=attrs
+        self.attributes[key] = value
     
     def hd(self):
         """

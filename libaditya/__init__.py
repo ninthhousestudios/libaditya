@@ -24,6 +24,7 @@ from libaditya.calc import *
 from libaditya.charts import * 
 from libaditya.hd import *
 from libaditya.stars import *
+from libaditya.cards import *
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read

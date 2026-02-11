@@ -23,7 +23,7 @@ from libaditya.objects import Planet, Planets, Sign
 
 class Jaimini:
     """
-    this is calc.Jaimini
+    this is calc.Jaimini, it inherits unto calc.Varga
 
     it is really a Varga, even though Varga inherits from here
 

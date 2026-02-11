@@ -36,6 +36,7 @@ from libaditya.objects import EphContext, Planet
 from .fixed_star import correct_nomen_name 
 from .fixed_star import FixedStar
 from .stellarium import Stellarium
+from .utilities import *
 
 
 
@@ -70,11 +71,20 @@ class Constellation:
     def planets(self):
         return self.attributes["planets"]
 
+    def how_many_planets(self):
+        return len(self.attributes["planets"])
+
     def stars(self):
         return self.attributes["stars"]
 
+    def how_many_stars(self):
+        return len(self.attributes["stars"])
+
     def objects(self):
         return self.attributes["planets"] + self.attributes["stars"]
+
+    def how_many_objects(self):
+        return len(self.attributes["planets"] + self.attributes["stars"])
 
     def first_star(self):
         return self._first_star
@@ -232,10 +242,10 @@ class Ecliptic:
         self.context.sysflg = const.SID
         self.context.ayanamsa = 97
         utils.set_swe_true_sidereal_ayanamsa()
-        self._constellations = self.init_Constellations()
-        self._boundaries = self.init_boundaries()
-        self.init_constellation_lengths()
-        self._planets = self.init_Planets()
+        self._constellations = self._init_Constellations()
+        self._boundaries = self._init_boundaries()
+        self._init_constellation_lengths()
+        self._planets = self._init_Planets()
 
     def __iter__(self):
         return iter(self._constellations.values())
@@ -251,15 +261,35 @@ class Ecliptic:
     def true_sidereal_master(self):
         return self._true_sidereal_master
 
-    def place(self, constellation: str, object: Planet | FixedStar):
+    def place(self, constellation: str, obj: Planet | FixedStar, attr: str = "planets"): # or "stars"
         """
         place an object in a constellation, such that
         Constellation().objects() will include object in the output
         """
-        attr="planets" if isinstance(object, Planet) else "stars"
-        self[constellation].set_attribute((attr,object))
+        self[constellation].set_attribute((attr,obj))
 
-    def init_Constellations(self):
+    def place_stars(self):
+        """
+        read all stars from ephe/sefstars.txt
+        so where the go in the ecliptic, if at all
+
+        in Ecliptic, we only place stars that are within 10 degrees latitude of the ecliptic itself
+        """
+        swe_ids = read_swe_ids() # from stars.utilities
+
+        for swe_id in swe_ids:
+            star = FixedStar(swe_id,self.context)
+            if abs(star.latitude()) < 10:
+                constellation = self.longitude_to_constellation(star.ecliptic_longitude())
+                star.set_attribute(("constellation",constellation))
+                constellation_name = constellation.split()[1]
+                if star in self[constellation_name].stars():
+                    # only place each star once
+                    continue
+                else:
+                    self.place(constellation_name,star,"stars")
+
+    def _init_Constellations(self):
         """
         intialize the 13 Constellation classes that make up the ecliptic, starting with Aries
         """
@@ -283,7 +313,7 @@ class Ecliptic:
         # can be used as a key for "self"
         return consts
 
-    def init_boundaries(self) -> [float]:
+    def _init_boundaries(self) -> [float]:
         """
         find the boundaries according to the midpoint method
 
@@ -312,7 +342,7 @@ class Ecliptic:
         # the last point between Pisces and Aries is actually the first, so put it there
         return ret[-1:] + ret[:-1]
 
-    def init_constellation_lengths(self):
+    def _init_constellation_lengths(self):
         """
         after finding the boundaries of each constellation, we can update them with their lengths
         """
@@ -328,7 +358,7 @@ class Ecliptic:
             constellation.set_attribute(("length",length))
         return
 
-    def init_Planets(self):
+    def _init_Planets(self):
         """
         put the Planets into their appropriate constellations
         tell the Planet so it knows
@@ -349,7 +379,7 @@ class Ecliptic:
             true_sidereal_planets[planet.identity()].set_attribute(("constellation",constellation))
             # now put the planets in their proper constellations
             #print(f"{planet.name()} {constellation=}")
-            self.place(constellation.split()[1],planet)
+            self.place(constellation.split()[1],planet,"planets")
 
     def longitude_to_constellation(self, long: float):
         """

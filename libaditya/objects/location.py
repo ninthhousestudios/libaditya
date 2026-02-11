@@ -88,6 +88,12 @@ class Location:
         # swe argument order is long, lat, alt
         return (self.long, self.lat, self.alt)
 
+    def nearest_equatorial_crossing(self):
+        """
+        return a position lat,long where lat=0 and long is self.long
+        """
+        return Location(lat=0,long=self.long,alt=self.alt,placename=self._placename,timezone=self.timezone,icao=self.icao,planet=self._planet)
+
     def get_metar(self, icao=None):
         """
         get metar for icao
