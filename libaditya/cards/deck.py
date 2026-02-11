@@ -25,7 +25,7 @@ class Deck:
 
     def __init__(self, deck_type="52 playing cards"):
         self._deck_type = deck_type
-        self._deck = self.init_Deck()
+        self._deck = self._init_Deck()
 
     def __iter__(self):
         return iter(self._deck)
@@ -39,7 +39,7 @@ class Deck:
     def index(self, card):
         return self._deck.index(card)
 
-    def init_Deck(self):
+    def _init_Deck(self):
         """
         a dictionary of 52 k-v pairs: "Card": Card
         i.e., key-constructor

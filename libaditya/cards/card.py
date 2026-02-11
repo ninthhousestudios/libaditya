@@ -26,7 +26,8 @@ class Card:
         self._card = card
         self._deck_type = deck_type
         self._index = index
-        self._drawing = self.richTable()
+        self._planet = ""
+        self._drawing = self.richDrawing()
 
     def card(self):
         return self._card
@@ -37,14 +38,20 @@ class Card:
     def name(self):
         return cardsc.name["number"][self.card()[0]] + " of " + cardsc.name["suit"][self.card()[1]]
 
-    def richTable(self):
+    def symbol(self):
+        return f"{self.card()[0]}{cardsc.symbols[self.card()[1]]}"
+
+    def planet(self):
+        return self._planet
+
+    def richDrawing(self):
         """
         return a rich.Table object representing this card
         """
         card = Table(box=box.ROUNDED)
         color = "red" if (self.card()[1] == "H" or self.card()[1] == "D") else "white"
-        card.add_column(self.name(),justify="center",style="white")
-        card.add_row(f"{self.card()[0]}{cardsc.symbols[self.card()[1]]}",style=color)
+        card.add_column(self.planet(),justify="center",style="white")
+        card.add_row(self.symbol(),style=color)
         # do more, like add planets
         return card
 

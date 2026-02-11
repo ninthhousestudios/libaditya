@@ -194,8 +194,22 @@ class Planet(CelestialObject,Longitude,PlanetBala):
             case swe.EARTH:
                 return 13
 
-    def number(self):
-        return self.list_index()+1
+    def number(self, system="vedic"):
+        if system == "solar_order":
+            match self.identity():
+                # only these are different
+                case "Mercury":
+                    return 3
+                case "Venus":
+                    return 4
+                case "Mars":
+                    return 5
+                case "Jupiter":
+                    return 6
+                case _:
+                    return self.list_index()+1
+        else:
+            return self.list_index()+1
 
     def system_name(self) -> str:
         return self.sysflgstr
@@ -1263,7 +1277,7 @@ class Ketu(Planet):
         self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
 
-    def number(self):
+    def number(self, system="vedic"):
         return 9
         
     def glyph(self):

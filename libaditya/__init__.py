@@ -18,6 +18,7 @@
 import swisseph as swe
 import pathlib
 from dataclasses import replace
+from rich.console import Console
 
 from libaditya.objects import *
 from libaditya.calc import *
