@@ -18,11 +18,12 @@ from rich import box
 from rich.table import Table
 from rich.console import Console
 
-from libaditya.objects import EphContext, Sun
+from libaditya import utils
+from libaditya.objects import EphContext, Sun, JulianDay
 
 from libaditya.cards import cards_constants as cardsc
-from .cot import CoT
 from libaditya.cards.deck import Deck
+from .cot import CoT
 
 class CardsOfTruth(CoT):
 
@@ -83,19 +84,55 @@ class CardsOfTruth(CoT):
     def deck(self):
         return self._deck
 
-    def year_spread(self, year):
+    def year_spread(self, year=None):
         """
         get a year spread for age year
 
         add way of doing default argument where it uses current age
-        """
-        return self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
 
+        if None, use current age, or try
+        not sure how well it actually works
+        """
+        if year == None:
+            # find the persons current age
+            now=JulianDay("now")
+            # age is a decimal in years
+            age = self.context.timeJD.age(now.jd_number())
+            year = int(utils.dec2ymd(age).split()[0])-1
+        year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
+        return self.Spread(year_spread_list, self.context.cot_planet_order)
     
     class Spread:
         """
         initialize a Spread object
         the most important argument is spread_list, which is the list of numbers presenting the cards of the spread
+
+        this object will be responsible for intializing the planets
+        im not entirely sure what the calculations for the different spreads are called
+        i think they are some sort of progression
+        probably, those calculations will end up going somewhere else depending on what exactly they are
+
+        spread_list needs to have 14 numbers in it between 0 and 51.
+
+        these integers represent the cards. the integer representing a certain card is the index of that card 
+        in the list cards_constants.cards
+
+        but Spread does not check to make sure that the spread is a valid one
+        it simply puts the cards in the spread in order: base, sun, moon, etc.
+        the precise order is given by CardsOfTruth.context.cot_planet_order
+        the default is "vedic"; the other option is "solar_system"
+
+        it finds the proper planets given the spread type
+        i.e., for a birth spread, the birth planets, for a year spread, the planets at that solar return, etc.
+        and puts them into the "Sun" card, the "Moon" card, etc.
+
+        To test this out by itself, you can do this:
+        >>> CardsOfTruth().Spread(spread_list=[0,4,3,45,...])
+        where "spread_list" is a list of 14 integers between 0 and 51
+        you can also test out the planet order:
+        >>> CardsOfTruth().Spread(spread_list=[0,4,3,45,...],order="solar_system")
+
+        TODO: currently, Planet-s being put into cards is not implemented
         """
 
         def __init__(self, spread_list, order="vedic"):
@@ -168,6 +205,6 @@ class CardsOfTruth(CoT):
 
             return spread
 
-        def print_rich(self):
+        def rich(self):
             from rich.console import Console
-            console.print(self.richDrawing())
+            Console().print(self.richDrawing())

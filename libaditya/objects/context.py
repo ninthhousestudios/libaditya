@@ -88,7 +88,7 @@ class EphContext:
         # 223.25 is what hd_gate_one "should" be; if not, print what it is to show that it is not what is expected
         if self.hd_gate_one != 223.25:
             istr+="\ngate 1 = {self.hd_gate_one}"
-        if ayanamsa:
+        if self.ayanamsa:
             istr+=f"\n{self.ayanamsa}"
         return istr
 

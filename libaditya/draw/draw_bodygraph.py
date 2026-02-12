@@ -22,7 +22,7 @@ from libaditya.hd import constants as hdc
 
 class DrawBodyGraph:
     """
-    Mixin that inherits unto charts/Bodygraph into order drawsvg this bodygraph
+    Mixin that inherits unto charts.bodygraph.Bodygraph in order to drawsvg this bodygraph
     """
 
     def draw_svg(self, theme_file=hdc.default_theme, outfile=None):
@@ -482,8 +482,8 @@ class DrawBodyGraph:
 
     def draw_info_boxes(self,d,theme,rstr,lstr):
 
-        d.append(draw.Text(rstr,font_size=10,x=325,y=10,stroke=theme["right-text"]))
-        d.append(draw.Text(lstr,font_size=10,x=100,y=10,stroke=theme["left-text"]))
+        d.append(draw.Text(rstr,font_size=10,x=305,y=10,stroke=theme["right-text"]))
+        d.append(draw.Text(lstr,font_size=10,x=80,y=10,stroke=theme["left-text"]))
 
         return d
 

@@ -176,6 +176,12 @@ class JulianDay:
         else:
             return float(self.datetime[3])
 
+    def age(self, datejd):
+        """
+        distance in years between self and date
+        """
+        return (datejd-self.jd)/self.oneyearjd
+
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"
 

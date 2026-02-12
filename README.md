@@ -3,27 +3,40 @@
 ```libaditya``` is an astrological calculation library meant to be easily understood in terms
 of what calculations are performed and how they are done. 
 
-there is a companion program ```pyphemeris``` which is meant to serve as an easily
-readable documentation on how the library works. Each function in libaditya itself is
+My hope is that astrologers will be able to use this directly themselves. There is
+obviously value in the various types of GUI programs and viewing a chart (though
+```libaditya``` can draw some kinds of charts), there is also value in thinking about
+astrology in a way that interacting with it through ```libaditya``` would help
+cultivate. I hope to use it to create more "end-user-friendly" software, but I would
+also like it to be possible for non-programmers to learn and use.
+
+There is a companion program ```pyphemeris``` which is meant to serve as an easily
+readable documentation on how the library works. Each function in ```libaditya``` itself is
 meant to return the requested data in a way that can then be presented in some way.
 Built into most ```libaditya``` classes are functions to represent themselves as text
 through repr (__repr__) and ```print```, i.e., through ```__str__```. ```pyphemeris```
-makes use of these in order to print the requested data to ```stdout```.
+makes use of these in order to print the requested data to ```stdout```. I have also
+started adding ```rich``` representations in ```libaditya``` itself, through ```.rich()``` methods.
 
-you can try ```pyphemeris``` by using ```uv``` to add it to your libaditya project:
-```
-uv add pyphemeris
-```
 
-## Table of Contents
+# Table of Contents
 
+- [README](#readme)
+- [Table of Contents](#table-of-contents)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
-- [Options](#options)
+  - [Defaults](#defaults)
+  - [Entering a Chart](#entering-a-chart)
+  - [Reading a Chart from a File](#reading-a-chart-from-a-file)
+  - [Chart Types and Options](#chart-types-and-options)
+  - [Dignity Example](#dignity-example)
+- [Vargas](#vargas)
+- [Human Design](#human-design)
+- [Sarvatobhadra Chakra](#sarvatobhadra-chakra)
+- [Cards of Truth](#cards-of-truth)
 
-## Dependencies
+# Dependencies
 
 automatically installed with ```uv```
 
@@ -31,7 +44,7 @@ python, [pyswisseph](https://pypi.org/project/pyswisseph/), [python-prettytable]
 
 written with python 3.13
 
-## Installation
+# Installation
 
 ```libaditya``` is now on pypi.org, so it can be installed with ```pip install
 libaditya```...I think. I use Arch (btw) and they do python packages differently (I
@@ -56,7 +69,7 @@ then, 1) if you dont change any of the code at all, then you can do ```git pull`
 it should update from the gitlab repo. 2) if you make changes to libaditya, im not really sure with
 how that would work in git from getting updates from libaditya and your own...
 
-## Usage
+# Usage
 
 then you can go into the Python ```repl``` using
 ```python```
@@ -76,7 +89,7 @@ you can then use ```help()```, e.g.:
 and this will print info for Chart. I am trying to add documentation to each of these
 classes and function so that there is something helpuful printed. 
 
-### Defaults
+## Defaults
 
 Basically all values have defaults, so you can also do this
 ```
@@ -96,7 +109,7 @@ how to input information. It is through EphContext, from libaditya.objects.conte
 takes a JulianDay and a Location, then a bunch of options. All of these have defaults
 that should a chart for the current time more or less.
 
-### Entering a Chart
+## Entering a Chart
 
 It is now possible to enter chart information "interactively", not really, which will
 produce a ```.toml``` chart file.
@@ -115,7 +128,7 @@ lat: N is positive
 long: E is positive
     three formats: 1) decimal
                    2) DD:MM(:SS)
-                   # below is how Kala represents these in their .chtk file
+                   // below is how Kala represents these in their .chtk file
                    3) 0DD(E/W)MM'SS(.SS)
                    3) DD(N/S)MM'SS(.SS)
 alt: float - meters
@@ -131,7 +144,7 @@ thus the ```.chtk``` format. It is now possible to convert between them. However
 ```.toml``` format has a place for altitude of the Location. The Kala format doesn't.
 Right now chtk_to_toml will write it as 0..need to change that.
 
-### reading a chart from a ```.toml``` file
+## Reading a Chart from a File
 
 ```read.toml_to_context()``` takes a ```toml``` file such as produced by
 ```write_new_chart_interactive()```. You can use that to instantiate a Chart:
@@ -140,129 +153,22 @@ Right now chtk_to_toml will write it as 0..need to change that.
 >>> chart = Chart(context)
 ```
 
-### ```.chtk``` files
+Likewise for ```.chtk``` files
 
-You can read a .chtk file into the repl like this:
 ```
 >>> context = read.chtk_to_context(infile)
 ```
 
-this returns an ```EphContext``` that you can then use to instantiated a Chart.
+this returns an ```EphContext``` that you can then use to instantiate a Chart.
 
 An ```EphContext``` also includes all the options for the chart.
 
-### Sidereal
+## Chart Types and Options
 
-Sidereal is possible, but here is how you must do it to get meaningful results:
-three options must be set:
+Plus basic Python if you are knew to this.
 
-```
-sysflg=const.SID     # indicates sidereal ecliptic
-ayanamsa=98          # this shouldnt be the default, but it is; Lahiri - 1; True Citra - 27; any
-                     # swisseph ayanamsa
-circle=Circle.ZODIAC # circle starts where the zodiac starts; with Circle.ADITYA, it
-                     # doesnt start where the "zodiac" starts, i.e., ecltipic longitude doesn't line up to
-                     # where the zodiac starts; if you dont change this, it might be
-                     # confusing!
-```
 
-### Read a .chtk file
-
-this is the most useful for getting birth information without needing to do it manually
-
-```
-jhcontext = read.chtk_to_context("josh.chtk")
-(or)
-jhcontext = read.chtk_to_toml("josh.toml")
-jhchart = Chart(jhcontext)
-```
-
-to change any of the options, do like this:
-
-```
-jhsiderealcontext =
-replace(jhcontext,sysflg=const.SID,ayanamsa=27,circle=Circle.ZODIAC,print_outer_planets=False)
-```
-
-this keeps everything else the same same, and changes what you specified to what you
-specified
-
-```
-jhdsidchart = Chart(jhsiderealcontext)
-```
-
-using tab completion is a good way to explore:
-type
-
-```>>> jhchart.```
-
-then tab twice, and you will see a list:
-```
->>> jhchart.
-jhchart.context     jhchart.get_varga(  jhchart.jaimini()   jhchart.rashi()  
-```
-
-actualy it will look different now
-you should see something like ```jhchart.sidereal()```
-you can use that to get a sidereal version of that chart. Default ayanamsa is 27.
-Ayanamsa are swiss ephemeris values, which will be elsewhere in this documentation
-eventually. Also, 98 for Dhruva GC mid-Mula, 99 for Ecliptic Vedanga Jyotisha and 100
-for Equatorial Vedanga Jyotisha
-Ayanamsa can be set by calling
-```
-jhchart.sidereal(ayanamsa=18)
-```
-
-if you working mostly with a sidereal chart, you can assign it to a variable
-```
-sidchart = jhchart.sidereal(ayanamsa=25)
-```
-
-then for the tropical or aditya versions of that chart, you could
-```
-sidchart.tropical()
-sidchart.aditya().rashi()
-```
-
-a Chart is basically a collection of Vargas. The Rashi is the most important. You can
-access it through Chart.rashi()
-
-if you assign is to a variable while in the repl:
-```
->>> rashi=jhchart.rashi()
-```
-
-then you can use tab completion of, ```dir()```:
-
-```
->>> dir(rashi)
-['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__firstlineno__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__static_attributes__', '__str__', '__subclasshook__', '__weakref__', '_amsha', '_cusps', '_get_pada', '_planets', '_rashi_planets', '_signs', 'akriti_yogas', 'amsha', 'argala', 'bandhana_yogas', 'chart', 'context', 'cusps', 'dignities', 'draw_sun_by_sign_table', 'init_cusps', 'init_planets', 'jaimini_first_strength', 'lagna', 'mkheader', 'pada', 'padas', 'planets', 'signs', 'sysflgstr', 'upapada', 'varga_name', 'where_is']
-```
-
-everything surrounded by "__" is a special Python  method. The ones without any
-underscores are the methods that "Rashi" has, things you can know about the rashi at
-hand.
-
-e.g.,
-
-```
->>> rashi.lagna()
-
-self.sign()=8 viṣṇu
-+--------+-------------------+----------------+
-| Object | In Sign Longitude | Real Longitude |
-+--------+-------------------+----------------+
-| Cusp 1 |          12:59:45 |        192.996 |
-+--------+-------------------+----------------+
-```
-
-The functions of the Classes themselves give the information in some way, and then there
-is a separate part that prints. Most of these have in-built printing methods due to
-Python, so that is why we can look at them to here. But to use them in a different
-application, we need to understand the data is returned, so we can read it and use it is
-whichever way we need at some time.
-
-#### Dignity example
+## Dignity example
 
 for example
 
@@ -340,7 +246,7 @@ help(EphContext)
 
 # Vargas
 
-Vargas can be accessed using ```Chart.varga(n)```.
+Vargas can be accessed using ```Chart().varga(n)```.
 
 If ```n``` is positive, the corresponding parivritti varga of that number will be
 produced.
@@ -363,3 +269,134 @@ implemeneted:
 -45 Akshavedamsha
 -60 Shashtyamsha
 ```
+
+# Human Design
+
+```libaditya``` currently has basic Human Design support and can draw Human Design natal
+bodygraphs for a Chart. It can also disply all of the relevant information about the
+Human Design properties of the planets, both conscious and unconscious, e.g., their
+gate, line, etc.
+
+How to get Human Design information about the planets:
+```
+>>> c = Chart()
+>>> hdp = c.bodygraph().planets()
+>>> print(hdp)
+// c.bodygraph().(un)conscious_planets() returns a Planets class of all the Planet-s
+>>> cp = c.bodygraph().conscious_planets().hd_planets()
+>>> print(cp)
+>>> ucp = c.bodygraph().unconscious_planets().hd_planets()
+>>> print(ucp)
+```
+
+To draw a bodygraph:
+```
+>>> c.bodygraph().draw_svg(outfile="my-bodygraph.svg")
+```
+
+A reminder if you are new to Python: if you want to know can come after ```c.bodygraph()```, 
+then assign that object to a variable, then you can inspect it using ```dir()``` or tab
+completion:
+```
+>>> bg = c.bodygraph()
+>>> dir(bg)
+>>> bg.(<TAB><TAB>)
+```
+
+# Sarvatobhadra Chakra
+
+An early version of ```libaditya``` had a program that would draw a sarvatobhadra
+chakra. I have started moving that over to work with ```libaditya```, so that any chart
+will be able to draw a sarvatobhadra chakra for itself.
+
+Right now, it only draws the base chart. When this is fully implemented, you will be
+able to do something like ```chart.draw_sbc()``` and it will draw it for you.
+```
+// english_letters: bool for whether or not to include small English equivalents of the
+// Sanskrit letters
+>>> d = c.rashi().draw_sbc(english_letters=True)
+>>> d.save_svg("sbc-base.svg")
+```
+
+# Cards of Truth
+
+I have just started an implementation of Cards of Truth in ```libaditya```.
+
+Currently, it can do year spreads with just the cards, no planets:
+```
+>>> c = Chart()
+>>> births = c.cot().birth_spread()
+```
+
+This returns a ```Spread``` object. ```Spread``` currently does not have a ```__str__```
+or a ```__repr```, but you can view it using ```rich```:
+```
+>>> births.rich()
+```
+
+Also, year spreads, though there may be some bugs currently in the implementation:
+```
+/// ideally .year_spread() with no arguments will be the current year spread; not sure
+/// how completely accurate this is currently
+/// you can put in any year; 0 is the birth spread, 1 the year after, etc.
+>>> c.cot().year_spread().rich()
+>>> c.cot().Year_spread(28).rich()
+```
+
+If you are new to Python, but know Cards of Truth, check out some of the objects
+to see what further information you can get:
+```
+>>> cot = c.cot()
+>>> cot
+<libaditya.cards.cards_of_truth.CardsOfTruth object at 0x7f7547f86250>
+>>> cot.(<TAB><TAB>)
+cot.Spread(                                  cot.jack_quadration()                        
+cot.birth_card()                             cot.king_quadration()                        
+cot.birth_spread()                           cot.master()                                 
+cot.context                                  cot.quadrate(                                
+cot.deck()                                   cot.quadraten(                               
+cot.get_birth_spread_with_card_in_position(  cot.queen_quadration()                       
+cot.get_birthspread_from_quadration(         cot.year_spread(                             
+cot.getbspreadwxcfromquad(              
+```
+
+Notice that some of these names end with ```()```, some with ```(``` and some with
+nothing. Those ending with ```()``` are methods that can be called with no arguments,
+and in fact do not have any arguments. So by the list, you know you can properly call:
+```
+>>> cot.birth_card()
+'KD'
+```
+
+The names with nothing are variables or objects in their own right. Check them out:
+```
+>>> cot.context
+```
+
+The names with ```(``` can take at least one argument, but may or may not need to have
+one or more arguments. You can always try to call them without any:
+```
+>>> cot.Spread()
+Traceback (most recent call last):
+  File "<python-input-35>", line 1, in <module>
+    cot.Spread()
+    ~~~~~~~~~~^^
+TypeError: CardsOfTruth.Spread.__init__() missing 1 required positional argument: 'spread_list'
+```
+
+And we see that didn't really work. Python has a built-in documentation feature. Under
+each class/function/method definition, you can put multi-line comments surrounded by
+triple quotes (""") at beginning and end. I have been trying to put documentation into
+these. With this, you can look up help in the Python ```repl``` itself:
+```
+>>> help(cot.Spread)
+```
+
+If you read that, you find out we can test ```Spread``` even using spreads that may
+never actually exist:
+```
+>>> cot.Spread([0,1,2,3,4,5,6,7,8,9,10,11,12,13]).rich()
+```
+
+At least this works right now. It may change once I implemented putting Planet-s into
+Card-s.

@@ -1,6 +1,16 @@
 ## features
 
 #
+README.md
+
+add
+hd, bodygraph
+sbc
+FixedStar
+TheStars
+Ecliptic
+
+#
 use stellarium to help with rectification
 can poll the time
 

@@ -35,7 +35,8 @@ class Bodygraph(DrawBodyGraph):
     the dream planets are the planets at the time the Moon was 88 degrees before the birth placement
 
     this can draw a bodygraph
-    use self.draw_svg(outfile="(optional)")
+
+    use Bodygraph().draw_svg(outfile="(optional; default is {Bodygraph().context.name}.svg)")
     """
 
     def __init__(self, context):
@@ -51,6 +52,9 @@ class Bodygraph(DrawBodyGraph):
 
     def unconscious_planets(self):
         return self._unconscious_planets
+    
+    def planets(self):
+        return self.conscious_planets().hd_planets() + self.unconscious_planets().hd_planets()
 
     def conscious_gates(self,chiron=True):
         return self.conscious_planets().gates(chiron)
