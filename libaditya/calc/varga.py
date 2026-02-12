@@ -18,7 +18,6 @@
 import swisseph as swe
 from prettytable import PrettyTable
 from dataclasses import replace
-from more_itertools import collapse
 
 from libaditya import constants as const
 from libaditya import utils
@@ -29,6 +28,7 @@ from libaditya.objects import planets as planet_constructors
 from libaditya.calc import vimshottari
 from libaditya.calc.panchanga import Panchanga
 from libaditya.calc.swe_functions import SWERashi
+from libaditya.calc.hellenistic import Hellenistic
 from libaditya.draw.draw_sbc import DrawSBC
 
 from .jaimini import Jaimini
@@ -244,7 +244,7 @@ class Varga(Jaimini,API):
 
 
 
-class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC):
+class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic):
 
     def __init__(self,context,chart):
         self.master = chart
@@ -483,3 +483,4 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC):
         akritis.append(("Samdura", to_move))
 
         return akritis
+

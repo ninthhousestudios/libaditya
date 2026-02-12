@@ -294,6 +294,14 @@ completion:
 >>> bg.(<TAB><TAB>)
 ```
 
+TODO:
+
+add Variables, the "arrows" that you can see on some bodygraphs on both sides of the
+head center. also, all of the information that also comes from the color, tone, and base
+from other planets, e.g., diet, environment, etc.
+all of the calculations are necessary, i just need to figure out what thing specifies
+what and write that into ```libaditya```.
+
 # Sarvatobhadra Chakra
 
 An early version of ```libaditya``` had a program that would draw a sarvatobhadra
@@ -301,10 +309,11 @@ chakra. I have started moving that over to work with ```libaditya```, so that an
 will be able to draw a sarvatobhadra chakra for itself.
 
 Right now, it only draws the base chart. When this is fully implemented, you will be
-able to do something like ```chart.draw_sbc()``` and it will draw it for you.
+able to do something like ```chart.draw_sbc()``` and it will draw one for you.
 ```
-// english_letters: bool for whether or not to include small English equivalents of the
-// Sanskrit letters
+/// english_letters: bool for whether or not to include small English equivalents of the
+/// Sanskrit letters
+/// right now, .draw_sbc() drawing a Drawing object from drawsvg
 >>> d = c.rashi().draw_sbc(english_letters=True)
 >>> d.save_svg("sbc-base.svg")
 ```
@@ -382,12 +391,11 @@ these. With this, you can look up help in the Python ```repl``` itself:
 ```
 >>> help(cot.Spread)
 ```
-
 If you read that, you find out we can test ```Spread``` even using spreads that may
 never actually exist:
 ```
 >>> cot.Spread([0,1,2,3,4,5,6,7,8,9,10,11,12,13]).rich()
 ```
 
-At least this works right now. It may change once I implemented putting Planet-s into
+At least it works this way right now. It may change once I implemented putting Planet-s into
 Card-s.

@@ -128,7 +128,7 @@ def chtk_to_Location(infile):
 
 def read_toml(infile):
     con=toml_to_context(infile)
-    return con.name,con.location.placename,con.timeJD.month(),con.timeJD.day(),con.timeJD.year(),con.timeJD.hour(tz="utc"),con.location.lat,con.location.long,con.timeJD.utcoffset
+    return con.name,con.location.placename(),con.timeJD.month(),con.timeJD.day(),con.timeJD.year(),con.timeJD.hour(tz="utc"),con.location.lat,con.location.long,con.timeJD.utcoffset
 
 def read_toml_location(infile):
     con=toml_to_context(infile)

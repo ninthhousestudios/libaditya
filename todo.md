@@ -11,13 +11,21 @@ TheStars
 Ecliptic
 
 #
-use stellarium to help with rectification
-can poll the time
+add .whoami() method to Chart; this is mostly for calculation options, e.g., tropical,
+aditya, sidereal, which ayanamsa, etc.
+could mean also adding one to EphContext
 
-of course, dont need stellarium for that
+some easy way to identify a chart
+
+#
 
 steps; currently libaditya has no way to do steps
 plotting, data visualisation, etc.
+
+obviously, python itself can be used to do steps, so not sure how necessary or useful
+this is
+
+was an idea, but need actual use cases to decide if it would be worth it
 
 #
 stars
@@ -43,19 +51,17 @@ can now draw hd bodygraph
 ```
 chart.bodygraph().draw_svg()
 ```
+so add transit charts, composite charts, and the return/opposition charts
+also, dream charts
+
+continue sbc...still quite a bit to do
 
 #
 implement all swisseph features in the appropriate place
 
-e.g., Planet.nod_aps_ut()
+started alt/azimuth coordinates
 
-started swe.heliacal_ut() in objects/swe_functions.py as inheritor Mixin SWEPlanet
-added metar for weather data. from this can satisfy function arguments concerning place.
-this will be built-in to location. but the user must pass the correct "location" for
-this, which will be an ICAO identifier; basically, the nearest airport and the weather
-data there. need to implement finding relative humidity from dewpoint. also see about
-finding old metar data. i would like to have .next_heliacal_rising/setting work for
-whatever jds are reasonable
+e.g., Planet.nod_aps_ut()
 
 #
 add Mean Node option
@@ -77,10 +83,6 @@ everything is in place to do this
 
 add "detriment" or "fall" for Western/Hellenistic
 
-#
-fixed stars
-
-want to do "true sidereal", but also just, fixed stars in general
 
 ## jaimini
 
@@ -111,16 +113,6 @@ irina-tweedie.chtk - multiple issues in first strength with tropical and aditya
 ## interface
 
 #
-write sample scripts for going through a directory of .chtk files and doing something
-with the data
-
-write the actual function to do this
-
-started this in ladb, works pretty well
-some charts have weird problems and i have no idea what is wrong
-maybe i will just reenter them in kala
-
-#
 move vimshottari around
 put calc functions in Rashi and print functions in print_functions
 
@@ -136,23 +128,6 @@ maybe name keys, depending on dealing with abhijit
 
 though regardless of creating a class for each, it would probably be better to have all
 the nakshatra information in a dictionary in constants.py
-
-#
-2025/12/01 - first part done strcuturally
-Sign and Signs are now recursive
-so we can put all of the Signs functions in Sign
-
-right now, only Signs knows how rashi aspects
-so we have to do
-```
-chart.jaimini().rashi().signs().rashi_aspects_to(Sign)
-```
-TODO: this->
-likewise with Sign and Signs
-if there was recursion, i could write
-```
-chart.jaimini().svamsha().aspects_to()
-```
 
 
 #
@@ -190,6 +165,9 @@ be adapted to yogas if yogas are represented a certain way
 
 #
 add dispositors, final dispositors, parivartana or chakra yogas
+
+#
+add dignities in vargas
 
 ## hd
 

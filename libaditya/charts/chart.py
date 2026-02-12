@@ -75,6 +75,12 @@ class Chart(API):
     def rashi(self):
         return self._Rashi
 
+    # natal() is meant to be an api feature for western/hellenistic/other astrologers
+    # who may feel more comfortable with that
+    # the same features are accessible using both names
+    def natal(self):
+        return self.rashi()
+
     def bodygraph(self):
         return Bodygraph(self.context)
 

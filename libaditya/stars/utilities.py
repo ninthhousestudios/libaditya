@@ -127,6 +127,12 @@ def swe_make_star(names=[""]) -> str:
 
 
 def swe_write_stars(names=[""],outfile=""):
+    """
+    take a list of objects ids, names
+    write out to a file their entries for ephe/sefstars.txt
+
+    TODO: update to do multi-line output with each name
+    """
     lines=[]
     for name in names:
         returns, ascii=swe_make_star(name)
@@ -255,7 +261,7 @@ def swe_stars_to_py(infile,outfile):
                 n+=1
             outfd.write(swe_star_to_python(star))
 
-def convert_sefstars(infile,outfile):
+def convert_sefstars_first_pass(infile,outfile):
     """
     convert ephe/sefstars.txt to a different format
     i already manually changed all 2-letter greek abbreviations to 3-letter abbreviations manually
@@ -347,6 +353,7 @@ def nomen_to_long_form(nomen: str):
         return const.star_names_short_to_long["greek"][greek]+" "+const.star_names_short_to_long["constellations"][latin]+f" {number}"
     return const.star_names_short_to_long["greek"][greek]+" "+const.star_names_short_to_long["constellations"][latin]
 
+# convert_sefstars_second_pass
 def swe_consolidate_sefstars(infile,outfile):
     """
     right now, sefstars.txt has some stars line that are the same, e.g.,:
@@ -407,10 +414,10 @@ def swe_consolidate_sefstars(infile,outfile):
         outfd.writelines(outlines)
 
 
-
-
 def swe_populate_stars(lines):
     """
+    lines are the lines that have been read from sefstars.txt
+
      populate the dictionary of star information
      stars_info = {
          "noMen": [swe_line,other_name,other_name,...]
@@ -443,13 +450,62 @@ def swe_populate_stars(lines):
                     if name in stars_info[nomen]:
                         continue
                     else:
-                        stars_info[nomen].append(name)
+                        stars_info[nomen].append(name.strip())
                         continue
             entry=[]
             if nomen != star_line.split(",")[1]:
                 print(f"Error, lines out of order...\n{info_line=}\n{star_line=}")
             entry.append(star_line)
             for name in info_line:
-                entry.append(name)
+                entry.append(name.strip())
             stars_info[nomen] = entry
     return stars_info
+
+def swe_write_multiline_sefstars(infile,outfile):
+    """
+    take a sefstars.txt that has two entries per star, i.e.,:
+    #0# noMen, other_name, other_name, ...
+    long_form_nomen,nomen,frame,ra_hour,...
+
+    and output a sefstars.txt that has the same info line as well as one entry for each name
+    #0# noMen, other_name, other_name, ...
+    (other_name,nomen,frame,ra_hour,...)
+    long_form_nomen,nomen,frame,ra_hour,...
+    nomen,nomen,frame,ra_hour,...
+    other_name,nomen,frame,ra_hour,...
+    ...
+
+    will try to make the first other_name be the "traditional" name if its has one
+    this may not always work exactly as hoped
+    """
+    with open("infile") as infd:
+        inlines=infd.readlines()
+
+    starsin = swe_populate_stars(inlines)
+    # starsin is now a dictionary
+    # key: noMen name (no ","!)
+    # values: list = [swe_string,other_name,other_name,...]
+
+    # need to perserve comments and order, so we will do this with a manual n-based while loop
+
+    # so we need to write out the original info line
+    # we need to write out the original swe_string
+    # all in the following order
+    # as well as the same swe_string with these as the first parameter
+    #   (traditional name) if this exists, it should be first
+    #   long_form_nomen ; this is a written form of the nomen name, e.g., Alpha Canis Majoris
+    #   other_name, etc.
+
+    n=0
+    for n in range(0,len(lines)):
+        line=lines[n]
+        if line.startswith("#") and not line.startswith("#0#"):
+            # a comment only
+            n+=1
+            continue
+        if line.startswith("#0#"):
+            info_line = line
+            n+=1
+            star_line = lines[n]
+            # ready for the next loop
+            n+=1
