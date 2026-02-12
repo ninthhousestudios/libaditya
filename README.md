@@ -23,7 +23,6 @@ started adding ```rich``` representations in ```libaditya``` itself, through ```
 
 - [README](#readme)
 - [Table of Contents](#table-of-contents)
-- [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Defaults](#defaults)
@@ -35,14 +34,6 @@ started adding ```rich``` representations in ```libaditya``` itself, through ```
 - [Human Design](#human-design)
 - [Sarvatobhadra Chakra](#sarvatobhadra-chakra)
 - [Cards of Truth](#cards-of-truth)
-
-# Dependencies
-
-automatically installed with ```uv```
-
-python, [pyswisseph](https://pypi.org/project/pyswisseph/), [python-prettytable](https://pypi.org/project/prettytable/)
-
-written with python 3.13
 
 # Installation
 
@@ -115,7 +106,7 @@ It is now possible to enter chart information "interactively", not really, which
 produce a ```.toml``` chart file.
 
 ```
->>> write.write_new_chart_interactive()
+>>> write.new_chart_interactive()
 ```
 
 In order, it will expect:
@@ -135,19 +126,19 @@ alt: float - meters
 placename: str (optional)
 ```
 
-The file that will be written is "name", all lowercase, with any specials replaced by
-"-". Call the function with argument ```outfile="your-filename.toml```. 
+The file that will be written is "name", all lowercase, with any spaces replaced by
+"-". Call the function with argument ```outfile="your-filename.toml```". 
 
 The only software I know of that does astrology like this is Kala, produced by Ernst
 Wilhelm and his wife; I believe she did the actual programming. I have been using it and
 thus the ```.chtk``` format. It is now possible to convert between them. However, the
 ```.toml``` format has a place for altitude of the Location. The Kala format doesn't.
-Right now chtk_to_toml will write it as 0..need to change that.
+Right now ```read.chtk_to_toml``` will write it as 0..need to change that.
 
 ## Reading a Chart from a File
 
 ```read.toml_to_context()``` takes a ```toml``` file such as produced by
-```write_new_chart_interactive()```. You can use that to instantiate a Chart:
+```write.new_chart_interactive()```. You can use that to instantiate a Chart:
 ```
 >>> context = read.toml_to_context("chart.toml")
 >>> chart = Chart(context)
@@ -165,7 +156,7 @@ An ```EphContext``` also includes all the options for the chart.
 
 ## Chart Types and Options
 
-Plus basic Python if you are knew to this.
+Plus basic Python if you are new to this.
 
 
 ## Dignity example
@@ -329,7 +320,7 @@ Currently, it can do year spreads with just the cards, no planets:
 ```
 
 This returns a ```Spread``` object. ```Spread``` currently does not have a ```__str__```
-or a ```__repr```, but you can view it using ```rich```:
+or a ```__repr__```, but you can view it using ```rich```:
 ```
 >>> births.rich()
 ```

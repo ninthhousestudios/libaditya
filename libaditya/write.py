@@ -20,7 +20,7 @@ import toml
 from libaditya.objects import JulianDay, Location
 from libaditya import read
 
-def write_new_chart_interactive(outfile=None):
+def new_chart_interactive(outfile=None):
     """
     take user input and write out a new chart
 
