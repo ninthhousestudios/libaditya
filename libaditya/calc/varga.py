@@ -19,6 +19,10 @@ import swisseph as swe
 from prettytable import PrettyTable
 from dataclasses import replace
 
+from rich import box
+from rich.table import Table
+from rich.console import Console
+
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
@@ -210,38 +214,96 @@ class Varga(Jaimini,API):
         """
         represents as a header with the chart information
         """
-        return self.__str__()
-        
-    def mkheader(self):
-        header = ""
-        header += f"{self.context.name}\n"
-        header += f"Varga {self._amsha} {self.varga_name()}\n"
-        header += f"{self.sysflgstr} coordinates\n"
-        header += f"{const.circle_name(self.context.circle)}\n"
-        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
-        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
-        header += f"Dignities based on {digplace}\n"
-        header += f"{self.context.rashi_aspects} rashi aspects\n"
-        if self.context.sysflg == swe.FLG_SIDEREAL:
-            # for sidereal signs we actually use swisseph 36
-            # dhruva equatorial is only for nakshatras
-            if self.context.ayanamsa == 98:
-                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-            else:
-                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
-            if self.context.ayanamsa == 98:
-                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-            header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
-            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        else:
-            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
-        header += f"{self.context.timeJD}\n"
-        return header
+        return self.mkheader()
 
+    def mkheader(self):
+        return utils.mkheader(self)
+        
+#    def mkheader(self):
+#        header = ""
+#        header += f"{self.context.name}\n"
+#        header += f"Varga {self._amsha} {self.varga_name()}\n"
+#        header += f"{self.sysflgstr} coordinates\n"
+#        header += f"{const.circle_name(self.context.circle)}\n"
+#        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
+#        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
+#        header += f"Dignities based on {digplace}\n"
+#        header += f"{self.context.rashi_aspects} rashi aspects\n"
+#        if self.context.sysflg == swe.FLG_SIDEREAL:
+#            # for sidereal signs we actually use swisseph 36
+#            # dhruva equatorial is only for nakshatras
+#            if self.context.ayanamsa == 98:
+#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+#            else:
+#                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+#            if self.context.ayanamsa == 98:
+#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+#            header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
+#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        else:
+#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
+#        header += f"{self.context.timeJD}\n"
+#        return header
+
+    def richDrawing_south_indian(self):
+        spread = Table(box=None)
+
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+
+        spread.add_row(self.signs()[12].richDrawing(),self.signs()[1].richDrawing(),self.signs()[2].richDrawing(),self.signs()[3].richDrawing())
+        spread.add_row(self.signs()[11].richDrawing(),"dignities?","jaimini karakas?",self.signs()[4].richDrawing())
+        spread.add_row(self.signs()[10].richDrawing(),"empty","empty",self.signs()[5].richDrawing())
+        spread.add_row(self.signs()[9].richDrawing(),self.signs()[8].richDrawing(),self.signs()[7].richDrawing(),self.signs()[6].richDrawing())
+
+        return spread
+
+    def richDrawing_circular(self):
+        spread = Table(box=None)
+
+        spread.add_column(" ",justify="center",style="#00ff00")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+        spread.add_column(" ",justify="center")
+
+        lagna = self.lagna()
+
+        # list of sign classes
+        # with the empty list at the beginning
+        # we can use 1-12 as the index, just as with Varga().signs()
+        signs = [[]]
+
+        # initialize list of Sign classes
+        for sign in range(1,13):
+            signs.append(self.signs()[lagna.astrological_signs_forward(sign)])
+
+        # call signs.richDrawing() at the appropriate place
+        # lagna is on the leftmost, which is east, facing south, which is the center of the 5x5 table
+        spread.add_row("",signs[11].richDrawing(),signs[10].richDrawing(),signs[9].richDrawing(),"")
+        spread.add_row(signs[12].richDrawing(),"","","",signs[8].richDrawing())
+        spread.add_row(signs[1].richDrawing(),"","","",signs[7].richDrawing())
+        spread.add_row(signs[2].richDrawing(),"","","",signs[6].richDrawing())
+        spread.add_row("",signs[3].richDrawing(),signs[4].richDrawing(),signs[5].richDrawing(),"")
+
+        return spread
+
+    def rich(self, which="circular"):
+        console = Console()
+        match which:
+            case "south_indian":
+                console.print(self.richDrawing_south_indian())
+            case "circular":
+                console.print(self.richDrawing_circular())
+            case _:
+                return
 
 
 class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic):

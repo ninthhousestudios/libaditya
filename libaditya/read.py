@@ -142,7 +142,7 @@ def toml_to_Location(infile):
 def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
     timeJD = JulianDay((year,month,day,timedec),utcoffset)
-    location = Location(lat, long, 0, placename, timeJD.mktimezone())
+    location = Location(lat, long, 0, placename, timeJD.utcoffset)
     return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
 
 def context_to_chtk(context=EphContext(),outfile=None):

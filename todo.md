@@ -1,4 +1,10 @@
-## features
+
+#
+consolidate mkheader() from the various classes
+
+#
+couldnt make Planet().constellation() work from pyphemeris
+calling Chart().Ecliptic() didnt change anything
 
 #
 README.md

@@ -19,6 +19,10 @@ import swisseph as swe
 from prettytable import PrettyTable
 from typing import Self
 
+from rich import box
+from rich.table import Table
+from rich.console import Console
+
 from libaditya import constants as const
 from libaditya import utils
 
@@ -206,6 +210,14 @@ class Sign:
             case 3 | 6 | 9 | 12:
                 return "Dual"
 
+    def ordered_cusps(self, reverse=False):
+        return sorted(self.cusps(),key = (lambda cusp: cusp.ecliptic_longitude()), reverse=reverse)
+
+    def ordered_planets(self, reverse=False):
+        return sorted(self.planets(),key = (lambda cusp: cusp.ecliptic_longitude()), reverse=reverse)
+
+    def ordered_objects(self, reverse=False):
+        return sorted(self.ordered_cusps() + self.ordered_planets(),key = (lambda obj: obj.amsha_longitude()), reverse=reverse)
 
     def __str__(self):
         """
@@ -215,9 +227,10 @@ class Sign:
         longitude
         """
         ret = ""
-        for obj in self._objects:
+
+        for obj in self.ordered_objects():
             if not self.context.print_outer_planets and obj.object_type()=="Planet" and obj.is_outer_planet():
-                # dont print outer planets
+                # dont print outer objs
                 continue
             if obj.identity() == "Sun" and self.context.sysflg == const.HELIO:
                 # dont print sun with heliocentric coordinates
@@ -240,7 +253,7 @@ class Sign:
 
     def __repr__(self):
         header = ""
-        header += f"\n{self.sign()=} {self.sign_name()}\t{self.amsha()}\n"
+        header += f"\n{self.sign()=} {self.sign_name()}\t{self.context.amsha}\n"
         output = PrettyTable()
         output.field_names = ["Object", "In Amsha Longitude", "Ecliptic Longitude"]
         output.align["Object"] = "l"
@@ -256,15 +269,24 @@ class Sign:
 
         return header + ret
 
-#    def __repr__(self):
-#        name = ""
-#        name += f"{self.sign_index()=} {self.sign_name()=}\n"
-#        for p in self._planets:
-#            name += f"{p}"
-#        for c in self._cusps:
-#            name += f"{c}"
-#        name += "\n"
-#        return name
+    def richDrawing(self, header_style="#6b00ff", info_style="#00ff00"):
+        sign = Table(box=box.ROUNDED, style=header_style)
+
+        # add a "header_style=" argument to change color of this header itself
+        sign.add_column(f"{self.sign()} {self.name()}",justify="center",style=info_style)
+
+        # add objects in rows
+        sign_str = self.__str__()
+        lines = sign_str.split("\n")
+        for line in lines:
+            sign.add_row(line)
+
+        return sign
+
+    def rich(self):
+        console = Console()
+        console.print(self.richDrawing())
+
 
 class One(Sign):
 
@@ -644,24 +666,46 @@ class Signs:
         return most
 
     def mkheader(self):
-        header = f"{self.sysflgstr} coordinates\n"
-        if self.context.sysflg == swe.FLG_SIDEREAL:
-            # for sidereal signs we actually use swisseph 36
-            # dhruva equatorial is only for nakshatras
-            if self.context.ayanamsa == 98:
-                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-            else:
-                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
-            if self.context.ayanamsa == 98:
-                self.context.ayanamsa = 36
-            header += f"{self.context.location}\n"
-            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        else:
-            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-        if self.context.sysflg == swe.FLG_TOPOCTR:
-            header += f"{self.context.location}"
-        header += f"{self.context.timeJD}\n"
-        return header
+        return utils.mkheader(self)
+
+    # this is to placate a field in utils.mkheader()
+    # this information is in Varga and is not really necessary
+    # since we do know the amsha
+    def varga_name(self):
+        return ""
+
+    def __repr__(self):
+        """
+        represents as a header with the chart information
+        """
+        return self.mkheader()
+
+#    def mkheader(self):
+#        header = ""
+#        header += f"{self.context.name}\n"
+#        header += f"Varga {self.context.amsha}\n"
+#        header += f"{self.sysflgstr} coordinates\n"
+#        header += f"{const.circle_name(self.context.circle)}\n"
+#        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
+#        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
+#        header += f"Dignities based on {digplace}\n"
+#        header += f"{self.context.rashi_aspects} rashi aspects\n"
+#        if self.context.sysflg == swe.FLG_SIDEREAL:
+#            # for sidereal signs we actually use swisseph 36
+#            # dhruva equatorial is only for nakshatras
+#            if self.context.ayanamsa == 98:
+#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+#            else:
+#                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+#            if self.context.ayanamsa == 98:
+#                self.context.ayanamsa = 36
+#            header += f"{self.context.location}\n"
+#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        else:
+#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
+#        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
+#        header += f"{self.context.timeJD}\n"
+#        return header
 

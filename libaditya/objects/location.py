@@ -28,7 +28,7 @@ class Location:
         long=165.76666666666668,
         alt=0,
         placename="Yamakoti",
-        timezone="YKT",
+        utcoffset="12",
         icao=None,
         planet="Earth"
     ):
@@ -36,13 +36,14 @@ class Location:
         self.long = float(long)
         self.alt = float(alt)
         self._placename = placename
-        self.timezone = timezone
+        self.utcoffset = float(utcoffset)
+        self._timezone = f"{"+" if self.utcoffset > 0 else ""}{self.utcoffset}"
         self.icao = icao
         self._planet = planet
         self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
 
     def __str__(self):
-        return f"{self._placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: {self.timezone}"
+        return f"{self._placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: UTC{self._timezone}"
 
     def stellarium(self):
         """
@@ -54,7 +55,7 @@ class Location:
         return [0,self.latitude(),self.longitude(),self.placename(),self.placename(),self.planet()]
 
     def place(self):
-        return f"{self.placename} ({round(self.lat, 3)},{round(self.long, 3)})"
+        return f"{self.placename()} ({round(self.lat, 3)},{round(self.long, 3)})"
 
     def planet(self):
         return self._planet
@@ -163,4 +164,4 @@ class Location:
 # this spot is used to calculate the vara, a savana day that is the same at once in the whole world
 # PKMJ is Marshall Islands International Airport
 # an airport close to Yamakoti, for purposes of weather information
-Yamakoti = Location(0, 165.76666666666668, 0, "Yamakoti", "ykt", "PKMJ")
+Yamakoti = Location(0, 165.76666666666668, 0, "Yamakoti", "12", "PKMJ")

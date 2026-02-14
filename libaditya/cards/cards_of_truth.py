@@ -29,12 +29,9 @@ class CardsOfTruth(CoT):
 
     def __init__(self, context=EphContext(), master=None):
         self.context = context
-        self._master = master
+        self.master = master
         self._birth_card: str = self._get_birth_card()
         self._birth_spread: self.Spread = self._get_birth_spread()
-
-    def master(self):
-        return self._master
 
     def birth_card(self):
         return self._birth_card
@@ -43,7 +40,7 @@ class CardsOfTruth(CoT):
         """
         self._birth_spread is the list of card integers of that spread
         """
-        return self.Spread(self._birth_spread, self.context.cot_planet_order)
+        return self.Spread(self._birth_spread, self.master, self.context.cot_planet_order)
 
     def _get_birth_card(self):
         """
@@ -100,7 +97,8 @@ class CardsOfTruth(CoT):
             age = self.context.timeJD.age(now.jd_number())
             year = int(utils.dec2ymd(age).split()[0])-1
         year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
-        return self.Spread(year_spread_list, self.context.cot_planet_order)
+        # change planets to self.master.solar_return(year)...i.e., write solar_return
+        return self.Spread(year_spread_list, self.master, self.context.cot_planet_order)
     
     class Spread:
         """
@@ -135,12 +133,13 @@ class CardsOfTruth(CoT):
         TODO: currently, Planet-s being put into cards is not implemented
         """
 
-        def __init__(self, spread_list, order="vedic"):
+        def __init__(self, spread_list, rashi, order="vedic"):
             self._list = spread_list
             self._deck = Deck()
             self._order = order
             self._spread = self._init_Spread()
-            self._planets = self._init_Planets()
+            self._rashi = rashi
+            self._place_Objects()
 
         def __iter__(self):
             return iter(self._spread)
@@ -177,11 +176,10 @@ class CardsOfTruth(CoT):
                 # with this above, we should be able to iterate over Spread regardless of the system
             return spread
 
-        def _init_Planets(self):
+        def _place_Objects(self):
             """
-            this function gets the necessary planetary information for a birth spread
             it initializes those Planet-s into Spread
-            it also adds those Planet-s to their proper Card in the Spread
+            it adds these Planet-s to their proper Card in the Spread
             so then we will have Spread().planets() and Spread()["Sun"] to see which Planet-s are in the Sun card
             """
             pass

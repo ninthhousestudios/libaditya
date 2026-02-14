@@ -22,12 +22,25 @@ from libaditya.cards import cards_constants as cardsc
 
 class Card:
 
-    def __init__(self, card, index, deck_type="52 playing card"):
+    def __init__(self, card, index, planet="", deck_type="52 playing card"):
         self._card = card
         self._deck_type = deck_type
         self._index = index
-        self._planet = ""
+        self._planet = planet
+        self.attributes = {
+            "planets": [],
+            "cusps": []
+        }
         self._drawing = self.richDrawing()
+
+    def set_attribute(self,attrs):
+        """
+        attrs is a tuple ("attribute",value)
+        add all of these to self.attributes
+        attritube is a string that will be a dictionary key for value
+        """
+        key,value=attrs
+        self.attributes[key] = value
 
     def card(self):
         return self._card
@@ -43,6 +56,12 @@ class Card:
 
     def planet(self):
         return self._planet
+
+    def planets(self):
+        return self.attributes["planets"]
+
+    def cusps(self):
+        return self.attributes["cusps"]
 
     def richDrawing(self):
         """

@@ -438,3 +438,33 @@ def set_swe_true_sidereal_ayanamsa():
     """
     swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
+
+def mkheader(obj):
+    header = ""
+    header += f"{obj.context.name}\n"
+    header += f"Varga {obj.context.amsha} {obj.varga_name()}\n"
+    header += f"{obj.sysflgstr} coordinates\n"
+    header += f"{const.circle_name(obj.context.circle)}\n"
+    header += f"House system {swe.house_name(obj.context.hsys.encode())}\n"
+    digplace = "rashi" if obj.context.rashi_temporary_friendships else "varga"
+    header += f"Dignities based on {digplace}\n"
+    header += f"{obj.context.rashi_aspects} rashi aspects\n"
+    if obj.context.sysflg == swe.FLG_SIDEREAL:
+        # for sidereal signs we actually use swisseph 36
+        # dhruva equatorial is only for nakshatras
+        if obj.context.ayanamsa == 98:
+            header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+            header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+        else:
+            header += f"{const.ayanamsa_name(obj.context.ayanamsa)} ayanamsa\n"
+    elif obj.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+        if obj.context.ayanamsa == 98:
+            header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
+            header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
+        header += f"{obj.context.location.placename()} ({obj.context.location.latitude()} lat, {obj.context.location.longitude()} long)\n"
+        header += f"{const.ayanamsa_name(obj.context.ayanamsa)} ayanamsa\n"
+    else:
+        header += f"{const.ayanamsa_name(obj.context.ayanamsa)} ayanamsa\n"
+    header += f"{obj.context.location.placename()} ({obj.context.location.latitude()} lat, {obj.context.location.longitude()} long)\n"
+    header += f"{obj.context.timeJD}\n"
+    return header

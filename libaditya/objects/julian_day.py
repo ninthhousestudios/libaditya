@@ -59,7 +59,7 @@ class JulianDay:
             jd = utils.tmod_to_jd(nowtime)
             self.jd = jd
         self.datetime = swe.revjul(self.jd)
-        self.utcoffset = utcoffset
+        self.utcoffset = float(utcoffset)
         self._timezone = self.mktimezone(timezone)
         self.usrdatetime = self.usrdt()
 

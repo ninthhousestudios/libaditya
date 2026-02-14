@@ -1901,7 +1901,7 @@ class Planets:
         else:
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         if self.system == swe.FLG_TOPOCTR:
-            header += f"{self.context.location}"
+            header += f"{self.context.location}\n"
         header += f"{self.timeJD}\n"
         return header
 

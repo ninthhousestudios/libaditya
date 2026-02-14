@@ -52,7 +52,7 @@ def sysflgstr(sflg):
     if sflg == swe.FLG_SIDEREAL:
         return "Sidereal"
     if sflg == swe.FLG_TOPOCTR:
-        return "Topocentric"
+        return "Tropical Topocentric"
     if sflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
         return "Sidereal Topocentric"
     if sflg == DRAC:
