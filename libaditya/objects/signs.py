@@ -238,6 +238,9 @@ class Sign:
             if (obj.identity() == "Rahu" or obj.identity() == "Ketu") and (self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY):
                 # dont print Rahu or Ketu for helio/barycentric
                 continue
+            if isinstance(obj,Cusp) and (self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY):
+                # dont print cusps in heliocentric or barycentric
+                continue
             ret += f"{obj.name()} "
             if self.context.signize:
                 ret += f"{obj.longitude().split(" ")[0]}\n" # remove the sign name here since we are printing in a south indian chart
@@ -680,32 +683,4 @@ class Signs:
         """
         return self.mkheader()
 
-#    def mkheader(self):
-#        header = ""
-#        header += f"{self.context.name}\n"
-#        header += f"Varga {self.context.amsha}\n"
-#        header += f"{self.sysflgstr} coordinates\n"
-#        header += f"{const.circle_name(self.context.circle)}\n"
-#        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
-#        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
-#        header += f"Dignities based on {digplace}\n"
-#        header += f"{self.context.rashi_aspects} rashi aspects\n"
-#        if self.context.sysflg == swe.FLG_SIDEREAL:
-#            # for sidereal signs we actually use swisseph 36
-#            # dhruva equatorial is only for nakshatras
-#            if self.context.ayanamsa == 98:
-#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-#            else:
-#                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
-#            if self.context.ayanamsa == 98:
-#                self.context.ayanamsa = 36
-#            header += f"{self.context.location}\n"
-#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        else:
-#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
-#        header += f"{self.context.timeJD}\n"
-#        return header
 

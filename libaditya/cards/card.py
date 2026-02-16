@@ -18,6 +18,8 @@ from rich import box
 from rich.table import Table
 from rich.console import Console
 
+from libaditya import constants as const
+
 from libaditya.cards import cards_constants as cardsc
 
 class Card:
@@ -31,7 +33,6 @@ class Card:
             "planets": [],
             "cusps": []
         }
-        self._drawing = self.richDrawing()
 
     def set_attribute(self,attrs):
         """
@@ -40,7 +41,7 @@ class Card:
         attritube is a string that will be a dictionary key for value
         """
         key,value=attrs
-        self.attributes[key] = value
+        self.attributes[key].append(value)
 
     def card(self):
         return self._card
@@ -48,10 +49,16 @@ class Card:
     def index(self):
         return self._index
 
+    def glyph(self):
+        return const.glyphs[self._planet]
+
     def name(self):
         return cardsc.name["number"][self.card()[0]] + " of " + cardsc.name["suit"][self.card()[1]]
 
     def symbol(self):
+        """
+        returns, e.g., 9♥
+        """
         return f"{self.card()[0]}{cardsc.symbols[self.card()[1]]}"
 
     def planet(self):
@@ -69,14 +76,15 @@ class Card:
         """
         card = Table(box=box.ROUNDED)
         color = "red" if (self.card()[1] == "H" or self.card()[1] == "D") else "white"
-        card.add_column(self.planet(),justify="center",style="white")
-        card.add_row(self.symbol(),style=color)
+        card.add_column(self.glyph(),justify="center",style="white")
+        card.add_row(self.symbol()+"\n",style=color)
+        for planet in self.planets():
+            card.add_row(planet.name(),style="white")
+        for cusp in self.cusps():
+            card.add_row(cusp.name(),style="white")
         # do more, like add planets
         return card
 
-    def drawing(self):
-        return self._drawing
-
-    def draw(self):
+    def rich(self):
         console = Console()
-        console.print(self.drawing())
+        console.print(self.richDrawing())

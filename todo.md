@@ -1,17 +1,13 @@
 
-#
-consolidate mkheader() from the various classes
 
 #
 couldnt make Planet().constellation() work from pyphemeris
 calling Chart().Ecliptic() didnt change anything
+try it again
 
 #
 README.md
 
-add
-hd, bodygraph
-sbc
 FixedStar
 TheStars
 Ecliptic
@@ -40,9 +36,6 @@ perhaps change TheStars.search_star_interactive() to search names in info field?
 
 add nakshatras to fixed stars
 
-make new libaditya version and publish this to pypi in order to make libaditya/stars
-"official"
-
 make __repr__ and __str__ for Ecliptic
 checkout rich?
 
@@ -67,7 +60,8 @@ implement all swisseph features in the appropriate place
 
 started alt/azimuth coordinates
 
-e.g., Planet.nod_aps_ut()
+TODO: 
+    Planet.nod_aps_ut()
 
 #
 add Mean Node option

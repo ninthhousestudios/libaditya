@@ -155,6 +155,18 @@ class Varga(Jaimini,API):
         return self.signs().where_is(object)
 
     def lagna(self):
+        if self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY:
+            return self.signs()[7]
+            # this is for using Varga().rich("circular")
+            # the lagna will be printed on the left side in the center
+            # then the houses and signs go counter clockwise in the order of usual western astrology chart
+            # so with the 7th on the left, we will have north at the top and east on the right
+            # with heliocentric, the sun in the middle
+            # with barycentric, the barycenter in the middle
+            # though, with barycentric, it makes it seem like the sun is the same distance as the other planets from the barycenter
+            # but obviously it is not. it seems on average the barycenter is not in the sun, but rather close to it
+            # so it seems like maybe sometimes the barycenter is inside the sun? so then it is sort of like the sun is "off-center"
+            # the solar system, and jupiter in particular, pull the sun "off-center"
         return self.signs().lagna()
 
     def deities(self):
@@ -219,35 +231,6 @@ class Varga(Jaimini,API):
     def mkheader(self):
         return utils.mkheader(self)
         
-#    def mkheader(self):
-#        header = ""
-#        header += f"{self.context.name}\n"
-#        header += f"Varga {self._amsha} {self.varga_name()}\n"
-#        header += f"{self.sysflgstr} coordinates\n"
-#        header += f"{const.circle_name(self.context.circle)}\n"
-#        header += f"House system {swe.house_name(self.context.hsys.encode())}\n"
-#        digplace = "rashi" if self.context.rashi_temporary_friendships else "varga"
-#        header += f"Dignities based on {digplace}\n"
-#        header += f"{self.context.rashi_aspects} rashi aspects\n"
-#        if self.context.sysflg == swe.FLG_SIDEREAL:
-#            # for sidereal signs we actually use swisseph 36
-#            # dhruva equatorial is only for nakshatras
-#            if self.context.ayanamsa == 98:
-#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-#            else:
-#                header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        elif self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
-#            if self.context.ayanamsa == 98:
-#                header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
-#                header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
-#            header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
-#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        else:
-#            header += f"{const.ayanamsa_name(self.context.ayanamsa)} ayanamsa\n"
-#        header += f"{self.context.location.placename()} ({self.context.location.latitude()} lat, {self.context.location.longitude()} long)\n"
-#        header += f"{self.context.timeJD}\n"
-#        return header
 
     def richDrawing_south_indian(self):
         spread = Table(box=None)
@@ -287,6 +270,9 @@ class Varga(Jaimini,API):
 
         # call signs.richDrawing() at the appropriate place
         # lagna is on the leftmost, which is east, facing south, which is the center of the 5x5 table
+
+        # usually Chart().rashi().signs()[n] means the nth sign
+        # here, signs[n] means signs from the lagna
         spread.add_row("",signs[11].richDrawing(),signs[10].richDrawing(),signs[9].richDrawing(),"")
         spread.add_row(signs[12].richDrawing(),"","","",signs[8].richDrawing())
         spread.add_row(signs[1].richDrawing(),"","","",signs[7].richDrawing())

@@ -162,7 +162,11 @@ glyphs = {
     "Uranus": "⛢",
     "Neptune": "♆",
     "Pluto": "⯓",
-    "Chiron": "⚷"
+    "Chiron": "⚷",
+    # these are for cards of truth
+    "Ecliptic": "⨁",
+    "Base": "",
+    "": ""
 }
 
 vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]

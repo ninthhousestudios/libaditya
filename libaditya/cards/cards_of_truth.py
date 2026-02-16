@@ -26,12 +26,28 @@ from libaditya.cards.deck import Deck
 from .cot import CoT
 
 class CardsOfTruth(CoT):
+    """
+     underneath this class, CoT represents the cards as a list of two-letter strings,
+     AH through KS. 
 
+     the index in this list represents its associated card always in the underlying representation
+
+     we dont really have to know how that works to use this, which is the point of libaditya
+
+    CardsOfTruth().birth_spread() returns a Spread() instance that represents the birth spread. see that class
+    for information on its use
+
+    its docstring explains about the planet order
+
+    it will also explain how to go into the Spread and get information you might need
+    """
+
+    # master is a calc.Rashi() object
     def __init__(self, context=EphContext(), master=None):
         self.context = context
         self.master = master
         self._birth_card: str = self._get_birth_card()
-        self._birth_spread: self.Spread = self._get_birth_spread()
+        self._birth_spread = self.Spread(self._get_birth_spread(), self)
 
     def birth_card(self):
         return self._birth_card
@@ -40,7 +56,7 @@ class CardsOfTruth(CoT):
         """
         self._birth_spread is the list of card integers of that spread
         """
-        return self.Spread(self._birth_spread, self.master, self.context.cot_planet_order)
+        return self._birth_spread
 
     def _get_birth_card(self):
         """
@@ -98,7 +114,7 @@ class CardsOfTruth(CoT):
             year = int(utils.dec2ymd(age).split()[0])-1
         year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
         # change planets to self.master.solar_return(year)...i.e., write solar_return
-        return self.Spread(year_spread_list, self.master, self.context.cot_planet_order)
+        return self.Spread(year_spread_list, self)
     
     class Spread:
         """
@@ -133,12 +149,13 @@ class CardsOfTruth(CoT):
         TODO: currently, Planet-s being put into cards is not implemented
         """
 
-        def __init__(self, spread_list, rashi, order="vedic"):
+        def __init__(self, spread_list, master):
             self._list = spread_list
+            self.master = master
+            self.context = self.master.context
             self._deck = Deck()
-            self._order = order
+            self._order = self.master.context.cot_planet_order
             self._spread = self._init_Spread()
-            self._rashi = rashi
             self._place_Objects()
 
         def __iter__(self):
@@ -173,6 +190,9 @@ class CardsOfTruth(CoT):
                 # self._list[spread_position] as the int representation of the card at that position
                 # put this int into cardsc.cards to get the string version, e.g., "KD"
                 spread[planet_key] = self.deck()[cardsc.cards[self._list[spread_position]]]
+                # tell the Card which planet it is
+                # it uses this, for instance, to print the glyph of the planet in the header
+                spread[planet_key]._planet = planet_key
                 # with this above, we should be able to iterate over Spread regardless of the system
             return spread
 
@@ -182,7 +202,15 @@ class CardsOfTruth(CoT):
             it adds these Planet-s to their proper Card in the Spread
             so then we will have Spread().planets() and Spread()["Sun"] to see which Planet-s are in the Sun card
             """
-            pass
+            # here is where we will need to know the type of spread
+            # for instance, the year spread is based on the solar return
+            # so we will need to get the plaents for the proper solar return
+            for planet in self.master.master.planets():
+                # put this planet in the card of its lord
+                self.spread()[planet.lord()].set_attribute(("planets",planet))
+            for cusp in self.master.master.cusps():
+                # put this cusp in the card of its lord
+                self.spread()[cusp.lord()].set_attribute(("cusps",cusp))
 
         def richDrawing(self):
             spread = Table(box=box.SIMPLE)
@@ -195,11 +223,11 @@ class CardsOfTruth(CoT):
             spread.add_column(" ",justify="center",style="white")
             spread.add_column(" ",justify="center",style="white")
 
-            spread.add_row(" "," "," ",self[0].drawing()," "," "," ")
-            spread.add_row(self[7].drawing(),self[6].drawing(),self[5].drawing(),self[4].drawing(),self[3].drawing(),self[2].drawing(),self[1].drawing())
-            spread.add_row(" "," ",self[9].drawing()," ",self[8].drawing()," "," ")
-            spread.add_row(" "," "," ",self[10].drawing()," "," "," ")
-            spread.add_row(" "," ",self[13].drawing(),self[12].drawing(),self[11].drawing()," "," ")
+            spread.add_row(" "," "," ",self[0].richDrawing()," "," "," ")
+            spread.add_row(self[7].richDrawing(),self[6].richDrawing(),self[5].richDrawing(),self[4].richDrawing(),self[3].richDrawing(),self[2].richDrawing(),self[1].richDrawing())
+            spread.add_row(" "," ",self[9].richDrawing()," ",self[8].richDrawing()," "," ")
+            spread.add_row(" "," "," ",self[10].richDrawing()," "," "," ")
+            spread.add_row(" "," ",self[13].richDrawing(),self[12].richDrawing(),self[11].richDrawing()," "," ")
 
             return spread
 

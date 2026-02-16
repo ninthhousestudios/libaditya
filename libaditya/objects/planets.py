@@ -1458,6 +1458,44 @@ natural_planets = {
 }
 
 class Planets:
+    """
+    a group of all the Planet-s that are available
+
+    here is special terminology used in Planets:
+
+    "karakas" - means "producer" in Sanskrit; they cause things to exist
+    these are the visible, embodied planets
+    sun, moon, mercury, venus, mars, jupiter, saturn
+
+    "grahas" - means "seizer" in Sanskrit, forces of consciousness
+    these are the karakas plus rahu and ketu, the north node and the south node
+
+    Planets().hd13() - these are the 13 planets used in Human Design, in an order
+    that is appropriate for hd
+
+    if you look at the way Planets().karakas/grahas/hd13() are defined, you can see how it is possible to
+    determine a particular order that works for you
+
+    Planets().(...) returns a dictionary of "Identity": Planet (Identity is the English name)
+    >>> for hdplanet in Planets().hd13().values():
+            print(hdplanet.name())
+    and it will iterate through the hdplanets in their proper order 
+
+    current print(Planets()) will print all the currently included Planet-s that applicable for that system
+    i.e., it won't print Earth using tropical, though i may change that
+    it will not print rahuketu if the chart is barycentric or heliocentric
+
+    all of these Planet-s will be in the same amsha; e.g., all natal planets, or all navamsha planets; they all stay together
+
+    to get a particular Planet:
+    >>> chart.rashi().planets().sun()
+    will return the Sun object
+    >>> chart.rashi().planets()["Sun"]
+    the same
+    >>> chart.rashi().planets()[1]
+    the same
+    right now, if it is an integer, it will go in the natural vedic order, sun, moon, mars, mercury, jupiter, venus, saturn, rahu, ketu, uranus, neptune, pluto, chiron
+    """
 
     def __init__(self, context=EphContext()):
         """
@@ -1547,10 +1585,10 @@ class Planets:
 
         # chiron can only be computed in a certain time frame
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
-            # swe can only compute Chiron between these two days
-            # so if it is outside this range, get rid of Chiron
             if "Chiron" in natural_planets.keys():
                 natural_planets.pop("Chiron")
+            # swe can only compute Chiron between these two days
+            # so if it is outside this range, get rid of Chiron
 
 #        # add Earth if using barycentric or heliocentric
 #        if self.system == const.BARY or self.system == const.HELIO:
@@ -1724,18 +1762,6 @@ class Planets:
                 if abs(graha_chosen.amsha_longitude()-graha_line.amsha_longitude()) < 1:
                     grahas.append((graha_chosen,graha_line))
         return grahas
-
-#        for n,graha_chosen in enumerate(self):
-#            if n == 9:
-#                # 9 would be Uranus; we only want grahas
-#                return grahas
-#            for i,graha_line in enumerate(self):
-#                if n == 9:
-#                    continue
-#                if graha_chosen == graha_line:
-#                    continue
-#                if abs(graha_chosen.amsha_longitude()-graha_line.amsha_longitude()) < 1:
-#                    grahas.append((graha_chosen,graha_line))
 
 
     def __str__(self):
@@ -1985,14 +2011,4 @@ class Planets:
 
         return ret
     
-
-planet_dict = {
-    "planets": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu, Uranus, Neptune, Pluto, Chiron],
-    "grahas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn, Rahu, Ketu],
-    "karakas": [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn],
-    "outer_planets": [Uranus, Neptune, Pluto],
-    "miscellaneous_planets": [Chiron]
-}
-
-karakas = [Sun, Moon, Mars, Mercury, Venus, Jupiter, Saturn]
 

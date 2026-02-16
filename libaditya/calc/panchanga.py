@@ -316,7 +316,7 @@ class Panchanga:
         self.timeJD
         """
         if (self.tithi() != 15):  
-            # if the tithi isnt 30, it cant be a full moon, so go forward 8 hours
+            # if the tithi isnt 15, it cant be a full moon, so go forward 8 hours
             return Panchanga(replace(self.context,timeJD=self.timeJD.shift("f","hour", 8))).next_full_moon()
         target = (self._sun.ecliptic_longitude() + 180) % 360
         diff = abs(self._moon.ecliptic_longitude() - target)

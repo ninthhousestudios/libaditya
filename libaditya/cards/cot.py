@@ -26,8 +26,8 @@ class CoT:
 
     this is a Mixin, having no __init__() method
 
-    you can use these methods through CoT, the class this inherits unto, e.g.,:
-    >>> CoT.queen_quadration()
+    you can use these methods through CardsOfTruth, the class this inherits unto, e.g.,:
+    >>> CardsOfTruth().queen_quadration()
     """
 
     @staticmethod
