@@ -14,6 +14,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+from enum import Enum
+
 from rich import box
 from rich.table import Table
 from rich.console import Console
@@ -24,6 +26,11 @@ from libaditya.objects import EphContext, Sun, JulianDay
 from libaditya.cards import cards_constants as cardsc
 from libaditya.cards.deck import Deck
 from .cot import CoT
+
+class SpreadType(Enum):
+    NATAL = 1
+    # solar return spread
+    YEAR = 2
 
 class CardsOfTruth(CoT):
     """
@@ -47,7 +54,7 @@ class CardsOfTruth(CoT):
         self.context = context
         self.master = master
         self._birth_card: str = self._get_birth_card()
-        self._birth_spread = self.Spread(self._get_birth_spread(), self)
+        self._birth_spread = self.Spread(self._get_birth_spread(), SpreadType.NATAL, self)
 
     def birth_card(self):
         return self._birth_card
@@ -108,13 +115,10 @@ class CardsOfTruth(CoT):
         """
         if year == None:
             # find the persons current age
-            now=JulianDay("now")
-            # age is a decimal in years
-            age = self.context.timeJD.age(now.jd_number())
-            year = int(utils.dec2ymd(age).split()[0])-1
+            year = int(self.context.timeJD.current_age())
         year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
         # change planets to self.master.solar_return(year)...i.e., write solar_return
-        return self.Spread(year_spread_list, self)
+        return self.Spread(year_spread_list, SpreadType.YEAR, self, which=year)
     
     class Spread:
         """
@@ -149,13 +153,19 @@ class CardsOfTruth(CoT):
         TODO: currently, Planet-s being put into cards is not implemented
         """
 
-        def __init__(self, spread_list, master):
+        def __init__(self, spread_list, spread_type: SpreadType, master, which=0):
             self._list = spread_list
             self.master = master
             self.context = self.master.context
+            self.spread_type = spread_type
+            # for all spreads besides natal, there is an option of which one you want
+            # e.g., for year spreads, which year of life? "which" specifices which specific instance of a spread of SpreadType you want
+            self.which = which
             self._deck = Deck()
             self._order = self.master.context.cot_planet_order
             self._spread = self._init_Spread()
+            self._planets = self._get_Planets()
+            self._cusps = self._get_Cusps()
             self._place_Objects()
 
         def __iter__(self):
@@ -196,6 +206,33 @@ class CardsOfTruth(CoT):
                 # with this above, we should be able to iterate over Spread regardless of the system
             return spread
 
+        def _get_Planets(self):
+            """
+            get the correct Planets for this spread
+            right now, natal or solar return
+            """
+            match self.spread_type:
+                case SpreadType.NATAL:
+                    # Spread.master is CardsOfTruth(); CardsOfTruth().master is Rashi()
+                    return self.master.master.planets()
+                case SpreadType.YEAR:
+                    # Rashi().solar_return() is a Chart() object
+                    return self.master.master.solar_return(self.which).rashi().planets()
+                    
+
+        def _get_Cusps(self):
+            """
+            get the correct Cusps for this spread
+            right now, natal or solar return
+            """
+            match self.spread_type:
+                case SpreadType.NATAL:
+                    # Spread.master is CardsOfTruth(); CardsOfTruth().master is Rashi()
+                    return self.master.master.cusps()
+                case SpreadType.YEAR:
+                    # Rashi().solar_return() is a Chart() object
+                    return self.master.master.solar_return(self.which).rashi().cusps()
+
         def _place_Objects(self):
             """
             it initializes those Planet-s into Spread
@@ -205,10 +242,10 @@ class CardsOfTruth(CoT):
             # here is where we will need to know the type of spread
             # for instance, the year spread is based on the solar return
             # so we will need to get the plaents for the proper solar return
-            for planet in self.master.master.planets():
+            for planet in self._planets:
                 # put this planet in the card of its lord
                 self.spread()[planet.lord()].set_attribute(("planets",planet))
-            for cusp in self.master.master.cusps():
+            for cusp in self._cusps:
                 # put this cusp in the card of its lord
                 self.spread()[cusp.lord()].set_attribute(("cusps",cusp))
 

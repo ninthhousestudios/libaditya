@@ -37,7 +37,7 @@ class JulianDay:
 
     # time units in julian days
     onedayjd = 1
-    oneyearjd = onedayjd * 360
+    oneyearjd = onedayjd * 365.25
     onemonthjd = onedayjd * 30
     onehrjd = onedayjd / 24
     oneminjd = onehrjd / 60
@@ -181,6 +181,14 @@ class JulianDay:
         distance in years between self and date
         """
         return (datejd-self.jd)/self.oneyearjd
+
+    def current_age(self):
+        """
+        distance in years between self and date
+        """
+        nowtime = time.gmtime()
+        jd = utils.tmod_to_jd(nowtime)
+        return (jd-self.jd)/self.oneyearjd
 
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"

@@ -18,12 +18,11 @@
 import os
 import pathlib
 from dataclasses import replace
-from typing import Self
 import swisseph as swe
 
 from libaditya import constants as const
 
-from libaditya.objects import EphContext, Planets, Cusps, Circle, JulianDay
+from libaditya.objects import EphContext, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
 from libaditya.cards import CardsOfTruth
 import libaditya.stars as stars
@@ -55,8 +54,8 @@ class Chart(API):
 
     not sure this syntax is really worth it? leaving it for now
     """
-    libaditya_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
-    ephe_path = libaditya_path + "ephe/"
+    libaditya_path = os.path.dirname(pathlib.Path(__file__).parent)
+    ephe_path = libaditya_path + "/ephe/"
 
     def __init__(self, context=EphContext()):
         swe.set_ephe_path(self.ephe_path)
@@ -64,7 +63,7 @@ class Chart(API):
         self._Rashi = Rashi(self.context,self)
 
     def __repr__(self):
-        return repr(self.rashi())
+        return self.rashi().__str__()
 
     def __str__(self):
         return self.__repr__()
@@ -72,7 +71,10 @@ class Chart(API):
     def chart(self):
         return self
 
-    def rashi(self):
+    def rashi(self, n=None):
+        # pass an integer to Chart().rashi(), get the varga...just to make it easier for me sometimes
+        if n is not None:
+            return self.varga(n)
         return self._Rashi
 
     # natal() is meant to be an api feature for western/hellenistic/other astrologers
@@ -87,18 +89,32 @@ class Chart(API):
     def varga(self, amsha: int):
         """
         use Chart.rashi() for the rashi() chart
+
         you must pass an integer to varga
-        Chart.varga(1) return something that has the same Planets and Cusps as the Rashi() chart, but
-        is different in some respects...not sure if they should be or not, e.g., wrt to argala
 
         1-N for positive integers make a parivritti varga of that amsha
-        special vargas have negative integer codes (updated here as implemeneted)
+
+        special vargas have negative integer codes
         these vargas all have deities associated with the amsha in various ways
-        these can be accessed by Longitude.deity(). Longitude knows what amsha it is in. Longitude.lord() gives the
-        planetary lord for the sign Longitude inhabits in the amsha.
+        these can be accessed by Planet/Cusp.deity() (really, it is Longitude.deity()...
+        Longitude is where basically all of the Aditya/Zodiac and varga calculations are managed)
+
             -2 Hora; Sun and Moon, same stays, opposite goes opposite
             -3 Drekkana;
+            -4 Chaturthamsha
+            -10 Dashamsha
+            -100 Dashamsha with Even Rashis going in reverse
+            -12 Dvadashamsha
+            -16 Shodashamsha
+            -20 Vimshamsha
+            -24 Parashara Chaturvimshamsha
+            -240 Siddhamsha
+            -27 Bhamsha
+            -40 Khdavedamsha
+            -45 Akshavedamsha
+            -60 Shashtyamsha
         """
+
         return Varga(self.context,amsha)
 
     def saptavargas(self):
@@ -238,6 +254,17 @@ class Chart(API):
         easily choose a combination of options that doesnt really make sense
         """
         return Chart(context=replace(self.context,**kwargs))
+
+    def _new_context(self, context):
+        """
+        return a Chart replacing anything in this EphContext by **kwargs
+        e.g., Chart.new_chart(hsys='R', ayanamsa=27) will return this Chart but using Regiomontanus house system
+        and True Citra ayanamsa, all the other options staying the same
+
+        be very careful with this as there are no protections on the option combinations and you could
+        easily choose a combination of options that doesnt really make sense
+        """
+        return Chart(context)
 
     def stars(self,stellarium=False):
         """

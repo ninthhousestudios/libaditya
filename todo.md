@@ -1,4 +1,32 @@
+#
+figure out how to calculate start times of card subperiods
+right now, specifically the year spreads
 
+day, 7year, week spreads seem relatively straightforward
+
+for day
+day 0 is the day of your birth is the same as the birth spread
+for day 1 you quadrate once, thus the day spread of day 1 will be the same as the year
+spread of year 1
+for day 2 you quadrate once again, etc.
+there are 90 quadrations, thus day 90 spread is the same as day 0 spread, etc.
+still need to know how many days since birth...based on the particular birth time i
+think
+
+for 7year
+spread for first 7 years is same as birth spread
+but sun card is year 0, moon card is year 1, etc.
+then for year 7, quadrate once, so that the spread of the second 7-year period is the
+same as the spread of year 1 and day 1, etc.
+
+can also do this with weeks
+
+there are also
+week progressions
+day progressions
+7year progressions
+
+day quadration has a number of options to it
 
 #
 couldnt make Planet().constellation() work from pyphemeris
