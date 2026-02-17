@@ -190,6 +190,12 @@ class JulianDay:
         jd = utils.tmod_to_jd(nowtime)
         return (jd-self.jd)/self.oneyearjd
 
+    def current_age_days(self):
+        """
+        distance in years between self and date
+        """
+        return self.current_age()*365.25
+
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"
 

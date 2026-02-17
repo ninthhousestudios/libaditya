@@ -27,10 +27,6 @@ from libaditya.cards import cards_constants as cardsc
 from libaditya.cards.deck import Deck
 from .cot import CoT
 
-class SpreadType(Enum):
-    NATAL = 1
-    # solar return spread
-    YEAR = 2
 
 class CardsOfTruth(CoT):
     """
@@ -54,7 +50,7 @@ class CardsOfTruth(CoT):
         self.context = context
         self.master = master
         self._birth_card: str = self._get_birth_card()
-        self._birth_spread = self.Spread(self._get_birth_spread(), SpreadType.NATAL, self)
+        self._birth_spread = self.BirthSpread(self._get_birth_spread(), self)
 
     def birth_card(self):
         return self._birth_card
@@ -118,7 +114,22 @@ class CardsOfTruth(CoT):
             year = int(self.context.timeJD.current_age())
         year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
         # change planets to self.master.solar_return(year)...i.e., write solar_return
-        return self.Spread(year_spread_list, SpreadType.YEAR, self, which=year)
+        return self.YearSpread(year_spread_list, self, which=year)
+
+    def day_quadration(self, day=None):
+        """
+        get a day quadration spread for day "day"
+        if day=None, will get for the current day
+
+        if day is an integer, it will get the spread the "day"th day after birth
+        0 is the first day one is born, 1 is the next day, 2 the day after that, etc.
+        """
+        if day == None:
+            # find current age in days
+            day = int(self.context.timeJD.current_age_days())
+        day_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(CoT.queen_quadration(),day))
+        # change planets to self.master.solar_return(year)...i.e., write solar_return
+        return self.DayQuadration(day_spread_list, self, which=day)
     
     class Spread:
         """
@@ -153,20 +164,16 @@ class CardsOfTruth(CoT):
         TODO: currently, Planet-s being put into cards is not implemented
         """
 
-        def __init__(self, spread_list, spread_type: SpreadType, master, which=0):
+        def __init__(self, spread_list, master, which=0):
             self._list = spread_list
             self.master = master
             self.context = self.master.context
-            self.spread_type = spread_type
             # for all spreads besides natal, there is an option of which one you want
-            # e.g., for year spreads, which year of life? "which" specifices which specific instance of a spread of SpreadType you want
+            # e.g., for the year spread, "which" is which year
             self.which = which
             self._deck = Deck()
             self._order = self.master.context.cot_planet_order
             self._spread = self._init_Spread()
-            self._planets = self._get_Planets()
-            self._cusps = self._get_Cusps()
-            self._place_Objects()
 
         def __iter__(self):
             return iter(self._spread)
@@ -206,32 +213,6 @@ class CardsOfTruth(CoT):
                 # with this above, we should be able to iterate over Spread regardless of the system
             return spread
 
-        def _get_Planets(self):
-            """
-            get the correct Planets for this spread
-            right now, natal or solar return
-            """
-            match self.spread_type:
-                case SpreadType.NATAL:
-                    # Spread.master is CardsOfTruth(); CardsOfTruth().master is Rashi()
-                    return self.master.master.planets()
-                case SpreadType.YEAR:
-                    # Rashi().solar_return() is a Chart() object
-                    return self.master.master.solar_return(self.which).rashi().planets()
-                    
-
-        def _get_Cusps(self):
-            """
-            get the correct Cusps for this spread
-            right now, natal or solar return
-            """
-            match self.spread_type:
-                case SpreadType.NATAL:
-                    # Spread.master is CardsOfTruth(); CardsOfTruth().master is Rashi()
-                    return self.master.master.cusps()
-                case SpreadType.YEAR:
-                    # Rashi().solar_return() is a Chart() object
-                    return self.master.master.solar_return(self.which).rashi().cusps()
 
         def _place_Objects(self):
             """
@@ -271,3 +252,73 @@ class CardsOfTruth(CoT):
         def rich(self):
             from rich.console import Console
             Console().print(self.richDrawing())
+
+    # the following are classes for specific kinds of spread
+    # the only difference is really how self._get_Planets() and self._get_Cusps() work
+    # this is where they get the appropriate planets and cusps and put them into the spread
+
+    class BirthSpread(Spread):
+
+        def __init__(self, spread_list, master, which=0):
+            super().__init__(spread_list, master)
+            self._planets = self._get_Planets()
+            self._cusps = self._get_Cusps()
+            self._place_Objects()
+
+        def _get_Planets(self):
+            """
+            get the correct Planets for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.planets()
+
+        def _get_Cusps(self):
+            """
+            get the correct Cusps for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.cusps()
+
+    class YearSpread(Spread):
+
+        def __init__(self, spread_list, master, which):
+            super().__init__(spread_list, master, which)
+            self._planets = self._get_Planets()
+            self._cusps = self._get_Cusps()
+            self._place_Objects()
+
+        def _get_Planets(self):
+            """
+            get the correct Planets for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.solar_return(self.which).rashi().planets()
+
+        def _get_Cusps(self):
+            """
+            get the correct Cusps for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.solar_return(self.which).rashi().cusps()
+
+    class DayQuadration(Spread):
+
+        def __init__(self, spread_list, master, which=0):
+            super().__init__(spread_list, master)
+            self._planets = self._get_Planets()
+            self._cusps = self._get_Cusps()
+            self._place_Objects()
+
+        def _get_Planets(self):
+            """
+            get the correct Planets for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.planets()
+
+        def _get_Cusps(self):
+            """
+            get the correct Cusps for this spread
+            right now, natal or solar return
+            """
+            return self.master.master.cusps()
