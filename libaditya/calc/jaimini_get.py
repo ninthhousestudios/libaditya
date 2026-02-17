@@ -15,6 +15,54 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+spirituality = {
+    "factor": ["12 away AK"],
+    "vargas": ["9","24","1"]
+}
+
+mundane_deity = {
+    "factor": ["6 away AmK"],
+    "vargas": ["30","9","1"]
+}
+
+home = {
+    "factor": ["4 away AK"],
+    "vargas": ["4","16","1"]
+}
+
+dharma = {
+    "factor": ["9 away AK"],
+    # 12 for seeing if parental influence supports innate dharma
+    "vargas": ["9","1","12"]
+}
+
+farmer = {
+    "factor": ["3 with malefic", "6 with malefic", "esp: 9 with Jupiter"],
+    # others?
+    "vargas": ["1"]
+}
+
+adultery = {
+    "factor": ["AK in Mars or AK in Venus"],
+    "vargas": ["9","7","1"]
+}
+
+spouse = {
+    "factor": ["7 away AK"],
+    "vargas": ["9","7","1"]
+}
+
+might = {
+    "factor": ["3 away AK"],
+    "vargas": ["9","3","1"]
+}
+
+conjurer = {
+    "factor": ["5 away AK and 9 away AK"],
+    "vargas": ["9","1"]
+}
+
+# dont forget const.multi_vargas
 
 class JaiminiGet:
     """

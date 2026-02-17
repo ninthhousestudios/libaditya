@@ -136,7 +136,11 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         """
         return the dignity that has been set by Planets.
         """
-        return self.attributes["dignity"]
+        match self.identity():
+            case "Earth" | "Uranus" | "Neptune" | "Pluto" | "Chiron":
+                return ""
+            case _:
+                return self.attributes["dignity"]
 
     def combined_relationship(self):
         """
@@ -293,6 +297,17 @@ class Planet(CelestialObject,Longitude,PlanetBala):
     def nakshatra_name(self) -> str:
         return self._nakshatra.nakshatra()
 
+    def nature(self):
+        """
+        "" for none
+        """
+        match self.identity():
+            case "Uranus" | "Neptune" | "Pluto" | "Chiron":
+                return "none"
+            case _:
+                return ""
+
+
     def _get_dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
@@ -412,10 +427,11 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         """
         return a string of planetary information that can be stored in a dictionary that can be convereted to toml
         separate attributes by a comma, in the proper order
-        current options:
-        name,dignity
+        
+        curent fields:
+        name,nature,lord,dignity
         """
-        return f"{self.planet_name},{self.dignity()}"
+        return f"{self.planet_name},{self.nature()},{self.lord()},{self.dignity()}"
 
     def __str__(self):
         ayanamsa = ""
@@ -1405,6 +1421,12 @@ class Earth(Planet):
 
     def type(self):
         return Earth
+
+    def nature(self) -> str:
+        """
+        nature means benefic or malefic
+        """
+        return "Benefic"
 
     def is_outer_planet(self):
         return False

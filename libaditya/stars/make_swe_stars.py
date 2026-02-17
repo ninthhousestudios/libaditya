@@ -161,7 +161,12 @@ star_names_short_to_long = {
 }
 
 def main():
-    args = get_args()
+    args, argparser = get_args()
+
+    # if they dont pass any stars, print help message
+    if not args.stars:
+        argparser.print_help()
+        exit()
 
     stars = []
 
@@ -375,7 +380,7 @@ def nomen_to_long_form(nomen: str):
 def get_args():
     parser = argparse.ArgumentParser(
         prog="make_swe_stars.py",
-        usage="%(prog)s [options]",
+        usage="%(prog)s [stars]: [stars] is a space-separated list. For star names with spaces, use quotation marks: \"Alpha Ursae Minoris\"",
         description="make sefstars.txt entry for specified stars",
     )
     parser.add_argument(
@@ -391,7 +396,7 @@ def get_args():
 #    )
     parser.add_argument("stars", nargs='*', help="stars to make entries for. you can enter multiple as a space separated list. if the name itself has a space in it, surround whole name with double-quotes: e.g., $ python make_swe_stars.py Sirius \"HIP 34567\" M87 \"Zeta Ursae Minoris\"") 
     args = parser.parse_args()
-    return args
+    return args, parser
 
 if __name__ == "__main__":
     main()
