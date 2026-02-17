@@ -198,7 +198,7 @@ def swe_make_star(names=[""]) -> [str]:
     make an entry for ephe/sefstars.txt to add star "name" to that file, and thus to swe
     returns a list [sefstars.txt_entry,simbad_response_str]
     """
-    import urllib
+    import urllib.request
     from string import Template
     simbad_query = Template("https://simbad.cds.unistra.fr/simbad/sim-id?Ident=$swe_id&NbIdent=1&Radius=2&Radius.unit=arcmin&submit=submit%20id&output.format=ASCII")
     swe_star_entry = Template("$trad_name,$nomen_name,ICRS,$ra_hour,$ra_minute,$ra_sec,$dec_degree,$dec_minute,$dec_sec,$pmra,$pmde,$rad_vel,$parallax,$magnitude_V")
@@ -231,8 +231,6 @@ def swe_write_stars(names=[""],outfile=""):
     """
     take a list of objects ids, names
     write out to a file their entries for ephe/sefstars.txt
-
-    TODO: update to do multi-line output with each name
     """
     lines=[]
     for name in names:
@@ -397,5 +395,3 @@ def get_args():
 
 if __name__ == "__main__":
     main()
-
-
