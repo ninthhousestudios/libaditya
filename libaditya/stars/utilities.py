@@ -469,22 +469,25 @@ def swe_write_multiline_sefstars(infile,outfile):
 
     and output a sefstars.txt that has the same info line as well as one entry for each name
     #0# noMen, other_name, other_name, ...
-    (other_name,nomen,frame,ra_hour,...)
-    long_form_nomen,nomen,frame,ra_hour,...
     nomen,nomen,frame,ra_hour,...
+    long_form_nomen,nomen,frame,ra_hour,...
     other_name,nomen,frame,ra_hour,...
+
+
+    #0# alfCMa,  Alpha Canis Major,  Sirius,  HIP 32349
+    alfCMa,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+    Alpha Canis Majoris,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+    Alpha Canis Major,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+    Sirius,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
+    HIP 32349,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
     ...
 
     will try to make the first other_name be the "traditional" name if its has one
     this may not always work exactly as hoped
     """
-    with open("infile") as infd:
+    with open(infile) as infd:
         inlines=infd.readlines()
 
-    starsin = swe_populate_stars(inlines)
-    # starsin is now a dictionary
-    # key: noMen name (no ","!)
-    # values: list = [swe_string,other_name,other_name,...]
 
     # need to perserve comments and order, so we will do this with a manual n-based while loop
 
@@ -496,16 +499,41 @@ def swe_write_multiline_sefstars(infile,outfile):
     #   long_form_nomen ; this is a written form of the nomen name, e.g., Alpha Canis Majoris
     #   other_name, etc.
 
+    # this is where we put the lines to write out
+    outlines = []
+
+    # we go through the inlines manually so that we preserve the order of comments, etc.
     n=0
-    for n in range(0,len(lines)):
-        line=lines[n]
+    for n in range(0,len(inlines)):
+        line=inlines[n]
         if line.startswith("#") and not line.startswith("#0#"):
             # a comment only
+            outlines.append(line)
             n+=1
             continue
         if line.startswith("#0#"):
             info_line = line
+            outlines.append(info_line)
             n+=1
-            star_line = lines[n]
+            star_line_long_form_nomen = inlines[n]
             # ready for the next loop
             n+=1
+
+            # now append the correct lines into outlines
+            star_line_split = star_line_long_form_nomen.split(",")[1:]
+            nomen = star_line_split[0]
+            # append nomen line first, then long_form, the eac name on the info line in order
+            outlines.append(",".join([nomen]+star_line_split))
+            outlines.append(star_line_long_form_nomen)
+            for name in info_line.split(",")[1:]:
+                # sometimes there are no more names, which appears as either empty string or a string of spaces, which .strip() converts to empty string, essentially
+                if name.strip() == "":
+                    continue
+                if name.strip() == "no hip id":
+                    continue
+                outlines.append(",".join([name.strip()]+star_line_split))
+
+    with open(outfile,"a") as outfd:
+        outfd.writelines(outlines)
+
+    return 0

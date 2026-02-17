@@ -13,6 +13,8 @@ there are 90 quadrations, thus day 90 spread is the same as day 0 spread, etc.
 still need to know how many days since birth...based on the particular birth time i
 think
 
+fix planets in day quadration
+
 for 7year
 spread for first 7 years is same as birth spread
 but sun card is year 0, moon card is year 1, etc.

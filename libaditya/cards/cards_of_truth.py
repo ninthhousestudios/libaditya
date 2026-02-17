@@ -14,8 +14,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from enum import Enum
-
 from rich import box
 from rich.table import Table
 from rich.console import Console
