@@ -128,7 +128,6 @@ class CardsOfTruth(CoT):
             # find current age in days
             day = int(self.context.timeJD.current_age_days())
         day_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(CoT.queen_quadration(),day))
-        # change planets to self.master.solar_return(year)...i.e., write solar_return
         return self.DayQuadration(day_spread_list, self, which=day)
     
     class Spread:
@@ -314,11 +313,11 @@ class CardsOfTruth(CoT):
             get the correct Planets for this spread
             right now, natal or solar return
             """
-            return self.master.master.planets()
+            return self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which).rashi().planets()
 
         def _get_Cusps(self):
             """
             get the correct Cusps for this spread
             right now, natal or solar return
             """
-            return self.master.master.cusps()
+            return self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which).rashi().cusps()
