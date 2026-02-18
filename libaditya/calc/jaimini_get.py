@@ -15,54 +15,79 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-spirituality = {
-    "factor": ["12 away AK"],
-    "vargas": ["9","24","1"]
-}
 
-mundane_deity = {
-    "factor": ["6 away AmK"],
-    "vargas": ["30","9","1"]
-}
 
-home = {
-    "factor": ["4 away AK"],
-    "vargas": ["4","16","1"]
-}
+class Gets:
+    """
+    factor-s are all signs
 
-dharma = {
-    "factor": ["9 away AK"],
-    # 12 for seeing if parental influence supports innate dharma
-    "vargas": ["9","1","12"]
-}
+    it is the planets that are conjunct or aspect that provide the effect
+    but that is interpretive, what effect and to what extent
 
-farmer = {
-    "factor": ["3 with malefic", "6 with malefic", "esp: 9 with Jupiter"],
-    # others?
-    "vargas": ["1"]
-}
+    "gets" are just about calculations
 
-adultery = {
-    "factor": ["AK in Mars or AK in Venus"],
-    "vargas": ["9","7","1"]
-}
+    to do the interpretation, we need to know which planets are conjunct or aspecting the ak,
+    which sign the ak is in in various vargas, etc.
 
-spouse = {
-    "factor": ["7 away AK"],
-    "vargas": ["9","7","1"]
-}
+    that is what we are doing here.
+    """
 
-might = {
-    "factor": ["3 away AK"],
-    "vargas": ["9","3","1"]
-}
+    karakamshas = {
+        # AK, i.e.,s the sign of the AK
+        "factor": ["AK"],
+        "vargas": ["9","1","7"]
+    }
 
-conjurer = {
-    "factor": ["5 away AK and 9 away AK"],
-    "vargas": ["9","1"]
-}
+    spirituality = {
+        "factor": ["12 away AK"],
+        "vargas": ["9","24","1"]
+    }
 
-# dont forget const.multi_vargas
+    mundane_deity = {
+        "factor": ["6 away AmK"],
+        "vargas": ["30","9","1"]
+    }
+
+    home = {
+        "factor": ["4 away AK"],
+        "vargas": ["4","16","1"]
+    }
+
+    dharma = {
+        "factor": ["9 away AK"],
+        # 12 for seeing if parental influence supports innate dharma
+        "vargas": ["9","1","12"]
+    }
+
+    farmer = {
+        "factor": ["3", "6", "9"],
+        # others?
+        "vargas": ["1"]
+    }
+
+    # this is interpretive actually
+    # this is will be covered by "karamashas" near the top
+#    adultery = {
+#        "factor": ["AK in Mars or AK in Venus"],
+#        "vargas": ["9","7","1"]
+#    }
+
+    spouse = {
+        "factor": ["7 away AK"],
+        "vargas": ["9","7","1"]
+    }
+
+    might = {
+        "factor": ["3 away AK"],
+        "vargas": ["9","3","1"]
+    }
+
+    conjurer = {
+        "factor": ["5 away AK", "9 away AK"],
+        "vargas": ["9","1"]
+    }
+
+    # dont forget const.multi_vargas
 
 class JaiminiGet:
     """

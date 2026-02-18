@@ -302,7 +302,9 @@ From [here](https://www.astro.com/swisseph/swephprg.htm#_Toc112949016)
 "Lahiri ICRC",                           46 SE_SIDM_LAHIRI_ICRC
 ```
 
-### Tropical, Sideral, Aditya, etc.
+TODO: custom ayanamsas in ```libaditya```
+
+### Chart Systems
 
 TODO: explain how options for these are managed in ```EphContext```.
 
@@ -524,10 +526,10 @@ may have defaults).
 ```
 >>> cot.Spread()
 Traceback (most recent call last):
-  File "<python-input-35>", line 1, in <module>
-    cot.Spread()
-    ~~~~~~~~~~^^
-TypeError: CardsOfTruth.Spread.__init__() missing 1 required positional argument: 'spread_list'
+  File "<python-input-10>", line 1, in <module>
+    ja.cot().Spread()
+    ~~~~~~~~~~~~~~~^^
+TypeError: CardsOfTruth.Spread.__init__() missing 2 required positional arguments: 'spread_list' and 'master'
 ```
 
 And we see that didn't really work. Python has a built-in documentation feature. Under
@@ -538,3 +540,17 @@ these. With this, you can look up help in the Python ```repl``` itself:
 >>> help(cot.Spread)
 ```
 
+The first line says that ```cot.Spread``` "initializes a Spread object; the most important argument is spread_list, which is the list of numbers presenting the cards of the spread".
+
+At the most fundamental layer, ```libaditya``` represents the cards as a list of
+two-letter reprentations of the cards, starting with "AH", "Ace of Hearts" and ending
+with "KS", "King of Spades". Consequently, the list index of card also represents that
+card. Python lists are 0-indexed, meaning the first element of the list is accessed by
+```ls[0]```.
+
+You can see these representations since they live in
+```libaditya/cards/cards_constants.py```. You can access them from the ```repl```:
+```
+>>> cards_constants.cards
+>>> cards_constants.jackquad
+```

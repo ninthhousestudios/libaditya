@@ -311,11 +311,13 @@ class CardsOfTruth(CoT):
             get the correct Planets for this spread
             right now, natal or solar return
             """
-            return self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which).rashi().planets()
+            chart = self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which)
+            return chart.rashi().planets()
 
         def _get_Cusps(self):
             """
             get the correct Cusps for this spread
             right now, natal or solar return
             """
-            return self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which).rashi().cusps()
+            chart = self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which)
+            return chart.rashi().cusps()

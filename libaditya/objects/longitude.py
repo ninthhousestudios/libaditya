@@ -26,7 +26,50 @@ from .context import EphContext, Circle
 
 class Longitude:
     """
+
+    note: this class is not really meant for users of any kind
+    most of this stuff should not be touched
+    ideally should not need to be touch
+    hopefully, it accurately represents the calculation basis well enough that it remains
+
+    in any case, if you are new to libaditya, the place to start is Chart()
+    Chart() sets off a whole cascade that ends up down here many times. Perhaps work your way
+    down from the top so you can see what is happening?
+
     Longitude expects at minimum a longitude
+
+    longitude is a base floating point reference longitude already in whatever system you prefer
+
+    note: this class does NOT deal with tropical, sidereal, heliocentric, topocentric, etc.
+    (..though it may at some pont deal with draconic?)
+    
+    it DOES however deal with whether something is referenced to the Aditya Circle or the Zodiac Circle
+    it also has to do with what varga, or "amsha" as the number itself is called, the longitude is referenced for
+
+    so if you know the ecliptic longitude of Mercury is 89 degrees (be they tropical, sidereal, or whatever) and you
+    want that in the 9th parivritti varga (the navamsha), you can call:
+    Longitude(89,9,context)
+
+    "context" is optional, but if you are working if a specific case, you will have a context you can pass
+    you can check out Longitude by
+
+    >>> l=Longitude(89,9)
+    >>> l
+    (89,321.0,9)
+    >>> l.longitde()
+    '21:00:00 parjanya'
+    >>> l.ecliptic_longitude()
+    89
+    >>> l.context.circle
+    <Circle.ADITYA: 1>
+    >>> l.amsha_longitude()
+    321.0
+
+    "amsha longitude" is what I chose to call the longitude in the varga. Everything longitude
+    knows its ecliptic longitude and its amsha longitude, if it is in an amsha other than one.
+    Thus, every longitude knows what sign that would in the rashi and its particular varga.
+    This is true of every object that is also an instance of Longitude, that is: Planet and Cusp and FixedStar.
+    Instances of all of these objects also have all of these
 
     note: Longitude takes a floating longitude
     this mean Longitude is not responsible for knowing if it is tropical or sidereal or topocentric, etc.
@@ -55,6 +98,7 @@ class Longitude:
         self._deity = "none"
         self._amsha_longitude = self.varga(amsha)%360
         self._amsha_index = int((self.amsha_raw_longitude() % 360) / 30)
+        self._ratio = self.get_ratio()
 
     def Longitude(self):
         return self
@@ -342,6 +386,25 @@ class Longitude:
         return the "real" longitude for self.ecliptic_longitude() in
         varga number "division"
         number 2-60 all refer to parvritti vargas
+
+        take number 8 for example:
+
+        divide each sign into 8, then write the names of the 12 signs 
+        in order around this circle of 12*8 sections. There will be 8 sets of 12 signs.
+
+        sign sections, below
+        01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08
+        01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12 01 02 03 04 05 06 07 08 09 10 11 12
+        sign names, above
+
+        you have to look at it with no wrap, but the first line has 12 "01-08"s and the second line has 8 "01-12"s
+
+        if you look at each time 01 appears in the upper line, then below you while find either 01, 09, 05, etc.
+
+        likewise, 02, 10, and 06 form a trine, so you will see in the lines above that trines are always paired
+
+        that is a consequence of the dividing into 8 and the way the signs end up when laying them out
+
         """
         # just to make sure we are working with the rashi longitude
         real_sign = self.ecliptic_sign_index()+1 # +1 to transform index into sign
@@ -361,6 +424,23 @@ class Longitude:
         self.set_parivritti_deities(this_amsha,real_sign)
 
         return base_longitude + (amsha_elapsed*30) + (current_in_amsha*30)
+
+    def get_ratio(self):
+        """
+        set the ratio of this parivritti varga
+        ratio meaning 12/amsha
+        for the first 12 amsha, we will relate this to a tone in just intonation
+        12/9 = 4/3 => navamsha is related to 4/3
+        e.g.,
+        """
+        from fractions import Fraction
+        if self._amsha > 0:
+            return Fraction(12/self._amsha)
+        else:
+            return Fraction(0,1)
+
+    def ratio(self):
+        return self._ratio
 
     def set_parivritti_deities(self, this_amsha, real_sign):
         """
