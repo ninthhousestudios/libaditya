@@ -31,8 +31,8 @@ started adding ```rich``` representations in ```libaditya``` itself, through ```
   - [Chart Types and Options](#chart-types-and-options)
     - [EphContext](#ephcontext)
     - [Chart](#chart)
-    - [Ayanamsa](#ayanamsa)
-    - [Tropical, Sideral, Aditya, etc.](#tropical-sideral-aditya-etc.)
+    - [Ayanamsas](#ayanamsas)
+    - [Chart Systems](#chart-systems)
   - [Dignity Example](#dignity-example)
 - [Vargas](#vargas)
 - [Human Design](#human-design)
@@ -243,12 +243,15 @@ Check [here](https://www.astro.com/swisseph/swisseph.htm#_Toc112511738) for an
 interesting and techincal discussion of ayanamsa by the programmers of the Swiss
 Ephemeris.
 
-Follows a list of all the Swiss Ephemeris ayanamsas:
-To set the ayanamsa in ```libaditya```, use the proper integer that is in the middle
-column below. You can also use ```swe.NAME```, where ```NAME``` is what follows the
-integer in the proper row, but with the ```SE_```. Thus, for "Fagan/Bradley", you can
-do ```chart.sidereal(ayanama=swe.SE_SIDM_FAGAN_BRADLEY)``` or
-```chart.sidereal(ayanamsa=0)```:
+Follows a list of all the Swiss Ephemeris ayanamsas. To set the ayanamsa in
+```libaditya```, use the proper integer that is in the middle column below. You can also
+use ```swe.NAME```, where ```NAME``` is what follows the integer in the proper row, but
+with the ```SE_```. Thus, for "Fagan/Bradley", you can do
+```chart.sidereal(ayanama=swe.SE_SIDM_FAGAN_BRADLEY)``` or
+```chart.sidereal(ayanamsa=0)```.
+
+From [here](https://www.astro.com/swisseph/swephprg.htm#_Toc112949016)
+
 ```
 "Fagan/Bradley”,                       0 SE_SIDM_FAGAN_BRADLEY
 "Lahiri”,                              1 SE_SIDM_LAHIRI
