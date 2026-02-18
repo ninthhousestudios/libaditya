@@ -62,6 +62,10 @@ was an idea, but need actual use cases to decide if it would be worth it
 #
 stars
 
+add long form nomen name to info line in sefstars.txt...just another function to go
+through and do it. we can just have it reconstruct, not even pick it up from one of the
+lines below
+
 perhaps change TheStars.search_star_interactive() to search names in info field? #0#
 
 add nakshatras to fixed stars

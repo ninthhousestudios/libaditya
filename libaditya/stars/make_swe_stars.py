@@ -175,14 +175,19 @@ def main():
         swe_star = swe_make_star(star)[0]
         info_line = swe_star[0]
         star_line_long_form_nomen = swe_star[1]
+        long_form_nomen = star_line_long_form_nomen.split(",")[0]
         # now append the correct lines into outlines
         star_line_split = star_line_long_form_nomen.split(",")[1:]
         nomen = star_line_split[0]
         # append nomen line first, then long_form, the eac name on the info line in order
+        info_line = info_line.split(",")
+        info_line.insert(2, " "+long_form_nomen)
+        info_line = ",".join(info_line)
         stars.append(info_line)
         stars.append(",".join([nomen]+star_line_split))
         stars.append(star_line_long_form_nomen)
-        for name in info_line.split(",")[1:]:
+        info_line = info_line.split(",")[1:]
+        for name in info_line:
             # sometimes there are no more names, which appears as either empty string or a string of spaces, which .strip() converts to empty string, essentially
             if name.strip() == "":
                 continue

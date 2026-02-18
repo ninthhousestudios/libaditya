@@ -29,6 +29,10 @@ started adding ```rich``` representations in ```libaditya``` itself, through ```
   - [Entering a Chart](#entering-a-chart)
   - [Reading a Chart from a File](#reading-a-chart-from-a-file)
   - [Chart Types and Options](#chart-types-and-options)
+    - [EphContext](#ephcontext)
+    - [Chart](#chart)
+    - [Ayanamsa](#ayanamsa)
+    - [Tropical, Sideral, Aditya, etc.](#tropical-sideral-aditya-etc.)
   - [Dignity Example](#dignity-example)
 - [Vargas](#vargas)
 - [Human Design](#human-design)
@@ -85,6 +89,7 @@ classes and function so that there is something helpuful printed.
 Basically all values have defaults, so you can also do this
 ```
 >>> c=Chart()
+>>> c
 >>> dir(c)
 ```
 to see all of what Chart has and can do.
@@ -97,8 +102,7 @@ want to know, e.g., ```chart.rashi().planets().sun().dignity()```
 
 Most of this is meant to be self explanatory. The one thing I need to document better is
 how to input information. It is through EphContext, from libaditya.objects.context. It
-takes a JulianDay and a Location, then a bunch of options. All of these have defaults
-that should a chart for the current time more or less.
+takes a JulianDay and a Location, then a bunch of options.
 
 ## Entering a Chart
 
@@ -115,19 +119,21 @@ name: str (optional)
 date: MM/DD/YYYY
 hour: (HH:MM(:SS)) (UTC)
 utcoffset: float
-lat: N is positive
-long: E is positive
-    three formats: 1) decimal
+lat: float, N is positive
+long: float, E is positive
+    three formats: 1) decimal float
                    2) DD:MM(:SS)
                    // below is how Kala represents these in their .chtk file
                    3) 0DD(E/W)MM'SS(.SS)
                    3) DD(N/S)MM'SS(.SS)
+    note: lat and long can each individual be entered with any of these three formats
 alt: float - meters
 placename: str (optional)
 ```
 
 The file that will be written is "name", all lowercase, with any spaces replaced by
-"-". Call the function with argument ```outfile="your-filename.toml```". 
+"-". Call the function with argument ```outfile="your-filename.toml```" to specify the
+filename.
 
 The only software I know of that does astrology like this is Kala, produced by Ernst
 Wilhelm and his wife; I believe she did the actual programming. I have been using it and
@@ -157,6 +163,145 @@ An ```EphContext``` also includes all the options for the chart.
 ## Chart Types and Options
 
 Plus basic Python if you are new to this.
+
+### EphContext
+
+The first basic building block of ```libaditya``` is the ```EphContext```. This holds
+all of the time, location, calculation option, and disply option information for the
+entire chart. This is a dataclass, i.e., it is essentially information. It has all the
+information that is needed to instantiate a ```Chart```.
+
+In Python, "to instantiate" means to make a specific instance of. On the day of your
+birth, the Sun was at a particular place in the sky, you were born at a particular
+location. The time and place are necessary to "instatiate" you as a human. In Python,
+there is such a thing as a generic "Human" object:
+
+```
+class Human:
+
+    def __init__(self, time, place):
+        self.time = time
+        self.place = place
+```
+
+That is how we define a "Human" object. To instantiate it, we need to say:
+```
+>>> josh = Human("15:08","Indiana")
+```
+
+```Human``` just has a time and place "in theory". ```josh``` has an actual time and
+place (you can check them by entering ```josh.time```). (btw, that code is valid Python
+code, which you can copy-paste and run in the ```repl```).
+
+An ```EphContext``` allows us to instantiate a ```Chart```, because it knows all of the
+information necessary to allow a specific ```Chart``` to come into existence.
+
+TODO: write a more detailed section elsewhere going over ```EphContext``` in detail
+
+### Chart
+
+We have already seen how to instantiate a ```Chart```:
+```
+>>> c = Chart(EphContext()) /// which is the same as c = Chart()
+```
+this gives a ```Chart``` for right now at the default place, which is defined in the
+definition of the class ```Location``` (```libaditya/objects/location.py```). The default
+location is Yamakoti.
+
+The other default chart options are all defined in ```libaditya/objects/context.py``` in
+the class definition for ```EphContext```. The base default for ```libaditya``` is
+tropical coordinates with the Aditya Circle (sign 1 = Dhata, 330 ecliptic longitude),
+with ayanamsa 98 for nakshatras (see ayanamsas below).
+
+Other default sets of chart options can be easily used with your instantiated ```Chart```:
+```
+>>> chart = Chart()
+>>> chart /// this will show a string representation of the chart. at the top is a
+          /// header will all of the information and options used for that chart
+>>> chart.tropical()
+>>> chart.sidereal()
+>>> chart.heliocentric()
+>>> chart.now()
+...
+```
+
+There are more than just those...see if you can find all of the possibilities.
+
+```Chart().sidereal()``` defaults to ayanamsa 27, True Citra Paksha. You can choose a
+different ayanamsa like this:
+```
+>>> chart.sidereal(ayanamsa=29)
+```
+
+### Ayanamsas
+
+```libaditya``` at the core is a wrapper for Swiss Ephemeris functions. Thus, it
+supports any ayanamsa the Swiss Ephemeris does. There are also some custom ayanamsa that
+```libaditya``` can use.
+
+Check [here](https://www.astro.com/swisseph/swisseph.htm#_Toc112511738) for an
+interesting and techincal discussion of ayanamsa by the programmers of the Swiss
+Ephemeris.
+
+Follows a list of all the Swiss Ephemeris ayanamsas:
+To set the ayanamsa in ```libaditya```, use the proper integer that is in the middle
+column below. You can also use ```swe.NAME```, where ```NAME``` is what follows the
+integer in the proper row, but with the ```SE_```. Thus, for "Fagan/Bradley", you can
+do ```chart.sidereal(ayanama=swe.SE_SIDM_FAGAN_BRADLEY)``` or
+```chart.sidereal(ayanamsa=0)```:
+```
+"Fagan/Bradley”,                       0 SE_SIDM_FAGAN_BRADLEY
+"Lahiri”,                              1 SE_SIDM_LAHIRI
+"De Luce”,                             2 SE_SIDM_DELUCE
+"Raman”,                               3 SE_SIDM_RAMAN
+"Usha/Shashi”,                         4 SE_SIDM_USHASHASHI
+"Krishnamurti”,                        5 SE_SIDM_KRISHNAMURTI
+"Djwhal Khul”,                         6 SE_SIDM_DJWHAL_KHUL
+"Yukteshwar”,                          7 SE_SIDM_YUKTESHWAR
+"J.N. Bhasin”,                         8 SE_SIDM_JN_BHASIN
+"Babylonian/Kugler 1”,                  9 SE_SIDM_BABYL_KUGLER1
+"Babylonian/Kugler 2”,                  10 SE_SIDM_BABYL_KUGLER2
+"Babylonian/Kugler 3”,                  11 SE_SIDM_BABYL_KUGLER3
+"Babylonian/Huber”,                    12 SE_SIDM_BABYL_HUBER
+"Babylonian/Eta Piscium”,               13 SE_SIDM_BABYL_ETPSC
+"Babylonian/Aldebaran = 15 Tau”,         14 SE_SIDM_ALDEBARAN_15TAU
+"Hipparchos”,                          15 SE_SIDM_HIPPARCHOS
+"Sassanian”,                           16 SE_SIDM_SASSANIAN
+"Galact. Center = 0 Sag”,               17 SE_SIDM_GALCENT_0SAG
+"J2000”,                               18 SE_SIDM_J2000
+"J1900”,                               19 SE_SIDM_J1900
+"B1950”,                               20 SE_SIDM_B1950
+"Suryasiddhanta”,                      21 SE_SIDM_SURYASIDDHANTA
+"Suryasiddhanta, mean Sun”,             22 SE_SIDM_SURYASIDDHANTA_MSUN
+"Aryabhata”,                           23 SE_SIDM_ARYABHATA
+"Aryabhata, mean Sun”,                  24 SE_SIDM_ARYABHATA_MSUN
+"SS Revati”,                           25 SE_SIDM_SS_REVATI
+"SS Citra”,                            26 SE_SIDM_SS_CITRA
+"True Citra”,                          27 SE_SIDM_TRUE_CITRA
+"True Revati”,                         28 SE_SIDM_TRUE_REVATI
+"True Pushya (PVRN Rao) ”,              29 SE_SIDM_TRUE_PUSHYA
+"Galactic Center (Gil Brand) ”,         30 SE_SIDM_GALCENT_RGBRAND
+"Galactic Equator (IAU1958) ”,          31 SE_SIDM_GALEQU_IAU1958
+"Galactic Equator”,                    32 SE_SIDM_GALEQU_TRUE
+"Galactic Equator mid-Mula”,            33 SE_SIDM_GALEQU_MULA
+"Skydram (Mardyks) ”,                   34 SE_SIDM_GALALIGN_MARDYKS
+"True Mula (Chandra Hari) ”,            35 SE_SIDM_TRUE_MULA
+"Dhruva/Gal.Center/Mula (Wilhelm) ”,     36 SE_SIDM_GALCENT_MULA_WILHELM
+"Aryabhata 522”,                       37 SE_SIDM_ARYABHATA_522
+"Babylonian/Britton”,                   38 SE_SIDM_BABYL_BRITTON
+"\"Vedic\"/Sheoran                     39 SE_SIDM_TRUE_SHEORAN
+"Cochrane (Gal.Center = 0 Cap)"         40 SE_SIDM_GALCENT_COCHRANE
+"Galactic Equator (Fiorenza)",          41 SE_SIDM_GALEQU_FIORENZA
+"Vettius Valens",                      42 SE_SIDM_VALENS_MOON
+"Lahiri 1940",                           43 SE_SIDM_LAHIRI_1940
+"Lahiri VP285",                          44 SE_SIDM_LAHIRI_VP285
+"Krishnamurti-Senthilathiban",           45 SE_SIDM_KRISHNAMURTI_VP291
+"Lahiri ICRC",                           46 SE_SIDM_LAHIRI_ICRC
+```
+
+### Tropical, Sideral, Aditya, etc.
+
+TODO: explain how options for these are managed in ```EphContext```.
 
 
 ## Dignity example
@@ -322,25 +467,22 @@ able to do something like ```chart.draw_sbc()``` and it will draw one for you.
 
 I have just started an implementation of Cards of Truth in ```libaditya```.
 
-Currently, it can do year spreads with just the cards, no planets:
+Currently, it can do birth spreads and year spreads:
 ```
 >>> c = Chart()
 >>> births = c.cot().birth_spread()
+/// gives current year spread
+>>> thisys = c.cot().year_spread()
+/// get year spreat at age 28
+>>> ys28 = c.cot().year_spread(28)
 ```
 
 This returns a ```Spread``` object. ```Spread``` currently does not have a ```__str__```
 or a ```__repr__```, but you can view it using ```rich```:
 ```
 >>> births.rich()
-```
-
-Also, year spreads, though there may be some bugs currently in the implementation:
-```
-/// ideally .year_spread() with no arguments will be the current year spread; not sure
-/// how completely accurate this is currently
-/// you can put in any year; 0 is the birth spread, 1 the year after, etc.
->>> c.cot().year_spread().rich()
->>> c.cot().Year_spread(28).rich()
+>>> thisys.rich()
+>>> ys28.rich()
 ```
 
 If you are new to Python, but know Cards of Truth, check out some of the objects
@@ -374,7 +516,8 @@ The names with nothing are variables or objects in their own right. Check them o
 ```
 
 The names with ```(``` can take at least one argument, but may or may not need to have
-one or more arguments. You can always try to call them without any:
+one or more arguments. You can always try to call them without any (their argument(s)
+may have defaults).
 ```
 >>> cot.Spread()
 Traceback (most recent call last):
@@ -391,11 +534,4 @@ these. With this, you can look up help in the Python ```repl``` itself:
 ```
 >>> help(cot.Spread)
 ```
-If you read that, you find out we can test ```Spread``` even using spreads that may
-never actually exist:
-```
->>> cot.Spread([0,1,2,3,4,5,6,7,8,9,10,11,12,13]).rich()
-```
 
-At least it works this way right now. It may change once I implemented putting Planet-s into
-Card-s.
