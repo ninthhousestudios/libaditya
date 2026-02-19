@@ -46,7 +46,7 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         self._amsha = self.context.amsha
         self.master = master
         self.pnumber = pnumber
-        self.attributes = {"constellation": "n/a"}
+        self.attributes = {"constellation": "n/a", "dignity": "n/a"}
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]

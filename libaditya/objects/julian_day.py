@@ -16,8 +16,6 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from dataclasses import dataclass
-from typing import Callable
 
 import time
 

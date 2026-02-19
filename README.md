@@ -554,3 +554,17 @@ You can see these representations since they live in
 >>> cards_constants.cards
 >>> cards_constants.jackquad
 ```
+
+# Projects
+
+implement all swe functions
+    allow of swe functions to be used easily in an intuitive way through Chart interface
+
+swe
+cards of truth
+human design
+    drawing bodygraphs
+true sidereal
+fixed star nakshatras - spherical nakshatras
+sbc
+swisseph cffi

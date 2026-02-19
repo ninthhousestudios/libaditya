@@ -62,6 +62,48 @@ was an idea, but need actual use cases to decide if it would be worth it
 #
 stars
 
+what if i just start over with the original sefstars.txt and repurpose what i have into
+an actual script that produces the sefstars.txt that i want
+
+it is pretty much all there
+    need to put original line with orignal Bayer designation first
+    need to add additional names from original sefstars.txt
+original_bayer_designation+original_sefstars_line
+original_traditional_names+original_sefstars_line if any
+e.g., Gamma Gruis
+original:
+    Aldhanab    ,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Al Dhanab    ,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Ras Alkurki  ,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+desired:
+    gaGru,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Aldhanab,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Al Dhanab,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Ras Alkurki,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+then additional ones from what I created
+    #0# gamGru,  Ras Alkurki  
+    gamGru,gamGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Gamma Gruis,gamGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Ras Alkurki,gamGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+the whole entry should look like this:
+    #0# gamGru,  Ras Alkurki
+    gaGru,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Aldhanab,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Al Dhanab,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Ras Alkurki,gaGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    gamGru,gamGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+    Gamma Gruis,gamGru,ICRS,21,53,55.72620,-37,21,53.4790,98.07,-13.22,0.1,15.45,3.01,-37,14536
+
+including the original lines preserve backward compatibility
+the system is really fine, now that i am used to it. at first it seemed weird, but now
+nat a problem
+
+
+add original line and version from orignal sefstars.txt to new sefstars.txt
+use libaditya.constants.bayer_nomen_lba_to_swe to add
+add this at the beginning
+then the new sefstars.txt will be backward compatible with the old sefstars.txt
+
 add long form nomen name to info line in sefstars.txt...just another function to go
 through and do it. we can just have it reconstruct, not even pick it up from one of the
 lines below

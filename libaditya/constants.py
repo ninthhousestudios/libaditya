@@ -1589,3 +1589,36 @@ star_names_short_to_long = {
         "HD": "Henry Draper Catalogue",
     }
 }
+
+bayer_nomen_lba_to_swe = {
+    # also note that for new to old need to change 0 to "-"
+    # e.g., del01Gru goes to de-1Gru
+
+    # this is for converting 6-letter Bayer designations to 5-letter ones
+    # to match with the original ephe/sefstars.txt sweph file
+    "alf": "al",
+    "bet": "be",
+    "gam": "ga",
+    # for one star that had some weird stuff happen to it
+    "del": "de",
+    "eps": "ep",
+    "zet": "ze",
+    "eta": "et", # but no stars with that letter
+    "tet": "th",
+    "iot": "io",
+    "kap": "ka",
+    "lam": "la",
+    "mu.": "mu",
+    "nu.": "nu",
+    "ksi": "xi",
+    "omi": "omi",
+    "pi.": "pi",
+    "rho": "rh",
+    "sig": "si",
+    "tau": "ta",
+    "ups": "up",
+    "phi": "ph",
+    "chi": "ch",
+    "psi": "ps",
+    "ome": "ome",
+}
