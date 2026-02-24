@@ -170,7 +170,7 @@ class Chart(API):
         """
         return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
-    def sidereal(self, **kwargs):
+    def sidereal(self, ayanamsa=27, **kwargs):
         """
         take the current EphContext and change what is needed to make it a sidereal zodiac chart
 
@@ -182,7 +182,7 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.SID,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
+        return Chart(context=replace(self.context,sysflg=const.SID,ayanamsa=ayanamsa,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
 
     def heliocentric(self, **kwargs):
         """

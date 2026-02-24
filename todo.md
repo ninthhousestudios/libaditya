@@ -62,6 +62,8 @@ was an idea, but need actual use cases to decide if it would be worth it
 #
 stars
 
+add printing a table for all the stars
+
 what if i just start over with the original sefstars.txt and repurpose what i have into
 an actual script that produces the sefstars.txt that i want
 
@@ -116,7 +118,8 @@ make __repr__ and __str__ for Ecliptic
 checkout rich?
 
 #
-fix Varga/Rashi header
+figure out about SWEIPH flag and using the different ephemerises intentionally
+make that an option
 
 #
 draw

@@ -365,10 +365,10 @@ class Longitude:
                 return self.shodashamsha()
             case -20:
                 return self.vimshamsha()
-            case -240:
-                return self.siddhamsha()
             case -24:
                 return self.siddhamsha(parashara=True)
+            case -240:
+                return self.siddhamsha()
             case -27:
                 return self.bhamsha()
             case -40:

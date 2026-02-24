@@ -257,9 +257,14 @@ def long_to_float(long):
         sign = 1
     else:
         sign = -1
-    degs = float(long[:3])
-    mins = float(long[4:6])
-    secs = float(long[7:9])
+    try:
+        degs = float(long[:3])
+        mins = float(long[4:6])
+        secs = float(long[7:9])
+    except:
+        degs = float(long[:2])
+        mins = float(long[3:5])
+        secs = float(long[6:8])
     return sign*(degs + (mins / 60) + (secs / 3600))
 
 

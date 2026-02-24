@@ -17,18 +17,15 @@
 import swisseph as swe
 from prettytable import PrettyTable
 from dataclasses import replace
-from typing import Self
 
 from libaditya import constants as const
 from libaditya import utils
-from libaditya.hd import HDLongitude
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
 from .celestial_object import CelestialObject
 from .context import EphContext
 from .longitude import Longitude
-from .cusps import Cusp, Cusps
 from .nakshatras import Nakshatra, Nakshatras
 from .shadbala import PlanetBala
 from .swe_functions import SWEFirstLast
@@ -1776,6 +1773,9 @@ class Planets:
         return self._planets["Earth"]
 
     def grahas_within_one_degree(self):
+        """
+        find all the grahas in Planets that are within one degree of each other
+        """
         grahas = []
         for graha_chosen in self.grahas().values():
             for graha_line in self.grahas().values():

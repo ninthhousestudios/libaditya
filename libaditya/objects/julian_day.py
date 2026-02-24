@@ -178,7 +178,7 @@ class JulianDay:
         """
         distance in years between self and date
         """
-        return (datejd-self.jd)/self.oneyearjd
+        return (datejd-self.jd)/365.24221
 
     def current_age(self):
         """
