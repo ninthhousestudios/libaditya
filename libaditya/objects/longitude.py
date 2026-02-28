@@ -790,6 +790,7 @@ class Longitude:
         a varga of 24 divisions
         odd signs: start at leo and go around the circle in order twice
         even: start at cancer and go twice around the circle in reverse order
+        if parashara = True, go forward for reverse also
         """
         # just to make sure we are working with the rashi longitude
         real_sign = 1 + self.ecliptic_sign_index() # + 1 to transform index into sign

@@ -560,11 +560,10 @@ You can see these representations since they live in
 implement all swe functions
     allow of swe functions to be used easily in an intuitive way through Chart interface
 
-swe
-cards of truth
-human design
-    drawing bodygraphs
-true sidereal
-fixed star nakshatras - spherical nakshatras
-sbc
-swisseph cffi
+swe,
+cards of truth,
+human design (drawing bodygraphs),
+true sidereal =>
+fixed star nakshatras - spherical nakshatras?,
+sbc,
+swisseph cffi? take a good look at pyswisseph and see if it really needs to be replaced

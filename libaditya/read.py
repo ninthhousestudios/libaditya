@@ -83,6 +83,7 @@ def read_chtk(infile):
                 # someimtes it is just HH:MM
                 # sometimes it is just H, so deal with all of those
                 line = clean_line(line).split(":")
+                sign = 1
                 if line[0] == "UTC":
                     utcoff = 0
                     continue
@@ -97,7 +98,10 @@ def read_chtk(infile):
                     h = int(line[0])
                     m = int(line[1])
                     s = int(line[2])
-                utcoff = int(h) + (int(m) / 60) + (int(s) / 3600)
+                if h < 0:
+                    sign = -1
+                    h = abs(h)
+                utcoff = sign*(int(h) + (int(m) / 60) + (int(s) / 3600))
             case 13:  # dst value
                 dst = intize_line(codecs.decode(line))
         linenum += 1
