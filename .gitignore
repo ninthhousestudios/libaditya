@@ -8,9 +8,9 @@ example*
 *.png
 *.pdf
 *.txt
+!libaditya/ephe/sefstars.txt
 *.sbc
 *.pyph
-*.txt
 debnds.py
 copyright
 libaditya.egg-info
