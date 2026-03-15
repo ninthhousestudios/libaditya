@@ -42,5 +42,5 @@ swe.set_ephe_path(base_path + "/ephe/")
 
 console = Console()
 
-from ._version import __version__
+# from ._version import __version__
 
