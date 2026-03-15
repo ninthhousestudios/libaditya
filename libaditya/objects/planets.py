@@ -43,7 +43,8 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         self._amsha = self.context.amsha
         self.master = master
         self.pnumber = pnumber
-        self.attributes = {"constellation": "n/a", "dignity": "n/a"}
+        self.attributes = {"constellation": "n/a", "dignity": "n/a", "lajjitaadi_avasthas": {},
+                           "baladi_avastha": "", "jagradadi_avastha": "", "deeptadi_avastha": "", "shayanadi_avastha": ""}
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]
@@ -138,6 +139,21 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 return ""
             case _:
                 return self.attributes["dignity"]
+
+    def lajjitaadi_avasthas(self):
+        return self.attributes["lajjitaadi_avasthas"]
+
+    def baladi_avastha(self):
+        return self.attributes["baladi_avastha"]
+
+    def jagradadi_avastha(self):
+        return self.attributes["jagradadi_avastha"]
+
+    def deeptadi_avastha(self):
+        return self.attributes["deeptadi_avastha"]
+
+    def shayanadi_avastha(self):
+        return self.attributes["shayanadi_avastha"]
 
     def combined_relationship(self):
         """
@@ -586,7 +602,7 @@ class Moon(Planet,SWEFirstLast):
     def __init__(self, context=EphContext(),master=None, nature=None):
         super().__init__(swe.MOON, context,master)
         self._id = "Moon"
-        self.attributes = {"nature": nature}
+        self.attributes["nature"] = nature
 
     def glyph(self):
         return "☾"

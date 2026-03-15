@@ -57,10 +57,18 @@ class Chart(API):
     libaditya_path = os.path.dirname(pathlib.Path(__file__).parent)
     ephe_path = libaditya_path + "/ephe/"
 
+    _initializing_ecliptic = False
+
     def __init__(self, context=EphContext()):
         swe.set_ephe_path(self.ephe_path)
         self.context = context
         self._Rashi = Rashi(self.context,self)
+        if not Chart._initializing_ecliptic:
+            Chart._initializing_ecliptic = True
+            try:
+                self._Ecliptic = self.ecliptic()
+            finally:
+                Chart._initializing_ecliptic = False
 
     def __repr__(self):
         return self.rashi().__str__()

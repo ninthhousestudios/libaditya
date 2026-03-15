@@ -132,7 +132,6 @@ class JulianDay:
             return f"{utils.date2str(self.datetime)}"
 
     def time(self, tz="utc", print_tz=True, debug=""):
-        tz="utc"
         if debug:
             debug=f" ({self.day(tz)})"
         ptz = ""
@@ -262,51 +261,5 @@ class JulianDay:
         """
         transform utc time into user specified time with self.utcoffset and timezone string
         return a tuple (year,month,day,hour)
-        an annoying function because i just had to brute force check everything by hand
-        not sure else how to do it?
-        probably there are some edge cases that will be wrong with this function
         """
-        usrhr = self.datetime[3] + self.utcoffset
-        usrday = self.datetime[2]
-        usrmonth = self.datetime[1]
-        usryear = self.datetime[0]
-        # check what other fields we need to change
-        # fix hour first
-        if usrhr < 0:  # the day before
-            usrday = usrday - 1
-            usrhr = usrhr % 24
-        if usrhr >= 24:  # the day after
-            usrday = self.datetime[2] + 1
-            usrhr = usrhr % 24
-
-        # now check the day to make sure the month didn't change
-        usrmonth = self.datetime[1]
-        if usrday > 31:  # day is more than 31, so increase month by one
-            usrday = 1
-            usrmonth += 1
-            if usrmonth > 12:
-                usrmonth = 1
-                usryear += 1
-        if usrday < 1:
-            usrmonth = self.datetime[1] - 1
-            if usrmonth in [1, 3, 5, 7, 8, 10, 12]:  # in a month with 31 days
-                usrday = 31
-            elif usrmonth == 2:  # february
-                if self.datetime[0] % 4 == 0:  # a leap year
-                    usrday = 29
-                else:
-                    usrday = 28
-            elif usrmonth < 1:
-                usrday = 31
-                usryear -= 1
-                usrmonth = 12
-            else:
-                usrday == 30
-        # now check the month to make sure the year didn't change
-        if self.datetime[1] > 12:
-            # month should have been changed above, lets change year
-            usryear = self.datetime[0] + 1
-        if self.datetime[1] < 1:
-            usryear = self.datetime[0] - 1
-
-        return (usryear, usrmonth, usrday, usrhr)
+        return swe.revjul(self.jd + self.utcoffset / 24)

@@ -41,6 +41,7 @@ class Sign:
         self._sign_name = const.names[self.context.names_type][self.context.sign_names][self.sign_index()]
         self._id = number
         self.master = master
+        self._lajjitaadi_avasthas = {}
         # a dictionary that defines our rashi aspects, {int: (int,int,int)}
         
     def sign_index(self):
@@ -67,6 +68,9 @@ class Sign:
 
     def cusps(self):
         return self._cusps
+
+    def lajjitaadi_avasthas(self):
+        return self._lajjitaadi_avasthas
 
     def lord(self) -> str:
         return const.lords[self.sign()]

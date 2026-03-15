@@ -197,6 +197,83 @@ def print_visible_times(times):
     print("End of visibility:")
     print(times[2])
 
+def lajjitaadi_avasthas_table(avasthas) -> str:
+    """
+    Takes the dict returned by Rashi.lajjitaadi_avasthas() and returns
+    a PrettyTable string.
+    """
+    output = PrettyTable()
+    output.field_names = ["Planet", "Avastha", "Source", "Details", "Strength"]
+    output.align["Planet"] = "l"
+    output.align["Avastha"] = "l"
+    output.align["Source"] = "l"
+    output.align["Details"] = "l"
+    output.align["Strength"] = "r"
+
+    for planet_name, planet_avasthas in avasthas.items():
+        for avastha_name, factors in planet_avasthas.items():
+            for factor in factors:
+                source = factor.get("source", "")
+                strength = factor.get("strength", "")
+                details = ""
+                if "planet" in factor:
+                    details = factor["planet"]
+                elif "lord" in factor:
+                    details = f"lord: {factor['lord']}"
+                elif "dignity" in factor:
+                    details = factor["dignity"]
+                elif "detail" in factor:
+                    details = factor["detail"]
+                output.add_row([planet_name, avastha_name.capitalize(), source, details, strength])
+
+    return output.get_string()
+
+def print_lajjitaadi_avasthas(avasthas):
+    print(lajjitaadi_avasthas_table(avasthas))
+
+
+AVASTHA_PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+
+def avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi) -> str:
+    # simple avasthas table
+    simple = PrettyTable()
+    simple.field_names = ["Planet", "Baladi", "Jagradadi", "Deeptadi", "Shayanadi"]
+    simple.align = "l"
+    for name in AVASTHA_PLANET_ORDER:
+        simple.add_row([name,
+                        baladi.get(name, ""),
+                        jagradadi.get(name, ""),
+                        deeptadi.get(name, ""),
+                        shayanadi.get(name, "")])
+
+    # lajjitaadi table
+    lajj = lajjitaadi_avasthas_table(lajjitaadi)
+
+    # lajjitaadi interaction sentences
+    verbs = {"delighted": "delighting", "starved": "starving", "agitated": "agitating",
+             "thirsty": "thirsting", "shamed": "shaming"}
+    adjectives = {"healthy": "secure", "proud": "proud"}
+    interactions = PrettyTable()
+    interactions.field_names = ["Interaction"]
+    interactions.align = "l"
+    for planet_name, planet_avasthas in lajjitaadi.items():
+        for avastha_name, factors in planet_avasthas.items():
+            if avastha_name in adjectives:
+                interactions.add_row([f"{planet_name} is {adjectives[avastha_name]}"])
+                continue
+            verb = verbs.get(avastha_name)
+            if not verb:
+                continue
+            for factor in factors:
+                if "planet" in factor:
+                    interactions.add_row([f"{factor['planet']} is {verb} {planet_name}"])
+
+    return simple.get_string() + "\n\nLajjitaadi Avasthas\n" + lajj + "\n\n" + interactions.get_string()
+
+def print_avasthas(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi):
+    print(avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi))
+
+
 from libaditya.cards import cards_constants as cardsc
 cards=cardsc.cards
 

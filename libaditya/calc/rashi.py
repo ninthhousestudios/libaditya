@@ -25,12 +25,15 @@ from libaditya.calc.panchanga import Panchanga
 from libaditya.calc.swe_functions import SWERashi
 from libaditya.calc.hellenistic import Hellenistic
 from libaditya.calc.returns import Returns
+from libaditya.calc.avasthas import (LajjitaadiAvasthas, BaladiAvasthas,
+                                     JagradadiAvasthas, DeeptadiAvasthas,
+                                     ShayanadiAvasthas)
 from libaditya.draw.draw_sbc import DrawSBC
 
 from .jaimini_get import JaiminiGet
 
 
-class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns):
+class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns,LajjitaadiAvasthas,BaladiAvasthas,JagradadiAvasthas,DeeptadiAvasthas,ShayanadiAvasthas):
 
     def __init__(self,context,chart):
         self.master = chart
@@ -40,6 +43,11 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns):
         self._sama_visama_balas = self.init_sama_visama_balas()
         self._kendradi_balas = self.init_kendradi_balas()
         self._drig_balas = self.init_drig_balas()
+        self._lajjitaadi_avasthas = self.lajjitaadi_avasthas()
+        self._baladi_avasthas = self.baladi_avasthas()
+        self._jagradadi_avasthas = self.jagradadi_avasthas()
+        self._deeptadi_avasthas = self.deeptadi_avasthas()
+        self._shayanadi_avasthas = self.shayanadi_avasthas()
 
     def planets(self):
         return self._planets
@@ -52,6 +60,14 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns):
 
     def signs(self):
         return self._signs
+
+    def avasthas(self):
+        from libaditya import print_functions as printf
+        printf.print_avasthas(self._lajjitaadi_avasthas,
+                              self._baladi_avasthas,
+                              self._jagradadi_avasthas,
+                              self._deeptadi_avasthas,
+                              self._shayanadi_avasthas)
 
     def house_position(self, planet: str, hsys=None) -> float:
         """
