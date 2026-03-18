@@ -167,6 +167,68 @@ def calculate_vimshottari_dasha(planet=Moon(),dlevels=1,yrlen=const.dasha_years[
 
     return vdasha + [first_dasha] + [age]
 
+def period_duration(lords,yrlen=const.dasha_years["saura"]):
+    """
+    duration in days of a vimshottari period defined by lord indices
+    lords = [maha, bhukti, pratyantar, ...]
+    e.g. [2,4,5] for Sun-Mars-Rahu pratyantar dasha
+    """
+    years = 1.0
+    for lord_idx in lords:
+        years *= const.vimshottari_dashas[lord_idx][length]
+    n = len(lords)
+    years /= 120 ** (n - 1)
+    return years * yrlen
+
+def calculate_specific_period(planet=Moon(),lords=[],yrlen=const.dasha_years["saura"]):
+    """
+    calculate start time and duration of a specific vimshottari period
+    without computing the entire dasha tree
+
+    lords: list of lord indices, e.g. [2, 4, 5] for Sun mahadasha,
+           Mars bhukti, Rahu pratyantar
+           indices into const.vimshottari_dashas:
+           0=Ketu, 1=Venus, 2=Sun, 3=Moon, 4=Mars, 5=Rahu,
+           6=Jupiter, 7=Saturn, 8=Mercury
+
+    returns (start_jd, duration_days)
+    """
+    if not lords:
+        return None
+
+    # initialization (same as calculate_vimshottari_dasha)
+    long = planet.nakshatra().ashvini_longitude()
+    nindex = planet.nakshatra().index()
+    elapsed = long - (nindex * planet.nakshatra().naksize())
+    elapsedfraction = elapsed / planet.nakshatra().naksize()
+    first_dasha = nindex % 9
+    years_elapsed = const.vimshottari_dashas[first_dasha][length] * elapsedfraction
+    age = -years_elapsed
+    current_jd = planet.timeJD.shift('b','d',-age*yrlen)
+
+    # walk each level, skipping to the requested lord
+    for level in range(len(lords)):
+        target = lords[level]
+
+        # which lord starts this level's sequence?
+        if level == 0:
+            start_lord = first_dasha
+        else:
+            start_lord = lords[level - 1]  # sub-periods start from parent lord
+
+        # skip past all periods before the target lord
+        this_lord = start_lord
+        count = 0
+        while this_lord != target and count < 9:
+            trial_lords = lords[:level] + [this_lord]
+            dur = period_duration(trial_lords, yrlen)
+            current_jd = current_jd.shift('f','d', dur)
+            this_lord = (this_lord + 1) % 9
+            count += 1
+
+    duration = period_duration(lords, yrlen)
+    return (current_jd, duration)
+
 def calc_vdasha(dlist,dasha_time,level,dlevels,yrlen):
     this_dasha_list = []
     next_dasha_list = []

@@ -16,7 +16,7 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from dataclasses import replace
+from dataclasses import dataclass, replace
 
 from libaditya.objects import Planet, RashiBala
 from libaditya.calc import Varga
@@ -31,6 +31,83 @@ from libaditya.calc.avasthas import (LajjitaadiAvasthas, BaladiAvasthas,
 from libaditya.draw.draw_sbc import DrawSBC
 
 from .jaimini_get import JaiminiGet
+
+
+@dataclass
+class AkritiYoga:
+    name: str
+    translation: str
+    to_move: int
+    houses: tuple
+
+    def __str__(self):
+        return f"{self.name} ({self.translation}): {self.to_move} to move — houses {self.houses}"
+
+    def __repr__(self):
+        return f"AkritiYoga({self.name!r}, to_move={self.to_move})"
+
+
+@dataclass
+class NabhasaYoga:
+    name: str
+    translation: str
+    category: str
+    to_move: int
+    condition: str
+
+    def __str__(self):
+        return f"{self.name} ({self.translation}): {self.to_move} to move — {self.condition}"
+
+    def __repr__(self):
+        return f"NabhasaYoga({self.name!r}, category={self.category!r}, to_move={self.to_move})"
+
+
+@dataclass
+class MahapurushaYoga:
+    name: str
+    translation: str
+    planet: str
+    present: bool
+    house: int
+    dignity: str
+
+    def __str__(self):
+        if self.present:
+            return f"{self.name} ({self.translation}): {self.planet} in house {self.house}, {self.dignity}"
+        return f"{self.name} ({self.translation}): not present"
+
+    def __repr__(self):
+        return f"MahapurushaYoga({self.name!r}, planet={self.planet!r}, present={self.present})"
+
+
+@dataclass
+class SolarYoga:
+    name: str
+    planets: list
+    present: bool
+
+    def __str__(self):
+        if self.present:
+            return f"{self.name}: {', '.join(self.planets)}"
+        return f"{self.name}: not present"
+
+    def __repr__(self):
+        return f"SolarYoga({self.name!r}, present={self.present})"
+
+
+@dataclass
+class LunarYoga:
+    name: str
+    planets: list
+    present: bool
+
+    def __str__(self):
+        if self.present:
+            return f"{self.name}: {', '.join(self.planets)}"
+        return f"{self.name}: not present"
+
+    def __repr__(self):
+        return f"LunarYoga({self.name!r}, present={self.present})"
 
 
 class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns,LajjitaadiAvasthas,BaladiAvasthas,JagradadiAvasthas,DeeptadiAvasthas,ShayanadiAvasthas):
@@ -126,163 +203,345 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns,Lajj
 
     def akriti_yogas(self):
         """
-        find the akriti yogas in this Rashi varga
+        find the 20 akriti yogas in this Rashi varga
         these are rarely found perfectly or completely, so we find
         how many planets would need to be moved to create each
-        this function returns a list of tuples of the name of each yoga and how many planets would
-        need to be moved in order to create the yoga
-        for these yogas, planets means the seven embodied planets, i.e., karakas
+        for these yogas, planets means the seven embodied planets, i.e., karakas (Sun-Saturn)
+        returns a list of AkritiYoga dataclasses sorted by to_move ascending
         """
-        # this will be a list of tuples ("name", planets_to_move_to_form_yoga)
         akritis = []
-        # these yogas are based on signs from the lagna
-        lagna = self.signs().lagna()
-        second = self.signs()[lagna.astrological_signs_foward(2)].how_many_karakas()
-        third = self.signs()[lagna.astrological_signs_foward(3)].how_many_karakas()
-        fourth = self.signs()[lagna.astrological_signs_foward(4)].how_many_karakas()
-        fifth = self.signs()[lagna.astrological_signs_foward(5)].how_many_karakas()
-        sixth = self.signs()[lagna.astrological_signs_foward(6)].how_many_karakas()
-        seventh = self.signs()[lagna.astrological_signs_foward(7)].how_many_karakas()
-        eighth = self.signs()[lagna.astrological_signs_foward(8)].how_many_karakas()
-        ninth = self.signs()[lagna.astrological_signs_foward(9)].how_many_karakas()
-        tenth = self.signs()[lagna.astrological_signs_foward(10)].how_many_karakas()
-        eleventh = self.signs()[lagna.astrological_signs_foward(11)].how_many_karakas()
-        twelfth = self.signs()[lagna.astrological_signs_foward(12)].how_many_karakas()
-        lagna = self.signs().lagna().how_many_karakas()
+        lagna_sign = self.signs().lagna()
+        # karaka counts per house (1-indexed by house number from lagna)
+        h = {}
+        for i in range(1, 13):
+            h[i] = self.signs()[lagna_sign.astrological_signs_forward(i)].how_many_karakas()
 
-        # sringataka yoga; all planets in 1,5,9 from lagna
-        # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (lagna + fifth + ninth)
-        akritis.append(("Sringataka", to_move))
+        # for vajra/yava: count benefic and malefic karakas per house
+        # uses fixed natural classification: Moon, Mercury, Jupiter, Venus = benefic
+        # Sun, Mars, Saturn = malefic
+        FIXED_MALEFICS = {"Sun", "Mars", "Saturn"}
+        bh = {}  # benefic karaka count per house
+        mh = {}  # malefic karaka count per house
+        for i in range(1, 13):
+            sign = self.signs()[lagna_sign.astrological_signs_forward(i)]
+            karakas = sign.karakas()
+            b = 0
+            m = 0
+            for k in karakas:
+                if k.identity() in FIXED_MALEFICS:
+                    m += 1
+                else:
+                    b += 1
+            bh[i] = b
+            mh[i] = m
 
-        # artha hala; all planets in 2,6,10
-        # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (second + sixth + tenth)
-        akritis.append(("Artha Hala", to_move))
+        def tm(*houses):
+            """to_move: how many of the 7 karakas are outside the given houses"""
+            return 7 - sum(h[i] for i in houses)
 
-        # kama hala; all planets in 3,7,11
-        # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (third + seventh + eleventh)
-        akritis.append(("Kama Hala", to_move))
+        def tm_dist(*houses):
+            """to_move for yogas requiring distribution across houses.
+            accounts for both planets outside AND empty required houses,
+            since a planet must be moved into each empty house."""
+            outside = 7 - sum(h[i] for i in houses)
+            empty = sum(1 for i in houses if h[i] == 0)
+            return max(outside, empty)
 
-        # moksha hala; all planets in 4,8,12
-        # the number of planets to move is 7 - the number of planets in these signs
-        to_move = 7 - (fourth + eighth + twelfth)
-        akritis.append(("Moksha Hala", to_move))
+        # --- trine yogas ---
+        akritis.append(AkritiYoga("Sringataka", "mountain having three peaks",
+                                  tm(1, 5, 9), (1, 5, 9)))
+        akritis.append(AkritiYoga("Hala Artha", "plough",
+                                  tm(2, 6, 10), (2, 6, 10)))
+        akritis.append(AkritiYoga("Hala Kama", "plough",
+                                  tm(3, 7, 11), (3, 7, 11)))
+        akritis.append(AkritiYoga("Hala Moksha", "plough",
+                                  tm(4, 8, 12), (4, 8, 12)))
 
-        # gada yogas; all planets in two successive angles 1/4,4/7,7/10,10/1, so check all of these
+        # --- gada yogas: all planets in two successive angles ---
+        akritis.append(AkritiYoga("Gada 1/4", "mace",
+                                  tm(1, 4), (1, 4)))
+        akritis.append(AkritiYoga("Gada 4/7", "mace",
+                                  tm(4, 7), (4, 7)))
+        akritis.append(AkritiYoga("Gada 7/10", "mace",
+                                  tm(7, 10), (7, 10)))
+        akritis.append(AkritiYoga("Gada 10/1", "mace",
+                                  tm(10, 1), (10, 1)))
 
-        # 1/4 gada
-        to_move = 7 - (lagna + fourth)
-        akritis.append(("Gada 1/4", to_move))
+        # --- two-house angle yogas ---
+        akritis.append(AkritiYoga("Sakata", "cart",
+                                  tm(1, 7), (1, 7)))
+        akritis.append(AkritiYoga("Vihaga", "skygoer",
+                                  tm(4, 10), (4, 10)))
 
-        # 4/7 gada
-        to_move = 7 - (fourth + seventh)
-        akritis.append(("Gada 4/7", to_move))
+        # --- four-house yogas ---
+        akritis.append(AkritiYoga("Kamala", "lotus",
+                                  tm(1, 4, 7, 10), (1, 4, 7, 10)))
+        akritis.append(AkritiYoga("Vapi Panaphara", "pond",
+                                  tm(2, 5, 8, 11), (2, 5, 8, 11)))
+        akritis.append(AkritiYoga("Vapi Apoklima", "pond",
+                                  tm(3, 6, 9, 12), (3, 6, 9, 12)))
 
-        # 7/10 gada
-        to_move = 7 - (seventh + tenth)
-        akritis.append(("Gada 7/10", to_move))
+        # --- vajra and yava: benefic/malefic distribution in angles ---
+        # vajra: all benefics in 1 & 7, all malefics in 4 & 10
+        vajra_correct = (bh[1] + bh[7]) + (mh[4] + mh[10])
+        akritis.append(AkritiYoga("Vajra", "thunderbolt",
+                                  7 - vajra_correct, (1, 4, 7, 10)))
+        # yava: all malefics in 1 & 7, all benefics in 4 & 10
+        yava_correct = (mh[1] + mh[7]) + (bh[4] + bh[10])
+        akritis.append(AkritiYoga("Yava", "barleycorn",
+                                  7 - yava_correct, (1, 4, 7, 10)))
 
-        # 10/1 gada
-        to_move = 7 - (lagna + tenth)
-        akritis.append(("Gada 1/4", to_move))
+        # --- four consecutive house yogas ---
+        akritis.append(AkritiYoga("Yupa", "sacrificial pillar",
+                                  tm(1, 2, 3, 4), (1, 2, 3, 4)))
+        akritis.append(AkritiYoga("Sara", "arrow",
+                                  tm(4, 5, 6, 7), (4, 5, 6, 7)))
+        akritis.append(AkritiYoga("Shakti", "power",
+                                  tm(7, 8, 9, 10), (7, 8, 9, 10)))
+        akritis.append(AkritiYoga("Danda", "rod",
+                                  tm(10, 11, 12, 1), (10, 11, 12, 1)))
 
-        # sakata; all planets in 1 and 7
-        to_move = 7 - (lagna + seventh)
-        akritis.append(("Sakata", to_move))
+        # --- seven consecutive house yogas (use tm_dist for distribution) ---
+        akritis.append(AkritiYoga("Nauka", "boat",
+                                  tm_dist(1, 2, 3, 4, 5, 6, 7), (1, 2, 3, 4, 5, 6, 7)))
+        akritis.append(AkritiYoga("Kuta", "peak",
+                                  tm_dist(4, 5, 6, 7, 8, 9, 10), (4, 5, 6, 7, 8, 9, 10)))
+        akritis.append(AkritiYoga("Chatra", "parasol",
+                                  tm_dist(7, 8, 9, 10, 11, 12, 1), (7, 8, 9, 10, 11, 12, 1)))
+        akritis.append(AkritiYoga("Chapa", "bow",
+                                  tm_dist(10, 11, 12, 1, 2, 3, 4), (10, 11, 12, 1, 2, 3, 4)))
 
-        # vihaga; all planets in 4 and 10 
-        to_move = 7 - (fourth + tenth)
-        akritis.append(("Vihaga", to_move))
+        # --- ardha chandra: seven consecutive from a panaphara or apoklima ---
+        akritis.append(AkritiYoga("Ardha Chandra Artha Panaphara", "half moon",
+                                  tm_dist(2, 3, 4, 5, 6, 7, 8), (2, 3, 4, 5, 6, 7, 8)))
+        akritis.append(AkritiYoga("Ardha Chandra Dharma Panaphara", "half moon",
+                                  tm_dist(5, 6, 7, 8, 9, 10, 11), (5, 6, 7, 8, 9, 10, 11)))
+        akritis.append(AkritiYoga("Ardha Chandra Moksha Panaphara", "half moon",
+                                  tm_dist(8, 9, 10, 11, 12, 1, 2), (8, 9, 10, 11, 12, 1, 2)))
+        akritis.append(AkritiYoga("Ardha Chandra Kama Panaphara", "half moon",
+                                  tm_dist(11, 12, 1, 2, 3, 4, 5), (11, 12, 1, 2, 3, 4, 5)))
+        akritis.append(AkritiYoga("Ardha Chandra Kama Apoklima", "half moon",
+                                  tm_dist(3, 4, 5, 6, 7, 8, 9), (3, 4, 5, 6, 7, 8, 9)))
+        akritis.append(AkritiYoga("Ardha Chandra Artha Apoklima", "half moon",
+                                  tm_dist(6, 7, 8, 9, 10, 11, 12), (6, 7, 8, 9, 10, 11, 12)))
+        akritis.append(AkritiYoga("Ardha Chandra Dharma Apoklima", "half moon",
+                                  tm_dist(9, 10, 11, 12, 1, 2, 3), (9, 10, 11, 12, 1, 2, 3)))
+        akritis.append(AkritiYoga("Ardha Chandra Moksha Apoklima", "half moon",
+                                  tm_dist(12, 1, 2, 3, 4, 5, 6), (12, 1, 2, 3, 4, 5, 6)))
 
-        # kamala; all planets in the four angles
-        to_move = 7 - (lagna + fourth + seventh + tenth)
-        akritis.append(("Kamala", to_move))
+        # --- six alternate house yogas (use tm_dist for distribution) ---
+        akritis.append(AkritiYoga("Chakra", "wheel",
+                                  tm_dist(1, 3, 5, 7, 9, 11), (1, 3, 5, 7, 9, 11)))
+        akritis.append(AkritiYoga("Samudra", "sea",
+                                  tm_dist(2, 4, 6, 8, 10, 12), (2, 4, 6, 8, 10, 12)))
 
-        # panaphara vapi; all planets in 2,5,8,11
-        to_move = 7 - (second + fifth + eighth + eleventh)
-        akritis.append(("Panaphara Vapi", to_move))
-
-        # apoklima vapi; all planets in 3,6,9,12
-        to_move = 7 - (third + sixth + ninth + twelfth)
-        akritis.append(("Apoklima Vapi", to_move))
-
-        # do vajra and yava yogas
-        # find out who is kruura and saumya and how to find out
-
-
-        # yupa yoga; all planets in 1,2,3,4
-        to_move = 7 - (lagna + second + third + fourth)
-        akritis.append(("Yupa", to_move))
-
-        # shara yoga: all planets in 4,5,6,7
-        to_move = 7 - (fourth + fifth + sixth + seventh)
-        akritis.append(("Shara", to_move))
-
-        # shakti yoga; all planets in 7,8,9,10
-        to_move = 7 - (seventh + eighth + ninth + tenth)
-        akritis.append(("Shakti", to_move))
-
-        # danda yoga; all planets in 10,11,12,1
-        to_move = 7 - (tenth + eleventh + twelfth + lagna)
-        akritis.append(("Danda", to_move))
-
-#        # nauka yoga; all planets in the 1,2,3,4,5,6,7
-#        to_move = 7 - (lagna + second + third + fourth + fifth + sixth + seventh)
-#        akritis.append(("Nauka", to_move))
-#
-#        # kuta yoga; all planets in 4,5,6,7,8,9,10
-#        to_move = 7 - (fourth + fifth + sixth + seventh + eighth + ninth + tenth)
-#        akritis.append(("Kuta", to_move))
-#
-#        # chatra yoga; all planets in 7,8,9,10,11,12,1
-#        to_move = 7 - (seventh + eighth + ninth + tenth + eleventh + twelfth + lagna)
-#        akritis.append(("Chatra", to_move))
-#
-#        # chapa yoga; all planets in 10,11,12,1,2,3,4
-#        to_move = 7 - (tenth + eleventh + twelfth + lagna + second + third + fourth)
-#        akritis.append(("Chapa", to_move))
-#
-#        # artha panaphara ardha chandra; all planets in 2,3,4,5,6,7,8
-#        to_move = 7 - (second + third + fourth + fifth + sixth + seventh + eighth)
-#        akritis.append(("Artha Panaphara Ardha Chandra", to_move))
-#
-#        # dharma panaphara ardha chandra; all planets in 5,6,7,8,9,10,11
-#        to_move = 7 - (fifth + sixth + seventh + eighth + ninth + tenth + eleventh)
-#        akritis.append(("Dharma Panaphara Ardha Chandra", to_move))
-#
-#        # moksha panaphara ardha chandra; all planets in 8,9,10,11,12,1,2
-#        to_move = 7 - (eighth + ninth + tenth + eleventh + twelfth + lagna + second)
-#        akritis.append(("Moksha Panaphara Ardha Chandra", to_move))
-#
-#        # kama panaphara ardha chandra; all planets in 11,12,1,2,3,4,5
-#        to_move = 7 - (eleventh + twelfth + lagna + second + third + fourth + fifth)
-#        akritis.append(("Kama Panaphara Ardha Chandra", to_move))
-#
-#        # kama apoklima ardha chandra; all planets in 3,4,5,6,7,8,9
-#        to_move = 7 - (third + fourth + fifth + sixth + seventh + eighth + ninth)
-#        akritis.append(("Kama Apoklima Ardha Chandra", to_move))
-#
-#        # artha apoklima ardha chandra; all planets in 6,7,8,9,10,11,12
-#        to_move = 7 - (sixth + seventh + eighth + ninth + tenth + eleventh + twelfth)
-#        akritis.append(("Artha Apoklima Ardha Chandra", to_move))
-#
-#        # dharma apoklima ardha chandra; all planets in 9,10,11,12,1,2,3
-#        to_move = 7 - (ninth + tenth + eleventh + twelfth + lagna + second + third)
-#        akritis.append(("Dharma Apoklima Ardha Chandra", to_move))
-#
-#        # moksha apoklima ardha chandra; all planets in 12,1,2,3,4,5,6
-#        to_move = 7 - (twelfth + lagna + second + third + fourth + fifth + sixth)
-#        akritis.append(("Moksha Apoklima Ardha Chandra", to_move))
-
-        # chakra yoga; all planets in 1,3,5,7,9,11
-        to_move = 7 - (lagna + third + fifth + seventh + ninth + eleventh)
-        akritis.append(("Chakra", to_move))
-
-        # samudra yoga; all plants in 2,4,6,8,10,12
-        to_move = 7 - (second + fourth + sixth + eighth + tenth + twelfth)
-        akritis.append(("Samdura", to_move))
-
+        akritis.sort(key=lambda y: y.to_move)
         return akritis
+
+
+    def ashraya_yogas(self):
+        """
+        Ashraya ("resting place") yogas: 3 yogas based on the modality
+        of the signs the 7 karakas rest in.
+        Rajju = all in movable, Musala = all in fixed, Nala = all in dual.
+        """
+        lagna_sign = self.signs().lagna()
+        movable = 0
+        fixed = 0
+        dual = 0
+        for i in range(1, 13):
+            sign = self.signs()[lagna_sign.astrological_signs_forward(i)]
+            n = sign.how_many_karakas()
+            mod = sign.modality()
+            if mod == "Moveable":
+                movable += n
+            elif mod == "Fixed":
+                fixed += n
+            else:
+                dual += n
+
+        yogas = [
+            NabhasaYoga("Rajju", "rope", "Ashraya", 7 - movable,
+                        "all planets in movable signs"),
+            NabhasaYoga("Musala", "pestle", "Ashraya", 7 - fixed,
+                        "all planets in fixed signs"),
+            NabhasaYoga("Nala", "reed", "Ashraya", 7 - dual,
+                        "all planets in dual signs"),
+        ]
+        yogas.sort(key=lambda y: y.to_move)
+        return yogas
+
+
+    def dala_yogas(self):
+        """
+        Dala ("petal") yogas: 2 yogas based on benefic/malefic occupation
+        of the kendras (houses 1, 4, 7, 10).
+        Mala = all benefics in kendras, Sarpa = all malefics in kendras.
+        Uses each planet's actual nature (Moon varies by phase).
+        """
+        lagna_sign = self.signs().lagna()
+        kendras = {1, 4, 7, 10}
+        benefics_in_kendras = 0
+        malefics_in_kendras = 0
+        total_benefics = 0
+        total_malefics = 0
+
+        for i in range(1, 13):
+            sign = self.signs()[lagna_sign.astrological_signs_forward(i)]
+            for planet in sign.karakas():
+                if planet.nature() == "Benefic":
+                    total_benefics += 1
+                    if i in kendras:
+                        benefics_in_kendras += 1
+                else:
+                    total_malefics += 1
+                    if i in kendras:
+                        malefics_in_kendras += 1
+
+        yogas = [
+            NabhasaYoga("Mala", "garland", "Dala",
+                        total_benefics - benefics_in_kendras,
+                        "all benefics in kendras"),
+            NabhasaYoga("Sarpa", "serpent", "Dala",
+                        total_malefics - malefics_in_kendras,
+                        "all malefics in kendras"),
+        ]
+        yogas.sort(key=lambda y: y.to_move)
+        return yogas
+
+
+    def sankhya_yogas(self):
+        """
+        Sankhya ("number") yogas: 7 yogas based on how many houses
+        the 7 karakas occupy. Exactly one is always active (to_move=0).
+        """
+        lagna_sign = self.signs().lagna()
+        occupied = 0
+        for i in range(1, 13):
+            if self.signs()[lagna_sign.astrological_signs_forward(i)].how_many_karakas() > 0:
+                occupied += 1
+
+        sankhya_defs = [
+            ("Veena", "lute", 7),
+            ("Dama", "garland", 6),
+            ("Pasa", "noose", 5),
+            ("Kedara", "field", 4),
+            ("Sula", "spike", 3),
+            ("Yuga", "yoke", 2),
+            ("Gola", "globe", 1),
+        ]
+        yogas = []
+        for name, trans, required in sankhya_defs:
+            yogas.append(NabhasaYoga(name, trans, "Sankhya",
+                                     abs(occupied - required),
+                                     f"planets in {required} houses"))
+        yogas.sort(key=lambda y: y.to_move)
+        return yogas
+
+
+    def nabhasa_yogas(self):
+        """
+        All 32 Nabhasa yogas: Ashraya (3) + Dala (2) + Sankhya (7) + Akriti (20).
+        Returns a list of mixed NabhasaYoga and AkritiYoga dataclasses,
+        sorted by to_move ascending.
+        """
+        all_yogas = self.ashraya_yogas() + self.dala_yogas() + self.sankhya_yogas() + self.akriti_yogas()
+        all_yogas.sort(key=lambda y: y.to_move)
+        return all_yogas
+
+
+    def panchamahapurusha_yogas(self):
+        """
+        Panchamahapurusha yogas: Mars, Mercury, Jupiter, Venus, or Saturn
+        in an angle (house 1, 4, 7, 10) AND in own, moolatrikona, or exaltation sign.
+        Returns a list of 5 MahapurushaYoga dataclasses.
+        """
+        defs = [
+            ("Ruchaka", "radiant", "Mars"),
+            ("Bhadra", "blessed", "Mercury"),
+            ("Hamsa", "swan", "Jupiter"),
+            ("Malavya", "of Malava", "Venus"),
+            ("Sasa", "rabbit", "Saturn"),
+        ]
+        yogas = []
+        for name, trans, planet_name in defs:
+            sign = self.signs().where_is(planet_name)
+            house = sign.rashis_from_lagna()
+            dig = self.planets()[planet_name].dignity()
+            in_angle = house in (1, 4, 7, 10)
+            in_own_or_ex = dig in ("OH", "EX", "MT")
+            present = in_angle and in_own_or_ex
+            yogas.append(MahapurushaYoga(name, trans, planet_name,
+                                         present, house, dig))
+        return yogas
+
+
+    def solar_yogas(self):
+        """
+        Solar yogas based on starry planets (Mars, Mercury, Jupiter, Venus, Saturn)
+        — NOT Moon, Rahu, or Ketu — in the 2nd and/or 12th from the Sun.
+        Vosi: planet(s) in the 12th from Sun (rises before Sun)
+        Vesi: planet(s) in the 2nd from Sun (sets after Sun)
+        Ubhayachari: planets in both 2nd and 12th from Sun
+        """
+        sun_sign = self.signs().where_is("Sun")
+        sun_house = sun_sign.rashis_from_lagna()
+        lagna_sign = self.signs().lagna()
+        # house numbers of 2nd and 12th from Sun
+        h12_from_sun = ((sun_house - 2) % 12) + 1  # 12th from Sun
+        h2_from_sun = (sun_house % 12) + 1          # 2nd from Sun
+
+        STARRY = {"Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
+        sign_12 = self.signs()[lagna_sign.astrological_signs_forward(h12_from_sun)]
+        sign_2 = self.signs()[lagna_sign.astrological_signs_forward(h2_from_sun)]
+
+        vosi_planets = [p.identity() for p in sign_12.karakas()
+                        if p.identity() in STARRY]
+        vesi_planets = [p.identity() for p in sign_2.karakas()
+                        if p.identity() in STARRY]
+
+        yogas = [
+            SolarYoga("Vosi", vosi_planets, len(vosi_planets) > 0),
+            SolarYoga("Vesi", vesi_planets, len(vesi_planets) > 0),
+            SolarYoga("Ubhayachari", vosi_planets + vesi_planets,
+                      len(vosi_planets) > 0 and len(vesi_planets) > 0),
+        ]
+        return yogas
+
+
+    def lunar_yogas(self):
+        """
+        Lunar yogas based on planets (not Sun, Rahu, Ketu) in the
+        2nd and/or 12th from the Moon.
+        Anapha: planet(s) in the 12th from Moon
+        Sunapha: planet(s) in the 2nd from Moon
+        Durudhara: planets in both 2nd and 12th from Moon
+        Kemadruma: none of the above
+        """
+        moon_sign = self.signs().where_is("Moon")
+        moon_house = moon_sign.rashis_from_lagna()
+        lagna_sign = self.signs().lagna()
+        h12_from_moon = ((moon_house - 2) % 12) + 1
+        h2_from_moon = (moon_house % 12) + 1
+
+        ELIGIBLE = {"Mars", "Mercury", "Jupiter", "Venus", "Saturn"}
+        sign_12 = self.signs()[lagna_sign.astrological_signs_forward(h12_from_moon)]
+        sign_2 = self.signs()[lagna_sign.astrological_signs_forward(h2_from_moon)]
+
+        anapha_planets = [p.identity() for p in sign_12.karakas()
+                          if p.identity() in ELIGIBLE]
+        sunapha_planets = [p.identity() for p in sign_2.karakas()
+                           if p.identity() in ELIGIBLE]
+
+        has_anapha = len(anapha_planets) > 0
+        has_sunapha = len(sunapha_planets) > 0
+
+        yogas = [
+            LunarYoga("Anapha", anapha_planets, has_anapha),
+            LunarYoga("Sunapha", sunapha_planets, has_sunapha),
+            LunarYoga("Durudhara", anapha_planets + sunapha_planets,
+                      has_anapha and has_sunapha),
+            LunarYoga("Kemadruma", [], not has_anapha and not has_sunapha),
+        ]
+        return yogas
 

@@ -274,6 +274,247 @@ def print_avasthas(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi):
     print(avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi))
 
 
+def akriti_yogas_table(akritis) -> str:
+    """
+    Takes the list of AkritiYoga dataclasses returned by Rashi.akriti_yogas()
+    and returns a PrettyTable string, sorted by to_move ascending.
+    """
+    output = PrettyTable()
+    output.field_names = ["Yoga", "Translation", "To Move", "Houses"]
+    output.align["Yoga"] = "l"
+    output.align["Translation"] = "l"
+    output.align["To Move"] = "r"
+    output.align["Houses"] = "l"
+    for y in akritis:
+        houses_str = ", ".join(str(h) for h in y.houses)
+        output.add_row([y.name, y.translation, y.to_move, houses_str])
+    return output.get_string()
+
+def print_akriti_yogas(akritis):
+    print(akriti_yogas_table(akritis))
+
+def rich_akriti_yogas_table(akritis):
+    """
+    Takes the list of AkritiYoga dataclasses returned by Rashi.akriti_yogas()
+    and returns a Rich Table renderable, sorted by to_move ascending.
+    """
+    from rich.table import Table
+    from rich.text import Text
+
+    output = Table(title="Akriti Yogas", box=None)
+    output.add_column("Yoga", style="bold", justify="left")
+    output.add_column("Translation", justify="left")
+    output.add_column("To Move", justify="right")
+    output.add_column("Houses", justify="left")
+
+    for y in akritis:
+        houses_str = ", ".join(str(h) for h in y.houses)
+        tm = y.to_move
+        if tm <= 2:
+            style = "bold green"
+        elif tm <= 4:
+            style = "green"
+        elif tm <= 5:
+            style = ""
+        else:
+            style = "dim"
+        output.add_row(
+            Text(y.name, style=style),
+            Text(y.translation, style=style),
+            Text(str(tm), style=style),
+            Text(houses_str, style=style),
+        )
+    return output
+
+def rich_akriti_yogas(akritis):
+    from rich.console import Console
+    Console().print(rich_akriti_yogas_table(akritis))
+
+
+def nabhasa_yogas_table(yogas) -> str:
+    """
+    Takes the list returned by Rashi.nabhasa_yogas() (or ashraya/dala/sankhya)
+    and returns a PrettyTable string, sorted by to_move ascending.
+    """
+    output = PrettyTable()
+    output.field_names = ["Yoga", "Translation", "Category", "To Move", "Condition"]
+    output.align["Yoga"] = "l"
+    output.align["Translation"] = "l"
+    output.align["Category"] = "l"
+    output.align["To Move"] = "r"
+    output.align["Condition"] = "l"
+    for y in yogas:
+        cat = getattr(y, 'category', 'Akriti')
+        cond = getattr(y, 'condition', None) or ", ".join(str(h) for h in y.houses)
+        output.add_row([y.name, y.translation, cat, y.to_move, cond])
+    return output.get_string()
+
+def print_nabhasa_yogas(yogas):
+    print(nabhasa_yogas_table(yogas))
+
+def rich_nabhasa_yogas_table(yogas):
+    """
+    Takes the list returned by Rashi.nabhasa_yogas() (or ashraya/dala/sankhya)
+    and returns a Rich Table renderable, sorted by to_move ascending.
+    """
+    from rich.table import Table
+    from rich.text import Text
+
+    output = Table(title="Nabhasa Yogas", box=None)
+    output.add_column("Yoga", style="bold", justify="left")
+    output.add_column("Translation", justify="left")
+    output.add_column("Category", justify="left")
+    output.add_column("To Move", justify="right")
+    output.add_column("Condition", justify="left")
+
+    for y in yogas:
+        cat = getattr(y, 'category', 'Akriti')
+        cond = getattr(y, 'condition', None) or ", ".join(str(h) for h in y.houses)
+        tm = y.to_move
+        if tm <= 2:
+            style = "bold green"
+        elif tm <= 4:
+            style = "green"
+        elif tm <= 5:
+            style = ""
+        else:
+            style = "dim"
+        output.add_row(
+            Text(y.name, style=style),
+            Text(y.translation, style=style),
+            Text(cat, style=style),
+            Text(str(tm), style=style),
+            Text(cond, style=style),
+        )
+    return output
+
+def rich_nabhasa_yogas(yogas):
+    from rich.console import Console
+    Console().print(rich_nabhasa_yogas_table(yogas))
+
+
+def mahapurusha_yogas_table(yogas) -> str:
+    output = PrettyTable()
+    output.field_names = ["Yoga", "Translation", "Planet", "Present", "House", "Dignity"]
+    output.align["Yoga"] = "l"
+    output.align["Translation"] = "l"
+    output.align["Planet"] = "l"
+    output.align["Present"] = "c"
+    output.align["House"] = "r"
+    output.align["Dignity"] = "l"
+    for y in yogas:
+        output.add_row([y.name, y.translation, y.planet,
+                        "Yes" if y.present else "No", y.house, y.dignity])
+    return output.get_string()
+
+def print_mahapurusha_yogas(yogas):
+    print(mahapurusha_yogas_table(yogas))
+
+def rich_mahapurusha_yogas_table(yogas):
+    from rich.table import Table
+    from rich.text import Text
+
+    output = Table(title="Panchamahapurusha Yogas", box=None)
+    output.add_column("Yoga", style="bold", justify="left")
+    output.add_column("Translation", justify="left")
+    output.add_column("Planet", justify="left")
+    output.add_column("Present", justify="center")
+    output.add_column("House", justify="right")
+    output.add_column("Dignity", justify="left")
+
+    for y in yogas:
+        style = "bold green" if y.present else "dim"
+        output.add_row(
+            Text(y.name, style=style),
+            Text(y.translation, style=style),
+            Text(y.planet, style=style),
+            Text("Yes" if y.present else "No", style=style),
+            Text(str(y.house), style=style),
+            Text(y.dignity, style=style),
+        )
+    return output
+
+def rich_mahapurusha_yogas(yogas):
+    from rich.console import Console
+    Console().print(rich_mahapurusha_yogas_table(yogas))
+
+
+def solar_yogas_table(yogas) -> str:
+    output = PrettyTable()
+    output.field_names = ["Yoga", "Present", "Planets"]
+    output.align["Yoga"] = "l"
+    output.align["Present"] = "c"
+    output.align["Planets"] = "l"
+    for y in yogas:
+        output.add_row([y.name, "Yes" if y.present else "No",
+                        ", ".join(y.planets) if y.planets else "—"])
+    return output.get_string()
+
+def print_solar_yogas(yogas):
+    print(solar_yogas_table(yogas))
+
+def rich_solar_yogas_table(yogas):
+    from rich.table import Table
+    from rich.text import Text
+
+    output = Table(title="Solar Yogas", box=None)
+    output.add_column("Yoga", style="bold", justify="left")
+    output.add_column("Present", justify="center")
+    output.add_column("Planets", justify="left")
+
+    for y in yogas:
+        style = "bold green" if y.present else "dim"
+        planets_str = ", ".join(y.planets) if y.planets else "—"
+        output.add_row(
+            Text(y.name, style=style),
+            Text("Yes" if y.present else "No", style=style),
+            Text(planets_str, style=style),
+        )
+    return output
+
+def rich_solar_yogas(yogas):
+    from rich.console import Console
+    Console().print(rich_solar_yogas_table(yogas))
+
+
+def lunar_yogas_table(yogas) -> str:
+    output = PrettyTable()
+    output.field_names = ["Yoga", "Present", "Planets"]
+    output.align["Yoga"] = "l"
+    output.align["Present"] = "c"
+    output.align["Planets"] = "l"
+    for y in yogas:
+        output.add_row([y.name, "Yes" if y.present else "No",
+                        ", ".join(y.planets) if y.planets else "—"])
+    return output.get_string()
+
+def print_lunar_yogas(yogas):
+    print(lunar_yogas_table(yogas))
+
+def rich_lunar_yogas_table(yogas):
+    from rich.table import Table
+    from rich.text import Text
+
+    output = Table(title="Lunar Yogas", box=None)
+    output.add_column("Yoga", style="bold", justify="left")
+    output.add_column("Present", justify="center")
+    output.add_column("Planets", justify="left")
+
+    for y in yogas:
+        style = "bold green" if y.present else "dim"
+        planets_str = ", ".join(y.planets) if y.planets else "—"
+        output.add_row(
+            Text(y.name, style=style),
+            Text("Yes" if y.present else "No", style=style),
+            Text(planets_str, style=style),
+        )
+    return output
+
+def rich_lunar_yogas(yogas):
+    from rich.console import Console
+    Console().print(rich_lunar_yogas_table(yogas))
+
+
 from libaditya.cards import cards_constants as cardsc
 cards=cardsc.cards
 

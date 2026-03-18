@@ -76,6 +76,23 @@ All objects are chainable. Most things work with zero arguments via sensible def
 
 Basic tests in `libaditya/tests.py`. Example TOML charts in `libaditya/toml-test/`.
 
+## Calculations added by Claude
+
+The following calculations in `calc/rashi.py` were implemented by Claude (Opus):
+
+- **Avasthas** — all five primary Parashara avastha systems in `calc/avasthas.py`: Lajjitaadi, Baladi, Jagradadi, Deeptadi, Shayanadi
+- **Nabhasa Yogas** — all 32 yogas across 4 subcategories, each with a `to_move` metric showing how many karakas would need to move to perfect the yoga:
+  - `ashraya_yogas()` — Rajju, Musala, Nala (modality-based)
+  - `dala_yogas()` — Mala, Sarpa (benefic/malefic in kendras)
+  - `sankhya_yogas()` — Gola through Veena (1–7 occupied houses)
+  - `akriti_yogas()` — 20 shape yogas (pre-existing, extended)
+  - `nabhasa_yogas()` — combined view of all 32
+- **Panchamahapurusha Yogas** — `panchamahapurusha_yogas()`: Ruchaka, Bhadra, Hamsa, Malavya, Sasa (Mars/Mercury/Jupiter/Venus/Saturn in angle + own/exaltation)
+- **Solar Yogas** — `solar_yogas()`: Vosi, Vesi, Ubhayachari (starry planets in 12th/2nd from Sun)
+- **Lunar Yogas** — `lunar_yogas()`: Anapha, Sunapha, Durudhara, Kemadruma (planets in 12th/2nd from Moon)
+
+Each has corresponding `print_` and `rich_` display functions in `print_functions.py`.
+
 ## Active work areas
 
-See `todo.md` for the full roadmap. Key areas: Cards of Truth subperiod timing, fixed star catalog improvements, SBC drawing completion, vara (weekday) calculations, akriti yogas, Jaimini first strength edge cases.
+See `todo.md` for the full roadmap. Key areas: Cards of Truth subperiod timing, fixed star catalog improvements, SBC drawing completion, vara (weekday) calculations, Jaimini first strength edge cases.
