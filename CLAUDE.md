@@ -78,7 +78,14 @@ Basic tests in `libaditya/tests.py`. Example TOML charts in `libaditya/toml-test
 
 ## Calculations added by Claude
 
-The following calculations in `calc/rashi.py` were implemented by Claude (Opus):
+The following calculations were implemented by Claude (Opus):
+
+**`calc/vimshottari.py`** (non-recursive helpers):
+
+- **`period_duration(lords)`** — computes the duration in days of any vimshottari period given a list of lord indices (maha, bhukti, pratyantar, …) without traversing the full dasha tree
+- **`calculate_specific_period(planet, lords)`** — returns `(start_jd, duration_days)` for any specific period identified by lord indices, walking only the requested path rather than recursively expanding all levels
+
+**`calc/rashi.py`**:
 
 - **Avasthas** — all five primary Parashara avastha systems in `calc/avasthas.py`: Lajjitaadi, Baladi, Jagradadi, Deeptadi, Shayanadi
 - **Nabhasa Yogas** — all 32 yogas across 4 subcategories, each with a `to_move` metric showing how many karakas would need to move to perfect the yoga:
@@ -92,6 +99,18 @@ The following calculations in `calc/rashi.py` were implemented by Claude (Opus):
 - **Lunar Yogas** — `lunar_yogas()`: Anapha, Sunapha, Durudhara, Kemadruma (planets in 12th/2nd from Moon)
 
 Each has corresponding `print_` and `rich_` display functions in `print_functions.py`.
+
+- **Jaimini Kemadruma Yoga** — `jaimini_kemadruma()`: checks from lagna, AK in D1, pada, and svamsha (AK in D9) for equal malefics in 2nd and 8th with no benefics (1.2.119). Applies odd/even direction rule. Reports Moon aspecting for severity (1.2.120).
+
+**`calc/jaimini.py`**:
+
+- **First Source of Strength** — `jaimini_first_strength(kn_rao=False)`: ranks all 12 signs by 8 tiebreaker levels (planet count, dignity, modality, lord's rashi planet count, lord's rashi dignity, lord's rashi modality, distance to lord, final tiebreaker). Refactored by Claude to use `_compare_strength()` comparator with `cmp_to_key`. Supports KN Rao tiebreaker mode.
+- **Third Source of Strength** — `jaimini_third_strength()`: classifies each sign as Kendra/Panapara/Apoklima based on distance from sign to its lord (distance % 3).
+
+**`calc/jaimini_get.py`**:
+
+- **`JaiminiGet.get(spec)`** — general method to compute Jaimini sign influences (conjunctions and rashi aspects) for any topic. Takes a declarative spec from the `Gets` class that defines the factor (karaka + offset, or cusp number) and which vargas to check. Handles odd/even sign direction counting automatically. Supports varga variant overrides (e.g. Siddhamsha vs standard D24). Returns nested dict keyed by factor then varga. See `calc/jaimini-get-arch.md` for full architecture.
+- **`Gets`** — declarative registry of Jaimini topic specs: karakamshas, spirituality, mundane_deity, home, dharma, farmer, spouse, might, conjurer. Each is a dict with `factor` (sign identification strings) and `vargas` (divisional chart priority list).
 
 ## Active work areas
 

@@ -180,6 +180,29 @@ class LajjitaadiAvasthas:
                 sign_obj = signs[sign_num]
                 sign_obj._lajjitaadi_avasthas[name] = avasthas
 
+        # build giving and receiving dicts for each karaka
+        for name in KARAKAS:
+            planet = planets[name]
+            avasthas = planet.attributes["lajjitaadi_avasthas"]
+            # receiving: factors from my avasthas where another planet is the cause
+            receiving = {}
+            for avastha, factors in avasthas.items():
+                planet_factors = [f for f in factors if "planet" in f]
+                if planet_factors:
+                    receiving[avastha] = planet_factors
+            planet.attributes["lajjitaadi_receiving"] = receiving
+            # giving: scan all other planets' avasthas for factors where I am the cause
+            giving = {}
+            for other_name in KARAKAS:
+                if other_name == name:
+                    continue
+                other_avasthas = planets[other_name].attributes["lajjitaadi_avasthas"]
+                for avastha, factors in other_avasthas.items():
+                    for f in factors:
+                        if f.get("planet") == name:
+                            _add(giving, avastha, {**f, "to": other_name})
+            planet.attributes["lajjitaadi_giving"] = giving
+
         return result
 
 

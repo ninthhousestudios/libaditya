@@ -240,70 +240,31 @@ def mk_dasha_lord(dlist):
             lordstr += const.vimshottari_dashas[dlist[lord]][0] + "/"
     return lordstr
 
+DIGNITY_RANK = {"EX": 9, "MT": 8, "OH": 7, "GF": 6, "F": 5, "N": 4, "E": 3, "GE": 2, "DB": 1}
+
 def compare_signs_dignities(sign1,sign2,dignities: [str]) -> int:
     """
-    find which sign has the highest dignity in it
-    dignities of the list of planetary dignities returned by Planets.dignities()
-    0 means they both have equal highest dignity
-    1 means sign1 has the highest dignity
-    2 means sign2 has the highest dignity
+    compare which sign has stronger dignities among its occupying planets
+    dignities is the list of planetary dignities returned by Planets.dignities()
+
+    if different planet counts, more planets wins
+    if same count, sort each sign's planets by dignity descending,
+    compare element by element; first difference determines the winner
+
+    0 means equal
+    1 means sign1 has stronger dignities
+    2 means sign2 has stronger dignities
     """
-    s1digs = []
-    for planet in sign1.karakas():
-        s1digs.append(dignities[planet.list_index()])
-    s2digs = []
-    for planet in sign2.karakas():
-        s2digs.append(dignities[planet.list_index()])
-    if s1digs == [] and s2digs == []:
+    s1digs = sorted([DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign1.karakas()], reverse=True)
+    s2digs = sorted([DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign2.karakas()], reverse=True)
+    if not s1digs and not s2digs:
         return 0
-    if "EX" in s1digs and "EX" in s2digs:
-        return 0
-    if "EX" in s1digs and not "EX" in s2digs:
-        return 1
-    if not "EX" in s1digs and "EX" in s2digs:
-        return 2
-    if "MT" in s1digs and "MT" in s2digs:
-        return 0
-    if "MT" in s1digs and not "MT" in s2digs:
-        return 1
-    if not "MT" in s1digs and "MT" in s2digs:
-        return 2
-    if "OH" in s1digs and "OH" in s2digs:
-        return 0
-    if "OH" in s1digs and not "OH" in s2digs:
-        return 1
-    if not "OH" in s1digs and "OH" in s2digs:
-        return 2
-    if "GF" in s1digs and "GF" in s2digs:
-        return 0
-    if "GF" in s1digs and not "GF" in s2digs:
-        return 1
-    if not "GF" in s1digs and "GF" in s2digs:
-        return 2
-    if "F" in s1digs and "F" in s2digs:
-        return 0
-    if "F" in s1digs and not "F" in s2digs:
-        return 1
-    if not "F" in s1digs and "F" in s2digs:
-        return 2
-    if "E" in s1digs and "E" in s2digs:
-        return 0
-    if "E" in s1digs and not "E" in s2digs:
-        return 1
-    if not "E" in s1digs and "E" in s2digs:
-        return 2
-    if "GE" in s1digs and "GE" in s2digs:
-        return 0
-    if "GE" in s1digs and not "GE" in s2digs:
-        return 1
-    if not "GE" in s1digs and "GE" in s2digs:
-        return 2
-    if "DB" in s1digs and "DB" in s2digs:
-        return 0
-    if "DB" in s1digs and not "DB" in s2digs:
-        return 1
-    if not "DB" in s1digs and "DB" in s2digs:
-        return 2
+    if len(s1digs) != len(s2digs):
+        return 1 if len(s1digs) > len(s2digs) else 2
+    for d1, d2 in zip(s1digs, s2digs):
+        if d1 > d2: return 1
+        if d1 < d2: return 2
+    return 0
 
 def compare_planets_dignities(planet1,planet2) -> int:
     """

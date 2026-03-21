@@ -44,6 +44,7 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         self.master = master
         self.pnumber = pnumber
         self.attributes = {"constellation": "n/a", "dignity": "n/a", "lajjitaadi_avasthas": {},
+                           "lajjitaadi_giving": {}, "lajjitaadi_receiving": {},
                            "baladi_avastha": "", "jagradadi_avastha": "", "deeptadi_avastha": "", "shayanadi_avastha": ""}
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
@@ -142,6 +143,12 @@ class Planet(CelestialObject,Longitude,PlanetBala):
 
     def lajjitaadi_avasthas(self):
         return self.attributes["lajjitaadi_avasthas"]
+
+    def lajjitaadi_avasthas_giving(self):
+        return self.attributes["lajjitaadi_giving"]
+
+    def lajjitaadi_avasthas_receiving(self):
+        return self.attributes["lajjitaadi_receiving"]
 
     def baladi_avastha(self):
         return self.attributes["baladi_avastha"]

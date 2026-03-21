@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+from functools import cmp_to_key
+
 from more_itertools import collapse
 
 from libaditya import utils
@@ -200,167 +202,89 @@ class Jaimini:
         return list(collapse(argala)),list(collapse(third_argala)),list(collapse(obstructed))
 
 
-    def jaimini_first_strength(self) -> [Sign]:
+    def _compare_strength(self, sign1, sign2, kn_rao=False) -> int:
+        """
+        compare two signs by Jaimini first source of strength
+        returns 1 if sign1 is stronger, -1 if sign2 is stronger, 0 if equal
+
+        8 tiebreaker levels per the Jaimini sutras:
+        0: planet count in sign
+        1: highest dignity among occupying planets (sorted comparison)
+        2: modality (dual > fixed > movable)
+        3: planet count in the lord's sign
+        4: highest dignity in the lord's sign
+        5: modality of the lord's sign
+        6: distance from sign to its lord (greater distance wins)
+        7: final tiebreaker (standard: higher rashi number; KN Rao: lord's degree in sign)
+        """
+        dignities = self.dignities()
+
+        # Level 0: planet count in sign
+        c1, c2 = sign1.how_many_karakas(), sign2.how_many_karakas()
+        if c1 != c2:
+            return 1 if c1 > c2 else -1
+
+        # Level 1: dignity comparison among occupying planets
+        result = utils.compare_signs_dignities(sign1, sign2, dignities)
+        if result == 1: return 1
+        if result == 2: return -1
+
+        # Level 2: modality
+        result = utils.compare_signs_modalities(sign1, sign2)
+        if result == 1: return 1
+        if result == 2: return -1
+
+        # Levels 3-5: same three checks on the lord's rashi
+        lord1 = self.planets()[sign1.lord()]
+        lord2 = self.planets()[sign2.lord()]
+        lord1_rashi = self.signs().where_is(sign1.lord())
+        lord2_rashi = self.signs().where_is(sign2.lord())
+
+        # Level 3: planet count in lord's sign
+        c1, c2 = lord1_rashi.how_many_karakas(), lord2_rashi.how_many_karakas()
+        if c1 != c2:
+            return 1 if c1 > c2 else -1
+
+        # Level 4: dignity comparison in lord's sign
+        result = utils.compare_signs_dignities(lord1_rashi, lord2_rashi, dignities)
+        if result == 1: return 1
+        if result == 2: return -1
+
+        # Level 5: modality of lord's sign
+        result = utils.compare_signs_modalities(lord1_rashi, lord2_rashi)
+        if result == 1: return 1
+        if result == 2: return -1
+
+        # Level 6: distance from sign to its lord (greater distance wins)
+        d1 = sign1.astrological_signs_apart(lord1.sign())
+        d2 = sign2.astrological_signs_apart(lord2.sign())
+        if d1 != d2:
+            return 1 if d1 > d2 else -1
+
+        # Level 7: final tiebreaker
+        if kn_rao:
+            deg1 = lord1.real_in_sign_longitude()
+            deg2 = lord2.real_in_sign_longitude()
+            if deg1 != deg2:
+                return 1 if deg1 > deg2 else -1
+            return 0
+        else:
+            # standard: higher rashi number wins
+            if sign1.sign() != sign2.sign():
+                return 1 if sign1.sign() > sign2.sign() else -1
+            return 0
+
+    def jaimini_first_strength(self, kn_rao=False) -> [Sign]:
         """
         calculate Jaiminis first source of strength for all signs
-        return a list of Sign classes with highest strength, then second-highest, etc.
+        return a list of Sign classes from strongest (index 0) to weakest (index 11)
+
+        kn_rao=True uses KN Rao's tiebreaker at level 7 (lord's degree in sign)
+        kn_rao=False (default) uses standard tiebreaker (higher rashi number wins)
         """
-        sortedls = []
-        for sign in self.signs():
-            # determine where in ls to put the sign
-            if sortedls == []:
-                sortedls.append(sign)
-                continue
-            # determine if sign is stronger than sortedls[0]
-            # if so, put it at sortedls[0], if not check against sortedls[1] if it exists
-            for n,sorted_sign in enumerate(sortedls):
-                #if sign.sign() == 12 and n == 3:
-                #import pdb; pdb.set_trace()
-                if sign.how_many_karakas() > 0 and sorted_sign.how_many_karakas() == 0:
-                    # sign is stronger than sorted_sign, so put sign at sorted_sign
-                    sortedls.insert(n,sign)
-                    break # break out of this while loop and go back to the for loop, checking the next sign
-                if sign.how_many_karakas() > sorted_sign.how_many_karakas():
-                    # sign is stronger, so insert here, then get next sign
-                    sortedls.insert(n,sign)
-                    break
-                if sign.how_many_karakas() < sorted_sign.how_many_karakas():
-                    # sign is weaker, so go to next sorted_sign to check that
-                    if n == len(sortedls) - 1:
-                    # this is the last sign in what we have so far
-                    # sign is the weaker, so append it at the end
-                        sortedls.append(sign)
-                        break
-                    continue
-                if sign.how_many_karakas() == sorted_sign.how_many_karakas():
-                    # need to find which planet has the highest dignitiy
-                    has_higher = utils.compare_signs_dignities(sign,sorted_sign,self.dignities())
-                    if has_higher == 1:
-                        # sign is stronger
-                        sortedls.insert(n,sign)
-                        break
-                    if has_higher == 2:
-                        # sorted_sign is stronger, so continue this loop to check against the next sign
-                        # unless this is the last element, then append
-                        if n == len(sortedls) - 1:
-                        # this is the last sign in what we have so far
-                        # sign is the weaker, so append it at the end
-                            sortedls.append(sign)
-                            break
-                        continue
-                    if has_higher == 0:
-                        # they have the same strength on this level, so we must check other things
-                        # we have to check sign modalities to see which is stronger
-                        # dual strongest, fixed middle, moveable weakest
-                        modality_strength = utils.compare_signs_modalities(sign,sorted_sign)
-                        if modality_strength == 1:
-                            # sign is stronger
-                            sortedls.insert(n,sign)
-                            break
-                        if modality_strength == 2:
-                            # if this is the last element in sortedls, append sign since it is weaker
-                            if n == len(sortedls) - 1:
-                            # this is the last sign in what we have so far
-                            # sign is the weaker, so append it at the end
-                                sortedls.append(sign)
-                                break
-                            # if not the last Planet in sortedls, test against the next Planet to see where to put it
-                            continue
-                        if modality_strength == 0:
-                            # have same modality strength, check next level, which is the rashis of the lords of these rashis
-                            # 5. If both the Rasis are the same modality, then consider the
-                            # lord of the Rasi in the same manner as the Rasi has been considered.
-                            # he says "consider the lord of the Rasi in the same manner as the Rashi"
-                            # can we consider a Planet in the same way as a Sign? no
-                            # a Planet is or is not a karaka, but does not have .how_many_karakas() like Sign
-                            # so we need to consider the (two) rāśī of the lords of these two rashis "rāśī adhipatyoḥ imau"
-                            # so consider the rashi the lord is in and the rashi the sorted signs lord is in, and which is stronger
-                            # therein is the stronger; if this doesn't decide, then go to 6. below
-                            signs_lord = sign.lord()
-                            signs_Lord = self.planets()[signs_lord] # the Planet class of the lord
-                            signs_lords_rashi = self.signs().where_is(signs_lord) # return the Sign class
-                            sorted_signs_lord = sorted_sign.lord()
-                            sorted_signs_Lord = self.planets()[sorted_signs_lord]
-                            sorted_signs_lords_rashi = self.signs().where_is(sorted_signs_lord)
-                            # now lets compare their rashis just as we did above
-
-                            has_higher = utils.compare_planets_dignities(self.planets()._dignities()[signs_Lord.list_index()],self.planets()._dignities()[sorted_signs_Lord.list_index()])
-
-                            # compare the signs of the lords
-
-                            if signs_lords_rashi.how_many_karakas() > 0 and sorted_signs_lords_rashi.how_many_karakas() == 0:
-                                # sign is stronger than sorted_sign, so put sign at sorted_sign
-                                sortedls.insert(n,sign)
-                                break # break out of this while loop and go back to the for loop, checking the next sign
-                            if signs_lords_rashi.how_many_karakas() > sorted_signs_lords_rashi.how_many_karakas():
-                                # sign is stronger, so insert here, then get next sign
-                                sortedls.insert(n,sign)
-                                break
-                            if signs_lords_rashi.how_many_karakas() < sorted_signs_lords_rashi.how_many_karakas():
-                                # sign is weaker, so go to next sorted_sign to check that
-                                if n == len(sortedls) - 1:
-                                # this is the last sign in what we have so far
-                                # sign is the weaker, so append it at the end
-                                    sortedls.append(sign)
-                                    break
-                                continue
-                            if signs_lords_rashi.how_many_karakas() == sorted_signs_lords_rashi.how_many_karakas():
-                                # need to find which planet has the highest dignitiy
-                                if has_higher == 1:
-                                    sortedls.insert(n,sign)
-                                    break # break out of this while loop and go back to the for loop, checking the next sign
-                                if has_higher == 2:
-                                    # sign is weaker, so go to next sorted_sign to check that
-                                    if n == len(sortedls) - 1:
-                                    # this is the last sign in what we have so far
-                                    # sign is the weaker, so append it at the end
-                                        sortedls.append(sign)
-                                        break
-                                    continue
-                                if has_higher == 0:
-                                    # the lords have the same dignity, so check the modalities of their signs
-                                    # they have the same strength on this level, so we must check other things
-                                    # we have to check sign modalities to see which is stronger
-                                    # dual strongest, fixed middle, moveable weakest
-                                    modality_strength = utils.compare_signs_modalities(signs_lords_rashi,sorted_signs_lords_rashi)
-                                    if modality_strength == 1:
-                                        # sign is stronger
-                                        sortedls.insert(n,sign)
-                                        break
-                                    if modality_strength == 2:
-                                        if n == len(sortedls) - 1:
-                                        # this is the last sign in what we have so far
-                                        # sign is the weaker, so append it at the end
-                                            sortedls.append(sign)
-                                            break
-                                        continue
-                                    if modality_strength == 0:
-                                        # 6. if both the lords are the same strong according to the above measures, 
-                                        # then the lord who has the highest degrees within the rasi it is in is the stronger, and thus its rasi will be the stronger
-                                        if signs_Lord.real_in_sign_longitude() == sorted_signs_Lord.real_in_sign_longitude():
-                                            # this means the lord is the same, so we have to go to the last tier of strength
-                                            # so get the two signs of the planet
-                                            if sign.sign()%2 == 1:
-                                                # odd sign is stronger
-                                                sortedls.insert(n,sign)
-                                                break
-                                            else:
-                                                if n == len(sortedls) - 1:
-                                                # this is the last sign in what we have so far
-                                                # sign is the weaker, so append it at the end
-                                                    sortedls.append(sign)
-                                                    break
-                                                continue
-                                        if signs_Lord.real_in_sign_longitude() > sorted_signs_Lord.real_in_sign_longitude():
-                                            sortedls.insert(n,sign)
-                                            break
-                                        else:
-                                            sortedls.append(sign)
-                                            break
-                                        # if this is equal, then we are dealing with two signs of the same lord
-                                        # that are not differentiated by any other qualities, so below is how we do it
-                # if it is not stronger than any, it is weaker than all, so it goes at the end
-        return sortedls
+        signs = list(self.signs())
+        signs.sort(key=cmp_to_key(lambda a, b: self._compare_strength(a, b, kn_rao)), reverse=True)
+        return signs
 
     def jaimini_second_strength(self) -> {Sign: [Planets]}:
         """
@@ -391,3 +315,21 @@ class Jaimini:
                 sourcels.append(lord)
             sss[sign] = sourcels
         return sss
+
+    def jaimini_third_strength(self) -> {Sign: (int, str)}:
+        """
+        calculate Jaiminis third source of strength for all signs
+        classifies each sign by the distance from sign to its lord:
+        Kendra (distance % 3 == 1) = 2 (strong)
+        Panapara (distance % 3 == 2) = 1 (moderate)
+        Apoklima (distance % 3 == 0) = 0 (weak)
+
+        return a dictionary of Sign: (value, category_name)
+        """
+        categories = {1: (2, "Kendra"), 2: (1, "Panapara"), 0: (0, "Apoklima")}
+        ret = {}
+        for sign in self.signs():
+            lord = self.planets()[sign.lord()]
+            distance = sign.astrological_signs_apart(lord.sign())
+            ret[sign] = categories[distance % 3]
+        return ret

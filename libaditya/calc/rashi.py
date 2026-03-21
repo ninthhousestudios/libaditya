@@ -545,3 +545,68 @@ class Rashi(Varga,SWERashi,JaiminiGet,RashiBala,DrawSBC,Hellenistic,Returns,Lajj
         ]
         return yogas
 
+    def jaimini_kemadruma(self):
+        """
+        Jaimini Kemadruma Yoga (1.2.119-120)
+
+        from the svamsha (AK in D9), lagna, or pada:
+        if there are an equal number of malefics in the 2nd and 8th,
+        with no benefics in either house, that is kemadruma yoga
+
+        count backward if the reference sign is even (jaimini direction rule)
+        malefics are planets where .nature() == "Malefic"
+
+        also checks from AK in rashi (D1)
+
+        moon aspecting the malefics makes it more severe (1.2.120)
+
+        returns a list of dicts, one per reference point where kemadruma is present
+        each dict has: reference, second_malefics, eighth_malefics, moon_aspects, sign
+        """
+        ak = self.planets().jaimini_karakas()[0]
+        d9 = self.master.varga(9)
+
+        # reference points: (name, sign, varga to use)
+        refs = [
+            ("lagna", self.lagna(), self),
+            ("AK in D1", self.signs().where_is(ak.identity()), self),
+            ("pada", self.pada(), self),
+            ("svamsha", d9.where_is(ak.identity()), d9),
+        ]
+
+        moon_sign = self.signs()[self.planets().moon().sign()]
+
+        results = []
+        for name, ref_sign, varga in refs:
+            direction = 1 if ref_sign.sign() % 2 == 1 else -1
+            second = varga.signs()[ref_sign.astrological_signs_forward(2 * direction)]
+            eighth = varga.signs()[ref_sign.astrological_signs_forward(8 * direction)]
+
+            second_malefics = [p for p in second.grahas() if p.nature() == "Malefic"]
+            eighth_malefics = [p for p in eighth.grahas() if p.nature() == "Malefic"]
+            second_benefics = [p for p in second.grahas() if p.nature() == "Benefic"]
+            eighth_benefics = [p for p in eighth.grahas() if p.nature() == "Benefic"]
+
+            if (len(second_malefics) == 0 or len(eighth_malefics) == 0):
+                continue
+            if len(second_malefics) != len(eighth_malefics):
+                continue
+            if second_benefics or eighth_benefics:
+                continue
+
+            # check if moon aspects either house (1.2.120 — more severe)
+            moon_aspects_second = self.signs().rashi_aspect_from_to(moon_sign, second)
+            moon_aspects_eighth = self.signs().rashi_aspect_from_to(moon_sign, eighth)
+
+            results.append({
+                "reference": name,
+                "sign": ref_sign,
+                "second": second,
+                "second_malefics": second_malefics,
+                "eighth": eighth,
+                "eighth_malefics": eighth_malefics,
+                "moon_aspects": moon_aspects_second or moon_aspects_eighth,
+            })
+
+        return results
+
