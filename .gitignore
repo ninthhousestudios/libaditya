@@ -19,3 +19,6 @@ tests.py
 bak.pyproject.toml
 build/
 libaditya/toml-test/
+
+# AgentOps session artifacts
+.agents/

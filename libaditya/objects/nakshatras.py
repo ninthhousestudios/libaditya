@@ -22,12 +22,12 @@ from libaditya import constants as const
 
 class Nakshatra:
     def __init__(self, occupant):
-        self._naksize = 13+(1/3)
         self._occupant = occupant
         self.context = occupant.context
         self.timeJD = occupant.timeJD
         self.base_long = self._occupant.ecliptic_longitude()
         self.ayanamsa = self.context.ayanamsa
+        self._naksize = 360/28 if self.ayanamsa == 101 else 13+(1/3)
         # ashlong means the number of degrees from ashvini; in most cases, the sidereal longitude
         self.ash_long = self.init_ash_long()
 
@@ -66,6 +66,8 @@ class Nakshatra:
         return self.ash_long
 
     def index(self):
+        if self.ayanamsa == 101:
+            return int(self.ashvini_longitude()/self.naksize())%28
         return int(self.ashvini_longitude()/self.naksize())%27
 
     def identity(self):
@@ -73,10 +75,12 @@ class Nakshatra:
         return the English name to use as an all purpose nakshatras dictionary index
         ['Ashvini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'P. Phalguni', 'U. Phalguni', 'Hasta', 'Chitra', 'Svati', 'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'P. Ashadha', 'U. Ashadha', 'Shravana', 'Danishtha', 'Shatabhisha', 'P. Bhadrapada', 'U. Bhadrapada', 'Revati'
         """
-        return const.names["eng"]["nakshatras"][self.index()]
+        nak_key = "nakshatras_28eq" if self.ayanamsa == 101 else "nakshatras"
+        return const.names["eng"][nak_key][self.index()]
 
     def nakshatra(self):
-        return const.names[self.context.names_type]["nakshatras"][self.index()]
+        nak_key = "nakshatras_28eq" if self.ayanamsa == 101 else "nakshatras"
+        return const.names[self.context.names_type][nak_key][self.index()]
 
     def degrees_elapsed(self):
         if self.context.toround[0] == True:
@@ -113,6 +117,8 @@ class Nakshatra:
         # otherwise, find the number of degrees from ashvini
         # insert custom ayanamsa codes and methods here
         if self.ayanamsa == -1:
+            return self.base_longitude()
+        if self.ayanamsa == 101:
             return self.base_longitude()
         if self.ayanamsa == 98:
             return self.dhruva_gc_equatorial()
