@@ -1,27 +1,22 @@
-# CLAUDE.md - libaditya
+# libaditya
 
-## What is this?
-
-libaditya is a Python 3.13+ astrological calculation library built on top of the Swiss Ephemeris (pyswisseph). It supports tropical, sidereal (46+ ayanamsas), and "Aditya Circle" zodiacs. It covers Vedic astrology (Jaimini, Panchanga, Vimshottari Dashas, Shadbala), Human Design (bodygraph SVG generation), Cards of Truth, fixed stars, and Sarvatobhadra Chakra drawing.
-
-Licensed AGPL v3+. Published on PyPI as `libaditya`. Hosted on GitLab.
+Python 3.13+ astrological calculation library built on pyswisseph. Supports tropical, sidereal (46+ ayanamsas), and Aditya Circle zodiacs. Vedic (Jaimini, Panchanga, Vimshottari, Shadbala), Human Design, Cards of Truth, fixed stars, SBC drawing. AGPL v3+. Published on PyPI.
 
 ## Project structure
 
 ```
 libaditya/
-  objects/       # Core data objects: EphContext, Planet, Sign, Cusp, Nakshatra, Longitude, JulianDay, Location
-  calc/          # Calculation modules: Rashi, Varga, Jaimini, Panchanga, Vimshottari, Hellenistic, Returns
-  charts/        # High-level chart interfaces: Chart (main entry point), Bodygraph, Jaimini, Tajika
-  cards/         # Cards of Truth system: birth/year/day spreads, quadrations
+  objects/       # EphContext, Planet, Sign, Cusp, Nakshatra, Longitude, JulianDay, Location
+  calc/          # Rashi, Varga, Jaimini, Panchanga, Vimshottari, Hellenistic, Returns, Avasthas
+  charts/        # Chart (main entry), Bodygraph, Jaimini, Tajika
+  cards/         # Cards of Truth: birth/year/day spreads, quadrations
   hd/            # Human Design: gate/line/channel calculations
-  draw/          # SVG drawing: bodygraph, Sarvatobhadra Chakra, themes/
-  stars/         # Fixed star catalog (~8000+ stars), Stellarium integration
+  draw/          # SVG drawing: bodygraph, SBC, themes/
+  stars/         # Fixed star catalog (~8000+ stars)
   ephe/          # Swiss Ephemeris data files (~37 MB)
   constants.py   # All constants, mappings, ayanamsa definitions (~1600 lines)
   utils.py       # DMS conversion, date parsing, signization, dignity helpers
   read.py        # File I/O: TOML charts, Kala .chtk parsing
-  write.py       # Interactive chart creation (TOML output)
   print_functions.py  # Terminal output formatting (PrettyTable, Rich)
 ```
 
@@ -43,13 +38,10 @@ pyswisseph, drawsvg, metar, more-itertools, prettytable, requests, rich, toml
 from libaditya import *
 
 chart = Chart()                    # current time, default location (Yamakoti)
-chart.tropical()                   # switch to tropical
-chart.sidereal(ayanamsa=27)        # switch to sidereal
-chart.rashi()                      # D1 chart
-chart.varga(9)                     # Navamsha
-chart.rashi().panchanga()          # Panchanga
+chart.tropical() / chart.sidereal(ayanamsa=27) / chart.aditya()
+chart.rashi() / chart.varga(9)
 chart.rashi().panchanga().vimshottari_dasha()
-chart.bodygraph().draw_svg()       # Human Design SVG
+chart.bodygraph().draw_svg()       # Human Design
 chart.cot().birth_spread()         # Cards of Truth
 ```
 
@@ -57,11 +49,11 @@ All objects are chainable. Most things work with zero arguments via sensible def
 
 ## Key design principles
 
-- Calculations should be transparent and understandable to astrologers
-- Chainable API with sensible defaults (everything works with no arguments)
+- Chainable API with sensible defaults
 - Multiple output representations: `__str__`, `__repr__`, `.rich()`
-- EphContext is the immutable configuration dataclass (time, location, calc options)
+- EphContext is the immutable configuration dataclass
 - Chart is the main entry point; wraps EphContext
+- Calculations should be transparent to astrologers
 
 ## Conventions
 
@@ -70,48 +62,22 @@ All objects are chainable. Most things work with zero arguments via sensible def
 - Rich for terminal formatting
 - drawsvg for SVG generation
 - Constants go in `constants.py`
-- Printing/formatting logic goes in `print_functions.py`, not in the objects themselves
+- Printing/formatting in `print_functions.py`, not in objects
 
 ## Testing
 
 Basic tests in `libaditya/tests.py`. Example TOML charts in `libaditya/toml-test/`.
 
-## Calculations added by Claude
+## Notable APIs
 
-The following calculations were implemented by Claude (Opus):
+**`calc/jaimini.py`**: `jaimini_first_strength(kn_rao=False)` ranks all 12 signs by 8 tiebreaker levels. Uses `_compare_strength()` comparator with `cmp_to_key`. `jaimini_third_strength()` classifies signs as Kendra/Panapara/Apoklima by distance % 3.
 
-**`calc/vimshottari.py`** (non-recursive helpers):
+**`calc/jaimini_get.py`**: `JaiminiGet.get(spec)` computes Jaimini sign influences (conjunctions + rashi aspects) for any topic. Takes declarative specs from `Gets` class (factor + vargas). Handles odd/even sign direction. See `calc/jaimini-get-arch.md`.
 
-- **`period_duration(lords)`** — computes the duration in days of any vimshottari period given a list of lord indices (maha, bhukti, pratyantar, …) without traversing the full dasha tree
-- **`calculate_specific_period(planet, lords)`** — returns `(start_jd, duration_days)` for any specific period identified by lord indices, walking only the requested path rather than recursively expanding all levels
+**`calc/avasthas.py`**: All 5 Parashara avastha systems — Lajjitaadi, Baladi, Jagradadi, Deeptadi, Shayanadi.
 
-**`calc/rashi.py`**:
+**`calc/rashi.py`**: Nabhasa yogas (32 across 4 subcategories), Panchamahapurusha, Solar/Lunar yogas. Each yoga has `to_move` metric. Print/rich display functions in `print_functions.py`.
 
-- **Avasthas** — all five primary Parashara avastha systems in `calc/avasthas.py`: Lajjitaadi, Baladi, Jagradadi, Deeptadi, Shayanadi
-- **Nabhasa Yogas** — all 32 yogas across 4 subcategories, each with a `to_move` metric showing how many karakas would need to move to perfect the yoga:
-  - `ashraya_yogas()` — Rajju, Musala, Nala (modality-based)
-  - `dala_yogas()` — Mala, Sarpa (benefic/malefic in kendras)
-  - `sankhya_yogas()` — Gola through Veena (1–7 occupied houses)
-  - `akriti_yogas()` — 20 shape yogas (pre-existing, extended)
-  - `nabhasa_yogas()` — combined view of all 32
-- **Panchamahapurusha Yogas** — `panchamahapurusha_yogas()`: Ruchaka, Bhadra, Hamsa, Malavya, Sasa (Mars/Mercury/Jupiter/Venus/Saturn in angle + own/exaltation)
-- **Solar Yogas** — `solar_yogas()`: Vosi, Vesi, Ubhayachari (starry planets in 12th/2nd from Sun)
-- **Lunar Yogas** — `lunar_yogas()`: Anapha, Sunapha, Durudhara, Kemadruma (planets in 12th/2nd from Moon)
+## Active work
 
-Each has corresponding `print_` and `rich_` display functions in `print_functions.py`.
-
-- **Jaimini Kemadruma Yoga** — `jaimini_kemadruma()`: checks from lagna, AK in D1, pada, and svamsha (AK in D9) for equal malefics in 2nd and 8th with no benefics (1.2.119). Applies odd/even direction rule. Reports Moon aspecting for severity (1.2.120).
-
-**`calc/jaimini.py`**:
-
-- **First Source of Strength** — `jaimini_first_strength(kn_rao=False)`: ranks all 12 signs by 8 tiebreaker levels (planet count, dignity, modality, lord's rashi planet count, lord's rashi dignity, lord's rashi modality, distance to lord, final tiebreaker). Refactored by Claude to use `_compare_strength()` comparator with `cmp_to_key`. Supports KN Rao tiebreaker mode.
-- **Third Source of Strength** — `jaimini_third_strength()`: classifies each sign as Kendra/Panapara/Apoklima based on distance from sign to its lord (distance % 3).
-
-**`calc/jaimini_get.py`**:
-
-- **`JaiminiGet.get(spec)`** — general method to compute Jaimini sign influences (conjunctions and rashi aspects) for any topic. Takes a declarative spec from the `Gets` class that defines the factor (karaka + offset, or cusp number) and which vargas to check. Handles odd/even sign direction counting automatically. Supports varga variant overrides (e.g. Siddhamsha vs standard D24). Returns nested dict keyed by factor then varga. See `calc/jaimini-get-arch.md` for full architecture.
-- **`Gets`** — declarative registry of Jaimini topic specs: karakamshas, spirituality, mundane_deity, home, dharma, farmer, spouse, might, conjurer. Each is a dict with `factor` (sign identification strings) and `vargas` (divisional chart priority list).
-
-## Active work areas
-
-See `todo.md` for the full roadmap. Key areas: Cards of Truth subperiod timing, fixed star catalog improvements, SBC drawing completion, vara (weekday) calculations, Jaimini first strength edge cases.
+See `todo.md` for roadmap.

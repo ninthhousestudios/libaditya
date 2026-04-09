@@ -19,6 +19,7 @@ tests.py
 bak.pyproject.toml
 build/
 libaditya/toml-test/
+dart_reader/
 
 # AgentOps session artifacts
 .agents/
