@@ -1,6 +1,6 @@
 [project]
 name = "libaditya"
-version = "0.3.3"
+version = "0.3.4"
 description = "Astrological calculation library for Adityas. It is capable of calculating using tropical zodiac, tropical adityas, or sidereal signs. It can do any ayanamsa for naskhatras, including tropcial/sidereal nakshatras, or both sidereal or both tropical (right now, Vedanga Jyotisha ayanamsa). It has basic HD calculations in it; will include more soon. see README for more information on trying it."
 readme = "README.md"
 requires-python = "<=3.13"
