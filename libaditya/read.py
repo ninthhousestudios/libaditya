@@ -46,9 +46,19 @@ def read_pyph(infile):
     return name, placename, month, day, year, ephclock, lat, long
 
 
+def _read_chtk_lines(infile):
+    """Read a .chtk file, handling both UTF-16 LE (BOM) and ASCII/UTF-8."""
+    with open(infile, "rb") as f:
+        raw = f.read()
+    if raw[:2] == b'\xff\xfe':
+        text = raw.decode("utf-16-le").lstrip("﻿")
+        return [line.encode("latin-1", errors="replace") for line in text.splitlines()]
+    else:
+        return raw.splitlines()
+
+
 def read_chtk(infile):
-    input = open(infile, "rb")
-    lines = input.readlines()
+    lines = _read_chtk_lines(infile)
     linenum = 0
     for line in lines:
         # print(f"{n}: {line.decode(errors='ignore')}")
@@ -68,7 +78,13 @@ def read_chtk(infile):
             case 6:
                 sec = intize_line(codecs.decode(line))
             case 7:
-                sex = intize_line(codecs.decode(line))
+                sexstr = codecs.decode(line).strip().replace("\x00", "").replace("\r", "").replace("\n", "")
+                if sexstr in ("m", "M", "1"):
+                    sex = 1
+                elif sexstr in ("f", "F", "0", "2"):
+                    sex = 2
+                else:
+                    sex = 0
             case 8:
                 country = clean_line(line)
             case 9:
@@ -105,7 +121,6 @@ def read_chtk(infile):
             case 13:  # dst value
                 dst = intize_line(codecs.decode(line))
         linenum += 1
-    input.close()
     placename = city + ", " + country
     ephclock = hour + min / 60 + sec / 3600
     return (
@@ -147,7 +162,7 @@ def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
     timeJD = JulianDay((year,month,day,timedec),utcoffset)
     location = Location(lat, long, 0, placename, timeJD.utcoffset)
-    return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type="mixed",sign_names="adityas")
+    return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type=names_type,sign_names=sign_names)
 
 def context_to_chtk(context=EphContext(),outfile=None):
     """
@@ -229,14 +244,15 @@ def lat_to_float(lat):
     """
     change kalas lat representation into a float
     """
-    # string is like this 030E44'00
-    if lat[2:3] == "N":
+    # string is like this 38N37'38 or short form 23n02
+    if lat[2:3] in ("N", "n"):
         sign = 1
     else:
         sign = -1
     degs = float(lat[:2])
-    mins = float(lat[3:5])
-    secs = float(lat[6:8])
+    mins = float(lat[3:5]) if len(lat) > 3 else 0.0
+    secs_str = lat[6:8] if len(lat) > 6 else ""
+    secs = float(secs_str) if secs_str else 0.0
     return sign*(degs + (mins / 60) + (secs / 3600))
 
 
@@ -256,19 +272,24 @@ def long_to_float(long):
     """
     change kalas long representation into a float
     """
-    # string is usually like this 030E44'00
-    if long[3:4] == "E":
-        sign = 1
-    else:
-        sign = -1
-    try:
+    # long form: 090W11'52 (3-digit degrees)
+    # short form: 72e39 (2-digit degrees, no seconds)
+    if long[3:4] in ("E", "e", "W", "w"):
+        sign = 1 if long[3:4] in ("E", "e") else -1
         degs = float(long[:3])
-        mins = float(long[4:6])
-        secs = float(long[7:9])
-    except:
+        mins = float(long[4:6]) if len(long) > 4 else 0.0
+        secs_str = long[7:9] if len(long) > 7 else ""
+        secs = float(secs_str) if secs_str else 0.0
+    elif long[2:3] in ("E", "e", "W", "w"):
+        sign = 1 if long[2:3] in ("E", "e") else -1
         degs = float(long[:2])
-        mins = float(long[3:5])
-        secs = float(long[6:8])
+        mins = float(long[3:5]) if len(long) > 3 else 0.0
+        secs_str = long[6:8] if len(long) > 6 else ""
+        secs = float(secs_str) if secs_str else 0.0
+    else:
+        sign = 1
+        degs = float(long[:3])
+        mins = secs = 0.0
     return sign*(degs + (mins / 60) + (secs / 3600))
 
 
@@ -298,7 +319,8 @@ def intize_line(line):
             del line[count]
             continue
         count += 1
-    return int("".join(line))
+    s = "".join(line)
+    return int(float(s))
 
 
 def clean_line(line):
