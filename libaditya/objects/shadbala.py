@@ -25,15 +25,15 @@ from libaditya import utils
 
 from .cusps import Cusp
 
+
 class PlanetBala:
     """
     a Mixin for libaditya.objects.Planet which has shadbala methods
     has most of them expect for class specific ones, e.g., Sun.cheshta_bala()
     """
 
-
     # STHANA BALA
-    
+
     def ucca_bala(self):
         """
         this method will work in each Varga, given the "amsha_longitude()", the longitude in whatever amsha this is in
@@ -46,8 +46,8 @@ class PlanetBala:
         if self.identity() == "Moon" or self.identity() == "Mercury":
             return self._ucca_bala_mm()
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        ucca = utils.sign_degree_to_longitude(self.ucca(),self.context)
-        #nica = utils.sign_degree_to_longitude(self.nica(),self.context)
+        ucca = utils.sign_degree_to_longitude(self.ucca(), self.context)
+        # nica = utils.sign_degree_to_longitude(self.nica(),self.context)
 
         return self.virupas_between(ucca)
 
@@ -63,10 +63,10 @@ class PlanetBala:
         maybe will add that
         """
         # ucca/nica are stored as sign.degrees, but we need the actual longitude to calculate ucca bala
-        lower_ucca = utils.sign_degree_to_longitude(self.ucca()[0],self.context)
-        upper_ucca = utils.sign_degree_to_longitude(self.ucca()[1],self.context)
-        lower_nica = utils.sign_degree_to_longitude(self.nica()[0],self.context)
-        upper_nica = utils.sign_degree_to_longitude(self.nica()[1],self.context)
+        lower_ucca = utils.sign_degree_to_longitude(self.ucca()[0], self.context)
+        upper_ucca = utils.sign_degree_to_longitude(self.ucca()[1], self.context)
+        lower_nica = utils.sign_degree_to_longitude(self.nica()[0], self.context)
+        upper_nica = utils.sign_degree_to_longitude(self.nica()[1], self.context)
 
         if self.amsha_longitude() >= lower_ucca and self.amsha_longitude() < upper_ucca:
             return 60
@@ -78,16 +78,16 @@ class PlanetBala:
         # ucca_length = 180-(upper_ucca - lower_ucca)
         # nica_length = 180-(upper_nica - lower_nica)
         # this is the length that gets 60 proportional points
-        calc_length = 180-(upper_ucca-lower_ucca)
+        calc_length = 180 - (upper_ucca - lower_ucca)
 
-        if self.amsha_between(upper_ucca,lower_nica):
+        if self.amsha_between(upper_ucca, lower_nica):
             # 0-3 is the range of exaltation, so 60 points is divided into 177 degrees
-            from_lower_nica = self.amsha_degrees_apart(lower_nica) 
-            return (from_lower_nica/calc_length)*60
-        if self.amsha_between(upper_nica,lower_ucca):
-            from_lower_ucca = self.amsha_degrees_apart(lower_ucca) 
-            from_upper_nica = calc_length-from_lower_ucca
-            return (from_upper_nica/calc_length)*60
+            from_lower_nica = self.amsha_degrees_apart(lower_nica)
+            return (from_lower_nica / calc_length) * 60
+        if self.amsha_between(upper_nica, lower_ucca):
+            from_lower_ucca = self.amsha_degrees_apart(lower_ucca)
+            from_upper_nica = calc_length - from_lower_ucca
+            return (from_upper_nica / calc_length) * 60
 
     def saptavargaja_bala(self):
         return self.attributes["saptavargaja_bala"]
@@ -106,22 +106,31 @@ class PlanetBala:
         which_third = 0
         if self.amsha_raw_in_sign_longitude() < 10:
             which_third = 1
-        elif self.amsha_raw_in_sign_longitude() >= 10 and self.amsha_raw_in_sign_longitude() < 20:
+        elif (
+            self.amsha_raw_in_sign_longitude() >= 10
+            and self.amsha_raw_in_sign_longitude() < 20
+        ):
             which_third = 2
         else:
             which_third = 3
-        match (self.gender(),which_third):
-            case ("M",1):
+        match (self.gender(), which_third):
+            case ("M", 1):
                 return 15
-            case ("N",2):
+            case ("N", 2):
                 return 15
-            case ("F",3):
+            case ("F", 3):
                 return 15
             case _:
                 return 0
 
     def sthana_bala(self):
-        return self.ucca_bala() + self.saptavargaja_bala() + self.sama_visama_bala() + self.kendradi_bala() + self.drekkana_bala()
+        return (
+            self.ucca_bala()
+            + self.saptavargaja_bala()
+            + self.sama_visama_bala()
+            + self.kendradi_bala()
+            + self.drekkana_bala()
+        )
 
     # DIG BALA
 
@@ -170,7 +179,6 @@ class PlanetBala:
             # all the others have 60 points at the northern solstice, i.e,, 90 degrees ecliptic longitude
             return self.virupas_between(90)
 
-
     # CHESHTA BALA
 
     def mean_longitude(self):
@@ -179,6 +187,7 @@ class PlanetBala:
 
     def cheshta_bala(self):
         from libaditya.objects import Sun
+
         t = self.context.timeJD.T()
         sun_mean_longitude = Sun(self.context).mean_longitude()
         mean = const.mean_longitude_formulas[self.identity()](t)
@@ -187,22 +196,22 @@ class PlanetBala:
             mean = sun_mean_longitude
         else:
             apogee = sun_mean_longitude
-        average = (self.ecliptic_longitude()+mean)/2
+        average = (self.ecliptic_longitude() + mean) / 2
         reduce = abs(apogee - average)
         if reduce > 180:
-            reduce = (360 - reduce)%360
-        return reduce/3
+            reduce = (360 - reduce) % 360
+        return reduce / 3
 
     # DRIG BALA
 
     def drig_bala(self):
         return self.attributes["drig_bala"]
 
+
 class RashiBala:
     """
     a Mixin for libaditya.calc.vargas.Rashi which has shadbala methods that work best at the Rashi level
     """
-
 
     # STHANA BALA
     # also includes Planet.ucca_bala() and Planet.drekkana_bala()
@@ -227,20 +236,12 @@ class RashiBala:
         """
         sapta_vargas = self.master.saptavargas()
 
-        points = {
-            "MT": 45,
-            "OH": 30,
-            "GF": 20,
-            "F": 15,
-            "N": 10,
-            "E": 4,
-            "GE": 2
-        }
+        points = {"MT": 45, "OH": 30, "GF": 20, "F": 15, "N": 10, "E": 4, "GE": 2}
 
         # list of totals in karaka order
         totals = []
 
-#        #import pdb; pdb.set_trace()
+        #        #import pdb; pdb.set_trace()
         for planet in self.planets().karakas().values():
             this_total = 0
             for varga in sapta_vargas:
@@ -249,7 +250,7 @@ class RashiBala:
                 if dignity == "EX" or dignity == "DB":
                     dignity = planet_in_varga.combined_relationship()
                 this_total += points[dignity]
-            planet.set_attribute(("saptavargaja_bala",this_total))
+            planet.set_attribute(("saptavargaja_bala", this_total))
             totals.append(this_total)
 
         return totals
@@ -260,19 +261,21 @@ class RashiBala:
         if they coincide, they get 15 points (for each varga); if not, 0
         in this case, N is treated as M, basically
         """
-        vargas = [self,self.master.varga(9)]
+        vargas = [self, self.master.varga(9)]
 
         totals = []
 
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         for planet in self.planets().karakas().values():
             this_total = 0
             for varga in vargas:
                 planet_gender = planet.gender()
                 sign_gender = varga.signs().where_is(planet.identity()).gender()
-                if planet_gender == sign_gender or (planet_gender == "N" and sign_gender == "M"):
+                if planet_gender == sign_gender or (
+                    planet_gender == "N" and sign_gender == "M"
+                ):
                     this_total += 15
-            planet.set_attribute(("sama_visama_bala",this_total))
+            planet.set_attribute(("sama_visama_bala", this_total))
             totals.append(this_total)
 
         return totals
@@ -294,7 +297,7 @@ class RashiBala:
                     bala = 30
                 case 3 | 6 | 9 | 12:
                     bala = 15
-            planet.set_attribute(("kendradi_bala",bala))
+            planet.set_attribute(("kendradi_bala", bala))
             balas.append(bala)
         return balas
 
@@ -325,18 +328,17 @@ class RashiBala:
         return list of float values, which are the digbalas of the planets in their natural order
         """
         ret = []
-        for n,karaka in enumerate(self.planets().karakas().values()):
+        for n, karaka in enumerate(self.planets().karakas().values()):
             if n == 7:
                 break
             ret.append(karaka._dig_bala(self.cusps()[karaka.dig_bala_cusp()]))
-            karaka.set_attribute(("dig_bala",ret[karaka.list_index()]))
+            karaka.set_attribute(("dig_bala", ret[karaka.list_index()]))
         return ret
 
     def dig_balas(self):
         return self._dig_balas
 
     # KALA BALA
-
 
     # AYANA BALA
 
@@ -376,10 +378,12 @@ class RashiBala:
         # first list is aspects of sun to the grahas in order, second is aspects of moon to grahas in order, etc.
         aspects = self.planets().parashara_aspects()
 
-        for this_planet_number,planet in enumerate(self.planets().karakas().values()):
+        for this_planet_number, planet in enumerate(self.planets().karakas().values()):
             this_total = 0
-            for aspecting_planet_number in range(0,7):
-                if not isinstance(aspects[aspecting_planet_number][this_planet_number], int):
+            for aspecting_planet_number in range(0, 7):
+                if not isinstance(
+                    aspects[aspecting_planet_number][this_planet_number], int
+                ):
                     # this means either aspecting_plant is this planet, or conjunct this plant, or does not aspect this planet
                     continue
                 # 3 is mercury and 4 is jupiter
@@ -387,12 +391,18 @@ class RashiBala:
                 if aspecting_planet_number == 3 or aspecting_planet_number == 4:
                     this_total += aspects[aspecting_planet_number][this_planet_number]
                 # if it is venus or benefic moon, add 1/4 of their aspect value
-                elif aspecting_planet_number == 5 or (aspecting_planet_number == 1 and self.planets().moon().is_benefic()):
-                    this_total += aspects[aspecting_planet_number][this_planet_number]*(1/4)
+                elif aspecting_planet_number == 5 or (
+                    aspecting_planet_number == 1 and self.planets().moon().is_benefic()
+                ):
+                    this_total += aspects[aspecting_planet_number][
+                        this_planet_number
+                    ] * (1 / 4)
                 # otherwise it is a malefic aspect, so subtract 1/4 of the aspect value
                 else:
-                    this_total -= aspects[aspecting_planet_number][this_planet_number]*(1/4)
-                planet.set_attribute(("drig_bala",this_total))
+                    this_total -= aspects[aspecting_planet_number][
+                        this_planet_number
+                    ] * (1 / 4)
+                planet.set_attribute(("drig_bala", this_total))
             balas.append(this_total)
 
         return balas

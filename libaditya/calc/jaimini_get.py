@@ -16,7 +16,6 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 
-
 class Gets:
     """
     factor-s are all signs
@@ -35,93 +34,75 @@ class Gets:
     karakamshas = {
         # AK, i.e.,s the sign of the AK
         "factor": ["AK"],
-        "vargas": ["9","1","7"]
+        "vargas": ["9", "1", "7"],
     }
 
-    spirituality = {
-        "factor": ["12 away AK"],
-        "vargas": ["9","24","1"]
-    }
+    spirituality = {"factor": ["12 away AK"], "vargas": ["9", "24", "1"]}
 
-    mundane_deity = {
-        "factor": ["6 away AmK"],
-        "vargas": ["30","9","1"]
-    }
+    mundane_deity = {"factor": ["6 away AmK"], "vargas": ["30", "9", "1"]}
 
-    home = {
-        "factor": ["4 away AK"],
-        "vargas": ["4","16","1"]
-    }
+    home = {"factor": ["4 away AK"], "vargas": ["4", "16", "1"]}
 
     dharma = {
         "factor": ["9 away AK"],
         # 12 for seeing if parental influence supports innate dharma
-        "vargas": ["9","1","12"]
+        "vargas": ["9", "1", "12"],
     }
 
     farmer = {
         "factor": ["3", "6", "9"],
         # others?
-        "vargas": ["1"]
+        "vargas": ["1"],
     }
 
     # this is interpretive actually
     # this is will be covered by "karamashas" near the top
-#    adultery = {
-#        "factor": ["AK in Mars or AK in Venus"],
-#        "vargas": ["9","7","1"]
-#    }
+    #    adultery = {
+    #        "factor": ["AK in Mars or AK in Venus"],
+    #        "vargas": ["9","7","1"]
+    #    }
 
-    spouse = {
-        "factor": ["7 away AK"],
-        "vargas": ["9","7","1"]
-    }
+    spouse = {"factor": ["7 away AK"], "vargas": ["9", "7", "1"]}
 
-    might = {
-        "factor": ["3 away AK"],
-        "vargas": ["9","3","1"]
-    }
+    might = {"factor": ["3 away AK"], "vargas": ["9", "3", "1"]}
 
-    conjurer = {
-        "factor": ["5 away AK", "9 away AK"],
-        "vargas": ["9","1"]
-    }
+    conjurer = {"factor": ["5 away AK", "9 away AK"], "vargas": ["9", "1"]}
 
     capability = {
         # 1.2.40-42: how capable/successful a person is at their livelihood
         "factor": ["10 away AK"],
-        "vargas": ["9","1","10"]
+        "vargas": ["9", "1", "10"],
     }
 
     disease_foundation = {
         # 1.2.88-90: chronic/glandular/skin disease (vitiligo, leprosy)
         # same factor as home but different vargas — D30 changes the reading
         "factor": ["4 away AK"],
-        "vargas": ["9","30","1"]
+        "vargas": ["9", "30", "1"],
     }
 
     disease_vitality = {
         # 1.2.91-95: bodily wasting, boils, water disease, poison
         "factor": ["AK", "5 away AK"],
-        "vargas": ["9","30","1"]
+        "vargas": ["9", "30", "1"],
     }
 
     authorship = {
         # 1.2.102-104: writing ability (Moon+Jupiter = author, etc.)
         "factor": ["AK", "5 away AK"],
-        "vargas": ["9","1","10"]
+        "vargas": ["9", "1", "10"],
     }
 
     intelligence = {
         # 1.2.105-114: type of intelligence (poet, logician, mathematician, etc.)
         "factor": ["AK", "5 away AK"],
-        "vargas": ["9","24","1"]
+        "vargas": ["9", "24", "1"],
     }
 
     speech = {
         # 1.2.116-118: secondary skills; Ketu+malefic = speech problems
         "factor": ["2 away AK"],
-        "vargas": ["9","1"]
+        "vargas": ["9", "1"],
     }
 
     # dont forget const.multi_vargas
@@ -237,4 +218,3 @@ class JaiminiGet:
     def get_spiritual_planets(self, d24=-240):
         """get spiritual planets using the general get() method"""
         return self.jaimini_get(Gets.spirituality, varga_overrides={"24": str(d24)})
-

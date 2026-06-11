@@ -21,7 +21,7 @@
 #        """
 #        input("Do you really want to bootstrap the files? It will append to ./the_stars.py:")
 #        with open(self.python_stars,"r") as starsfd:
-#            lines = starsfd.readlines() 
+#            lines = starsfd.readlines()
 #        the_stars = dict()
 #        for line in lines:
 #            if not "class" in line:

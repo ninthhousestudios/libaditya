@@ -23,6 +23,7 @@ from .context import EphContext
 
 from libaditya import constants as const
 
+
 class Cusp(Longitude):
     def __init__(self, longitude, amsha, speed, number, context=EphContext()):
         self.context = context
@@ -33,15 +34,16 @@ class Cusp(Longitude):
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
         self.hname = swe.house_name(self.hsys)
         self._ayanamsa = self.context.ayanamsa
-        super().__init__(longitude,amsha,self.context)
-#        self.longituDE = longitude # a Longitude class
-#        self.long = self.longituDE.amsha_raw_longitude()
-#        self._amsha = self.longituDE.amsha()
+        super().__init__(longitude, amsha, self.context)
+        #        self.longituDE = longitude # a Longitude class
+        #        self.long = self.longituDE.amsha_raw_longitude()
+        #        self._amsha = self.longituDE.amsha()
         self.daily_speed = speed
         self._cusp_index = number - 1
         self._number = number
         self.cusp_name = f"Cusp {self._number}"
         from .nakshatras import Nakshatra
+
         self._nakshatra = Nakshatra(self)
 
     def __str__(self):
@@ -125,23 +127,26 @@ class Cusps:
         self.hname = swe.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
         if cusps == None:
-            self.cusps, self.ascmc, self.ascmcspeed = self.init_cusps() # a 12 tuple of cusp points
+            self.cusps, self.ascmc, self.ascmcspeed = (
+                self.init_cusps()
+            )  # a 12 tuple of cusp points
             self._armc = self.ascmc[2]
         else:
             # this is for varga cusps, where we call this constructor with a list of Cusp classes ("cusps") that have the right cusps in them
             self.cusps = cusps
             self._armc = 0
         from .nakshatras import Nakshatras
-        self._nakshatras = Nakshatras(self,self.context)
+
+        self._nakshatras = Nakshatras(self, self.context)
 
     def __iter__(self):
         return iter(self.cusps)
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         n-1 so that we can pass the cusp number, e.g., 1
         """
-        return self.cusps[n-1]
+        return self.cusps[n - 1]
 
     def armc(self):
         """
@@ -180,9 +185,16 @@ class Cusps:
         )
         retcusps = []
         for n, cusp in enumerate(cusps):
-            retcusps.append(Cusp(longitude=cusp,amsha=1, speed=speeds[n], number=n+1, context=self.context))
+            retcusps.append(
+                Cusp(
+                    longitude=cusp,
+                    amsha=1,
+                    speed=speeds[n],
+                    number=n + 1,
+                    context=self.context,
+                )
+            )
         return retcusps, ascmc, ascmcspeeds
-
 
     def __str__(self):
         output = PrettyTable()
@@ -206,7 +218,14 @@ class Cusps:
 
         if self.context.print_nakshatras:
             ret = output.get_string(
-                fields=["Cusp", "Longitude", "Nakshatra", "Elapsed", "Hourly Motion", "Daily Motion"]
+                fields=[
+                    "Cusp",
+                    "Longitude",
+                    "Nakshatra",
+                    "Elapsed",
+                    "Hourly Motion",
+                    "Daily Motion",
+                ]
             )
         else:
             ret = output.get_string(
@@ -214,7 +233,6 @@ class Cusps:
             )
 
         return self.mkheader() + ret
-
 
     def mkheader(self):
         """

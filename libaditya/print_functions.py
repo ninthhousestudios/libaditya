@@ -31,26 +31,30 @@ def dignity_table(dignities):
     takes a list of dignites from Planets.dignities and output a string form
     """
     ret = ""
-    for n in range(0,len(dignities)):
+    for n in range(0, len(dignities)):
         ret += f"{const.karaka_glyphs[n]} :  {dignities[n]}\n"
     # slice removes last \n
     return ret[:-1]
 
+
 def print_dignity_table(dignites):
     print(dignity_table(dignites))
+
 
 def varga_deities(deities):
     """
     takes a list of dignites from Planets.deities and output a string form
     """
     ret = ""
-    for n in range(0,9):
+    for n in range(0, 9):
         ret += f"{const.graha_glyphs[n]} :  {deities[n]}\n"
     ret += f"Lg :  {deities[9]}\n"
     return ret
 
+
 def print_varga_deities(deities):
     print(varga_deities(deities))
+
 
 def parashara_aspect_table_planets(aspects):
     """
@@ -61,13 +65,14 @@ def parashara_aspect_table_planets(aspects):
     output.field_names = [" "] + [glyph for glyph in const.graha_glyphs]
     output.align[" "] = "l"
 
-    for n,row in enumerate(aspects):
-        output.add_row(*[[const.karaka_glyphs[n]] + row]) 
+    for n, row in enumerate(aspects):
+        output.add_row(*[[const.karaka_glyphs[n]] + row])
         output.add_divider()
 
     ret = output.get_string(fields=[" "] + [glyph for glyph in const.graha_glyphs])
 
     return ret
+
 
 def parashara_aspect_table_cusps(aspects):
     """
@@ -75,14 +80,15 @@ def parashara_aspect_table_cusps(aspects):
     make a prettytable list of these values
     """
     output = PrettyTable()
-    output.field_names = [" "] + [str(n) for n in range(1,13)]
+    output.field_names = [" "] + [str(n) for n in range(1, 13)]
     output.align[" "] = "l"
 
-    for n,row in enumerate(aspects):
-        output.add_row(*[[const.karaka_glyphs[n]] + row]) 
+    for n, row in enumerate(aspects):
+        output.add_row(*[[const.karaka_glyphs[n]] + row])
         output.add_divider()
 
-    return output.get_string(fields=[" "] + [str(n) for n in range(1,13)])
+    return output.get_string(fields=[" "] + [str(n) for n in range(1, 13)])
+
 
 def jaimini_karakas_str(karakas) -> str:
     """
@@ -97,23 +103,27 @@ def jaimini_karakas_str(karakas) -> str:
 
     return output.get_string(fields=["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"])
 
+
 def print_jaimini_karakas(karakas):
     print(jaimini_karakas_str(karakas))
+
 
 def print_padas(padas):
     """
     receive a dictionary of all the padas
     key is the sign number, value is the Sign of the pada
     """
-    for sign,pada in padas.items():
-        print(f"{sign.sign_name()} pada: {pada.sign_name()}") 
+    for sign, pada in padas.items():
+        print(f"{sign.sign_name()} pada: {pada.sign_name()}")
+
 
 def print_jaimini_first_strength(fs: [int]) -> None:
     """
     print jaiminis first strength
     """
-    for n,s in enumerate(fs):
-        print(f"{n+1}\t{s.glyph()} {s.sign()}")
+    for n, s in enumerate(fs):
+        print(f"{n + 1}\t{s.glyph()} {s.sign()}")
+
 
 def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
     """
@@ -124,8 +134,9 @@ def print_jaimini_second_strength(ssd: {Sign: [Planet]}) -> None:
         fstr += f"({sign.sign()}) {sign.glyph()}\t"
         for strength in strengths:
             # strengh is a Planet class
-            fstr+=f" {strength.abbreviation()} "
-        print(fstr) 
+            fstr += f" {strength.abbreviation()} "
+        print(fstr)
+
 
 def print_jaimini_argala(result: [Planet]):
     """
@@ -147,6 +158,7 @@ def print_jaimini_argala(result: [Planet]):
     for planet in result[2]:
         print(planet.identity())
 
+
 def print_jaimini_aspects(chart):
     """
     print all effective rashi aspects for this chart
@@ -163,11 +175,12 @@ def print_jaimini_aspects(chart):
         for ap in aspecting:
             print(f"{sign.name()} <- {ap.name()}")
 
+
 def print_jaimini_spiritual_planets(splanets):
     """
     prints infomration returned by Rashi.get_spiritual_planets
     """
-    vargas = ["1","9","24","-24","-240"]
+    vargas = ["1", "9", "24", "-24", "-240"]
     print("Spiritual planets:")
 
     for varga in splanets.keys():
@@ -183,6 +196,7 @@ def print_jaimini_spiritual_planets(splanets):
             for planet in sign:
                 print(f"\t{planet}")
 
+
 def print_visible_times(times):
     """
     takes a list of three JulianDay classes
@@ -196,6 +210,7 @@ def print_visible_times(times):
     print(times[1])
     print("End of visibility:")
     print(times[2])
+
 
 def lajjitaadi_avasthas_table(avasthas) -> str:
     """
@@ -224,9 +239,12 @@ def lajjitaadi_avasthas_table(avasthas) -> str:
                     details = factor["dignity"]
                 elif "detail" in factor:
                     details = factor["detail"]
-                output.add_row([planet_name, avastha_name.capitalize(), source, details, strength])
+                output.add_row(
+                    [planet_name, avastha_name.capitalize(), source, details, strength]
+                )
 
     return output.get_string()
+
 
 def print_lajjitaadi_avasthas(avasthas):
     print(lajjitaadi_avasthas_table(avasthas))
@@ -234,24 +252,34 @@ def print_lajjitaadi_avasthas(avasthas):
 
 AVASTHA_PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
 
+
 def avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi) -> str:
     # simple avasthas table
     simple = PrettyTable()
     simple.field_names = ["Planet", "Baladi", "Jagradadi", "Deeptadi", "Shayanadi"]
     simple.align = "l"
     for name in AVASTHA_PLANET_ORDER:
-        simple.add_row([name,
-                        baladi.get(name, ""),
-                        jagradadi.get(name, ""),
-                        deeptadi.get(name, ""),
-                        shayanadi.get(name, "")])
+        simple.add_row(
+            [
+                name,
+                baladi.get(name, ""),
+                jagradadi.get(name, ""),
+                deeptadi.get(name, ""),
+                shayanadi.get(name, ""),
+            ]
+        )
 
     # lajjitaadi table
     lajj = lajjitaadi_avasthas_table(lajjitaadi)
 
     # lajjitaadi interaction sentences
-    verbs = {"delighted": "delighting", "starved": "starving", "agitated": "agitating",
-             "thirsty": "thirsting", "shamed": "shaming"}
+    verbs = {
+        "delighted": "delighting",
+        "starved": "starving",
+        "agitated": "agitating",
+        "thirsty": "thirsting",
+        "shamed": "shaming",
+    }
     adjectives = {"healthy": "secure", "proud": "proud"}
     interactions = PrettyTable()
     interactions.field_names = ["Interaction"]
@@ -266,9 +294,18 @@ def avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi) -> str:
                 continue
             for factor in factors:
                 if "planet" in factor:
-                    interactions.add_row([f"{factor['planet']} is {verb} {planet_name}"])
+                    interactions.add_row(
+                        [f"{factor['planet']} is {verb} {planet_name}"]
+                    )
 
-    return simple.get_string() + "\n\nLajjitaadi Avasthas\n" + lajj + "\n\n" + interactions.get_string()
+    return (
+        simple.get_string()
+        + "\n\nLajjitaadi Avasthas\n"
+        + lajj
+        + "\n\n"
+        + interactions.get_string()
+    )
+
 
 def print_avasthas(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi):
     print(avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi))
@@ -290,8 +327,10 @@ def akriti_yogas_table(akritis) -> str:
         output.add_row([y.name, y.translation, y.to_move, houses_str])
     return output.get_string()
 
+
 def print_akriti_yogas(akritis):
     print(akriti_yogas_table(akritis))
+
 
 def rich_akriti_yogas_table(akritis):
     """
@@ -326,8 +365,10 @@ def rich_akriti_yogas_table(akritis):
         )
     return output
 
+
 def rich_akriti_yogas(akritis):
     from rich.console import Console
+
     Console().print(rich_akriti_yogas_table(akritis))
 
 
@@ -344,13 +385,15 @@ def nabhasa_yogas_table(yogas) -> str:
     output.align["To Move"] = "r"
     output.align["Condition"] = "l"
     for y in yogas:
-        cat = getattr(y, 'category', 'Akriti')
-        cond = getattr(y, 'condition', None) or ", ".join(str(h) for h in y.houses)
+        cat = getattr(y, "category", "Akriti")
+        cond = getattr(y, "condition", None) or ", ".join(str(h) for h in y.houses)
         output.add_row([y.name, y.translation, cat, y.to_move, cond])
     return output.get_string()
 
+
 def print_nabhasa_yogas(yogas):
     print(nabhasa_yogas_table(yogas))
+
 
 def rich_nabhasa_yogas_table(yogas):
     """
@@ -368,8 +411,8 @@ def rich_nabhasa_yogas_table(yogas):
     output.add_column("Condition", justify="left")
 
     for y in yogas:
-        cat = getattr(y, 'category', 'Akriti')
-        cond = getattr(y, 'condition', None) or ", ".join(str(h) for h in y.houses)
+        cat = getattr(y, "category", "Akriti")
+        cond = getattr(y, "condition", None) or ", ".join(str(h) for h in y.houses)
         tm = y.to_move
         if tm <= 2:
             style = "bold green"
@@ -388,14 +431,23 @@ def rich_nabhasa_yogas_table(yogas):
         )
     return output
 
+
 def rich_nabhasa_yogas(yogas):
     from rich.console import Console
+
     Console().print(rich_nabhasa_yogas_table(yogas))
 
 
 def mahapurusha_yogas_table(yogas) -> str:
     output = PrettyTable()
-    output.field_names = ["Yoga", "Translation", "Planet", "Present", "House", "Dignity"]
+    output.field_names = [
+        "Yoga",
+        "Translation",
+        "Planet",
+        "Present",
+        "House",
+        "Dignity",
+    ]
     output.align["Yoga"] = "l"
     output.align["Translation"] = "l"
     output.align["Planet"] = "l"
@@ -403,12 +455,22 @@ def mahapurusha_yogas_table(yogas) -> str:
     output.align["House"] = "r"
     output.align["Dignity"] = "l"
     for y in yogas:
-        output.add_row([y.name, y.translation, y.planet,
-                        "Yes" if y.present else "No", y.house, y.dignity])
+        output.add_row(
+            [
+                y.name,
+                y.translation,
+                y.planet,
+                "Yes" if y.present else "No",
+                y.house,
+                y.dignity,
+            ]
+        )
     return output.get_string()
+
 
 def print_mahapurusha_yogas(yogas):
     print(mahapurusha_yogas_table(yogas))
+
 
 def rich_mahapurusha_yogas_table(yogas):
     from rich.table import Table
@@ -434,8 +496,10 @@ def rich_mahapurusha_yogas_table(yogas):
         )
     return output
 
+
 def rich_mahapurusha_yogas(yogas):
     from rich.console import Console
+
     Console().print(rich_mahapurusha_yogas_table(yogas))
 
 
@@ -446,12 +510,19 @@ def solar_yogas_table(yogas) -> str:
     output.align["Present"] = "c"
     output.align["Planets"] = "l"
     for y in yogas:
-        output.add_row([y.name, "Yes" if y.present else "No",
-                        ", ".join(y.planets) if y.planets else "—"])
+        output.add_row(
+            [
+                y.name,
+                "Yes" if y.present else "No",
+                ", ".join(y.planets) if y.planets else "—",
+            ]
+        )
     return output.get_string()
+
 
 def print_solar_yogas(yogas):
     print(solar_yogas_table(yogas))
+
 
 def rich_solar_yogas_table(yogas):
     from rich.table import Table
@@ -472,8 +543,10 @@ def rich_solar_yogas_table(yogas):
         )
     return output
 
+
 def rich_solar_yogas(yogas):
     from rich.console import Console
+
     Console().print(rich_solar_yogas_table(yogas))
 
 
@@ -484,12 +557,19 @@ def lunar_yogas_table(yogas) -> str:
     output.align["Present"] = "c"
     output.align["Planets"] = "l"
     for y in yogas:
-        output.add_row([y.name, "Yes" if y.present else "No",
-                        ", ".join(y.planets) if y.planets else "—"])
+        output.add_row(
+            [
+                y.name,
+                "Yes" if y.present else "No",
+                ", ".join(y.planets) if y.planets else "—",
+            ]
+        )
     return output.get_string()
+
 
 def print_lunar_yogas(yogas):
     print(lunar_yogas_table(yogas))
+
 
 def rich_lunar_yogas_table(yogas):
     from rich.table import Table
@@ -510,39 +590,123 @@ def rich_lunar_yogas_table(yogas):
         )
     return output
 
+
 def rich_lunar_yogas(yogas):
     from rich.console import Console
+
     Console().print(rich_lunar_yogas_table(yogas))
 
 
 from libaditya.cards import cards_constants as cardsc
-cards=cardsc.cards
+
+cards = cardsc.cards
+
 
 def print_cot_quadration(pquad):
     """Print a quadration"""
     # remember that lists are indexed starting with 0
-    print('        {}  {}  {}      '.format(cards[pquad[51]], cards[pquad[50]], cards[pquad[49]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[6]], cards[pquad[5]], cards[pquad[4]],
-                                        cards[pquad[3]], cards[pquad[2]], cards[pquad[1]], cards[pquad[0]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[13]], cards[pquad[12]], cards[pquad[11]], cards[pquad[10]],
-                                        cards[pquad[9]], cards[pquad[8]], cards[pquad[7]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[20]], cards[pquad[19]], cards[pquad[18]], cards[pquad[17]],
-                                        cards[pquad[16]], cards[pquad[15]], cards[pquad[14]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[27]], cards[pquad[26]], cards[pquad[25]], cards[pquad[24]],
-                                        cards[pquad[23]], cards[pquad[22]], cards[pquad[21]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[34]], cards[pquad[33]], cards[pquad[32]],
-                                        cards[pquad[31]], cards[pquad[30]], cards[pquad[29]], cards[pquad[28]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[41]], cards[pquad[40]], cards[pquad[39]], cards[pquad[38]],
-                                        cards[pquad[37]], cards[pquad[36]], cards[pquad[35]]))
-    print('{}  {}  {}  {}  {}  {}  {}'.format(cards[pquad[48]], cards[pquad[47]], cards[pquad[46]], cards[pquad[45]],
-                                        cards[pquad[44]], cards[pquad[43]], cards[pquad[42]]))
+    print(
+        "        {}  {}  {}      ".format(
+            cards[pquad[51]], cards[pquad[50]], cards[pquad[49]]
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[6]],
+            cards[pquad[5]],
+            cards[pquad[4]],
+            cards[pquad[3]],
+            cards[pquad[2]],
+            cards[pquad[1]],
+            cards[pquad[0]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[13]],
+            cards[pquad[12]],
+            cards[pquad[11]],
+            cards[pquad[10]],
+            cards[pquad[9]],
+            cards[pquad[8]],
+            cards[pquad[7]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[20]],
+            cards[pquad[19]],
+            cards[pquad[18]],
+            cards[pquad[17]],
+            cards[pquad[16]],
+            cards[pquad[15]],
+            cards[pquad[14]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[27]],
+            cards[pquad[26]],
+            cards[pquad[25]],
+            cards[pquad[24]],
+            cards[pquad[23]],
+            cards[pquad[22]],
+            cards[pquad[21]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[34]],
+            cards[pquad[33]],
+            cards[pquad[32]],
+            cards[pquad[31]],
+            cards[pquad[30]],
+            cards[pquad[29]],
+            cards[pquad[28]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[41]],
+            cards[pquad[40]],
+            cards[pquad[39]],
+            cards[pquad[38]],
+            cards[pquad[37]],
+            cards[pquad[36]],
+            cards[pquad[35]],
+        )
+    )
+    print(
+        "{}  {}  {}  {}  {}  {}  {}".format(
+            cards[pquad[48]],
+            cards[pquad[47]],
+            cards[pquad[46]],
+            cards[pquad[45]],
+            cards[pquad[44]],
+            cards[pquad[43]],
+            cards[pquad[42]],
+        )
+    )
+
 
 def print_cot_basic_spread(bspread):
     """print a birth spread"""
-    print('         {}         '.format(cards[bspread[0]]))
-    print('{} {} {} {} {} {} {}'.format(cards[bspread[7]],cards[bspread[6]],
-                                        cards[bspread[5]],cards[bspread[4]],cards[bspread[3]],
-                                        cards[bspread[2]],cards[bspread[1]]))
-    print('      {}    {}      '.format(cards[bspread[9]],cards[bspread[8]]))
-    print('         {}         '.format(cards[bspread[10]]))
-    print('      {} {} {}      '.format(cards[bspread[13]],cards[bspread[12]],cards[bspread[11]]))
+    print("         {}         ".format(cards[bspread[0]]))
+    print(
+        "{} {} {} {} {} {} {}".format(
+            cards[bspread[7]],
+            cards[bspread[6]],
+            cards[bspread[5]],
+            cards[bspread[4]],
+            cards[bspread[3]],
+            cards[bspread[2]],
+            cards[bspread[1]],
+        )
+    )
+    print("      {}    {}      ".format(cards[bspread[9]], cards[bspread[8]]))
+    print("         {}         ".format(cards[bspread[10]]))
+    print(
+        "      {} {} {}      ".format(
+            cards[bspread[13]], cards[bspread[12]], cards[bspread[11]]
+        )
+    )

@@ -29,7 +29,7 @@ class YiLongitude:
     YiLongitude is the most basic representation of the Human Design longitude
     which is the ecliptic longitude and its subdivisions thereof into
     hexagram, line, color, tone, and base
-    
+
     note: this class takes no context, thus has no options
     it is possible to do sidereal, true sidereal and other shifted HD,
     but this most basic class those are built on will have this representation at the core
@@ -50,29 +50,30 @@ class YiLongitude:
         self._colors = 0
         self._tones = 0
         self._bases = 0
-        self._gate = self.init_gate(self._longitude) 
+        self._gate = self.init_gate(self._longitude)
 
     def init_gate(self, longitude):
         # distance from gate 1 to the current gate in degrees
-        dist = (longitude-self.gate_one)%360
+        dist = (longitude - self.gate_one) % 360
         self._distance = dist
         # how many lines that amounts to
-        self._bases = int(dist/hdc.base)
-        self._tones, self._base = divmod(self._bases,5)
-        self._base+=1 # base is 1-5, not 0-4
-        self._colors, self._tone = divmod(self._tones,6)
-        self._tone+=1
-        self._lines, self._color = divmod(self._colors,6)
-        self._color+=1
+        self._bases = int(dist / hdc.base)
+        self._tones, self._base = divmod(self._bases, 5)
+        self._base += 1  # base is 1-5, not 0-4
+        self._colors, self._tone = divmod(self._tones, 6)
+        self._tone += 1
+        self._lines, self._color = divmod(self._colors, 6)
+        self._color += 1
         # gate is how many gates from gate 1 the planet is
         # so index this into pconst.wheel
-        gates_from, self._line = divmod(self._lines,6)
-        self._line += 1 # lines are numbered 1-6, not 0-5
+        gates_from, self._line = divmod(self._lines, 6)
+        self._line += 1  # lines are numbered 1-6, not 0-5
         self._hexagram = hdc.wheel[gates_from]
         self._hexagrams = int(gates_from)
         # gates are represented as a float, e.g., 12.1 = gate 12, line 1
         # easiest was to make a string "12.1", then convert to float
-        return float(str(int(self._hexagram))+'.'+str(int(self._line)))
+        return float(str(int(self._hexagram)) + "." + str(int(self._line)))
+
 
 class HDLongitude(YiLongitude):
     """
@@ -94,7 +95,7 @@ class HDLongitude(YiLongitude):
 
     def __init__(self, longitude, context):
         self.context = context
-        super().__init__(longitude,self.context.hd_gate_one)
+        super().__init__(longitude, self.context.hd_gate_one)
 
     def longitude(self):
         return self._longitude
@@ -118,13 +119,13 @@ class HDLongitude(YiLongitude):
         return self._line
 
     def color(self) -> int:
-        return self._color        
+        return self._color
 
     def tone(self) -> int:
-        return self._tone        
+        return self._tone
 
     def base(self) -> int:
-        return self._base        
+        return self._base
 
     def gates(self):
         """
@@ -157,9 +158,12 @@ class HDLongitude(YiLongitude):
         return self._bases
 
     def gate_in_longitude(self):
-        ginlong = (self.longitude()-(self.gate_one+(hdc.gate*hdc.wheel.index(self.gate_number()))))%360
+        ginlong = (
+            self.longitude()
+            - (self.gate_one + (hdc.gate * hdc.wheel.index(self.gate_number())))
+        ) % 360
         if self.context.toround[0]:
-            return round(ginlong,self.context.toround[1])
+            return round(ginlong, self.context.toround[1])
         else:
             return ginlong
 
@@ -167,47 +171,47 @@ class HDLongitude(YiLongitude):
         """
         returns percent how much this object has elapsed
         """
-        return round(self.gate_in_longitude()/hdc.gate*100,2)
+        return round(self.gate_in_longitude() / hdc.gate * 100, 2)
 
     def line_in_longitude(self):
-        linlong = self.gate_in_longitude()-(hdc.line*(self.line()-1))
+        linlong = self.gate_in_longitude() - (hdc.line * (self.line() - 1))
         if self.context.toround[0]:
-            return round(linlong,self.context.toround[1])
+            return round(linlong, self.context.toround[1])
         else:
             return linlong
 
     def line_elapsed(self):
-        return round(self.line_in_longitude()/hdc.line*100,2)
+        return round(self.line_in_longitude() / hdc.line * 100, 2)
 
     def color_in_longitude(self):
-        cinlong = self.line_in_longitude()-(hdc.color*(self.color()-1))
+        cinlong = self.line_in_longitude() - (hdc.color * (self.color() - 1))
         if self.context.toround[0]:
-            return round(cinlong,self.context.toround[1])
+            return round(cinlong, self.context.toround[1])
         else:
             return cinlong
 
     def color_elapsed(self):
-        return round(self.color_in_longitude()/hdc.color*100,2)
+        return round(self.color_in_longitude() / hdc.color * 100, 2)
 
     def tone_in_longitude(self):
-        tinlong = self.color_in_longitude()-(hdc.tone*(self.tone()-1))
+        tinlong = self.color_in_longitude() - (hdc.tone * (self.tone() - 1))
         if self.context.toround[0]:
-            return round(tinlong,self.context.toround[1])
+            return round(tinlong, self.context.toround[1])
         else:
             return tinlong
 
     def tone_elapsed(self):
-        return round(self.tone_in_longitude()/hdc.tone*100,2)
+        return round(self.tone_in_longitude() / hdc.tone * 100, 2)
 
     def base_in_longitude(self):
-        binlong = self.tone_in_longitude()-(hdc.base*(self.base()-1))
+        binlong = self.tone_in_longitude() - (hdc.base * (self.base() - 1))
         if self.context.toround[0]:
-            return round(binlong,self.context.toround[1])
+            return round(binlong, self.context.toround[1])
         else:
             return binlong
 
     def base_elapsed(self):
-        return round(self.base_in_longitude()/hdc.base*100,2)
+        return round(self.base_in_longitude() / hdc.base * 100, 2)
 
     def row(self):
         """
@@ -225,7 +229,19 @@ class HDLongitude(YiLongitude):
         "Base"
         "Base Elapsed"
         """
-        return [str(self.raw_longitude()), str(self.hexagram()), str(str(self.gate_in_longitude())+f" ({self.gate_elapsed()} %)"), str(self.line()), str(str(self.line_in_longitude())+f" ({self.line_elapsed()} %)"), str(self.color()), str(str(self.color_in_longitude())+f" ({self.color_elapsed()} %)"), str(self.tone()), str(str(self.tone_in_longitude())+f" ({self.tone_elapsed()} %)"), str(self.base()), str(str(self.base_in_longitude())+str(f" ({self.base_elapsed()} %))"))]
+        return [
+            str(self.raw_longitude()),
+            str(self.hexagram()),
+            str(str(self.gate_in_longitude()) + f" ({self.gate_elapsed()} %)"),
+            str(self.line()),
+            str(str(self.line_in_longitude()) + f" ({self.line_elapsed()} %)"),
+            str(self.color()),
+            str(str(self.color_in_longitude()) + f" ({self.color_elapsed()} %)"),
+            str(self.tone()),
+            str(str(self.tone_in_longitude()) + f" ({self.tone_elapsed()} %)"),
+            str(self.base()),
+            str(str(self.base_in_longitude()) + str(f" ({self.base_elapsed()} %))")),
+        ]
 
     def row_definition(self):
         """
@@ -238,7 +254,14 @@ class HDLongitude(YiLongitude):
         "Tone"
         "Base"
         """
-        return [str(self.raw_longitude()), str(self.hexagram()), str(self.line()), str(self.color()), str(self.tone()), str(self.base())]
+        return [
+            str(self.raw_longitude()),
+            str(self.hexagram()),
+            str(self.line()),
+            str(self.color()),
+            str(self.tone()),
+            str(self.base()),
+        ]
 
     def row_state(self):
         """
@@ -251,7 +274,14 @@ class HDLongitude(YiLongitude):
         "Tone Elapsed"
         "Base Elapsed"
         """
-        return [str(self.raw_longitude()), str(str(self.gate_in_longitude())+f" ({self.gate_elapsed()} %)"), str(str(self.line_in_longitude())+f" ({self.line_elapsed()} %)"), str(str(self.color_in_longitude())+f" ({self.color_elapsed()} %)"), str(str(self.tone_in_longitude())+f" ({self.tone_elapsed()} %)"), str(str(self.base_in_longitude())+str(f" ({self.base_elapsed()} %))"))]
+        return [
+            str(self.raw_longitude()),
+            str(str(self.gate_in_longitude()) + f" ({self.gate_elapsed()} %)"),
+            str(str(self.line_in_longitude()) + f" ({self.line_elapsed()} %)"),
+            str(str(self.color_in_longitude()) + f" ({self.color_elapsed()} %)"),
+            str(str(self.tone_in_longitude()) + f" ({self.tone_elapsed()} %)"),
+            str(str(self.base_in_longitude()) + str(f" ({self.base_elapsed()} %))")),
+        ]
 
     def __repr__(self):
         """
@@ -268,4 +298,3 @@ class HDLongitude(YiLongitude):
         ret += f"Tone: {self.tone()}\n"
         ret += f"Base: {self.base()}"
         return ret
-

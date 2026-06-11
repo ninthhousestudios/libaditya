@@ -1,6 +1,6 @@
 #    This file is part of libaditya.
 #
-#    Copyright (c) 2025 Josh Harper <josh@ninthhouse.studio>
+#    Copyright (c) 2025 Josh Harper <humanhaven@substack.com>
 #
 #    libaditya is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by

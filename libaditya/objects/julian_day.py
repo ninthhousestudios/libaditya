@@ -133,15 +133,15 @@ class JulianDay:
 
     def time(self, tz="utc", print_tz=True, debug=""):
         if debug:
-            debug=f" ({self.day(tz)})"
+            debug = f" ({self.day(tz)})"
         ptz = ""
         ret = ""
         if tz != "utc":
-            if print_tz: 
+            if print_tz:
                 ptz = " " + self._timezone
             ret += f"{utils.time2str(utils.dec2dms(self.usrdatetime[3]))}{ptz}"
         else:
-            if print_tz: 
+            if print_tz:
                 ptz = " UTC"
             ret += f"{utils.time2str(utils.dec2dms(self.datetime[3]))}{ptz}"
         return ret + debug
@@ -177,7 +177,7 @@ class JulianDay:
         """
         distance in years between self and date
         """
-        return (datejd-self.jd)/365.24221
+        return (datejd - self.jd) / 365.24221
 
     def current_age(self):
         """
@@ -185,13 +185,13 @@ class JulianDay:
         """
         nowtime = time.gmtime()
         jd = utils.tmod_to_jd(nowtime)
-        return (jd-self.jd)/self.oneyearjd
+        return (jd - self.jd) / self.oneyearjd
 
     def current_age_days(self):
         """
         distance in years between self and date
         """
-        return self.current_age()*365.25
+        return self.current_age() * 365.25
 
     def usrdate(self):
         return f"{utils.date2str(self.usrdatetime)}"
@@ -220,15 +220,22 @@ class JulianDay:
 
     def midnightJD(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
-        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),self.utcoffset)
+        return JulianDay(
+            swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),
+            self.utcoffset,
+        )
 
     def next_midnightjd(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
-        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1
+        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1
 
     def next_midnightJD(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
-        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1,self.utcoffset,self.timezone())
+        return JulianDay(
+            swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1,
+            self.utcoffset,
+            self.timezone(),
+        )
 
     def ecliptic_obliquity(self):
         return swe.calc(self.jd, swe.ECL_NUT)[0][0]
@@ -255,7 +262,7 @@ class JulianDay:
             sf = sf * self.oneyearjd
         else:
             print("given unit not recognized")
-        return JulianDay(self.jd + (number * sf),self.utcoffset,self._timezone)
+        return JulianDay(self.jd + (number * sf), self.utcoffset, self._timezone)
 
     def usrdt(self):
         """

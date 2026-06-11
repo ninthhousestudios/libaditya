@@ -30,20 +30,22 @@ from .planets import *
 from .cusps import Cusp, Cusps
 from .context import EphContext
 
-class Sign:
 
+class Sign:
     def __init__(self, number, planets, cusps, context, master):
         self.context = context
         self._planets = planets
         self._cusps = cusps
         self._objects = self.init_objects()
-        self._sign_index = (number-1)%12
-        self._sign_name = const.names[self.context.names_type][self.context.sign_names][self.sign_index()]
+        self._sign_index = (number - 1) % 12
+        self._sign_name = const.names[self.context.names_type][self.context.sign_names][
+            self.sign_index()
+        ]
         self._id = number
         self.master = master
         self._lajjitaadi_avasthas = {}
         # a dictionary that defines our rashi aspects, {int: (int,int,int)}
-        
+
     def sign_index(self):
         return self._sign_index
 
@@ -89,7 +91,7 @@ class Sign:
         used for temporary relationships
         """
         lagna = self.master.lagna().sign()
-        return ((self.sign() - lagna)%12)+1
+        return ((self.sign() - lagna) % 12) + 1
 
     def house_type(self):
         """
@@ -146,8 +148,11 @@ class Sign:
             for object_line in self.objects():
                 if object_chosen == object_line:
                     continue
-                if abs(object_chosen.amsha_longitude()-object_line.amsha_longitude()) < 1:
-                    objects.append((object_chosen,object_line))
+                if (
+                    abs(object_chosen.amsha_longitude() - object_line.amsha_longitude())
+                    < 1
+                ):
+                    objects.append((object_chosen, object_line))
         return objects
 
     def init_objects(self):
@@ -156,7 +161,7 @@ class Sign:
         else:
             return self._planets + self._cusps
 
-    def astrological_signs_forward(self,n) -> int:
+    def astrological_signs_forward(self, n) -> int:
         """
         go forward n signs
         this means in the astrologically sense
@@ -170,16 +175,16 @@ class Sign:
 
 
         """
-        if n == 0 or  n == -1:
+        if n == 0 or n == -1:
             return self.sign()
         if n < 0:
             # go backwards
-            almost = (self.sign() - (abs(n)-1))%12
+            almost = (self.sign() - (abs(n) - 1)) % 12
             if almost == 0:
                 return 12
             else:
                 return almost
-        forward = self.sign() + (n-1)
+        forward = self.sign() + (n - 1)
         if forward > 0 and forward <= 12:
             return forward
         else:
@@ -191,7 +196,7 @@ class Sign:
         this just calls astrological_signs_forward with -n
         """
         return self.astrological_signs_forward(-n)
-        
+
     def astrological_signs_apart(self, other_sign: int) -> int:
         """
         how many signs apart are this one sign and other_sign
@@ -200,7 +205,7 @@ class Sign:
         i.e., signs 10 and 1 are 4 signs apart
         other_sign is the sign number of the other sign
         """
-        return ((other_sign - self.sign())%12)+1
+        return ((other_sign - self.sign()) % 12) + 1
 
     def modality(self):
         """
@@ -215,13 +220,23 @@ class Sign:
                 return "Dual"
 
     def ordered_cusps(self, reverse=False):
-        return sorted(self.cusps(),key = (lambda cusp: cusp.ecliptic_longitude()), reverse=reverse)
+        return sorted(
+            self.cusps(), key=(lambda cusp: cusp.ecliptic_longitude()), reverse=reverse
+        )
 
     def ordered_planets(self, reverse=False):
-        return sorted(self.planets(),key = (lambda cusp: cusp.ecliptic_longitude()), reverse=reverse)
+        return sorted(
+            self.planets(),
+            key=(lambda cusp: cusp.ecliptic_longitude()),
+            reverse=reverse,
+        )
 
     def ordered_objects(self, reverse=False):
-        return sorted(self.ordered_cusps() + self.ordered_planets(),key = (lambda obj: obj.amsha_longitude()), reverse=reverse)
+        return sorted(
+            self.ordered_cusps() + self.ordered_planets(),
+            key=(lambda obj: obj.amsha_longitude()),
+            reverse=reverse,
+        )
 
     def __str__(self):
         """
@@ -233,24 +248,34 @@ class Sign:
         ret = ""
 
         for obj in self.ordered_objects():
-            if not self.context.print_outer_planets and obj.object_type()=="Planet" and obj.is_outer_planet():
+            if (
+                not self.context.print_outer_planets
+                and obj.object_type() == "Planet"
+                and obj.is_outer_planet()
+            ):
                 # dont print outer objs
                 continue
             if obj.identity() == "Sun" and self.context.sysflg == const.HELIO:
                 # dont print sun with heliocentric coordinates
                 continue
-            if (obj.identity() == "Rahu" or obj.identity() == "Ketu") and (self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY):
+            if (obj.identity() == "Rahu" or obj.identity() == "Ketu") and (
+                self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY
+            ):
                 # dont print Rahu or Ketu for helio/barycentric
                 continue
-            if isinstance(obj,Cusp) and (self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY):
+            if isinstance(obj, Cusp) and (
+                self.context.sysflg == const.HELIO or self.context.sysflg == const.BARY
+            ):
                 # dont print cusps in heliocentric or barycentric
                 continue
             ret += f"{obj.name()} "
             if self.context.signize:
-                ret += f"{obj.longitude().split(" ")[0]}\n" # remove the sign name here since we are printing in a south indian chart
+                ret += f"{obj.longitude().split(' ')[0]}\n"  # remove the sign name here since we are printing in a south indian chart
             else:
-                ret += f"{obj.raw_longitude()}\n" # remove the sign name here since we are printing in a south indian chart
-            if self.context.print_nakshatras and (self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO):
+                ret += f"{obj.raw_longitude()}\n"  # remove the sign name here since we are printing in a south indian chart
+            if self.context.print_nakshatras and (
+                self.context.sysflg != const.BARY and self.context.sysflg != const.HELIO
+            ):
                 ret += f"{obj.nakshatra_name()} "
                 ret += f"{obj.nakshatra().elapsed()}\n"
             ret += "\n"
@@ -268,11 +293,13 @@ class Sign:
         output.align["Ecliptic Longitude"] = "r"
 
         for p in self._planets:
-            output.add_row([p.name(),p.amsha_in_sign_longitude(),p.raw_longitude()])
+            output.add_row([p.name(), p.amsha_in_sign_longitude(), p.raw_longitude()])
         for c in self._cusps:
-            output.add_row([c.name(),c.amsha_in_sign_longitude(),c.raw_longitude()])
+            output.add_row([c.name(), c.amsha_in_sign_longitude(), c.raw_longitude()])
 
-        ret = output.get_string(fields=["Object", "In Amsha Longitude", "Ecliptic Longitude"])
+        ret = output.get_string(
+            fields=["Object", "In Amsha Longitude", "Ecliptic Longitude"]
+        )
 
         return header + ret
 
@@ -280,7 +307,9 @@ class Sign:
         sign = Table(box=box.ROUNDED, style=header_style)
 
         # add a "header_style=" argument to change color of this header itself
-        sign.add_column(f"{self.sign()} {self.name()}",justify="center",style=info_style)
+        sign.add_column(
+            f"{self.sign()} {self.name()}", justify="center", style=info_style
+        )
 
         # add objects in rows
         sign_str = self.__str__()
@@ -296,9 +325,8 @@ class Sign:
 
 
 class One(Sign):
-
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(1,planets,cusps,context,master)
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(1, planets, cusps, context, master)
 
     def modality(self) -> str:
         return "Moveable"
@@ -309,10 +337,10 @@ class One(Sign):
     def glyph(self):
         return "♈"
 
-class Two(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(2,planets,cusps,context,master)
+class Two(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(2, planets, cusps, context, master)
 
     def modality(self) -> str:
         return "Fixed"
@@ -323,11 +351,11 @@ class Two(Sign):
     def glyph(self):
         return "♉"
 
-class Three(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(3,planets,cusps,context,master)
-        
+class Three(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(3, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Dual"
 
@@ -337,11 +365,11 @@ class Three(Sign):
     def glyph(self):
         return "♊"
 
-class Four(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(4,planets,cusps,context,master)
-        
+class Four(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(4, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Moveable"
 
@@ -351,10 +379,10 @@ class Four(Sign):
     def glyph(self):
         return "♋"
 
-class Five(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(5,planets,cusps,context,master)
+class Five(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(5, planets, cusps, context, master)
 
     def modality(self) -> str:
         return "Fixed"
@@ -364,13 +392,12 @@ class Five(Sign):
 
     def glyph(self):
         return "♌️"
-        
+
 
 class Six(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(6, planets, cusps, context, master)
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(6,planets,cusps,context,master)
-        
     def modality(self) -> str:
         return "Dual"
 
@@ -380,11 +407,11 @@ class Six(Sign):
     def glyph(self):
         return "♍"
 
-class Seven(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(7,planets,cusps,context,master)
-        
+class Seven(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(7, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Moveable"
 
@@ -394,11 +421,11 @@ class Seven(Sign):
     def glyph(self):
         return "♎"
 
-class Eight(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(8,planets,cusps,context,master)
-        
+class Eight(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(8, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Fixed"
 
@@ -408,11 +435,11 @@ class Eight(Sign):
     def glyph(self):
         return "♏"
 
-class Nine(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(9,planets,cusps,context,master)
-        
+class Nine(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(9, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Dual"
 
@@ -422,11 +449,11 @@ class Nine(Sign):
     def glyph(self):
         return "♐"
 
-class Ten(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(10,planets,cusps,context,master)
-        
+class Ten(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(10, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Moveable"
 
@@ -436,11 +463,11 @@ class Ten(Sign):
     def glyph(self):
         return "♑"
 
-class Eleven(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(11,planets,cusps,context,master)
-        
+class Eleven(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(11, planets, cusps, context, master)
+
     def modality(self) -> str:
         return "Fixed"
 
@@ -450,10 +477,10 @@ class Eleven(Sign):
     def glyph(self):
         return "♒"
 
-class Twelve(Sign):
 
-    def __init__(self,planets,cusps,context,master):
-        super().__init__(12,planets,cusps,context,master)
+class Twelve(Sign):
+    def __init__(self, planets, cusps, context, master):
+        super().__init__(12, planets, cusps, context, master)
 
     def modality(self) -> str:
         return "Dual"
@@ -463,7 +490,7 @@ class Twelve(Sign):
 
     def glyph(self):
         return "♓"
-        
+
 
 local_Signs = {
     1: One,
@@ -477,11 +504,11 @@ local_Signs = {
     9: Nine,
     10: Ten,
     11: Eleven,
-    12: Twelve
+    12: Twelve,
 }
 
+
 class Signs:
-    
     def __init__(self, planets=Planets(), cusps=Cusps(), context=EphContext()):
         self.context = context
         self._planets = planets
@@ -494,7 +521,7 @@ class Signs:
     def __iter__(self):
         return iter(self._signs.values())
 
-    def __getitem__(self,n: int) -> Self:
+    def __getitem__(self, n: int) -> Self:
         """
         s=Signs(), then you can write
         then you can write s[key] with key between 1 and 12 inclusive
@@ -520,7 +547,7 @@ class Signs:
         ret = ""
         ret += self.mkheader()
 
-        for number,sign in self._signs.items():
+        for number, sign in self._signs.items():
             ret += f"{number}: {sign}\n"
         ret += "\n"
 
@@ -533,7 +560,7 @@ class Signs:
         and put them in the right holding place in "signs", then
         initialize a list of Sign classes
         """
-        stmp = [[[],[]] for x in range(0,12)]
+        stmp = [[[], []] for x in range(0, 12)]
         # do planets first, inner index = 0
         inner_index = 0
         for p in self._planets:
@@ -542,9 +569,11 @@ class Signs:
         inner_index = 1
         for c in self._cusps:
             stmp[c.amsha_sign_index()][inner_index].append(c)
-        retsigns={}
+        retsigns = {}
         for n, sign in enumerate(stmp):
-            retsigns[n+1] = local_Signs[n+1](planets=sign[0],cusps=sign[1],context=self.context,master=self)
+            retsigns[n + 1] = local_Signs[n + 1](
+                planets=sign[0], cusps=sign[1], context=self.context, master=self
+            )
         return retsigns
 
     def signs(self):
@@ -559,16 +588,16 @@ class Signs:
         3 - both aspect each other
         i.e., sign1 aspects means that there is at least one graha in sign1 caring its aspect to sign2
         """
-        ltr = self.rashi_aspect_from_to(sign1,sign2)
-        rtl = self.rashi_aspect_from_to(sign2,sign1)
-        match (ltr,rtl):
-            case (0,0):
+        ltr = self.rashi_aspect_from_to(sign1, sign2)
+        rtl = self.rashi_aspect_from_to(sign2, sign1)
+        match (ltr, rtl):
+            case (0, 0):
                 return 0
-            case (1,0):
-                return  1
-            case (0,1):
+            case (1, 0):
+                return 1
+            case (0, 1):
                 return 2
-            case (1,1):
+            case (1, 1):
                 return 3
 
     def rashi_aspect_from_to(self, sign1: Sign, sign2: Sign):
@@ -604,7 +633,7 @@ class Signs:
         aspected_signs = self.aspects[sign.sign()]
         ret = []
         for aspected_sign in [self.signs()[each] for each in aspected_signs]:
-            if self.rashi_aspect_from_to(aspected_sign,sign):
+            if self.rashi_aspect_from_to(aspected_sign, sign):
                 ret.append(aspected_sign)
         return ret
 
@@ -619,7 +648,7 @@ class Signs:
         aspecting_signs = self.aspects[sign.sign()]
         ret = []
         for aspecting_sign in [self.signs()[each] for each in aspecting_signs]:
-            if self.rashi_aspect_from_to(aspecting_sign,sign):
+            if self.rashi_aspect_from_to(aspecting_sign, sign):
                 ret.append(aspecting_sign)
         return ret
 
@@ -627,8 +656,8 @@ class Signs:
         """
         return the Sign class of the lagna sign, i.e., whichever one has Cusp 1
         """
-        return self.where_is(1) # 1 means Cusp 1
-        
+        return self.where_is(1)  # 1 means Cusp 1
+
     def where_is(self, object: int | str) -> Sign:
         """
         if object is int, a Cusp
@@ -666,7 +695,7 @@ class Signs:
         """
         return the number of objects that is greatest of any sign
         """
-        most=0
+        most = 0
         for sign in self:
             if sign.how_many_objects() > most:
                 most = sign.how_many_objects()
@@ -686,5 +715,3 @@ class Signs:
         represents as a header with the chart information
         """
         return self.mkheader()
-
-

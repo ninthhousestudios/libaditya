@@ -30,20 +30,24 @@ class Location:
         placename="Yamakoti",
         utcoffset="12",
         icao=None,
-        planet="Earth"
+        planet="Earth",
     ):
         self.lat = float(lat)
         self.long = float(long)
         self.alt = float(alt)
         self._placename = placename
         self.utcoffset = float(utcoffset)
-        self._timezone = f"{"+" if self.utcoffset > 0 else ""}{self.utcoffset}"
+        self._timezone = f"{'+' if self.utcoffset > 0 else ''}{self.utcoffset}"
         self.icao = icao
         self._planet = planet
-        self._atmospheric_pressure, self._atmospheric_temperature, self._relative_humidity = self.init_environment(self.icao)
+        (
+            self._atmospheric_pressure,
+            self._atmospheric_temperature,
+            self._relative_humidity,
+        ) = self.init_environment(self.icao)
 
     def __str__(self):
-        return f"{self._placename} ({round(self.lat,3)} lat,{round(self.long,3)} long)\nelevation {self.alt} m\ntimezone: UTC{self._timezone}"
+        return f"{self._placename} ({round(self.lat, 3)} lat,{round(self.long, 3)} long)\nelevation {self.alt} m\ntimezone: UTC{self._timezone}"
 
     def stellarium(self):
         """
@@ -52,7 +56,14 @@ class Location:
 
         i changed RemoteControl.location.setLocation() to ignore id is it is set to 0
         """
-        return [0,self.latitude(),self.longitude(),self.placename(),self.placename(),self.planet()]
+        return [
+            0,
+            self.latitude(),
+            self.longitude(),
+            self.placename(),
+            self.placename(),
+            self.planet(),
+        ]
 
     def place(self):
         return f"{self.placename()} ({round(self.lat, 3)},{round(self.long, 3)})"
@@ -70,7 +81,7 @@ class Location:
         return self.long
 
     def atmospheric_pressure(self):
-        return self._atmospheric_pressure 
+        return self._atmospheric_pressure
 
     def atmospheric_temperature(self):
         return self._atmospheric_temperature
@@ -93,7 +104,15 @@ class Location:
         """
         return a position lat,long where lat=0 and long is self.long
         """
-        return Location(lat=0,long=self.long,alt=self.alt,placename=self._placename,utcoffset=self.utcoffset,icao=self.icao,planet=self._planet)
+        return Location(
+            lat=0,
+            long=self.long,
+            alt=self.alt,
+            placename=self._placename,
+            utcoffset=self.utcoffset,
+            icao=self.icao,
+            planet=self._planet,
+        )
 
     def get_metar(self, icao=None):
         """
@@ -112,6 +131,7 @@ class Location:
             name = self.icao
         url = f"{BASE_URL}/{name}.TXT"
         from urllib.request import urlopen
+
         urlh = urlopen(url)
         report = ""
         for line in urlh:
@@ -137,14 +157,14 @@ class Location:
         """
         # do this somehow
         # metar was suddenly giving an error
-#        if icao is not None:
-#            metar = self.get_metar(icao)
-#            # since this is for swe, we use millibars and celsius
-#            # metar...value() can do other units too
-#            # 0 is for relative humidity
-#            # need to figure out how to calculate it from dewpoint, then it can go in here
-#            return (metar.press.value("mb"),metar.temp.value("c"),0)
-        return (0,0,0)
+        #        if icao is not None:
+        #            metar = self.get_metar(icao)
+        #            # since this is for swe, we use millibars and celsius
+        #            # metar...value() can do other units too
+        #            # 0 is for relative humidity
+        #            # need to figure out how to calculate it from dewpoint, then it can go in here
+        #            return (metar.press.value("mb"),metar.temp.value("c"),0)
+        return (0, 0, 0)
 
     def swe_location_azalt(self, coords=swe.ECL2HOR):
         """

@@ -19,6 +19,7 @@
 from libaditya.objects import EphContext, Location
 from libaditya.stars.stellarium.remote_control import RemoteControl
 
+
 class Stellarium:
     """
     this is the main libaditya interface to stellarium
@@ -33,7 +34,7 @@ class Stellarium:
 
     def __init__(self, context=EphContext(), ip="127.0.0.1", port="8090", password=""):
         self.context = context
-        self._rc = RemoteControl(ip,port,password)
+        self._rc = RemoteControl(ip, port, password)
         self.init_context()
 
     def rc(self):
@@ -50,7 +51,7 @@ class Stellarium:
         self.set_timeJD()
         self.set_location()
 
-    def change_context(self,context):
+    def change_context(self, context):
         """
         replace self.context with context
         then initialize it
@@ -72,7 +73,7 @@ class Stellarium:
         """
         self.rc().main.setTimeJD(self.context.timeJD.jd_number())
 
-    def set_location(self, location : Location = None):
+    def set_location(self, location: Location = None):
         """
         set the location in stellarium to Location self.context.location
         """
@@ -89,4 +90,4 @@ class Stellarium:
         """
         object should be an objects "swe_id()", though  should be "stellarium(_id)"
         """
-        return self.rc().objects.getInfo(object,format)
+        return self.rc().objects.getInfo(object, format)

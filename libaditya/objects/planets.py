@@ -31,21 +31,29 @@ from .shadbala import PlanetBala
 from .swe_functions import SWEFirstLast
 
 
-class Planet(CelestialObject,Longitude,PlanetBala):
+class Planet(CelestialObject, Longitude, PlanetBala):
     """
     this class has information and functions related to planets
     each Planet takes a planet number and an EphContext
     """
 
-    def __init__(self, pnumber, context=EphContext(),master=None):
+    def __init__(self, pnumber, context=EphContext(), master=None):
         self.timeJD = context.timeJD
         self.context = context
         self._amsha = self.context.amsha
         self.master = master
         self.pnumber = pnumber
-        self.attributes = {"constellation": "n/a", "dignity": "n/a", "lajjitaadi_avasthas": {},
-                           "lajjitaadi_giving": {}, "lajjitaadi_receiving": {},
-                           "baladi_avastha": "", "jagradadi_avastha": "", "deeptadi_avastha": "", "shayanadi_avastha": ""}
+        self.attributes = {
+            "constellation": "n/a",
+            "dignity": "n/a",
+            "lajjitaadi_avasthas": {},
+            "lajjitaadi_giving": {},
+            "lajjitaadi_receiving": {},
+            "baladi_avastha": "",
+            "jagradadi_avastha": "",
+            "deeptadi_avastha": "",
+            "shayanadi_avastha": "",
+        }
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]
@@ -56,34 +64,57 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         self.sysflg = self.system | swe.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
-        self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed = self.init_coords()
+        (
+            self.long,
+            self.lat,
+            self.dist,
+            self.long_speed,
+            self.lat_speed,
+            self.dist_speed,
+        ) = self.init_coords()
         # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
         # this works because self.pnumber for Ketu is set to Rahu
         # so at this point self.long with be Rahu's longitude, which we then change to Ketu's
-        if isinstance(self,Ketu):
-            self.long = (self.long-180)%360
+        if isinstance(self, Ketu):
+            self.long = (self.long - 180) % 360
             self.pnumber = 8
         # if we are not doing heliocentric or barycentric, then Earth will be opposite the Sun
         # this is really for the purpose of HD, which uses Earth as opposite the Sun
-        if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
-            self.long = (self.long-180)%360
+        if (
+            isinstance(self, Earth)
+            and self.context.sysflg != const.HELIO
+            and self.context.sysflg != const.BARY
+        ):
+            self.long = (self.long - 180) % 360
         # so that we only need only longitude() function with all the signizing and rounding or not
         # this instantiates all the functions in Longitude
         # this is for all the calculations that require *only* longitude
         # thus it is used for both Planet and Cusp
-        super().__init__(self.long,self._amsha,self.context)
+        super().__init__(self.long, self._amsha, self.context)
         if self._amsha != 1:
-            self.lat = self.dist = self.long_speed = self.lat_speed = self.dist_speed = 0
-        #self._hd = HDLongitude(self.ecliptic_longitude(),context=self.context)
+            self.lat = self.dist = self.long_speed = self.lat_speed = (
+                self.dist_speed
+            ) = 0
+        # self._hd = HDLongitude(self.ecliptic_longitude(),context=self.context)
         # below is the default for the outer planets, since they dont have dignity
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
-        (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
+        (
+            self._right_ascension,
+            self._declination,
+            self._equatorial_distance,
+            _,
+            _,
+            _,
+        ) = swe.calc_ut(
+            self.context.timeJD.jd_number(), self.swe_id(), swe.FLG_EQUATORIAL
+        )[0]
         from .nakshatras import Nakshatra
+
         self._nakshatra = Nakshatra(self)
 
     # this < is specialized to jaimini_karakas since it uses in_sign_longitude, not ecliptic longitude
-    def __lt__(self,p2):
+    def __lt__(self, p2):
         return self.amsha_raw_in_sign_longitude() < p2.amsha_raw_in_sign_longitude()
 
     def amsha(self):
@@ -121,9 +152,17 @@ class Planet(CelestialObject,Longitude,PlanetBala):
             swe.set_topo(loc[0], loc[1], loc[2])
         # for draconic charts i choose -8 to indicate that system
         # but swe doesnt accept that, so replace it if necessary
-        if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
-            return swe.calc_ut(self.jd, swe.SUN, self.sysflg if self.sysflg >= 0 else 0)[0]
-        return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
+        if (
+            isinstance(self, Earth)
+            and self.context.sysflg != const.HELIO
+            and self.context.sysflg != const.BARY
+        ):
+            return swe.calc_ut(
+                self.jd, swe.SUN, self.sysflg if self.sysflg >= 0 else 0
+            )[0]
+        return swe.calc_ut(
+            self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0
+        )[0]
 
     def name(self) -> str:
         return self.planet_name + self.retrostr()
@@ -231,9 +270,9 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 case "Jupiter":
                     return 6
                 case _:
-                    return self.list_index()+1
+                    return self.list_index() + 1
         else:
-            return self.list_index()+1
+            return self.list_index() + 1
 
     def system_name(self) -> str:
         return self.sysflgstr
@@ -308,7 +347,9 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 self.pnumber,
                 rs | swe.BIT_HINDU_RISING,
                 location.swe_location(),
-            )[1][0],self.timeJD.utcoffset,self.timeJD.timezone()
+            )[1][0],
+            self.timeJD.utcoffset,
+            self.timeJD.timezone(),
         )
 
     def nakshatra(self) -> Nakshatra:
@@ -327,12 +368,11 @@ class Planet(CelestialObject,Longitude,PlanetBala):
             case _:
                 return ""
 
-
     def _get_dignity(self, self_in_rashi, lord: Self) -> str:
         """
         return the dignity of a planet
         i.e, the combined relationship, so we need to know where the lord is
-    
+
         this doesnt really work like you might expect, since we need information from Planets
         since a Planet cannot always determine its dignity on its own
 
@@ -348,28 +388,28 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 temporary_relationship = "F"
             case _:
                 temporary_relationship = "E"
-        match (natural_relationship,temporary_relationship):
-            case ("F","F"):
+        match (natural_relationship, temporary_relationship):
+            case ("F", "F"):
                 self.attributes["combined_relationship"] = "GF"
-                self.attributes["dignity"] =  "GF"
-            case ("N","F"):
+                self.attributes["dignity"] = "GF"
+            case ("N", "F"):
                 self.attributes["combined_relationship"] = "F"
-                self.attributes["dignity"] =  "F"
-            case ("E","F"):
+                self.attributes["dignity"] = "F"
+            case ("E", "F"):
                 self.attributes["combined_relationship"] = "N"
-                self.attributes["dignity"] =  "N"
-            case ("F","E"):
+                self.attributes["dignity"] = "N"
+            case ("F", "E"):
                 self.attributes["combined_relationship"] = "N"
-                self.attributes["dignity"] =  "N"
-            case ("N","E"):
+                self.attributes["dignity"] = "N"
+            case ("N", "E"):
                 self.attributes["combined_relationship"] = "E"
-                self.attributes["dignity"] =  "E"
-            case ("E","E"):
+                self.attributes["dignity"] = "E"
+            case ("E", "E"):
                 self.attributes["combined_relationship"] = "GE"
-                self.attributes["dignity"] =  "GE"
-            case ("N","N"):
+                self.attributes["dignity"] = "GE"
+            case ("N", "N"):
                 self.attributes["combined_relationship"] = "N"
-                self.attributes["dignity"] =  "N"
+                self.attributes["dignity"] = "N"
         if self.is_ex():
             self.attributes["dignity"] = "EX"
             # Mercury exalts himself, so for saptavargajabala, that means EX=OH
@@ -377,7 +417,7 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 self.attributes["combined_relationship"] = "OH"
             return "EX"
         if self.is_mt():
-            self.attributes["dignity"] =  "MT"
+            self.attributes["dignity"] = "MT"
             return "MT"
         if self.is_oh():
             self.attributes["dignity"] = "OH"
@@ -386,7 +426,6 @@ class Planet(CelestialObject,Longitude,PlanetBala):
             self.attributes["dignity"] = "DB"
             return "DB"
         return self.attributes["dignity"]
-
 
     def parashara_aspect_to(self, planet) -> float | str:
         """
@@ -409,29 +448,29 @@ class Planet(CelestialObject,Longitude,PlanetBala):
             # within this orb planets do not aspect other planets
             return ""
         if diff > 180 and diff < 300:
-            return (300 - diff)/2
+            return (300 - diff) / 2
         if diff > 150 and diff <= 180:
-            return (diff - 150)*2
+            return (diff - 150) * 2
         if diff > 120 and diff <= 150:
-            return (150 - diff)
+            return 150 - diff
         if diff > 90 and diff <= 120:
-            return ((120-diff)/2) + 30
+            return ((120 - diff) / 2) + 30
         if diff > 60 and diff <= 90:
             return (diff - 60) + 15
         if diff > 30 and diff <= 60:
-            return (diff - 30)/2
+            return (diff - 30) / 2
 
     def parashara_aspect_from(self, planet) -> float | str:
         return planet.parashara_aspect_to(self)
 
     def lowest_hourly_speed(self) -> float:
-        return self.lowest_daily_speed()/24
+        return self.lowest_daily_speed() / 24
 
     def lowest_minutely_speed(self) -> float:
-        return self.lowest_hourly_speed()/60
+        return self.lowest_hourly_speed() / 60
 
     def lowest_secondly_speed(self) -> float:
-        return self.lowest_minutely_speed()/60
+        return self.lowest_minutely_speed() / 60
 
     def ucca(self):
         """
@@ -447,7 +486,7 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         """
         return a string of planetary information that can be stored in a dictionary that can be convereted to toml
         separate attributes by a comma, in the proper order
-        
+
         curent fields:
         name,nature,lord,dignity
         """
@@ -464,8 +503,8 @@ class Planet(CelestialObject,Longitude,PlanetBala):
 
 
 class Sun(Planet):
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.SUN, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.SUN, context, master)
         self._id = "Sun"
 
     def glyph(self):
@@ -491,7 +530,7 @@ class Sun(Planet):
         i.e., x/24 hours = hours motion
         x/24/60 = minute motion
         """
-        return .9
+        return 0.9
 
     def is_outer_planet(self):
         return False
@@ -515,15 +554,19 @@ class Sun(Planet):
         if next_long == self.ecliptic_longitude():
             return self
         # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+        if round(self.ecliptic_longitude(), 3) % 360 == round(next_long, 3):
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Sun(replace(self.context,timeJD=self.timeJD.shift("f","seconds",30)))
+            return Sun(
+                replace(self.context, timeJD=self.timeJD.shift("f", "seconds", 30))
+            )
         # difference between current longitude and desired longitude
         diff = self.degrees_apart(next_long)
-        shift_factor = diff*self.lowest_daily_speed()
-        return Sun(replace(self.context,timeJD=self.timeJD.shift("f","days",shift_factor))).ingress(next_long)
+        shift_factor = diff * self.lowest_daily_speed()
+        return Sun(
+            replace(self.context, timeJD=self.timeJD.shift("f", "days", shift_factor))
+        ).ingress(next_long)
 
     def next_equinox(self):
         """
@@ -554,7 +597,10 @@ class Sun(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 5 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 20):
+        if self.sign() == 5 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 20
+        ):
             return True
         else:
             return False
@@ -587,10 +633,10 @@ class Sun(Planet):
                 return "E"
 
     def ucca(self):
-        return (1,10)
+        return (1, 10)
 
     def nica(self):
-        return (7,10)
+        return (7, 10)
 
     def dig_bala_cusp(self):
         """
@@ -605,9 +651,9 @@ class Sun(Planet):
         return self.virupas_between(90)
 
 
-class Moon(Planet,SWEFirstLast):
-    def __init__(self, context=EphContext(),master=None, nature=None):
-        super().__init__(swe.MOON, context,master)
+class Moon(Planet, SWEFirstLast):
+    def __init__(self, context=EphContext(), master=None, nature=None):
+        super().__init__(swe.MOON, context, master)
         self._id = "Moon"
         self.attributes["nature"] = nature
 
@@ -630,8 +676,10 @@ class Moon(Planet,SWEFirstLast):
         """
         JulianDay of the next time Moon is conjunct true node Rahu
         """
-        jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(self.context.timeJD.jd_number())
-        crossJD = JulianDay(jd_cross,self.context.timeJD.utcoffset)
+        jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(
+            self.context.timeJD.jd_number()
+        )
+        crossJD = JulianDay(jd_cross, self.context.timeJD.utcoffset)
         ret = ""
         ret = f"{crossJD}\n"
         ret += f"swe.{moon_longitude=} swe.{moon_latitude=}\n"
@@ -666,7 +714,10 @@ class Moon(Planet,SWEFirstLast):
         return True
 
     def is_ex(self):
-        if self.sign() == 2 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 3):
+        if self.sign() == 2 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 3
+        ):
             return True
         else:
             return False
@@ -684,7 +735,10 @@ class Moon(Planet,SWEFirstLast):
             return False
 
     def is_db(self):
-        if self.sign() == 8 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 3):
+        if self.sign() == 8 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 3
+        ):
             return True
         else:
             return False
@@ -705,10 +759,10 @@ class Moon(Planet,SWEFirstLast):
                 return "N"
 
     def ucca(self):
-        return ((2,0),(2,3))
+        return ((2, 0), (2, 3))
 
     def nica(self):
-        return ((8,0),(8,3))
+        return ((8, 0), (8, 3))
 
     def dig_bala_cusp(self):
         return 4
@@ -718,6 +772,7 @@ class Moon(Planet,SWEFirstLast):
         moon has 60 points of cheshta bala at the full moon
         """
         from libaditya.calc import Panchanga
+
         panch = Panchanga(self.context)
         if self.nature() == "Benefic":
             # Moon is heading towards full which is where is has 60
@@ -727,31 +782,36 @@ class Moon(Planet,SWEFirstLast):
             # Moon is malefic, heading towards new
             # so the place is has 60 points is opposite where the new moon is
             next_new_moon = panch.next_new_moon()
-            return self.virupas_between((next_new_moon.moon().ecliptic_longitude()+180)%360)
+            return self.virupas_between(
+                (next_new_moon.moon().ecliptic_longitude() + 180) % 360
+            )
 
     def ingress(self, next_long):
         """
         return Moon for the JulianDay where Moon arrives at longitude next_long
         """
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         if next_long == self.ecliptic_longitude():
             return self
         # % 360 help in case we are looking for the equinox, next_long = 0
-        if round(self.ecliptic_longitude(),3)%360 == round(next_long,3):
+        if round(self.ecliptic_longitude(), 3) % 360 == round(next_long, 3):
             # if we dont go forward one second the longitude we are are will be
             # for example, 269.99999769, and then the ephemeris will print "30:00:00 bhaga"
             # so by going forward one seconds, we get to 270.0000000343 and it will print "00:00:00 pusha"
-            return Moon(replace(self.context,timeJD=self.timeJD.shift("f","seconds",1)))
+            return Moon(
+                replace(self.context, timeJD=self.timeJD.shift("f", "seconds", 1))
+            )
         # difference between current longitude and desired longitude
         diff = self.degrees_apart(next_long)
-        shift_factor = diff*(self.lowest_daily_speed()/24)
-        return Moon(replace(self.context,timeJD=self.timeJD.shift("f","hours",shift_factor))).ingress(next_long)
+        shift_factor = diff * (self.lowest_daily_speed() / 24)
+        return Moon(
+            replace(self.context, timeJD=self.timeJD.shift("f", "hours", shift_factor))
+        ).ingress(next_long)
 
 
 class Mars(Planet):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.MARS, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.MARS, context, master)
         self._id = "Mars"
 
     def glyph(self):
@@ -788,13 +848,18 @@ class Mars(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 1 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 12):
+        if self.sign() == 1 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 12
+        ):
             return True
         else:
             return False
 
     def is_oh(self):
-        if (self.sign() == 1 and self.amsha_raw_in_sign_longitude() > 12) or self.sign() == 8:
+        if (
+            self.sign() == 1 and self.amsha_raw_in_sign_longitude() > 12
+        ) or self.sign() == 8:
             return True
         else:
             return False
@@ -841,36 +906,35 @@ class Mars(Planet):
             # within this orb planets do not aspect other planets
             return ""
         if diff > 240 and diff < 300:
-            return (300 - diff)/2
+            return (300 - diff) / 2
         if diff > 210 and diff <= 240:
             return 60 - (diff - 210)
         if diff > 180 and diff < 210:
             return 60
         if diff > 150 and diff <= 180:
-            return (diff - 150)*2
+            return (diff - 150) * 2
         if diff > 120 and diff <= 150:
-            return (150 - diff)
+            return 150 - diff
         if diff > 90 and diff <= 120:
             return 60 - (120 - diff)
         if diff > 60 and diff <= 90:
-            return (diff - 60) + (diff - 60)/2 + 15
+            return (diff - 60) + (diff - 60) / 2 + 15
         if diff > 30 and diff <= 60:
-            return (diff - 30)/2
+            return (diff - 30) / 2
 
     def ucca(self):
-        return (10,28)
+        return (10, 28)
 
     def nica(self):
-        return  (4,28)
+        return (4, 28)
 
     def dig_bala_cusp(self):
         return 10
 
 
-class Mercury(Planet,SWEFirstLast):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.MERCURY, context,master)
+class Mercury(Planet, SWEFirstLast):
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.MERCURY, context, master)
         self._id = "Mercury"
 
     def glyph(self):
@@ -901,25 +965,36 @@ class Mercury(Planet,SWEFirstLast):
         return True
 
     def is_ex(self):
-        if self.sign() == 6 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 15):
+        if self.sign() == 6 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 15
+        ):
             return True
         else:
             return False
 
     def is_mt(self):
-        if self.sign() == 6 and (self.amsha_raw_in_sign_longitude() >= 15 and self.amsha_raw_in_sign_longitude() < 20):
+        if self.sign() == 6 and (
+            self.amsha_raw_in_sign_longitude() >= 15
+            and self.amsha_raw_in_sign_longitude() < 20
+        ):
             return True
         else:
             return False
 
     def is_oh(self):
-        if self.sign() == 3 or (self.sign() == 6 and self.amsha_raw_in_sign_longitude() >= 20):
+        if self.sign() == 3 or (
+            self.sign() == 6 and self.amsha_raw_in_sign_longitude() >= 20
+        ):
             return True
         else:
             return False
 
     def is_db(self):
-        if self.sign() == 12 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 15):
+        if self.sign() == 12 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 15
+        ):
             return True
         else:
             return False
@@ -942,19 +1017,18 @@ class Mercury(Planet,SWEFirstLast):
                 return "N"
 
     def ucca(self):
-        return ((6,0),(6,15))
+        return ((6, 0), (6, 15))
 
     def nica(self):
-        return ((12,0),(12,15))
+        return ((12, 0), (12, 15))
 
     def dig_bala_cusp(self):
         return 1
 
 
 class Jupiter(Planet):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.JUPITER, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.JUPITER, context, master)
         self._id = "Jupiter"
 
     def glyph(self):
@@ -991,13 +1065,18 @@ class Jupiter(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 9 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 10):
+        if self.sign() == 9 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 10
+        ):
             return True
         else:
             return False
 
     def is_oh(self):
-        if self.sign() == 12 or (self.sign() == 9 and self.amsha_raw_in_sign_longitude() > 10):
+        if self.sign() == 12 or (
+            self.sign() == 9 and self.amsha_raw_in_sign_longitude() > 10
+        ):
             return True
         else:
             return False
@@ -1028,7 +1107,7 @@ class Jupiter(Planet):
         return the float of the precise parashara aspect between
         self and planet
 
-        this function does aspects for Jupiter 
+        this function does aspects for Jupiter
         the other karakas have their own special aspects that are defined in their own classes
 
         this is implemented according to the sutras from bphs as found in graha sutras by ew
@@ -1044,37 +1123,37 @@ class Jupiter(Planet):
             # within this orb planets do not aspect other planets
             return ""
         if diff > 270 and diff < 300:
-            return (300 - diff)/2
+            return (300 - diff) / 2
         if diff > 240 and diff <= 270:
-            return ((30-(diff-240))*1.5) + 15
+            return ((30 - (diff - 240)) * 1.5) + 15
         if diff > 210 and diff <= 240:
-            return ((diff-210)/2) + 45
+            return ((diff - 210) / 2) + 45
         if diff > 180 and diff <= 210:
-            return (300 - diff)/2
+            return (300 - diff) / 2
         if diff > 150 and diff <= 180:
-            return (diff - 150)*2
+            return (diff - 150) * 2
         if diff > 120 and diff <= 150:
-            return 60 - ((diff-120)*2)
+            return 60 - ((diff - 120) * 2)
         if diff > 90 and diff <= 120:
-            return ((120-diff)/2) + 45
+            return ((120 - diff) / 2) + 45
         if diff > 60 and diff <= 90:
             return (diff - 60) + 15
         if diff > 30 and diff <= 60:
-            return (diff - 30)/2
+            return (diff - 30) / 2
 
     def ucca(self):
-        return (4,5)
+        return (4, 5)
 
     def nica(self):
-        return (10,5)
+        return (10, 5)
 
     def dig_bala_cusp(self):
         return 1
 
-class Venus(Planet,SWEFirstLast):
 
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.VENUS, context,master)
+class Venus(Planet, SWEFirstLast):
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.VENUS, context, master)
         self._id = "Venus"
 
     def glyph(self):
@@ -1111,13 +1190,18 @@ class Venus(Planet,SWEFirstLast):
             return False
 
     def is_mt(self):
-        if self.sign() == 7 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 15):
+        if self.sign() == 7 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 15
+        ):
             return True
         else:
             return False
 
     def is_oh(self):
-        if self.sign() == 2 or (self.sign() == 7 and self.amsha_raw_in_sign_longitude() > 15):
+        if self.sign() == 2 or (
+            self.sign() == 7 and self.amsha_raw_in_sign_longitude() > 15
+        ):
             return True
         else:
             return False
@@ -1144,19 +1228,18 @@ class Venus(Planet,SWEFirstLast):
                 return "F"
 
     def ucca(self):
-        return (12,27)
+        return (12, 27)
 
     def nica(self):
-        return (6,27)
+        return (6, 27)
 
     def dig_bala_cusp(self):
         return 4
 
 
 class Saturn(Planet):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.SATURN, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.SATURN, context, master)
         self._id = "Saturn"
 
     def glyph(self):
@@ -1193,13 +1276,18 @@ class Saturn(Planet):
             return False
 
     def is_mt(self):
-        if self.sign() == 11 and (self.amsha_raw_in_sign_longitude() >= 0 and self.amsha_raw_in_sign_longitude() < 20):
+        if self.sign() == 11 and (
+            self.amsha_raw_in_sign_longitude() >= 0
+            and self.amsha_raw_in_sign_longitude() < 20
+        ):
             return True
         else:
             return False
 
     def is_oh(self):
-        if self.sign() == 10 or (self.sign() == 11 and self.amsha_raw_in_sign_longitude() > 20):
+        if self.sign() == 10 or (
+            self.sign() == 11 and self.amsha_raw_in_sign_longitude() > 20
+        ):
             return True
         else:
             return False
@@ -1246,35 +1334,35 @@ class Saturn(Planet):
             # within this orb planets do not aspect other planets
             return ""
         if diff > 270 and diff < 300:
-            return (300 - diff)*2
+            return (300 - diff) * 2
         if diff > 240 and diff <= 270:
             return (diff - 240) + 30
         if diff > 180 and diff <= 240:
-            return (300 - diff)/2
+            return (300 - diff) / 2
         if diff > 150 and diff <= 180:
-            return (diff - 150)*2
+            return (diff - 150) * 2
         if diff > 120 and diff <= 150:
-            return (150 - diff)
+            return 150 - diff
         if diff > 90 and diff <= 120:
-            return ((120-diff)/2) + 30
+            return ((120 - diff) / 2) + 30
         if diff > 60 and diff <= 90:
-            return 60 - ((diff - 60)/2)
+            return 60 - ((diff - 60) / 2)
         if diff > 30 and diff <= 60:
-            return (diff - 30)*2
+            return (diff - 30) * 2
 
     def ucca(self):
-        return (7,20)
+        return (7, 20)
 
     def nica(self):
-        return (1,20)
+        return (1, 20)
 
     def dig_bala_cusp(self):
         return 7
 
-class Rahu(Planet):
 
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.TRUE_NODE, context,master)
+class Rahu(Planet):
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.TRUE_NODE, context, master)
         self.planet_name = const.names[context.names_type]["planets"][10]
         self._id = "Rahu"
 
@@ -1307,15 +1395,14 @@ class Rahu(Planet):
 
 
 class Ketu(Planet):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.TRUE_NODE, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.TRUE_NODE, context, master)
         self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
 
     def number(self, system="vedic"):
         return 9
-        
+
     def glyph(self):
         return "☋"
 
@@ -1345,8 +1432,8 @@ class Ketu(Planet):
 
 
 class Uranus(Planet):
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.URANUS, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.URANUS, context, master)
         self._id = "Uranus"
 
     def glyph(self):
@@ -1370,10 +1457,10 @@ class Uranus(Planet):
     def is_graha(self):
         return False
 
-class Neptune(Planet):
 
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.NEPTUNE, context,master)
+class Neptune(Planet):
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.NEPTUNE, context, master)
         self._id = "Neptune"
 
     def glyph(self):
@@ -1399,9 +1486,8 @@ class Neptune(Planet):
 
 
 class Pluto(Planet):
-
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.PLUTO, context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.PLUTO, context, master)
         self._id = "Pluto"
 
     def glyph(self):
@@ -1425,9 +1511,10 @@ class Pluto(Planet):
     def is_graha(self):
         return False
 
+
 class Earth(Planet):
-    def __init__(self, context=EphContext(),master=None):
-        super().__init__(swe.EARTH,context,master)
+    def __init__(self, context=EphContext(), master=None):
+        super().__init__(swe.EARTH, context, master)
         self._id = "Earth"
 
     def glyph(self):
@@ -1457,11 +1544,11 @@ class Earth(Planet):
     def is_graha(self):
         return False
 
-class Chiron(Planet):
 
-    def __init__(self, context=EphContext(),master=None):
+class Chiron(Planet):
+    def __init__(self, context=EphContext(), master=None):
         self.planet_name = "Chiron"
-        super().__init__(swe.CHIRON, context,master)
+        super().__init__(swe.CHIRON, context, master)
         self._id = "Chiron"
 
     def type(self):
@@ -1482,6 +1569,7 @@ class Chiron(Planet):
     def is_graha(self):
         return False
 
+
 natural_planets = {
     "Sun": Sun,
     "Earth": Earth,
@@ -1498,6 +1586,7 @@ natural_planets = {
     "Pluto": Pluto,
     "Chiron": Chiron,
 }
+
 
 class Planets:
     """
@@ -1521,7 +1610,7 @@ class Planets:
     Planets().(...) returns a dictionary of "Identity": Planet (Identity is the English name)
     >>> for hdplanet in Planets().hd13().values():
             print(hdplanet.name())
-    and it will iterate through the hdplanets in their proper order 
+    and it will iterate through the hdplanets in their proper order
 
     current print(Planets()) will print all the currently included Planet-s that applicable for that system
     i.e., it won't print Earth using tropical, though i may change that
@@ -1557,12 +1646,13 @@ class Planets:
         self._planets = self.init_Planets()
         self.set_attributes()
         from .nakshatras import Nakshatras
-        self._nakshatras = Nakshatras(self,self.context)
+
+        self._nakshatras = Nakshatras(self, self.context)
 
     def __iter__(self):
         return iter(self._planets.values())
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         self._planets (i.e., "self") is a dictionary of "Sun": Sun
 
@@ -1584,43 +1674,45 @@ class Planets:
         return self._planets.items()
 
     def karakas(self):
-        return {"Sun": self.sun(),
-                "Moon": self.moon(),
-                "Mars": self.mars(),
-                "Mercury": self.mercury(),
-                "Jupiter": self.jupiter(),
-                "Venus": self.venus(),
-                "Saturn": self.saturn()
-                }
+        return {
+            "Sun": self.sun(),
+            "Moon": self.moon(),
+            "Mars": self.mars(),
+            "Mercury": self.mercury(),
+            "Jupiter": self.jupiter(),
+            "Venus": self.venus(),
+            "Saturn": self.saturn(),
+        }
 
     def grahas(self):
-        return {"Sun": self.sun(),
-                "Moon": self.moon(),
-                "Mars": self.mars(),
-                "Mercury": self.mercury(),
-                "Jupiter": self.jupiter(),
-                "Venus": self.venus(),
-                "Saturn": self.saturn(),
-                "Rahu": self.rahu(),
-                "Ketu": self.ketu()
-                }
+        return {
+            "Sun": self.sun(),
+            "Moon": self.moon(),
+            "Mars": self.mars(),
+            "Mercury": self.mercury(),
+            "Jupiter": self.jupiter(),
+            "Venus": self.venus(),
+            "Saturn": self.saturn(),
+            "Rahu": self.rahu(),
+            "Ketu": self.ketu(),
+        }
 
     def hd13(self):
-        return {"Sun": self.sun(),
-                "Earth": self.earth(),
-                "Moon": self.moon(),
-                "Rahu": self.rahu(),
-                "Ketu": self.ketu(),
-                "Mercury": self.mercury(),
-                "Venus": self.venus(),
-                "Mars": self.mars(),
-                "Jupiter": self.jupiter(),
-                "Saturn": self.saturn(),
-                "Uranus": self.uranus(),
-                "Neptune": self.neptune(),
-                "Pluto": self.pluto()
-                }
-
+        return {
+            "Sun": self.sun(),
+            "Earth": self.earth(),
+            "Moon": self.moon(),
+            "Rahu": self.rahu(),
+            "Ketu": self.ketu(),
+            "Mercury": self.mercury(),
+            "Venus": self.venus(),
+            "Mars": self.mars(),
+            "Jupiter": self.jupiter(),
+            "Saturn": self.saturn(),
+            "Uranus": self.uranus(),
+            "Neptune": self.neptune(),
+            "Pluto": self.pluto(),
+        }
 
     def init_Planets(self):
         ret = {}
@@ -1632,13 +1724,13 @@ class Planets:
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
 
-#        # add Earth if using barycentric or heliocentric
-#        if self.system == const.BARY or self.system == const.HELIO:
-#            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-#            natural_planets["Earth"] = Earth
+        #        # add Earth if using barycentric or heliocentric
+        #        if self.system == const.BARY or self.system == const.HELIO:
+        #            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
+        #            natural_planets["Earth"] = Earth
 
-        for planet,constructor in natural_planets.items():
-            ret[planet] = constructor(self.context,self)
+        for planet, constructor in natural_planets.items():
+            ret[planet] = constructor(self.context, self)
 
         return ret
 
@@ -1649,10 +1741,12 @@ class Planets:
         then we can set_attributes() in __init__(), e.g., dignity
         """
         # moons nature
-        moon_nature = "Benefic" if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180 else "Malefic"
-        self.moon().set_attribute(("nature",moon_nature))
-
-
+        moon_nature = (
+            "Benefic"
+            if self.sun().degrees_apart(self.moon().ecliptic_longitude()) <= 180
+            else "Malefic"
+        )
+        self.moon().set_attribute(("nature", moon_nature))
 
     def nakshatras(self) -> Nakshatras:
         return self._nakshatras
@@ -1681,13 +1775,21 @@ class Planets:
             # _dignity() takes two arguments: 1) itself in the rashi chart or this varga, depending on the options
             #                                 2) its lord in rashi or in this varga, depending on the option
             #                                 set with EphContext.rashi_temporary_friends True or False
-            dignities.append(planet._get_dignity(temp_planets.karakas()[planet.identity()],temp_planets.karakas()[planet.lord()]))
+            dignities.append(
+                planet._get_dignity(
+                    temp_planets.karakas()[planet.identity()],
+                    temp_planets.karakas()[planet.lord()],
+                )
+            )
         # Planet._get_dignity sets Planet.attributes["dignity"], but we may also want to have dignities for Rahu and Ketu
         # so we set them here
-        self.rahu().set_attribute(("dignity",self.planets()[self.rahu().lord()].dignity()))
-        self.ketu().set_attribute(("dignity",self.planets()[self.ketu().lord()].dignity()))
+        self.rahu().set_attribute(
+            ("dignity", self.planets()[self.rahu().lord()].dignity())
+        )
+        self.ketu().set_attribute(
+            ("dignity", self.planets()[self.ketu().lord()].dignity())
+        )
         return dignities
-
 
     def parashara_aspects(self):
         """
@@ -1700,7 +1802,9 @@ class Planets:
             this_row = []
             for aspected in self.grahas().values():
                 value = aspecting.parashara_aspect_to(aspected)
-                this_row.append(int(round(value,0)) if isinstance(value,float) else value)
+                this_row.append(
+                    int(round(value, 0)) if isinstance(value, float) else value
+                )
             ret.append(this_row)
 
         return ret
@@ -1716,7 +1820,9 @@ class Planets:
             this_row = []
             for aspected in cusps:
                 value = aspecting.parashara_aspect_to(aspected)
-                this_row.append(int(round(value,0)) if isinstance(value,float) else value)
+                this_row.append(
+                    int(round(value, 0)) if isinstance(value, float) else value
+                )
             ret.append(this_row)
 
         return ret
@@ -1740,10 +1846,12 @@ class Planets:
         # for long in sorted(longs.values())
         # sorted from least in sign longitude to to most
         # sorted returns a list of Planet classes
-        karakas_reverse = {k: v for k, v in sorted(longs.items(), key=lambda item: item[1])}
-        #karakas_reverse = sorted(longs.items())
+        karakas_reverse = {
+            k: v for k, v in sorted(longs.items(), key=lambda item: item[1])
+        }
+        # karakas_reverse = sorted(longs.items())
         # karakas_reverse is a list of tuples (Planet,in_sign_longitude)
-        #ret = [karaka[0] for karaka in karakas_reverse]
+        # ret = [karaka[0] for karaka in karakas_reverse]
         # sorted() gives from least to most, but karakas are from most to least
         return list(karakas_reverse.__reversed__())
 
@@ -1804,10 +1912,12 @@ class Planets:
             for graha_line in self.grahas().values():
                 if graha_chosen == graha_line:
                     continue
-                if abs(graha_chosen.amsha_longitude()-graha_line.amsha_longitude()) < 1:
-                    grahas.append((graha_chosen,graha_line))
+                if (
+                    abs(graha_chosen.amsha_longitude() - graha_line.amsha_longitude())
+                    < 1
+                ):
+                    grahas.append((graha_chosen, graha_line))
         return grahas
-
 
     def __str__(self):
         if self.context.print_nakshatras:
@@ -1831,7 +1941,7 @@ class Planets:
             "Latitude Speed",
             "Distance",
             "Dist. Speed",
-            "Constellation"
+            "Constellation",
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -1870,7 +1980,7 @@ class Planets:
                 "Nakshatra",
                 "Elapsed",
                 "Latitude",
-                "Constellation"
+                "Constellation",
             ]
         )
 
@@ -1890,7 +2000,7 @@ class Planets:
             "Latitude Speed",
             "Distance",
             "Dist. Speed",
-            "Constellation"
+            "Constellation",
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -1917,7 +2027,7 @@ class Planets:
                 continue
             if not self.context.print_outer_planets and p.is_outer_planet():
                 continue
-            output.add_row(p.table_row()[:2]+p.table_row()[4:])
+            output.add_row(p.table_row()[:2] + p.table_row()[4:])
 
         ret = output.get_string(
             fields=[
@@ -1928,7 +2038,7 @@ class Planets:
                 "Latitude Speed",
                 "Distance",
                 "Dist. Speed",
-                "Constellation"
+                "Constellation",
             ]
         )
 
@@ -1987,7 +2097,7 @@ class Planets:
             "Tone",
             "Base",
             "Speed",
-            "Sign"
+            "Sign",
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -2000,19 +2110,24 @@ class Planets:
         output.align["Sign"] = "r"
 
         for planet in self:
-            output.add_row([planet.name()] + planet.hd().row_definition() + [planet.speed()] + [planet.signize()])
+            output.add_row(
+                [planet.name()]
+                + planet.hd().row_definition()
+                + [planet.speed()]
+                + [planet.signize()]
+            )
 
         ret = output.get_string(
             fields=[
-            "Planet",
-            "Longitude",
-            "Gate",
-            "Line",
-            "Color",
-            "Tone",
-            "Base",
-            "Speed",
-            "Sign"
+                "Planet",
+                "Longitude",
+                "Gate",
+                "Line",
+                "Color",
+                "Tone",
+                "Base",
+                "Speed",
+                "Sign",
             ]
         )
         return ret
@@ -2027,7 +2142,7 @@ class Planets:
             "Color Elapsed",
             "Tone Elapsed",
             "Base Elapsed",
-            "Speed"
+            "Speed",
         ]
         output.align["Planet"] = "l"
         output.align["Longitude"] = "l"
@@ -2043,17 +2158,15 @@ class Planets:
 
         ret = output.get_string(
             fields=[
-            "Planet",
-            "Longitude",
-            "Gate Elapsed",
-            "Line Elapsed",
-            "Color Elapsed",
-            "Tone Elapsed",
-            "Base Elapsed",
-            "Speed",
+                "Planet",
+                "Longitude",
+                "Gate Elapsed",
+                "Line Elapsed",
+                "Color Elapsed",
+                "Tone Elapsed",
+                "Base Elapsed",
+                "Speed",
             ]
         )
 
         return ret
-    
-

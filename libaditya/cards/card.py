@@ -22,25 +22,22 @@ from libaditya import constants as const
 
 from libaditya.cards import cards_constants as cardsc
 
-class Card:
 
+class Card:
     def __init__(self, card, index, planet="", deck_type="52 playing card"):
         self._card = card
         self._deck_type = deck_type
         self._index = index
         self._planet = planet
-        self.attributes = {
-            "planets": [],
-            "cusps": []
-        }
+        self.attributes = {"planets": [], "cusps": []}
 
-    def set_attribute(self,attrs):
+    def set_attribute(self, attrs):
         """
         attrs is a tuple ("attribute",value)
         add all of these to self.attributes
         attritube is a string that will be a dictionary key for value
         """
-        key,value=attrs
+        key, value = attrs
         self.attributes[key].append(value)
 
     def card(self):
@@ -53,7 +50,11 @@ class Card:
         return const.glyphs[self._planet]
 
     def name(self):
-        return cardsc.name["number"][self.card()[0]] + " of " + cardsc.name["suit"][self.card()[1]]
+        return (
+            cardsc.name["number"][self.card()[0]]
+            + " of "
+            + cardsc.name["suit"][self.card()[1]]
+        )
 
     def symbol(self):
         """
@@ -76,12 +77,12 @@ class Card:
         """
         card = Table(box=box.ROUNDED)
         color = "red" if (self.card()[1] == "H" or self.card()[1] == "D") else "white"
-        card.add_column(self.glyph(),justify="center",style="white")
-        card.add_row(self.symbol()+"\n",style=color)
+        card.add_column(self.glyph(), justify="center", style="white")
+        card.add_row(self.symbol() + "\n", style=color)
         for planet in self.planets():
-            card.add_row(planet.name(),style="white")
+            card.add_row(planet.name(), style="white")
         for cusp in self.cusps():
-            card.add_row(cusp.name(),style="white")
+            card.add_row(cusp.name(), style="white")
         # do more, like add planets
         return card
 

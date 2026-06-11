@@ -17,16 +17,17 @@
 
 from libaditya.stars.fixed_stars import TheStars
 
+
 def main():
 
     thestars = TheStars()
 
-    with open("stars.py","w") as fd:
+    with open("stars.py", "w") as fd:
         lines = []
-        for key,value in thestars.the_stars().items():
+        for key, value in thestars.the_stars().items():
             line = ""
-            name = value.replace(" ","")
-            name = value.replace("'","")
+            name = value.replace(" ", "")
+            name = value.replace("'", "")
             if not name:
                 name = key
             if any(char.isnumeric() for char in name):
@@ -34,28 +35,29 @@ def main():
                 # so put them at the end; i did this manually for stars/the_stars.py
                 # now get the numbers and move them to the end
                 if name[:3].isnumeric():
-                    name = name[3:]+name[:3]
+                    name = name[3:] + name[:3]
                 if name[:2].isnumeric():
-                    name = name[2:]+name[:2]
+                    name = name[2:] + name[:2]
                 if name[:1].isnumeric():
-                    name = name[1:]+name[:1]
+                    name = name[1:] + name[:1]
             if any(char.isnumeric() for char in key):
                 # key has any numbers, they are at the beginning of the key
                 # so put them at the end; i did this manually for stars/the_stars.py
                 # now get the numbers and move them to the end
                 if key[:3].isnumeric():
-                    key = key[3:]+key[:3]
+                    key = key[3:] + key[:3]
                 if key[:2].isnumeric():
-                    key = key[2:]+key[:2]
+                    key = key[2:] + key[:2]
                 if key[:1].isnumeric():
-                    key = key[1:]+key[:1]
-            name = name.replace("-","")
-            name = name.replace(".","")
+                    key = key[1:] + key[:1]
+            name = name.replace("-", "")
+            name = name.replace(".", "")
             line += f"class {name}(FixedStar): # ,{key}\n\n"
             line += f"    def __init__(self, context = EphContext):\n"
-            line += f"        super().__init__(swe_id = \",{key}\", context=context)\n\n"
-            lines.append(line) 
+            line += f'        super().__init__(swe_id = ",{key}", context=context)\n\n'
+            lines.append(line)
         fd.writelines(lines)
+
 
 if __name__ == "__main__":
     main()

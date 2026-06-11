@@ -54,6 +54,7 @@ class Chart(API):
 
     not sure this syntax is really worth it? leaving it for now
     """
+
     libaditya_path = os.path.dirname(pathlib.Path(__file__).parent)
     ephe_path = libaditya_path + "/ephe/"
 
@@ -62,7 +63,7 @@ class Chart(API):
     def __init__(self, context=EphContext()):
         swe.set_ephe_path(self.ephe_path)
         self.context = context
-        self._Rashi = Rashi(self.context,self)
+        self._Rashi = Rashi(self.context, self)
         if not Chart._initializing_ecliptic:
             Chart._initializing_ecliptic = True
             try:
@@ -123,15 +124,15 @@ class Chart(API):
             -60 Shashtyamsha
         """
 
-        return Varga(self.context,amsha)
+        return Varga(self.context, amsha)
 
     def saptavargas(self):
         """
         return a list of of the saptaVargas
         i.e., 1, -2, -3, 7, 9, -12, 30
         """
-        saptavargas = [1,-2,-3,7,9,-12,30]
-        return [Varga(self.context,amsha) for amsha in saptavargas]
+        saptavargas = [1, -2, -3, 7, 9, -12, 30]
+        return [Varga(self.context, amsha) for amsha in saptavargas]
 
     # do the other groups of vargas, dasha, etc.
 
@@ -146,10 +147,12 @@ class Chart(API):
 
     def jaimini(self):
         from libaditya.charts import Jaimini
+
         return Jaimini(context=self.context)
 
     def tajika(self):
         from libaditya.charts import Tajika
+
         return Tajika(context=self.context)
 
     def aditya(self, **kwargs):
@@ -163,7 +166,15 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ADITYA,sign_names="adityas",**kwargs))
+        return Chart(
+            context=replace(
+                self.context,
+                sysflg=const.TROP,
+                circle=Circle.ADITYA,
+                sign_names="adityas",
+                **kwargs,
+            )
+        )
 
     def tropical(self, **kwargs):
         """
@@ -176,7 +187,15 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.TROP,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
+        return Chart(
+            context=replace(
+                self.context,
+                sysflg=const.TROP,
+                circle=Circle.ZODIAC,
+                sign_names="zodiac",
+                **kwargs,
+            )
+        )
 
     def sidereal(self, ayanamsa=27, **kwargs):
         """
@@ -190,7 +209,16 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.SID,ayanamsa=ayanamsa,circle=Circle.ZODIAC,sign_names="zodiac",**kwargs))
+        return Chart(
+            context=replace(
+                self.context,
+                sysflg=const.SID,
+                ayanamsa=ayanamsa,
+                circle=Circle.ZODIAC,
+                sign_names="zodiac",
+                **kwargs,
+            )
+        )
 
     def heliocentric(self, **kwargs):
         """
@@ -201,7 +229,7 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.HELIO,**kwargs))
+        return Chart(context=replace(self.context, sysflg=const.HELIO, **kwargs))
 
     def barycentric(self, **kwargs):
         """
@@ -212,13 +240,15 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.BARY,**kwargs))
+        return Chart(context=replace(self.context, sysflg=const.BARY, **kwargs))
 
     def cot(self, **kwargs):
         """
         create a CardsOfTruth instantce for this context
         """
-        return CardsOfTruth(context=replace(self.context,**kwargs),master=self.rashi())
+        return CardsOfTruth(
+            context=replace(self.context, **kwargs), master=self.rashi()
+        )
 
     def draconic(self, **kwargs):
         """
@@ -229,13 +259,19 @@ class Chart(API):
         **kwargs can take any keyword argument that can be used for EphContext
         so if you want to change the ayanamsa, pass Chart.aditya(ayanamsa=27) and it will give you a new chart for that
         """
-        return Chart(context=replace(self.context,sysflg=const.DRAC,**kwargs))
+        return Chart(context=replace(self.context, sysflg=const.DRAC, **kwargs))
 
     def shift(self, dir, unit, number, **kwargs):
         """
         calls self.JulianDay effectively and return a Chart with shifted JulianDay
         """
-        return Chart(context=replace(self.context,timeJD=self.context.timeJD.shift(dir,unit,number),**kwargs))
+        return Chart(
+            context=replace(
+                self.context,
+                timeJD=self.context.timeJD.shift(dir, unit, number),
+                **kwargs,
+            )
+        )
 
     def timejd(self, next_time):
         """
@@ -244,13 +280,22 @@ class Chart(API):
         carries along the timezone from this context
         """
         if isinstance(next_time, float):
-            return Chart(context=replace(self.context,timeJD=JulianDay(next_time,self.context.timeJD.utcoffset)))
+            return Chart(
+                context=replace(
+                    self.context,
+                    timeJD=JulianDay(next_time, self.context.timeJD.utcoffset),
+                )
+            )
 
     def now(self):
         """
         return a chart like this one but for right now
         """
-        return Chart(context=replace(self.context,timeJD=JulianDay("now",self.context.timeJD.utcoffset)))
+        return Chart(
+            context=replace(
+                self.context, timeJD=JulianDay("now", self.context.timeJD.utcoffset)
+            )
+        )
 
     def _new_chart(self, **kwargs):
         """
@@ -261,7 +306,7 @@ class Chart(API):
         be very careful with this as there are no protections on the option combinations and you could
         easily choose a combination of options that doesnt really make sense
         """
-        return Chart(context=replace(self.context,**kwargs))
+        return Chart(context=replace(self.context, **kwargs))
 
     def _new_context(self, context):
         """
@@ -274,13 +319,13 @@ class Chart(API):
         """
         return Chart(context)
 
-    def stars(self,stellarium=False):
+    def stars(self, stellarium=False):
         """
         this is TheStars, used when you know the nomenclature name of the star, the (,)noMen name, because they all look a bit like that
         this is implemented so that you can choose or not to put the ","
         """
-        return stars.TheStars(self.context,stellarium)
+        return stars.TheStars(self.context, stellarium)
 
     def ecliptic(self):
-        self_true_sidereal = self.sidereal(ayanamsa=97,signize=False)
-        return stars.the_stars.Ecliptic(self_true_sidereal.context,master=self)
+        self_true_sidereal = self.sidereal(ayanamsa=97, signize=False)
+        return stars.the_stars.Ecliptic(self_true_sidereal.context, master=self)

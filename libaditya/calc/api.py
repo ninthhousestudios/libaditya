@@ -17,6 +17,7 @@
 
 from libaditya.objects import Sign
 
+
 class API:
     """
     a Mixin API for Varga

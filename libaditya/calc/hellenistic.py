@@ -17,6 +17,7 @@
 
 from libaditya.objects import Planet
 
+
 class Hellenistic:
     """
     inherits unto Rashi

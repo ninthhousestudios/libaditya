@@ -17,6 +17,7 @@
 
 from libaditya.objects import EphContext, Sun
 
+
 class Returns:
     """
     inherits unto Rashi
@@ -43,8 +44,8 @@ class Returns:
         while year > 0:
             this_sun = Sun(context)
             # move it forward slightly, so that when we ingress it to its ecliptic_longitude, its find the next time it is there
-            this_sun = this_sun.ingress(this_sun.ecliptic_longitude()+.1)
-            next_sun =  this_sun.ingress(return_longitude)
+            this_sun = this_sun.ingress(this_sun.ecliptic_longitude() + 0.1)
+            next_sun = this_sun.ingress(return_longitude)
             context = next_sun.context
             year -= 1
         return self.master._new_context(context)

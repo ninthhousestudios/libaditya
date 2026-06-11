@@ -15,5 +15,3 @@ from .signs import *
 from .shadbala import RashiBala
 
 from libaditya import constants as const
-
-

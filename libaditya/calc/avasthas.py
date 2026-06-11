@@ -27,21 +27,53 @@ WATER_SIGNS = {4, 8, 12}
 
 BALADI_STATES = ["Bala", "Kumara", "Yuva", "Vriddha", "Mrita"]
 JAGRADADI_STATES = ["Jagrat", "Swapna", "Sushupti"]
-DEEPTADI_STATES = ["Deepta", "Swastha", "Mudita", "Shanta", "Shakta",
-                   "Peedita", "Deena", "Vikala", "Khala"]
-SHAYANADI_STATES = ["Shayana", "Upavesha", "Netrapani", "Prakasha",
-                    "Gamana", "Agamana", "Sabha", "Agama",
-                    "Bhojana", "Nrityalipsa", "Kautuka", "Nidra"]
-SHAYANADI_MULTIPLIERS = {"Sun": 5, "Moon": 2, "Mars": 2, "Mercury": 3,
-                         "Jupiter": 5, "Venus": 3, "Saturn": 3}
-COMBUST_ORBS = {"Moon": 12, "Mars": 17, "Mercury": 14, "Jupiter": 11,
-                "Venus": 10, "Saturn": 15}
+DEEPTADI_STATES = [
+    "Deepta",
+    "Swastha",
+    "Mudita",
+    "Shanta",
+    "Shakta",
+    "Peedita",
+    "Deena",
+    "Vikala",
+    "Khala",
+]
+SHAYANADI_STATES = [
+    "Shayana",
+    "Upavesha",
+    "Netrapani",
+    "Prakasha",
+    "Gamana",
+    "Agamana",
+    "Sabha",
+    "Agama",
+    "Bhojana",
+    "Nrityalipsa",
+    "Kautuka",
+    "Nidra",
+]
+SHAYANADI_MULTIPLIERS = {
+    "Sun": 5,
+    "Moon": 2,
+    "Mars": 2,
+    "Mercury": 3,
+    "Jupiter": 5,
+    "Venus": 3,
+    "Saturn": 3,
+}
+COMBUST_ORBS = {
+    "Moon": 12,
+    "Mars": 17,
+    "Mercury": 14,
+    "Jupiter": 11,
+    "Venus": 10,
+    "Saturn": 15,
+}
 BENEFIC_NAVAMSA_SIGNS = {2, 3, 4, 6, 7, 9, 12}
 NATURAL_MALEFICS = {"Sun", "Mars", "Saturn", "Rahu", "Ketu"}
 
 
 class LajjitaadiAvasthas:
-
     def lajjitaadi_avasthas(self) -> dict:
         """
         Calculate Lajjitaadi Avasthas for the seven karakas.
@@ -72,7 +104,7 @@ class LajjitaadiAvasthas:
                     continue
                 other = planets[other_name]
                 aspect = planet.parashara_aspect_from(other)
-                is_conjunction = (aspect == "Y")
+                is_conjunction = aspect == "Y"
                 aspect_strength = aspect if isinstance(aspect, (int, float)) else None
                 # natural relationship: how does planet feel about other?
                 if other_name in KARAKAS:
@@ -85,52 +117,112 @@ class LajjitaadiAvasthas:
                 # --- Delighted ---
                 # conjunct Jupiter
                 if is_conjunction and other_name == "Jupiter":
-                    _add(avasthas, "delighted", {"source": "conjunction", "planet": other_name, "strength": 60})
+                    _add(
+                        avasthas,
+                        "delighted",
+                        {"source": "conjunction", "planet": other_name, "strength": 60},
+                    )
                 # conjunct natural friend (except Saturn)
                 if is_conjunction and is_friend and other_name != "Saturn":
-                    _add(avasthas, "delighted", {"source": "conjunction", "planet": other_name, "strength": 60})
+                    _add(
+                        avasthas,
+                        "delighted",
+                        {"source": "conjunction", "planet": other_name, "strength": 60},
+                    )
                 # aspected by natural friend
                 if aspect_strength and is_friend:
-                    _add(avasthas, "delighted", {"source": "aspect", "planet": other_name, "strength": aspect_strength})
+                    _add(
+                        avasthas,
+                        "delighted",
+                        {
+                            "source": "aspect",
+                            "planet": other_name,
+                            "strength": aspect_strength,
+                        },
+                    )
 
                 # --- Starved ---
                 # conjunct natural enemy
                 if is_conjunction and is_enemy:
-                    _add(avasthas, "starved", {"source": "conjunction", "planet": other_name, "strength": 60})
+                    _add(
+                        avasthas,
+                        "starved",
+                        {"source": "conjunction", "planet": other_name, "strength": 60},
+                    )
                 # conjunct Saturn (for non-Saturn planets)
                 if is_conjunction and other_name == "Saturn":
-                    _add(avasthas, "starved", {"source": "conjunction", "planet": "Saturn", "strength": 60})
+                    _add(
+                        avasthas,
+                        "starved",
+                        {"source": "conjunction", "planet": "Saturn", "strength": 60},
+                    )
                 # aspected by natural enemy
                 if aspect_strength and is_enemy:
-                    _add(avasthas, "starved", {"source": "aspect", "planet": other_name, "strength": aspect_strength})
+                    _add(
+                        avasthas,
+                        "starved",
+                        {
+                            "source": "aspect",
+                            "planet": other_name,
+                            "strength": aspect_strength,
+                        },
+                    )
 
                 # --- Agitated ---
                 # conjunct Sun
                 if is_conjunction and other_name == "Sun":
-                    _add(avasthas, "agitated", {"source": "conjunction", "planet": "Sun", "strength": 60})
+                    _add(
+                        avasthas,
+                        "agitated",
+                        {"source": "conjunction", "planet": "Sun", "strength": 60},
+                    )
                 # aspected by natural enemy who is also a natural malefic
                 if aspect_strength and is_enemy and other_name in KARAKAS:
                     if other.nature() == "Malefic":
-                        _add(avasthas, "agitated", {"source": "aspect", "planet": other_name, "strength": aspect_strength})
+                        _add(
+                            avasthas,
+                            "agitated",
+                            {
+                                "source": "aspect",
+                                "planet": other_name,
+                                "strength": aspect_strength,
+                            },
+                        )
 
                 # --- Thirsty ---
                 # in a water sign AND aspected by natural enemy
                 if sign_num in WATER_SIGNS and aspect_strength and is_enemy:
-                    _add(avasthas, "thirsty", {"source": "aspect", "planet": other_name, "strength": aspect_strength})
+                    _add(
+                        avasthas,
+                        "thirsty",
+                        {
+                            "source": "aspect",
+                            "planet": other_name,
+                            "strength": aspect_strength,
+                        },
+                    )
 
             # --- Delighted: in sign of natural friend ---
             if sign_lord != name and sign_lord in KARAKAS:
                 lord_planet = planets[sign_lord]
                 rel_to_lord = planet.natural_relationship_from(lord_planet)
                 if rel_to_lord in ("F", "OH"):
-                    _add(avasthas, "delighted", {"source": "sign", "lord": sign_lord, "strength": 60})
+                    _add(
+                        avasthas,
+                        "delighted",
+                        {"source": "sign", "lord": sign_lord, "strength": 60},
+                    )
 
             # --- Starved: in sign of natural enemy ---
             if sign_lord != name and sign_lord in KARAKAS:
                 lord_planet = planets[sign_lord]
                 rel_to_lord = planet.natural_relationship_from(lord_planet)
                 if rel_to_lord == "E":
-                    _add(avasthas, "starved", {"source": "sign", "lord": sign_lord, "strength": 60})
+                    _add(
+                        avasthas,
+                        "starved",
+                        {"source": "sign", "lord": sign_lord, "strength": 60},
+                    )
 
             # --- Healthy: planet in own sign ---
             if planet.is_oh():
@@ -138,9 +230,17 @@ class LajjitaadiAvasthas:
 
             # --- Proud: planet is EX or MT ---
             if planet.is_ex():
-                _add(avasthas, "proud", {"source": "dignity", "dignity": "EX", "strength": 60})
+                _add(
+                    avasthas,
+                    "proud",
+                    {"source": "dignity", "dignity": "EX", "strength": 60},
+                )
             elif planet.is_mt():
-                _add(avasthas, "proud", {"source": "dignity", "dignity": "MT", "strength": 60})
+                _add(
+                    avasthas,
+                    "proud",
+                    {"source": "dignity", "dignity": "MT", "strength": 60},
+                )
 
             # --- Thirsty: water sign check (base condition) ---
             # already handled above in the per-other loop; the water sign is a
@@ -162,17 +262,37 @@ class LajjitaadiAvasthas:
                         conj_rahu_ketu = True
 
             if conj_sun_mars_saturn:
-                in_fifth_sign = (sign_num == fifth_sign_num)
-                conj_fifth_cusp = (planet.sign() == cusps[5].sign())
+                in_fifth_sign = sign_num == fifth_sign_num
+                conj_fifth_cusp = planet.sign() == cusps[5].sign()
                 if conj_rahu_ketu or in_fifth_sign or conj_fifth_cusp:
                     for trigger in conj_sun_mars_saturn:
-                        _add(avasthas, "shamed", {"source": "conjunction", "planet": trigger, "strength": 60})
+                        _add(
+                            avasthas,
+                            "shamed",
+                            {
+                                "source": "conjunction",
+                                "planet": trigger,
+                                "strength": 60,
+                            },
+                        )
                     if conj_rahu_ketu:
-                        _add(avasthas, "shamed", {"source": "condition", "detail": "conjunct Rahu/Ketu"})
+                        _add(
+                            avasthas,
+                            "shamed",
+                            {"source": "condition", "detail": "conjunct Rahu/Ketu"},
+                        )
                     if in_fifth_sign:
-                        _add(avasthas, "shamed", {"source": "condition", "detail": "in 5th sign"})
+                        _add(
+                            avasthas,
+                            "shamed",
+                            {"source": "condition", "detail": "in 5th sign"},
+                        )
                     if conj_fifth_cusp and not in_fifth_sign:
-                        _add(avasthas, "shamed", {"source": "condition", "detail": "conjunct 5th cusp"})
+                        _add(
+                            avasthas,
+                            "shamed",
+                            {"source": "condition", "detail": "conjunct 5th cusp"},
+                        )
 
             planet.attributes["lajjitaadi_avasthas"] = avasthas
             if avasthas:
@@ -213,7 +333,6 @@ def _add(avasthas, avastha_name, factor):
 
 
 class BaladiAvasthas:
-
     def baladi_avasthas(self) -> dict:
         planets = self.planets()
         result = {}
@@ -232,7 +351,6 @@ class BaladiAvasthas:
 
 
 class JagradadiAvasthas:
-
     def jagradadi_avasthas(self) -> dict:
         planets = self.planets()
         result = {}
@@ -250,7 +368,6 @@ class JagradadiAvasthas:
 
 
 class DeeptadiAvasthas:
-
     def deeptadi_avasthas(self) -> dict:
         planets = self.planets()
         sun = planets["Sun"]
@@ -310,7 +427,6 @@ class DeeptadiAvasthas:
 
 
 class ShayanadiAvasthas:
-
     def shayanadi_avasthas(self) -> dict:
         planets = self.planets()
         context = self.context

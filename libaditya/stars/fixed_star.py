@@ -24,6 +24,7 @@ from libaditya.objects import Longitude, CelestialObject, EphContext
 
 from libaditya.stars.stellarium import Stellarium
 
+
 def correct_nomen_name(swe_id):
     # take care of cases like ,And14
     # the proper nomen name is ,14And
@@ -32,24 +33,25 @@ def correct_nomen_name(swe_id):
         # remove initial comma if there
         swe_id = swe_id[1:]
     # the next lines transform a Flamsteed designation of Namennn to nnnName, where there are 1-3 n's in [0,9]
-#    if swe_id[-3:].isnumeric():
-#        return ","+swe_id[-3:]+swe_id[:-3]
-#    if swe_id[-2:].isnumeric():
-#        if swe_id[-2:] == "00":
-#            # for GCRS00
-#            return ","+swe_id
-#        return ","+swe_id[-2:]+swe_id[:-2]
-#    if swe_id[-1:].isnumeric():
-#        return ","+swe_id[-1:]+swe_id[:-1]
+    #    if swe_id[-3:].isnumeric():
+    #        return ","+swe_id[-3:]+swe_id[:-3]
+    #    if swe_id[-2:].isnumeric():
+    #        if swe_id[-2:] == "00":
+    #            # for GCRS00
+    #            return ","+swe_id
+    #        return ","+swe_id[-2:]+swe_id[:-2]
+    #    if swe_id[-1:].isnumeric():
+    #        return ","+swe_id[-1:]+swe_id[:-1]
     # make sure there is a comma for swe
-    return ","+swe_id
+    return "," + swe_id
 
 
 # if you want a Stellarium star
 # include "st:" at the beginning of swe_id
 # and pass "rc", a stars.stellarium.stellarium.Stellarium instance, which is the connection to Stellarium
 
-class FixedStar(CelestialObject,Longitude):
+
+class FixedStar(CelestialObject, Longitude):
     """
     initialize a FixedStar through the Swiss Ephemeris
     all available stars are listed in libaditya/ephe/sefstars.txt
@@ -57,7 +59,7 @@ class FixedStar(CelestialObject,Longitude):
     each star has a one-line entry in sefstars.txt
     the nomenclature name is the second entry, e.g.,:
     Alpha Canis Majoris,alfCMa,ICRS,06,45,08.91728,-16,42,58.0171,-546.01,-1223.07,-5.50,379.21,-1.46
-    
+
     alfCMa is the "nomenclature" name that you should use to initialize FixedStar
 
     in the original sefstars.txt, the first field is a "traditional" name, in this case Sirius
@@ -83,7 +85,13 @@ class FixedStar(CelestialObject,Longitude):
     stars can be added by using the script libaditya/ephe/make_swe_star.py
     """
 
-    def __init__(self, swe_id: str, context: EphContext = EphContext(), rc: Stellarium = None, swe_string=""):
+    def __init__(
+        self,
+        swe_id: str,
+        context: EphContext = EphContext(),
+        rc: Stellarium = None,
+        swe_string="",
+    ):
         self.context = context
         self.system = self.context.sysflg
         self.sysflg = self.system | swe.FLG_SPEED
@@ -104,23 +112,43 @@ class FixedStar(CelestialObject,Longitude):
             self.rc = rc
             # now initialize all of the information
             self.init_Stellarium()
-            super().__init__(self.long,1,context)
+            super().__init__(self.long, 1, context)
             # done with this __init__
             return
         self._swe_id = correct_nomen_name(swe_id)
         try:
             # if it works, the swe_id is valid
-            swe.fixstar2_ut(self._swe_id,self.context.timeJD.jd_number())
+            swe.fixstar2_ut(self._swe_id, self.context.timeJD.jd_number())
         except:
             # if not, assume it is a search
             # so remove "," from beginning, add "%" to end for wildcard
-            self._swe_id = self._swe_id[1:]+"%"
+            self._swe_id = self._swe_id[1:] + "%"
         # self._coords is a 6-tuple
         # will be unpacked into FixedStar.longitude(), etc., for each value in the tuple
-        (self.long, self.lat, self.dist, self.long_speed, self.lat_speed, self.dist_speed), self._name, self._retflags = self.init_coords()
-        self.dist_ly = 0 # convert self.dist in AUs to LYs
+        (
+            (
+                self.long,
+                self.lat,
+                self.dist,
+                self.long_speed,
+                self.lat_speed,
+                self.dist_speed,
+            ),
+            self._name,
+            self._retflags,
+        ) = self.init_coords()
+        self.dist_ly = 0  # convert self.dist in AUs to LYs
         self._name, self.returned_swe_id = self._name.split(",")
-        (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.fixstar2_ut(self.swe_id(),self.context.timeJD.jd_number(),swe.FLG_EQUATORIAL)[0]
+        (
+            self._right_ascension,
+            self._declination,
+            self._equatorial_distance,
+            _,
+            _,
+            _,
+        ) = swe.fixstar2_ut(
+            self.swe_id(), self.context.timeJD.jd_number(), swe.FLG_EQUATORIAL
+        )[0]
         if "%" in self._swe_id:
             self._swe_id = self.returned_swe_id
         self.attributes = {"constellation": "n/a"}
@@ -128,8 +156,7 @@ class FixedStar(CelestialObject,Longitude):
         # super() means Longitude. CelestialObject is a Mixin and has no __init__ method of its own
         # it is basically just a holder for shared code between Planet and FixedStar
         # ...things that apply to both of them as CelestialObjects
-        super().__init__(self.long,1,context)
-
+        super().__init__(self.long, 1, context)
 
     def init_coords(self):
         loc = self.context.location.swe_location()
@@ -147,7 +174,11 @@ class FixedStar(CelestialObject,Longitude):
         if self.system == (const.SID | const.TOPO):
             swe.set_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
-        return swe.fixstar2_ut(self.swe_id(), self.context.timeJD.jd_number(), self.sysflg if self.sysflg >= 0 else 0)
+        return swe.fixstar2_ut(
+            self.swe_id(),
+            self.context.timeJD.jd_number(),
+            self.sysflg if self.sysflg >= 0 else 0,
+        )
 
     def __eq__(self, fs2):
         """
@@ -175,7 +206,7 @@ class FixedStar(CelestialObject,Longitude):
 
     def identity(self):
         return self.swe_id()
-        
+
     def magnitude(self):
         return swe.fixstar2_mag(self.swe_id())[0]
 
@@ -187,7 +218,7 @@ class FixedStar(CelestialObject,Longitude):
         """
         try:
             self.rc.change_context(self.context)
-            info = self.rc.info(self.swe_id())        
+            info = self.rc.info(self.swe_id())
         except:
             print("Stellarium not available...")
             return
@@ -200,7 +231,7 @@ class FixedStar(CelestialObject,Longitude):
         self.dist_ly = self.dist
         self.long_speed = self.lat_speed = self.dist_speed = 0
         self._name = info["name"]
-        self._right_ascension = info["ra"] 
+        self._right_ascension = info["ra"]
         self._declination = info["dec"]
         self._equatorial_distance = self.dist
         self._altitude = info["altitude"]

@@ -52,17 +52,20 @@ class Bodygraph(DrawBodyGraph):
 
     def unconscious_planets(self):
         return self._unconscious_planets
-    
-    def planets(self):
-        return self.conscious_planets().hd_planets() + self.unconscious_planets().hd_planets()
 
-    def conscious_gates(self,chiron=True):
+    def planets(self):
+        return (
+            self.conscious_planets().hd_planets()
+            + self.unconscious_planets().hd_planets()
+        )
+
+    def conscious_gates(self, chiron=True):
         return self.conscious_planets().gates(chiron)
 
-    def unconscious_gates(self,chiron=True):
+    def unconscious_gates(self, chiron=True):
         return self.unconscious_planets().gates()
 
-    def all_gates(self,chiron=False):
+    def all_gates(self, chiron=False):
         """
         get all_gates that should be activated in the bodygraph
         """
@@ -76,5 +79,4 @@ class Bodygraph(DrawBodyGraph):
         return self._dream_planets
 
     def _new_bodygraph(self, **kwargs):
-        return Bodygraph(context=replace(self.context,**kwargs))
-
+        return Bodygraph(context=replace(self.context, **kwargs))

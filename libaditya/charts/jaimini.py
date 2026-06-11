@@ -18,11 +18,11 @@
 from libaditya.objects import EphContext
 from libaditya.charts import Chart
 
-class Jaimini(Chart):
 
-    def __init__(self,  context=EphContext()):
+class Jaimini(Chart):
+    def __init__(self, context=EphContext()):
         super().__init__(context)
-        self.ak = self.atmakaraka # so you can call chart.jaimini().ak()
+        self.ak = self.atmakaraka  # so you can call chart.jaimini().ak()
 
     def pada(self, amsha=1):
         if amsha == 1:

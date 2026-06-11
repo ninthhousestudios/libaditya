@@ -20,6 +20,7 @@ import toml
 from libaditya.objects import JulianDay, Location
 from libaditya import read
 
+
 def new_chart_interactive(outfile=None):
     """
     take user input and write out a new chart
@@ -50,18 +51,18 @@ def new_chart_interactive(outfile=None):
     # name, placename, month, day, year, timedec, lat, long, utcoffset
     month, day, year = read.intize_date(date)
     timedec = read.intize_time(hour)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset)
+    timeJD = JulianDay((year, month, day, timedec), utcoffset)
     location = Location(lat, long, alt, placename, timeJD.mktimezone())
-    d=dict()
+    d = dict()
     d["name"] = name.split(".")
     d["timeJD"] = dict()
-    d["timeJD"]["jd"]=timeJD.jd_number()
-    d["timeJD"]["utcoffset"]=timeJD.utcoffset
-    d["location"]=location.__dict__
+    d["timeJD"]["jd"] = timeJD.jd_number()
+    d["timeJD"]["utcoffset"] = timeJD.utcoffset
+    d["location"] = location.__dict__
 
     if outfile is not None:
         # split in case they put extension on there
-        name=outfile.split(".")
-    with open(f"{name.lower().replace(' ','-')}.toml", "w") as fd:
-        toml.dump(d,fd)
+        name = outfile.split(".")
+    with open(f"{name.lower().replace(' ', '-')}.toml", "w") as fd:
+        toml.dump(d, fd)
     return

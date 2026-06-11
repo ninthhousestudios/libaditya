@@ -22,6 +22,7 @@ from libaditya import constants as const
 
 from libaditya.objects import Circle
 
+
 class DrawSBC:
     """
     Mixin for drawing a sarvatobhadra chakra
@@ -63,12 +64,15 @@ class DrawSBC:
         bpanch = self.panchanga()
         birth_panchanga = bpanch.info_string()
         d.append(
-            draw.Rectangle(395, 450, 70, 45, rx="1", ry="1", stroke="black", fill="yellow")
+            draw.Rectangle(
+                395, 450, 70, 45, rx="1", ry="1", stroke="black", fill="yellow"
+            )
         )
         d.append(draw.Text(birth_panchanga, font_size=6, x=400, y=450))
 
         return d
-        
+
+
 # all of these where "assembled by hand"
 # guess at coordinates and seeing what look good and adjusting...
 
@@ -82,6 +86,7 @@ class DrawSBC:
 # i.e., (0,0) is the first column, first row
 # and,  (7,7) is the last column, last row
 # and,  (6,3) is the sixth column, third row
+
 
 def make_coords(x=40, y=40):
     # each list is a column, so coords[3][4] will get the 4th column of the 5th row
@@ -353,10 +358,12 @@ def draw_chakra_base(d, context, themefile=const.sbc_default_theme):
                 )
 
     # initalize all the names to write
-    planets, nakshatras, tithis, karanas, varas, yogas, adityas, zodiac, abhijit = [const.names[context.names_type][x] for x in const.names[context.names_type]]
+    planets, nakshatras, tithis, karanas, varas, yogas, adityas, zodiac, abhijit = [
+        const.names[context.names_type][x] for x in const.names[context.names_type]
+    ]
     # "nakshatraeq" is what I called 28 equal nakshatras with Abhijit at index 19
     nakshatraeq = nakshatras.copy()
-    nakshatraeq.insert(19,abhijit)
+    nakshatraeq.insert(19, abhijit)
 
     # draw names of nakshatras {{{1 }}}
     # init names
@@ -611,6 +618,7 @@ def draw_chakra_base(d, context, themefile=const.sbc_default_theme):
         )
     # }}}
     return d
+
 
 def draw_english_letters(d):
     """draw english letter equivalents on the sanskrit letter boxes"""

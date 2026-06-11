@@ -21,11 +21,13 @@ import os
 
 from libaditya import constants as const
 
+
 def dms2dec(dms):
     """
     dms is a tuple (hour,minutes,seconds) that wants to be turned into a float
     """
     return dms[0] + (dms[1] / 60) + (dms[2] / 3600)
+
 
 def sign_degree_to_longitude(sd: float, context):
     """
@@ -33,12 +35,13 @@ def sign_degree_to_longitude(sd: float, context):
     now change to an ecliptic longitude based on which Circle we are using
     """
     from libaditya.objects import Circle
-    sign=int(sd[0])
-    degrees=float(sd[1])
+
+    sign = int(sd[0])
+    degrees = float(sd[1])
     if context.circle == Circle.ZODIAC:
-        return ((sign-1)*30) + degrees
+        return ((sign - 1) * 30) + degrees
     else:
-        return (((sign-2)%12)*30) + degrees
+        return (((sign - 2) % 12) * 30) + degrees
 
 
 def signize(long, toround, names):
@@ -69,11 +72,14 @@ def intize_date(date):
 
     return (month, day, year)
 
+
 def even(n):
-    return n%2 == 0 
+    return n % 2 == 0
+
 
 def odd(n):
-    return n%2 == 1 
+    return n % 2 == 1
+
 
 def intize_time(time):
     """
@@ -110,7 +116,8 @@ def time2str(time):
     """time is a dec2dms tupel (deg,min,sec); returns a string 'HH:MM:SS'"""
     return f"{str(int(time[0])).zfill(2)}:{str(int(time[1])).zfill(2)}:{str(int(time[2])).zfill(2)}"
 
-def mktimezone(offset,timezone="UTC"):
+
+def mktimezone(offset, timezone="UTC"):
     sign = ""
     appendix = ""
     if offset > 0:
@@ -120,6 +127,7 @@ def mktimezone(offset,timezone="UTC"):
     else:
         appendix = sign + f"{round(offset, 2)}"
     return timezone + appendix
+
 
 def mktab(n):
     tab = ""
@@ -144,7 +152,6 @@ def dec2dmsstr(dd):
     return f"{int(degrees):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 
-
 def dec2ymd(age: float) -> str:
     """
     take a floating point age (=number of years) and return a string
@@ -153,12 +160,12 @@ def dec2ymd(age: float) -> str:
     programming the details of that
     if any of these are zero, it does not print that
     """
-#    import pdb; pdb.set_trace()
+    #    import pdb; pdb.set_trace()
     sign = ""
     if age < 0:
-        sign = "-" 
-        age=-age
-    strlist=[]
+        sign = "-"
+        age = -age
+    strlist = []
     # how many years is the integer part
     years = int(age)
     if not years == 0:
@@ -166,7 +173,7 @@ def dec2ymd(age: float) -> str:
     # get the decimal part of the float
     rem = age % 1
     # multiple by 12 to find numbers of months as a float
-    md = rem*12
+    md = rem * 12
     # months is the decimal part
     months = int(md)
     if not months == 0:
@@ -174,41 +181,44 @@ def dec2ymd(age: float) -> str:
     rem = md % 1
     # days are approximatebecause to be precise we need to find
     # the precise monthetc. and i dont feel like it
-    dpart = rem*31
-    days = int(rem*31)
+    dpart = rem * 31
+    days = int(rem * 31)
     if not days == 0:
         strlist.append(f"{days} days")
     if years == 0 and months == 0:
         # only compute hours and seconds if years and months are 0
-        rem = dpart%1
-        dpart = rem*24
+        rem = dpart % 1
+        dpart = rem * 24
         hours = int(dpart)
         if not hours == 0:
             strlist.append(f"{hours} hours")
-        mpart = rem*60
+        mpart = rem * 60
         minutes = int(mpart)
         if not minutes == 0:
             strlist.append(f"{minutes} minutes")
-        rem = mpart%1
-        seconds = int(rem*60)
+        rem = mpart % 1
+        seconds = int(rem * 60)
         if not seconds == 0:
             strlist.append(f"{seconds} seconds")
     if not strlist:
         return "Less than one second"
-    strlist[0] = sign+strlist[0]
+    strlist[0] = sign + strlist[0]
     return ", ".join(strlist)
+
 
 def mktab(n):
     tab = ""
-    for i in range(0,n):
+    for i in range(0, n):
         tab += "\t"
     return tab
 
+
 def mksub(n):
     sub = ""
-    for i in range(0,n):
+    for i in range(0, n):
         sub += "sub"
     return sub
+
 
 def construct_varga_row(cusp):
     """
@@ -220,12 +230,13 @@ def construct_varga_row(cusp):
     """
     ret = []
 
-    for n in range(0,12):
+    for n in range(0, 12):
         if n == cusp.sign_index():
             ret.append(cusp.in_sign_longitude())
         else:
             ret.append("")
     return ret
+
 
 # make a string for dasha lords including subdashas
 def mk_dasha_lord(dlist):
@@ -233,16 +244,28 @@ def mk_dasha_lord(dlist):
     make a string of dashas lords
     """
     lordstr = ""
-    for lord in range(0,len(dlist)):
-        if lord == len(dlist)-1:
+    for lord in range(0, len(dlist)):
+        if lord == len(dlist) - 1:
             lordstr += const.vimshottari_dashas[dlist[lord]][0]
         else:
             lordstr += const.vimshottari_dashas[dlist[lord]][0] + "/"
     return lordstr
 
-DIGNITY_RANK = {"EX": 9, "MT": 8, "OH": 7, "GF": 6, "F": 5, "N": 4, "E": 3, "GE": 2, "DB": 1}
 
-def compare_signs_dignities(sign1,sign2,dignities: [str]) -> int:
+DIGNITY_RANK = {
+    "EX": 9,
+    "MT": 8,
+    "OH": 7,
+    "GF": 6,
+    "F": 5,
+    "N": 4,
+    "E": 3,
+    "GE": 2,
+    "DB": 1,
+}
+
+
+def compare_signs_dignities(sign1, sign2, dignities: [str]) -> int:
     """
     compare which sign has stronger dignities among its occupying planets
     dignities is the list of planetary dignities returned by Planets.dignities()
@@ -255,25 +278,34 @@ def compare_signs_dignities(sign1,sign2,dignities: [str]) -> int:
     1 means sign1 has stronger dignities
     2 means sign2 has stronger dignities
     """
-    s1digs = sorted([DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign1.karakas()], reverse=True)
-    s2digs = sorted([DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign2.karakas()], reverse=True)
+    s1digs = sorted(
+        [DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign1.karakas()],
+        reverse=True,
+    )
+    s2digs = sorted(
+        [DIGNITY_RANK.get(dignities[p.list_index()], 0) for p in sign2.karakas()],
+        reverse=True,
+    )
     if not s1digs and not s2digs:
         return 0
     if len(s1digs) != len(s2digs):
         return 1 if len(s1digs) > len(s2digs) else 2
     for d1, d2 in zip(s1digs, s2digs):
-        if d1 > d2: return 1
-        if d1 < d2: return 2
+        if d1 > d2:
+            return 1
+        if d1 < d2:
+            return 2
     return 0
 
-def compare_planets_dignities(planet1,planet2) -> int:
+
+def compare_planets_dignities(planet1, planet2) -> int:
     """
     compare the dignities of these two planets
     0 for equal
     1 for planet1 has higher dignity
     2 for planet2 has higher dignity
     """
-    match planet1,planet2:
+    match planet1, planet2:
         case "EX", "EX":
             return 0
         case "EX", _:
@@ -324,8 +356,7 @@ def compare_planets_dignities(planet1,planet2) -> int:
             return 2
 
 
-
-def compare_signs_modalities(sign1,sign2) -> int:
+def compare_signs_modalities(sign1, sign2) -> int:
     """
     compare the modalities of sign1 and sign2, both Sign classes
     return which is stronger
@@ -335,7 +366,7 @@ def compare_signs_modalities(sign1,sign2) -> int:
     """
     if sign1.modality() == sign2.modality():
         return 0
-    match (sign1.modality(),sign2.modality()):
+    match (sign1.modality(), sign2.modality()):
         case ("Dual", "Fixed"):
             return 1
         case ("Dual", "Moveable"):
@@ -349,12 +380,14 @@ def compare_signs_modalities(sign1,sign2) -> int:
         case ("Moveable", "Fixed"):
             return 2
 
-def copy_collect_charts(root,outdir="all-charts"):
+
+def copy_collect_charts(root, outdir="all-charts"):
     """
     will copy all .chtk files in root and down to outdir/*.chtk
     will give errors if run again because the file is already there, but it works
     """
     import subprocess
+
     ret = []
     for root, sub, files in os.walk(root):
         for file in files:
@@ -365,17 +398,20 @@ def copy_collect_charts(root,outdir="all-charts"):
 
     return ret
 
-def toJD(ls,context):
+
+def toJD(ls, context):
     """
     take a list ls of julianday floats
     return a list of JulianDay classes
     """
     from libaditya.objects import JulianDay
-    return [JulianDay(jd_number,context.timeJD.utcoffset) for jd_number in ls]
+
+    return [JulianDay(jd_number, context.timeJD.utcoffset) for jd_number in ls]
+
 
 def is_stellarium_id(swe_id):
     """
-    find if swe_id is actually a stellarium id 
+    find if swe_id is actually a stellarium id
     """
     if isinstance(swe_id, int):
         return False

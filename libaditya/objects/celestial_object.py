@@ -22,6 +22,7 @@ from libaditya import utils
 from libaditya.objects import JulianDay
 from libaditya.hd.longitude import HDLongitude
 
+
 class CelestialObject:
     """
     this inherits unto Planet and FixedStar
@@ -31,20 +32,20 @@ class CelestialObject:
     all three inherit from Longitude, but only Planet and FixedStar from CelestialObject
     """
 
-    def set_attribute(self,attrs):
+    def set_attribute(self, attrs):
         """
         attrs is a tuple ("attribute",value)
         add all of these to self.attributes
         attritube is a string that will be a dictionary key for value
         """
-        key,value=attrs
+        key, value = attrs
         self.attributes[key] = value
-    
+
     def hd(self):
         """
         each Planet and FixedStar has its own HDLongitude
         """
-        return HDLongitude(self.ecliptic_longitude(),context=self.context)
+        return HDLongitude(self.ecliptic_longitude(), context=self.context)
 
     def constellation(self):
         """
@@ -78,8 +79,8 @@ class CelestialObject:
         """
         return self.right_ascension() as hours,minutes,seconds
         """
-        d,m,s = utils.dec2dms(self.right_ascension())
-        return f"{int(d/15):02d}h{int(m):02d}m{int(s):02d}s"
+        d, m, s = utils.dec2dms(self.right_ascension())
+        return f"{int(d / 15):02d}h{int(m):02d}m{int(s):02d}s"
 
     def declination(self) -> float:
         """
@@ -94,7 +95,7 @@ class CelestialObject:
         """
         return self.declination() as degrees,minutes,seconds
         """
-        d,m,s = utils.dec2dms(self.declination())
+        d, m, s = utils.dec2dms(self.declination())
         return f"{int(d):02d}d{int(m):02d}m{int(s):02d}s"
 
     def equatorial_distance(self):
@@ -135,17 +136,19 @@ class CelestialObject:
 
     # SWE FUNCTIONS
     # that apply to planets and fixed stars; it uses Object.swe_id(), so the proper thing it gotten
-    
-    def rise_trans(self, bitflags=swe.BIT_HINDU_RISING,location=None) -> JulianDay:
+
+    def rise_trans(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
         if location:
-            self.context = replace(self.context,location=location)
+            self.context = replace(self.context, location=location)
         timeJD = JulianDay(
             swe.rise_trans(
                 self.context.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
                 self.swe_id(),
                 bitflags,
                 self.context.location.swe_location(),
-            )[1][0],self.context.timeJD.utcoffset)
+            )[1][0],
+            self.context.timeJD.utcoffset,
+        )
         return timeJD
 
     def rise(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
@@ -155,7 +158,7 @@ class CelestialObject:
         # an object instantied by using Stellarium. it will have this information from that
         if utils.is_stellarium_id(self.swe_id()):
             return self._rise
-        return self.rise_trans(bitflags=bitflags|swe.CALC_RISE,location=location)
+        return self.rise_trans(bitflags=bitflags | swe.CALC_RISE, location=location)
 
     def set(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
         """
@@ -163,9 +166,9 @@ class CelestialObject:
         """
         if utils.is_stellarium_id(self.swe_id()):
             return self._set
-        return self.rise_trans(bitflags=bitflags|swe.CALC_SET,location=location)
+        return self.rise_trans(bitflags=bitflags | swe.CALC_SET, location=location)
 
-    def next_heliacal_event(self, atmosphere,observer,event=None):
+    def next_heliacal_event(self, atmosphere, observer, event=None):
         """
         swe.heliacal_ut() returns 3 jd numbers
         start of visbility, optimum visbility, end of visbility
@@ -177,27 +180,36 @@ class CelestialObject:
         if self.identity() == "Moon":
             # Moon doesnt have these
             return
-        return utils.toJD(swe.heliacal_ut(
-            self.context.timeJD.jd_number(),
-            self.context.location.swe_location(),
-            # need to figure out how to get current information for the place
-            # relative humdity can do with metpy, but it is a lot of dependcies for just one thing that
-            # may not really be that important
-            # the 4-tuple of 0 sets atmospheric information to general values
-            atmosphere,
-            # a 6-tuple of values relative to an observer and various observing situations
-            observer,
-            self.identity(),
-            event,
-            # this is the ephemeris flag, i think
-            self.sysflg
-       ), self.context)
+        return utils.toJD(
+            swe.heliacal_ut(
+                self.context.timeJD.jd_number(),
+                self.context.location.swe_location(),
+                # need to figure out how to get current information for the place
+                # relative humdity can do with metpy, but it is a lot of dependcies for just one thing that
+                # may not really be that important
+                # the 4-tuple of 0 sets atmospheric information to general values
+                atmosphere,
+                # a 6-tuple of values relative to an observer and various observing situations
+                observer,
+                self.identity(),
+                event,
+                # this is the ephemeris flag, i think
+                self.sysflg,
+            ),
+            self.context,
+        )
 
-    def next_heliacal_rising(self, atmosphere=(0,0,0,0),observer=(0,0,0,0,0,0)):
-        return self.next_heliacal_event(atmosphere,observer,event=swe.HELIACAL_RISING)
+    def next_heliacal_rising(
+        self, atmosphere=(0, 0, 0, 0), observer=(0, 0, 0, 0, 0, 0)
+    ):
+        return self.next_heliacal_event(atmosphere, observer, event=swe.HELIACAL_RISING)
 
-    def next_heliacal_setting(self, atmosphere=(0,0,0,0),observer=(0,0,0,0,0,0)):
-        return self.next_heliacal_event(atmosphere,observer,event=swe.HELIACAL_SETTING)
+    def next_heliacal_setting(
+        self, atmosphere=(0, 0, 0, 0), observer=(0, 0, 0, 0, 0, 0)
+    ):
+        return self.next_heliacal_event(
+            atmosphere, observer, event=swe.HELIACAL_SETTING
+        )
 
     def altitude(self):
         return self._altitude

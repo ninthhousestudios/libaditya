@@ -22,7 +22,7 @@ from rich.console import Console
 
 from libaditya.objects import *
 from libaditya.calc import *
-from libaditya.charts import * 
+from libaditya.charts import *
 from libaditya.hd import *
 from libaditya.stars import *
 from libaditya.cards import *
@@ -35,12 +35,11 @@ from libaditya import print_functions as printf
 
 # base_path means for libaditya src itself
 base_path = os.path.dirname(os.path.realpath(__file__))
-# the 
-package_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
+# the
+package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
 
 swe.set_ephe_path(base_path + "/ephe/")
 
 console = Console()
 
 # from ._version import __version__
-

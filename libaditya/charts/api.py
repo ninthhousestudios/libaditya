@@ -18,6 +18,7 @@
 from dataclasses import replace
 from typing import Self
 
+
 class API:
     """
     Mixin class for Chart api

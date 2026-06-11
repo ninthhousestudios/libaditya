@@ -50,7 +50,7 @@ def _read_chtk_lines(infile):
     """Read a .chtk file, handling both UTF-16 LE (BOM) and ASCII/UTF-8."""
     with open(infile, "rb") as f:
         raw = f.read()
-    if raw[:2] == b'\xff\xfe':
+    if raw[:2] == b"\xff\xfe":
         text = raw.decode("utf-16-le").lstrip("﻿")
         return [line.encode("latin-1", errors="replace") for line in text.splitlines()]
     else:
@@ -78,7 +78,13 @@ def read_chtk(infile):
             case 6:
                 sec = intize_line(codecs.decode(line))
             case 7:
-                sexstr = codecs.decode(line).strip().replace("\x00", "").replace("\r", "").replace("\n", "")
+                sexstr = (
+                    codecs.decode(line)
+                    .strip()
+                    .replace("\x00", "")
+                    .replace("\r", "")
+                    .replace("\n", "")
+                )
                 if sexstr in ("m", "M", "1"):
                     sex = 1
                 elif sexstr in ("f", "F", "0", "2"):
@@ -117,7 +123,7 @@ def read_chtk(infile):
                 if h < 0:
                     sign = -1
                     h = abs(h)
-                utcoff = sign*(int(h) + (int(m) / 60) + (int(s) / 3600))
+                utcoff = sign * (int(h) + (int(m) / 60) + (int(s) / 3600))
             case 13:  # dst value
                 dst = intize_line(codecs.decode(line))
         linenum += 1
@@ -141,62 +147,110 @@ def read_chtk_location(infile):
     _, placename, _, _, _, _, lat, long, utcoff = read_chtk(infile)
     return placename, lat, long, utcoff
 
+
 def chtk_to_Location(infile):
-    context=chtk_to_context(infile)
+    context = chtk_to_context(infile)
     return context.location
+
 
 def read_toml(infile):
-    con=toml_to_context(infile)
-    return con.name,con.location.placename(),con.timeJD.month(),con.timeJD.day(),con.timeJD.year(),con.timeJD.hour(tz="utc"),con.location.lat,con.location.long,con.location.utcoffset
+    con = toml_to_context(infile)
+    return (
+        con.name,
+        con.location.placename(),
+        con.timeJD.month(),
+        con.timeJD.day(),
+        con.timeJD.year(),
+        con.timeJD.hour(tz="utc"),
+        con.location.lat,
+        con.location.long,
+        con.location.utcoffset,
+    )
+
 
 def read_toml_location(infile):
-    con=toml_to_context(infile)
-    return con.location.placename, con.location.lat, con.location.long, con.timeJD.utcoffset
+    con = toml_to_context(infile)
+    return (
+        con.location.placename,
+        con.location.lat,
+        con.location.long,
+        con.timeJD.utcoffset,
+    )
+
 
 def toml_to_Location(infile):
-    context=toml_to_context(infile)
+    context = toml_to_context(infile)
     return context.location
 
+
 # note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
-def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
-    name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset)
+def chtk_to_context(
+    infile,
+    sysflg=const.TROP,
+    ayanamsa=98,
+    hsys="C",
+    circle=Circle.ADITYA,
+    signize=True,
+    toround=(True, 3),
+    print_nakshatras=True,
+    print_outer_planets=True,
+    names_type="mixed",
+    sign_names="adityas",
+):
+    name, placename, month, day, year, timedec, lat, long, utcoffset = read_chtk(infile)
+    timeJD = JulianDay((year, month, day, timedec), utcoffset)
     location = Location(lat, long, 0, placename, timeJD.utcoffset)
-    return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type=names_type,sign_names=sign_names)
+    return EphContext(
+        name=name,
+        timeJD=timeJD,
+        location=location,
+        sysflg=sysflg,
+        amsha=1,
+        ayanamsa=ayanamsa,
+        hsys=hsys,
+        circle=circle,
+        toround=toround,
+        print_nakshatras=print_nakshatras,
+        print_outer_planets=print_outer_planets,
+        names_type=names_type,
+        sign_names=sign_names,
+    )
 
-def context_to_chtk(context=EphContext(),outfile=None):
-    """
-    turn context into a list of strings
 
-    out = []
-    out.append(str(name)+"\n")
-    out.append(str(year)+"\n")
-    out.append(str(month)+"\n")
-    out.append(str(day)+"\n")
-    out.append(str(hour)+"\n")
-    out.append(str(min)+"\n")
-    out.append(str(sec)+"\n")
-    out.append(str(sex)+"\n")
-    out.append(str(country)+"\n")
-    out.append(str(city)+"\n")
-    out.append(float_to_long(long)+"\n")
-    out.append(float_to_lat(lat)+"\n")
-    out.append(f"{h:02d}:{m:02d}:{s:02d}\n")
-    out.append(str(dst)+"\n")
-    return out
-#   put below into a different function
-#    fout = open(foutname+"-test"+".chtk","w")
-#    fout.writelines(out)
-#    fout.close()
+def context_to_chtk(context=EphContext(), outfile=None):
+    """
+        turn context into a list of strings
+
+        out = []
+        out.append(str(name)+"\n")
+        out.append(str(year)+"\n")
+        out.append(str(month)+"\n")
+        out.append(str(day)+"\n")
+        out.append(str(hour)+"\n")
+        out.append(str(min)+"\n")
+        out.append(str(sec)+"\n")
+        out.append(str(sex)+"\n")
+        out.append(str(country)+"\n")
+        out.append(str(city)+"\n")
+        out.append(float_to_long(long)+"\n")
+        out.append(float_to_lat(lat)+"\n")
+        out.append(f"{h:02d}:{m:02d}:{s:02d}\n")
+        out.append(str(dst)+"\n")
+        return out
+    #   put below into a different function
+    #    fout = open(foutname+"-test"+".chtk","w")
+    #    fout.writelines(out)
+    #    fout.close()
     """
     out = []
-    out.append(str(context.name)+"\n")
-    out.append(str(context.timeJD.year())+"\n")
-    out.append(str(context.timeJD.month())+"\n")
-    out.append(str(context.timeJD.day())+"\n")
-    out.append(str(context.timeJD.hour())+"\n")
-    out.append(str(context.timeJD.min())+"\n")
-    out.append(str(context.timeJD.sec())+"\n")
+    out.append(str(context.name) + "\n")
+    out.append(str(context.timeJD.year()) + "\n")
+    out.append(str(context.timeJD.month()) + "\n")
+    out.append(str(context.timeJD.day()) + "\n")
+    out.append(str(context.timeJD.hour()) + "\n")
+    out.append(str(context.timeJD.min()) + "\n")
+    out.append(str(context.timeJD.sec()) + "\n")
+
 
 def chtk_to_toml(infile):
     """
@@ -217,28 +271,30 @@ def chtk_to_toml(infile):
     placename = ""
     timezone = timeJD.mktimezone()
     """
-    name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset)
+    name, placename, month, day, year, timedec, lat, long, utcoffset = read_chtk(infile)
+    timeJD = JulianDay((year, month, day, timedec), utcoffset)
     location = Location(lat, long, 0, placename, utcoffset)
-    d=dict()
+    d = dict()
     d["name"] = name
     d["timeJD"] = dict()
-    d["timeJD"]["jd"]=timeJD.jd_number()
-    d["timeJD"]["utcoffset"]=timeJD.utcoffset
-    d["location"]=location.__dict__
+    d["timeJD"]["jd"] = timeJD.jd_number()
+    d["timeJD"]["utcoffset"] = timeJD.utcoffset
+    d["location"] = location.__dict__
     with open(f"{infile.split('.')[0]}.toml", "w") as fd:
-        toml.dump(d,fd)
+        toml.dump(d, fd)
     return
+
 
 def toml_to_context(infile) -> EphContext:
     with open(infile, "r") as fd:
         d = toml.load(fd)
     name = d["name"]
-    timeJD = JulianDay(d["timeJD"]["jd"],d["timeJD"]["utcoffset"])
+    timeJD = JulianDay(d["timeJD"]["jd"], d["timeJD"]["utcoffset"])
     # use unpacking of the dictionary values
     location = Location(*d["location"].values())
     # all other options are defaults
-    return EphContext(name=name,timeJD=timeJD,location=location)
+    return EphContext(name=name, timeJD=timeJD, location=location)
+
 
 def lat_to_float(lat):
     """
@@ -253,7 +309,7 @@ def lat_to_float(lat):
     mins = float(lat[3:5]) if len(lat) > 3 else 0.0
     secs_str = lat[6:8] if len(lat) > 6 else ""
     secs = float(secs_str) if secs_str else 0.0
-    return sign*(degs + (mins / 60) + (secs / 3600))
+    return sign * (degs + (mins / 60) + (secs / 3600))
 
 
 def float_to_lat(lat):
@@ -290,7 +346,7 @@ def long_to_float(long):
         sign = 1
         degs = float(long[:3])
         mins = secs = 0.0
-    return sign*(degs + (mins / 60) + (secs / 3600))
+    return sign * (degs + (mins / 60) + (secs / 3600))
 
 
 def float_to_long(long):
@@ -414,9 +470,15 @@ def parse_position_argument(position):
             if "-" in positiontmp[0]:
                 sign = -1
             if len(positiontmp) == 2:
-                position = sign * (abs(float(positiontmp[0])) + float(positiontmp[1]) / 60)
+                position = sign * (
+                    abs(float(positiontmp[0])) + float(positiontmp[1]) / 60
+                )
             else:
-                position = sign * (abs(float(positiontmp[0])) + float(positiontmp[1]) / 60 + float(positiontmp[2]) / 3600)
+                position = sign * (
+                    abs(float(positiontmp[0]))
+                    + float(positiontmp[1]) / 60
+                    + float(positiontmp[2]) / 3600
+                )
         return position
 
     # given in Kala format DDD(DIR)MM('SS)
@@ -437,15 +499,17 @@ def parse_position_argument(position):
                 positiontmp = position.split("W")
             if "'" in positiontmp[1]:
                 min, sec = positiontmp[1].split("'")
-                position = positionsign * (int(positiontmp[0]) + int(min) / 60 + float(sec) / 3600)
+                position = positionsign * (
+                    int(positiontmp[0]) + int(min) / 60 + float(sec) / 3600
+                )
             else:
-                position = positionsign * (int(positiontmp[0]) + int(positiontmp[1]) / 60)
+                position = positionsign * (
+                    int(positiontmp[0]) + int(positiontmp[1]) / 60
+                )
         return position
 
 
-
-
-#def init_names(langfile=const.base_path + "/dict/dict.mixed"):
+# def init_names(langfile=const.base_path + "/dict/dict.mixed"):
 #    names = configparser.ConfigParser()
 #    if "/" not in langfile:
 #        langfile = const.base_path + f"/dict/{langfile}"

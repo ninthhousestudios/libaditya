@@ -3,7 +3,18 @@
 # i copied and pasted the one directory of code into remote_control
 # the license is mit, even though known of the file have the license in them
 
-from . import main,objects,scripts,simbad,stelaction,stelproperty,location,locationsearch,view
+from . import (
+    main,
+    objects,
+    scripts,
+    simbad,
+    stelaction,
+    stelproperty,
+    location,
+    locationsearch,
+    view,
+)
+
 
 class RemoteControl:
     def __init__(self, ip="127.0.0.1", port=8090, password="") -> None:
@@ -17,6 +28,7 @@ class RemoteControl:
         self.stelaction = stelaction.StelAction(self.ip, self.port, self.password)
         self.stelproperty = stelproperty.StelProperty(self.ip, self.port, self.password)
         self.location = location.Location(self.ip, self.port, self.password)
-        self.locationsearch = locationsearch.LocationSearch(self.ip, self.port, self.password)
+        self.locationsearch = locationsearch.LocationSearch(
+            self.ip, self.port, self.password
+        )
         self.view = view.View(self.ip, self.port, self.password)
-        

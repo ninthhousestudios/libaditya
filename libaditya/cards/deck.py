@@ -17,6 +17,7 @@
 from libaditya.cards import cards_constants as cardsc
 from libaditya.cards.card import Card
 
+
 class Deck:
     """
     could this also be a tarot deck, or would that be different?
@@ -46,7 +47,7 @@ class Deck:
         """
         deck = {}
 
-        for index,card in enumerate(cardsc.cards):
-            deck[card] = Card(card,index)
+        for index, card in enumerate(cardsc.cards):
+            deck[card] = Card(card, index)
 
         return deck

@@ -21,9 +21,9 @@ import toml
 import os
 import pathlib
 
-package_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
+package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
 
-with open(package_path+"pyproject.toml", 'r') as f:
+with open(package_path + "pyproject.toml", "r") as f:
     config = toml.load(f)
 
 __version__ = config["project"]["version"]

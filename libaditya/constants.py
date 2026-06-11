@@ -73,8 +73,10 @@ def ayanamsa_name(ayanamsa):
     swe.set_sid_mode(ayanamsa)
     return swe.get_ayanamsa_name(ayanamsa)
 
+
 def circle_name(circle) -> str:
     from libaditya.objects import Circle
+
     if circle == Circle.ADITYA:
         return "Aditya Circle"
     if circle == Circle.ZODIAC:
@@ -95,73 +97,71 @@ lords = {
     9: "Jupiter",
     10: "Saturn",
     11: "Saturn",
-    12: "Jupiter"
+    12: "Jupiter",
 }
 
 rashi_aspects = {
     "quadrant": {
-        1: (2,5,8),
-        2: (7,10,1),
-        3: (6,9,12),
-        4: (5,8,11),
-        5: (10,1,4),
-        6: (9,12,3),
-        7: (8,11,2),
-        8: (1,4,7),
-        9: (12,3,6),
-        10: (11,2,5),
-        11: (4,7,10),
-        12: (3,6,9)
+        1: (2, 5, 8),
+        2: (7, 10, 1),
+        3: (6, 9, 12),
+        4: (5, 8, 11),
+        5: (10, 1, 4),
+        6: (9, 12, 3),
+        7: (8, 11, 2),
+        8: (1, 4, 7),
+        9: (12, 3, 6),
+        10: (11, 2, 5),
+        11: (4, 7, 10),
+        12: (3, 6, 9),
     },
-
     "element": {
-        1: (2,8,11),
-        2: (7,4,1),
-        3: (6,9,12),
-        4: (5,2,11),
-        5: (7,10,4),
-        6: (9,12,3),
-        7: (8,11,5),
-        8: (1,10,7),
-        9: (12,3,6),
-        10: (11,2,8),
-        11: (4,1,10),
-        12: (3,6,9)
+        1: (2, 8, 11),
+        2: (7, 4, 1),
+        3: (6, 9, 12),
+        4: (5, 2, 11),
+        5: (7, 10, 4),
+        6: (9, 12, 3),
+        7: (8, 11, 5),
+        8: (1, 10, 7),
+        9: (12, 3, 6),
+        10: (11, 2, 8),
+        11: (4, 1, 10),
+        12: (3, 6, 9),
     },
-
     "conventional": {
-        1: (5,8,11),
-        2: (4,7,10),
-        3: (6,9,12),
-        4: (8,11,2),
-        5: (7,10,1),
-        6: (9,12,3),
-        7: (11,2,5),
-        8: (10,1,4),
-        9: (12,3,6),
-        10: (2,5,8),
-        11: (1,4,7),
-        12: (3,6,9)
-    }
+        1: (5, 8, 11),
+        2: (4, 7, 10),
+        3: (6, 9, 12),
+        4: (8, 11, 2),
+        5: (7, 10, 1),
+        6: (9, 12, 3),
+        7: (11, 2, 5),
+        8: (10, 1, 4),
+        9: (12, 3, 6),
+        10: (2, 5, 8),
+        11: (1, 4, 7),
+        12: (3, 6, 9),
+    },
 }
 
 # vargas that have multiple options for them
 multi_vargas = {
-    "2": [2,-2],
-    "3": [3,-3],
-    "4": [4,-4],
-    "10": [10,-10,-100],
-    "16": [16,-16],
-    "20": [20,-20],
-    "24": [24,-24],
-    "27": [27,-27],
-    "40": [40,-40],
-    "45": [45,-45],
-    "60": [60,-60]
+    "2": [2, -2],
+    "3": [3, -3],
+    "4": [4, -4],
+    "10": [10, -10, -100],
+    "16": [16, -16],
+    "20": [20, -20],
+    "24": [24, -24],
+    "27": [27, -27],
+    "40": [40, -40],
+    "45": [45, -45],
+    "60": [60, -60],
 }
 
-karaka_glyphs = ["⨀","☾","♂","☿","♃","♀","♄"]
-graha_glyphs = ["⨀","☾","♂","☿","♃","♀","♄","☊","☋"]
+karaka_glyphs = ["⨀", "☾", "♂", "☿", "♃", "♀", "♄"]
+graha_glyphs = ["⨀", "☾", "♂", "☿", "♃", "♀", "♄", "☊", "☋"]
 
 # these glyphs are in order for hd
 # in hd.constants, use [*glyphs.values()]
@@ -183,10 +183,20 @@ glyphs = {
     # these are for cards of truth
     "Ecliptic": "⨁",
     "Base": "",
-    "": ""
+    "": "",
 }
 
-vimshottari_dashas = [("Ketu",7),("Venus",20),("Sun",6),("Moon",10),("Mars",7),("Rahu",18),("Jupiter",16),("Saturn",19),("Mercury",17)]
+vimshottari_dashas = [
+    ("Ketu", 7),
+    ("Venus", 20),
+    ("Sun", 6),
+    ("Moon", 10),
+    ("Mars", 7),
+    ("Rahu", 18),
+    ("Jupiter", 16),
+    ("Saturn", 19),
+    ("Mercury", 17),
+]
 
 dasha_years = {
     "saura": 365.2422,
@@ -194,7 +204,7 @@ dasha_years = {
     "savana": 360,
     "sidereal": 365.2564,
     "chandra": 364.2888,
-    "lunar": 354.36708
+    "lunar": 354.36708,
 }
 
 # not sure if i use these or not; better leave them for now
@@ -215,12 +225,72 @@ calendardays = [
 
 # used for Planet.cheshta_bala()
 mean_longitude_formulas = {
-    "Sun": (lambda t: (280.466449 + (36000.7698231)*t + (0.00030368)*(t**2) + (0.000000021)*(t**3))%360),
-    "Mars": (lambda t: (355.433275 + (19141.6964746)*t + (0.00031097)*(t**2) + (0.000000015)*(t**3))%360),
-    "Mercury": (lambda t: (252.250906 + (149474.0722491)*t + (0.00030397)*(t**2) - (0.000000018)*(t**3))%360),
-    "Jupiter": (lambda t: (34.351484 + (3036.3027889)*t + (0.00022374)*(t**2) + (0.000000025)*(t**3))%360),
-    "Venus": (lambda t: (181.979801 + (58519.2130302)*t + (0.00031060)*(t**2) + (0.000000015)*(t**3))%360),
-    "Saturn": (lambda t: (50.07741 + (1223.5110141)*t + (0.00051952)*(t**2) - (0.000000003)*(t**3))%360)
+    "Sun": (
+        lambda t: (
+            (
+                280.466449
+                + (36000.7698231) * t
+                + (0.00030368) * (t**2)
+                + (0.000000021) * (t**3)
+            )
+            % 360
+        )
+    ),
+    "Mars": (
+        lambda t: (
+            (
+                355.433275
+                + (19141.6964746) * t
+                + (0.00031097) * (t**2)
+                + (0.000000015) * (t**3)
+            )
+            % 360
+        )
+    ),
+    "Mercury": (
+        lambda t: (
+            (
+                252.250906
+                + (149474.0722491) * t
+                + (0.00030397) * (t**2)
+                - (0.000000018) * (t**3)
+            )
+            % 360
+        )
+    ),
+    "Jupiter": (
+        lambda t: (
+            (
+                34.351484
+                + (3036.3027889) * t
+                + (0.00022374) * (t**2)
+                + (0.000000025) * (t**3)
+            )
+            % 360
+        )
+    ),
+    "Venus": (
+        lambda t: (
+            (
+                181.979801
+                + (58519.2130302) * t
+                + (0.00031060) * (t**2)
+                + (0.000000015) * (t**3)
+            )
+            % 360
+        )
+    ),
+    "Saturn": (
+        lambda t: (
+            (
+                50.07741
+                + (1223.5110141) * t
+                + (0.00051952) * (t**2)
+                - (0.000000003) * (t**3)
+            )
+            % 360
+        )
+    ),
 }
 
 signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎", "♏︎", "♐︎", "♑︎", "♒︎", "♓︎"]
@@ -228,7 +298,7 @@ signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎
 # names is at the end in ruff style
 # much easier to edit that way
 
-#names = {
+# names = {
 #    "eng":
 #    {'planets': ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Rahu', 'Ketu', [], [], 'Earth', 'Chiron'], 'nakshatras': ['Ashvini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'P. Phalguni', 'U. Phalguni', 'Hasta', 'Chitra', 'Svati', 'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'P. Ashadha', 'U. Ashadha', 'Shravana', 'Danishtha', 'Shatabhisha', 'P. Bhadrapada', 'U. Bhadrapada', 'Revati'], 'tithis': ['nanda', 'bhadra', 'jaya', 'rikta', 'purna'], 'karanas': [['Kimtughna', 'Bava'], ['Balava', 'Kaulava'], ['Taitula', 'Garija'], ['Vanija', 'Vishti'], ['Bava', 'Balava'], ['Kaulava', 'Taitula'], ['Garija', 'Vanija'], ['Vishti', 'Bava'], ['Balava', 'Kaulava'], ['Taitula', 'Garija'], ['Vanija', 'Vishti'], ['Bava', 'Balava'], ['Kaulava', 'Taitula'], ['Garija', 'Vanija'], ['Vishti', 'Bava'], ['Balava', 'Kaulava'], ['Taitula', 'Garija'], ['Vanija', 'Vishti'], ['Bava', 'Balava'], ['Kaulava', 'Taitula'], ['Garija', 'Vanija'], ['Vishti', 'Bava'], ['Balava', 'Kaulava'], ['Taitula', 'Garija'], ['Vanija', 'Vishti'], ['Bava', 'Balava'], ['Kaulava', 'Taitula'], ['Garija', 'Vanija'], ['Vishti', 'Shakuni'], ['Chatushpada', 'Naga']], 'varas': ['Ravivara', 'Somavara', 'Mangalavara', 'Budhavara', 'Guruvara', 'Shukravara', 'Shanivara'], 'yogas': ['Vishkambha', 'Priti', 'Ayushman', 'Saubhagya', 'Shobana', 'Atiganda', 'Sukarma', 'Dhriti', 'Shoola', 'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana', 'Vajra', 'Siddhi', 'Vyatipata', 'Variyan', 'Parigha', 'Shiva', 'Siddha', 'Sadhya', 'Shubha', 'Shukla', 'Brahma', 'Indra', 'Vaidhriti'], 'adityas': ['Dhata', 'Aryama', 'Mitra', 'Varuna', 'Indra', 'Vivasvan', 'Tvashta', 'Vishnu', 'Amshu', 'Bhaga', 'Pusha', 'Parjanya'], 'zodiac': ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'], "abhjit": "Abhijit"},
 #    "iast":
@@ -239,7 +309,7 @@ signglyph = ["♈︎", "♉︎", "♊︎", "♋︎", "♌︎", "♍︎", "♎︎
 #    {'planets': ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Rahu', 'Ketu', [], [], 'Earth', 'Chiron'], 'nakshatras': ['aśvinī', 'bharaṇī', 'kṛttikā', 'rohiṇī', 'mṛgaśīrṣa', 'ārdrā', 'punarvasu', 'puṣya', 'āśleṣā', 'maghā', 'pūrvā phalgunī', 'uttarā phalgunī', 'hasta', 'citrā', 'svāti', 'viśākhā', 'anurādhā', 'jyeṣṭhā', 'mūla', 'pūrvāṣāḍhā', 'uttarāṣāḍhā', 'śravaṇa', 'dhaniṣṭhā', 'śatabhiṣa', 'pūrvabhādrapadā', 'uttarabhādrapadā', 'revatī'], 'tithis': ['nanda', 'bhadra', 'jāya', 'ṛkta', 'pūrṇa'], 'karanas': [['kiṃtughna', 'bava'], ['balava', 'kaulava'], ['taitila', 'garija'], ['vaṇija', 'viṣṭi'], ['bava', 'balava'], ['kaulava', 'taitila'], ['garija', 'vaṇija'], ['viṣṭi', 'bava'], ['balava', 'kaulava'], ['taitila', 'garija'], ['vaṇija', 'viṣṭi'], ['bava', 'balava'], ['kaulava', 'taitila'], ['garija', 'vaṇija'], ['viṣṭi', 'bava'], ['balava', 'kaulava'], ['taitila', 'garija'], ['vaṇija', 'viṣṭi'], ['bava', 'balava'], ['kaulava', 'taitila'], ['garija', 'vaṇija'], ['viṣṭi', 'bava'], ['balava', 'kaulava'], ['taitila', 'garija'], ['vaṇija', 'viṣṭi'], ['bava', 'balava'], ['kaulava', 'taitila'], ['garija', 'vaṇija'], ['viṣṭi', 'śakuni'], ['catuṣpada', 'nāga']], 'varas': ['ravivāra', 'somavāra', 'maṅgalavāra', 'budhavāra', 'guruvāra', 'śukravāra', 'śanivāra'], 'yogas': ['viṣkambha', 'prīti', 'āyuṣmān', 'saubhāgya', 'śobhana', 'atigaṇḍa', 'sukarma', 'dhṛti', 'śula', 'gaṇḍa', 'vṛddhi', 'dhruva', 'vyāghāta', 'harṣaṇa', 'vajra', 'siddhi', 'vyātipata', 'varīyas', 'parighā', 'śiva', 'siddha', 'sādhya', 'śubha', 'śukla', 'brahmā', 'indra', 'vaidhṛti'], 'adityas': ['dhātā', 'aryamā', 'mitra', 'varuṇa', 'indra', 'vivasvān', 'tvaṣṭā', 'viṣṇu', 'aṃśu', 'bhaga', 'pūṣā', 'parjanya'], 'zodiac': ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'], "abhijit": "abhijit"},
 #    "abbrev":
 #    {'planets': ['Su', 'Mo', 'Me', 'Ve', 'Ma', 'Ju', 'Sa', 'Ur', 'Ne', 'Pl', 'Ra', 'Ke', [], [], 'Ea', 'Ch'], 'nakshatras': ['aśv', 'bha', 'kṛt', 'roh', 'mṛg', 'ārd', 'pun', 'puṣ', 'āśl', 'mag', 'pph', 'uph', 'has', 'cit', 'svā', 'viś', 'anu', 'jye', 'mūl', 'pāṣ', 'uāṣ', 'śra', 'dha', 'śat', 'pdā', 'udā', 'rev'], 'tithis': ['nan', 'bha', 'jāy', 'ṛkt', 'pūr'], 'karanas': [['kiṃ', 'bav'], ['bal', 'kau'], ['tai', 'gar'], ['vaṇ', 'viṣ'], ['bav', 'bal'], ['kau', 'tai'], ['gar', 'vaṇ'], ['viṣ', 'bav'], ['bal', 'kau'], ['tai', 'gar'], ['vaṇ', 'viṣ'], ['bav', 'bal'], ['kau', 'tai'], ['gar', 'vaṇ'], ['viṣ', 'bav'], ['bal', 'kau'], ['tai', 'gar'], ['vaṇ', 'viṣ'], ['bav', 'bal'], ['kau', 'tai'], ['gar', 'vaṇ'], ['viṣ', 'bav'], ['bal', 'kau'], ['tai', 'gar'], ['vaṇ', 'viṣ'], ['bav', 'bal'], ['kau', 'tai'], ['gar', 'vaṇ'], ['viṣ', 'śak'], ['cat', 'nāg']], 'varas': ['rav', 'som', 'maṅ', 'bud', 'gur', 'śuk', 'śan'], 'yogas': ['viṣ', 'prī', 'āyu', 'sau', 'śob', 'ati', 'suk', 'dhṛ', 'śul', 'gaṇ', 'vṛd', 'dhr', 'vyā', 'har', 'vaj', 'sid', 'vyā', 'var', 'par', 'śiv', 'sid', 'sād', 'śub', 'śuk', 'bra', 'ind', 'vai'], 'adityas': ['dhā', 'ary', 'mit', 'var', 'ind', 'viv', 'tva', 'viṣ', 'aṃś', 'bha', 'pūṣ', 'par'], 'zodiac': ['Ar', 'Ta', 'Ge', 'Ca', 'Le', 'Vi', 'Li', 'Sc', 'Sa', 'Ca', 'Aq', 'Pi'], "abhijit": "ab"},
-#}
+# }
 #
 planet_names = [
     "Sun",
@@ -551,50 +621,228 @@ adityas_abbreviated = [
 sign_names = adityas
 sign_names_abbreviated = adityas_abbreviated
 
-abbreviated_names = planet_names_abbreviated,sign_names_abbreviated,nakshatras_abbreviated,tithis_abbreviated,karanas_abbreviated,varas_abbreviated,yogas_abbreviated
+abbreviated_names = (
+    planet_names_abbreviated,
+    sign_names_abbreviated,
+    nakshatras_abbreviated,
+    tithis_abbreviated,
+    karanas_abbreviated,
+    varas_abbreviated,
+    yogas_abbreviated,
+)
 
 
-varga_deities={
+varga_deities = {
     2: ["Sun", "Moon"],
     3: ["Narada", "Agastya", "Durvasas"],
     4: ["Sanaka", "Sananda", "Sanatkumāra", "Sanātana"],
     7: ["Kshara", "Kshira", "Dadhya", "Ajya", "Ikshurasa", "Madhya", "Shuddha Jala"],
-    9: ["Deva","Nri","Rakshasa"],
-    10: ["Indra","Agni","Yama","Rakshasa","Varuna","Vayu","Kubera","Ishana","Brahma","Ananta"],
+    9: ["Deva", "Nri", "Rakshasa"],
+    10: [
+        "Indra",
+        "Agni",
+        "Yama",
+        "Rakshasa",
+        "Varuna",
+        "Vayu",
+        "Kubera",
+        "Ishana",
+        "Brahma",
+        "Ananta",
+    ],
     12: ["Ganesha", "Ashvins", "Yama", "Hayagriva"],
     16: ["Brahma", "Vishnu", "Shiva", "Sun"],
-    20: ["Daya", "Megha", "Chinnashirsha", "Pishachani", "Dhumavati", "Matangi", "Bala", "Bhadra", "Aruna", "Anala", "Pingala", "Chucchuka", "Ghora", "Varahi", "Vaishnavi", "Sita", "Bhuvanesvari", "Bhairavi", "Mangala", "Aparajita"],
+    20: [
+        "Daya",
+        "Megha",
+        "Chinnashirsha",
+        "Pishachani",
+        "Dhumavati",
+        "Matangi",
+        "Bala",
+        "Bhadra",
+        "Aruna",
+        "Anala",
+        "Pingala",
+        "Chucchuka",
+        "Ghora",
+        "Varahi",
+        "Vaishnavi",
+        "Sita",
+        "Bhuvanesvari",
+        "Bhairavi",
+        "Mangala",
+        "Aparajita",
+    ],
     # 21 is for odd signs in the -20/20
-    21: ["Kali", "Gauri", "Jaya", "Lakshmi", "Vijaya", "Vimala", "Sati", "Tara", "Jvalamukhi", "Shveta", "Lalita", "Bagalamukhi", "Pratyangira", "Sachi", "Raudri", "Bhavani", "Varada", "Jaya", "Tripura", "Sumukhi"],
-    24: ["Skanda", "Parsudhara", "Anala", "Vishwakarma", "Bhaga", "Mitra", "Maya", "Antaka", "Vrishadhwaja", "Govinda", "Madana", "Bhima"],
-    27: ["Dastra", "Yama", "Agni", "Pitamaha", "Chandra", "Isha", "Aditi", "Jiva", "Ahi", "Pitara", "Bhaga", "Aryama", "Arka", "Tvashta", "Marut", "Shakragni", "Mitra", "Vasava", "Nirriti", "Varuna", "Vishvadeva", "Govinda", "Vasu", "Varuna", "Ajapa", "Ahirbudhanya", "Pusha"],
-    40: ["Vishnu", "Chandra", "Marichi", "Tvashta", "Dhata", "Shiva", "Ravi", "Yama", "Yaksha", "Gandharva", "Kala", "Varuna"],
+    21: [
+        "Kali",
+        "Gauri",
+        "Jaya",
+        "Lakshmi",
+        "Vijaya",
+        "Vimala",
+        "Sati",
+        "Tara",
+        "Jvalamukhi",
+        "Shveta",
+        "Lalita",
+        "Bagalamukhi",
+        "Pratyangira",
+        "Sachi",
+        "Raudri",
+        "Bhavani",
+        "Varada",
+        "Jaya",
+        "Tripura",
+        "Sumukhi",
+    ],
+    24: [
+        "Skanda",
+        "Parsudhara",
+        "Anala",
+        "Vishwakarma",
+        "Bhaga",
+        "Mitra",
+        "Maya",
+        "Antaka",
+        "Vrishadhwaja",
+        "Govinda",
+        "Madana",
+        "Bhima",
+    ],
+    27: [
+        "Dastra",
+        "Yama",
+        "Agni",
+        "Pitamaha",
+        "Chandra",
+        "Isha",
+        "Aditi",
+        "Jiva",
+        "Ahi",
+        "Pitara",
+        "Bhaga",
+        "Aryama",
+        "Arka",
+        "Tvashta",
+        "Marut",
+        "Shakragni",
+        "Mitra",
+        "Vasava",
+        "Nirriti",
+        "Varuna",
+        "Vishvadeva",
+        "Govinda",
+        "Vasu",
+        "Varuna",
+        "Ajapa",
+        "Ahirbudhanya",
+        "Pusha",
+    ],
+    40: [
+        "Vishnu",
+        "Chandra",
+        "Marichi",
+        "Tvashta",
+        "Dhata",
+        "Shiva",
+        "Ravi",
+        "Yama",
+        "Yaksha",
+        "Gandharva",
+        "Kala",
+        "Varuna",
+    ],
     45: ["Vidhi", "Isha", "Acyuta"],
     # for -45 fixed signs
     46: ["Isha", "Acyuta", "Surajyeshta"],
     # for -45 dual signs
     47: ["Vishnu", "Ka", "Isha"],
-    60: ["Ghora", "Rakshasa", "Deva", "Kubera", "Yaksha", "Kimnara", "Bhrashta", "Kulaghna", "Garala", "Vahni", "Maya", "Purishaka", "Apampathi", "Marut", "Kala", "Sarpa", "Amrita", "Indu", "Mridu", "Komala", "Heramba", "Brahma", "Vishnu", "Maheshwara", "Deva", "Ardra", "Kalinasha", "Kshitisha", "Kamalakara", "Gulika", "Mrityu", "Kala", "Davagni", "Ghora", "Yama", "Kantaka", "Sudha", "Amrita", "Purnachandra", "Vishadaghda", "Kulanasa", "Vamsakshaya", "Utpata", "Kala", "Saumya", "Komala", "Sitala", "Karaladamshtra", "Chandramukhi", "Pravina", "Kala Pavaka", "Dandayudha", "Nirmala", "Saumya", "Krura", "Atisitala", "Amrita", "Payodhi", "Bhramana", "Chandra Rekha"]
+    60: [
+        "Ghora",
+        "Rakshasa",
+        "Deva",
+        "Kubera",
+        "Yaksha",
+        "Kimnara",
+        "Bhrashta",
+        "Kulaghna",
+        "Garala",
+        "Vahni",
+        "Maya",
+        "Purishaka",
+        "Apampathi",
+        "Marut",
+        "Kala",
+        "Sarpa",
+        "Amrita",
+        "Indu",
+        "Mridu",
+        "Komala",
+        "Heramba",
+        "Brahma",
+        "Vishnu",
+        "Maheshwara",
+        "Deva",
+        "Ardra",
+        "Kalinasha",
+        "Kshitisha",
+        "Kamalakara",
+        "Gulika",
+        "Mrityu",
+        "Kala",
+        "Davagni",
+        "Ghora",
+        "Yama",
+        "Kantaka",
+        "Sudha",
+        "Amrita",
+        "Purnachandra",
+        "Vishadaghda",
+        "Kulanasa",
+        "Vamsakshaya",
+        "Utpata",
+        "Kala",
+        "Saumya",
+        "Komala",
+        "Sitala",
+        "Karaladamshtra",
+        "Chandramukhi",
+        "Pravina",
+        "Kala Pavaka",
+        "Dandayudha",
+        "Nirmala",
+        "Saumya",
+        "Krura",
+        "Atisitala",
+        "Amrita",
+        "Payodhi",
+        "Bhramana",
+        "Chandra Rekha",
+    ],
 }
+
 
 # used for pyhd and sbc themes
 # just initializes a dictionary
 # i guess it could be a .toml file?
 # this is same thing
 def init_theme(file=None):
-    input = open(file,'r')
-    
-    config = {} # empty dictionary
+    input = open(file, "r")
+
+    config = {}  # empty dictionary
 
     for line in input:
-       if not "=" in line or line.startswith('#'):
-           continue # either a comment or not a variable if line doesnt have =
-       field, value = line.split("=")
-       field = field.strip().lower()
-       value = value.strip()
-       config[field]=value 
+        if not "=" in line or line.startswith("#"):
+            continue  # either a comment or not a variable if line doesnt have =
+        field, value = line.split("=")
+        field = field.strip().lower()
+        value = value.strip()
+        config[field] = value
     input.close()
     return config
+
 
 # template comment box
 
@@ -785,10 +1033,8 @@ names = {
             "Aquarius",
             "Pisces",
         ],
-        "abhijit":
-        "Abhijit",
-        "ophiucus":
-        "Ophiucus"
+        "abhijit": "Abhijit",
+        "ophiucus": "Ophiucus",
     },
     "iast": {
         "planets": [
@@ -967,8 +1213,7 @@ names = {
             "kumbha",
             "mīna",
         ],
-        "abhijit":
-        "abhijit",
+        "abhijit": "abhijit",
     },
     "deva": {
         "planets": [
@@ -1139,8 +1384,7 @@ names = {
             "कुम्भ",
             "मीन",
         ],
-        "abhijit":
-            "अभिजित्"
+        "abhijit": "अभिजित्",
     },
     "mixed": {
         "planets": [
@@ -1319,8 +1563,7 @@ names = {
             "Aquarius",
             "Pisces",
         ],
-        "abhijit":
-        "abhijit",
+        "abhijit": "abhijit",
     },
     "abbrev": {
         "planets": [
@@ -1491,114 +1734,113 @@ names = {
             "Aq",
             "Pi",
         ],
-        "abhijit":
-        "abh",
+        "abhijit": "abh",
     },
 }
 
 greek_alphabet_internet_original = {
-    'Alpha': u'\u0391' ,
-    'Beta': u'\u0392',
-    'Gamma': u'\u0393',
-    'Delta': u'\u0394',
-    'Epsilon': u'\u0395',
-    'Zeta': u'\u0396',
-    'Eta': u'\u0397',
-    'Theta': u'\u0398',
-    'Iota': u'\u0399',
-    'Kappa': u'\u039A',
-    'Lamda': u'\u039B',
-    'Mu': u'\u039C',
-    'Nu': u'\u039D',
-    'Xi': u'\u039E',
-    'Omicron': u'\u039F',
-    'Pi': u'\u03A0',
-    'Rho': u'\u03A1',
-    'Sigma': u'\u03A3',
-    'Tau': u'\u03A4',
-    'Upsilon': u'\u03A5',
-    'Phi': u'\u03A6',
-    'Chi': u'\u03A7',
-    'Psi': u'\u03A8',
-    'Omega': u'\u03A9',
-    'alpha': u'\u03B1',
-    'beta': u'\u03B2',
-    'gamma': u'\u03B3',
-    'delta': u'\u03B4',
-    'epsilon': u'\u03B5',
-    'zeta': u'\u03B6',
-    'eta': u'\u03B7',
-    'theta': u'\u03B8',
-    'iota': u'\u03B9',
-    'kappa': u'\u03BA',
-    'lamda': u'\u03BB',
-    'mu': u'\u03BC',
-    'nu': u'\u03BD',
-    'xi': u'\u03BE',
-    'omicron': u'\u03BF',
-    'pi': u'\u03C0',
-    'rho': u'\u03C1',
-    'sigma': u'\u03C3',
-    'tau': u'\u03C4',
-    'upsilon': u'\u03C5',
-    'phi': u'\u03C6',
-    'chi': u'\u03C7',
-    'psi': u'\u03C8',
-    'omega':  u'\u03C9'
+    "Alpha": "\u0391",
+    "Beta": "\u0392",
+    "Gamma": "\u0393",
+    "Delta": "\u0394",
+    "Epsilon": "\u0395",
+    "Zeta": "\u0396",
+    "Eta": "\u0397",
+    "Theta": "\u0398",
+    "Iota": "\u0399",
+    "Kappa": "\u039a",
+    "Lamda": "\u039b",
+    "Mu": "\u039c",
+    "Nu": "\u039d",
+    "Xi": "\u039e",
+    "Omicron": "\u039f",
+    "Pi": "\u03a0",
+    "Rho": "\u03a1",
+    "Sigma": "\u03a3",
+    "Tau": "\u03a4",
+    "Upsilon": "\u03a5",
+    "Phi": "\u03a6",
+    "Chi": "\u03a7",
+    "Psi": "\u03a8",
+    "Omega": "\u03a9",
+    "alpha": "\u03b1",
+    "beta": "\u03b2",
+    "gamma": "\u03b3",
+    "delta": "\u03b4",
+    "epsilon": "\u03b5",
+    "zeta": "\u03b6",
+    "eta": "\u03b7",
+    "theta": "\u03b8",
+    "iota": "\u03b9",
+    "kappa": "\u03ba",
+    "lamda": "\u03bb",
+    "mu": "\u03bc",
+    "nu": "\u03bd",
+    "xi": "\u03be",
+    "omicron": "\u03bf",
+    "pi": "\u03c0",
+    "rho": "\u03c1",
+    "sigma": "\u03c3",
+    "tau": "\u03c4",
+    "upsilon": "\u03c5",
+    "phi": "\u03c6",
+    "chi": "\u03c7",
+    "psi": "\u03c8",
+    "omega": "\u03c9",
 }
 
 greek_alphabet = {
-    "Alpha": u"\u0391" ,
-    "Beta": u"\u0392",
-    "Gamma": u"\u0393",
-    "Delta": u"\u0394",
-    "Epsilon": u"\u0395",
-    "Zeta": u"\u0396",
-    "Eta": u"\u0397",
-    "Theta": u"\u0398",
-    "Iota": u"\u0399",
-    "Kappa": u"\u039A",
-    "Lamda": u"\u039B",
-    "Mu": u"\u039C",
-    "Nu": u"\u039D",
-    "Xi": u"\u039E",
-    "Omicron": u"\u039F",
-    "Pi": u"\u03A0",
-    "Rho": u"\u03A1",
-    "Sigma": u"\u03A3",
-    "Tau": u"\u03A4",
-    "Upsilon": u"\u03A5",
-    "Phi": u"\u03A6",
-    "Chi": u"\u03A7",
-    "Psi": u"\u03A8",
-    "Omega": u"\u03A9",
+    "Alpha": "\u0391",
+    "Beta": "\u0392",
+    "Gamma": "\u0393",
+    "Delta": "\u0394",
+    "Epsilon": "\u0395",
+    "Zeta": "\u0396",
+    "Eta": "\u0397",
+    "Theta": "\u0398",
+    "Iota": "\u0399",
+    "Kappa": "\u039a",
+    "Lamda": "\u039b",
+    "Mu": "\u039c",
+    "Nu": "\u039d",
+    "Xi": "\u039e",
+    "Omicron": "\u039f",
+    "Pi": "\u03a0",
+    "Rho": "\u03a1",
+    "Sigma": "\u03a3",
+    "Tau": "\u03a4",
+    "Upsilon": "\u03a5",
+    "Phi": "\u03a6",
+    "Chi": "\u03a7",
+    "Psi": "\u03a8",
+    "Omega": "\u03a9",
 }
 
 greek_alphabet_lowercase = {
-    "Alpha": u"\u03B1",
-    "Beta": u"\u03B2",
-    "Gamma": u"\u03B3",
-    "Delta": u"\u03B4",
-    "Epsilon": u"\u03B5",
-    "Zeta": u"\u03B6",
-    "Eta": u"\u03B7",
-    "Theta": u"\u03B8",
-    "Iota": u"\u03B9",
-    "Kappa": u"\u03BA",
-    "Lamda": u"\u03BB",
-    "Mu": u"\u03BC",
-    "Nu": u"\u03BD",
-    "Xi": u"\u03BE",
-    "Omicron": u"\u03BF",
-    "Pi": u"\u03C0",
-    "Rho": u"\u03C1",
-    "Sigma": u"\u03C3",
-    "Tau": u"\u03C4",
-    "Upsilon": u"\u03C5",
-    "Phi": u"\u03C6",
-    "Chi": u"\u03C7",
-    "Psi": u"\u03C8",
-    "Omega":  u"\u03C9"
+    "Alpha": "\u03b1",
+    "Beta": "\u03b2",
+    "Gamma": "\u03b3",
+    "Delta": "\u03b4",
+    "Epsilon": "\u03b5",
+    "Zeta": "\u03b6",
+    "Eta": "\u03b7",
+    "Theta": "\u03b8",
+    "Iota": "\u03b9",
+    "Kappa": "\u03ba",
+    "Lamda": "\u03bb",
+    "Mu": "\u03bc",
+    "Nu": "\u03bd",
+    "Xi": "\u03be",
+    "Omicron": "\u03bf",
+    "Pi": "\u03c0",
+    "Rho": "\u03c1",
+    "Sigma": "\u03c3",
+    "Tau": "\u03c4",
+    "Upsilon": "\u03c5",
+    "Phi": "\u03c6",
+    "Chi": "\u03c7",
+    "Psi": "\u03c8",
+    "Omega": "\u03c9",
 }
 
 # if swe_id is lllUll then it is a Bayer designation
@@ -1622,7 +1864,7 @@ star_names_short_to_long = {
         "d": "Delta",
         "eps": "Epsilon",
         "zet": "Zeta",
-        "eta": "Eta", # but no stars with that letter
+        "eta": "Eta",  # but no stars with that letter
         "tet": "Theta",
         "iot": "Iota",
         "kap": "Kappa",
@@ -1657,7 +1899,7 @@ star_names_short_to_long = {
         "Aqr": "Aquarii",
         "And": "Andromedae",
         "Ant": "Antilae",
-        "Aps": "Apodis", # Apus constellation
+        "Aps": "Apodis",  # Apus constellation
         "Ara": "Arae",
         "Psc": "Piscium",
         "Eri": "Eridani",
@@ -1678,13 +1920,13 @@ star_names_short_to_long = {
         "Del": "Delphini",
         "Dor": "Doradus",
         "Equ": "Equulei",
-        "For": "Fornacis", # Fornax constellation
+        "For": "Fornacis",  # Fornax constellation
         "Cyg": "Cygni",
         "Gru": "Gruis",
         "Ori": "Orionis",
         "Cet": "Ceti",
-        "Cha": "Chamaeleontis", # Chamaeleon constellation
-        "Cir": "Circini", # Circinus constellation
+        "Cha": "Chamaeleontis",  # Chamaeleon constellation
+        "Cir": "Circini",  # Circinus constellation
         "Col": "Columbae",
         "Com": "Comae Berenices",
         "CrB": "Coronae Borealis",
@@ -1730,7 +1972,7 @@ star_names_short_to_long = {
         "Pyx": "Pyxis",
         "Ret": "Reticulum",
         "Scl": "Sculptoris",
-        "Vel": "Velorum", # Vela, contains Vela supercluster
+        "Vel": "Velorum",  # Vela, contains Vela supercluster
         "Vol": "Volantis",
         "Vul": "Vulpeculae",
         "VC": "Virgo Cluster",
@@ -1739,13 +1981,12 @@ star_names_short_to_long = {
         "HIP": "Hipparcos Catalogue",
         "HR": "Bright Star Catalogue",
         "HD": "Henry Draper Catalogue",
-    }
+    },
 }
 
 bayer_nomen_lba_to_swe = {
     # also note that for new to old need to change 0 to "-"
     # e.g., del01Gru goes to de-1Gru
-
     # this is for converting 6-letter Bayer designations to 5-letter ones
     # to match with the original ephe/sefstars.txt sweph file
     "alf": "al",
@@ -1755,7 +1996,7 @@ bayer_nomen_lba_to_swe = {
     "del": "de",
     "eps": "ep",
     "zet": "ze",
-    "eta": "et", # but no stars with that letter
+    "eta": "et",  # but no stars with that letter
     "tet": "th",
     "iot": "io",
     "kap": "ka",

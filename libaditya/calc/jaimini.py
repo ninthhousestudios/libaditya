@@ -23,6 +23,7 @@ from libaditya import utils
 
 from libaditya.objects import Planet, Planets, Sign
 
+
 class Jaimini:
     """
     this is calc.Jaimini, it inherits unto calc.Varga
@@ -44,7 +45,6 @@ class Jaimini:
     that is the frontend
     this is the backend
     """
-
 
     def pada(self) -> Sign:
         """
@@ -70,10 +70,10 @@ class Jaimini:
         return Sign class of the pada
         """
         # we need to find the Sign that has the 10th cusp
-        tenth = self.signs().where_is(10) # 10 means the 10th cusp
+        tenth = self.signs().where_is(10)  # 10 means the 10th cusp
         return self._get_pada(tenth)
 
-    def padas(self) -> {Sign:Sign}:
+    def padas(self) -> {Sign: Sign}:
         """
         return a dictionary of all the padas
         key is the Sign, value is the Sign of the pada
@@ -100,7 +100,7 @@ class Jaimini:
         lords_sign = self.signs()[lord.sign()]
         return self.signs()[lords_sign.astrological_signs_forward(signs_apart)]
 
-    def bandhana_yogas(self) -> [([Planet],[Planet])]:
+    def bandhana_yogas(self) -> [([Planet], [Planet])]:
         """
         return a list of tuples of Planet lists that are forming bandhana yogas
         tuple[0] and tuple[1] are planets are that in bandhana relationship to each other from the ascendant
@@ -115,7 +115,7 @@ class Jaimini:
         # pairs=((2,12),(3,11),(4,10),(5,9),(6,8))
         # we go forwards and backwards by the same amount
 
-        pairs = (2,3,4,5,6)
+        pairs = (2, 3, 4, 5, 6)
         lagna = self.lagna()
 
         ret = []
@@ -128,46 +128,46 @@ class Jaimini:
                     continue
                 s1ls = []
                 s2ls = []
-                for sign1, sign2 in zip(one.grahas(),two.grahas()):
+                for sign1, sign2 in zip(one.grahas(), two.grahas()):
                     s1ls.append(sign1)
                     s2ls.append(sign2)
-                ret.append((s1ls,s2ls))
+                ret.append((s1ls, s2ls))
 
         return ret
 
     def argala(self, rashi: Sign) -> [[Planet], [Planet], [Planet]]:
         """
         get argala to rashi in this varga
-        
+
         returns three lists
         [Planet classes forming argala from/to rashi]
         [malefic Planet classes forming argala to 3rd from rashi]
         [Planet classes being obstructed from/to rashi]
         """
         # will need the first strength of all the signs to determine argala
-        fs = self.jaimini_first_strength() 
+        fs = self.jaimini_first_strength()
         # if ketu is in this sign, we could backwards for argala
-        sign = -1 if self.where_is("Ketu").sign() == rashi.sign() else 1 
+        sign = -1 if self.where_is("Ketu").sign() == rashi.sign() else 1
         # find our Sign classes of argala-virodhina pairs
         # 2-12
         # 11-3
         # 4-10
         # 9-5
         # check third for more malefics than benefics
-        second = self.signs()[rashi.astrological_signs_forward(sign*2)]
-        twelfth = self.signs()[rashi.astrological_signs_forward(sign*12)]
-        eleventh = self.signs()[rashi.astrological_signs_forward(sign*11)]
-        third = self.signs()[rashi.astrological_signs_forward(sign*3)]
-        fourth = self.signs()[rashi.astrological_signs_forward(sign*4)]
-        tenth = self.signs()[rashi.astrological_signs_forward(sign*10)]
-        ninth = self.signs()[rashi.astrological_signs_forward(sign*9)]
-        fifth = self.signs()[rashi.astrological_signs_forward(sign*5)]
+        second = self.signs()[rashi.astrological_signs_forward(sign * 2)]
+        twelfth = self.signs()[rashi.astrological_signs_forward(sign * 12)]
+        eleventh = self.signs()[rashi.astrological_signs_forward(sign * 11)]
+        third = self.signs()[rashi.astrological_signs_forward(sign * 3)]
+        fourth = self.signs()[rashi.astrological_signs_forward(sign * 4)]
+        tenth = self.signs()[rashi.astrological_signs_forward(sign * 10)]
+        ninth = self.signs()[rashi.astrological_signs_forward(sign * 9)]
+        fifth = self.signs()[rashi.astrological_signs_forward(sign * 5)]
         argala = []
         obstructed = []
-        pairs = [(second,twelfth),(eleventh,third),(fourth,tenth),(ninth,fifth)]
+        pairs = [(second, twelfth), (eleventh, third), (fourth, tenth), (ninth, fifth)]
 
         # now we can loop on these pairs
-        for arg,vir in pairs:
+        for arg, vir in pairs:
             if arg.how_many_grahas() > vir.how_many_grahas():
                 # if there are more grahas in arg, then they cause argala
                 # cant be obstructed by vir, so add them to argala list
@@ -187,8 +187,8 @@ class Jaimini:
                 obstructed.append(arg.grahas())
 
         # check malefic argala in 3rd
-        mal = [] # how many malefics in Three
-        ben = [] # how many benefics in Three
+        mal = []  # how many malefics in Three
+        ben = []  # how many benefics in Three
         for graha in third.grahas():
             if graha.nature() == "Malefic":
                 mal.append(graha)
@@ -199,8 +199,11 @@ class Jaimini:
             # if there are more malefics in the 3rd than benefics, these malefics causes a special argala
             third_argala.append(mal)
 
-        return list(collapse(argala)),list(collapse(third_argala)),list(collapse(obstructed))
-
+        return (
+            list(collapse(argala)),
+            list(collapse(third_argala)),
+            list(collapse(obstructed)),
+        )
 
     def _compare_strength(self, sign1, sign2, kn_rao=False) -> int:
         """
@@ -226,13 +229,17 @@ class Jaimini:
 
         # Level 1: dignity comparison among occupying planets
         result = utils.compare_signs_dignities(sign1, sign2, dignities)
-        if result == 1: return 1
-        if result == 2: return -1
+        if result == 1:
+            return 1
+        if result == 2:
+            return -1
 
         # Level 2: modality
         result = utils.compare_signs_modalities(sign1, sign2)
-        if result == 1: return 1
-        if result == 2: return -1
+        if result == 1:
+            return 1
+        if result == 2:
+            return -1
 
         # Levels 3-5: same three checks on the lord's rashi
         lord1 = self.planets()[sign1.lord()]
@@ -247,13 +254,17 @@ class Jaimini:
 
         # Level 4: dignity comparison in lord's sign
         result = utils.compare_signs_dignities(lord1_rashi, lord2_rashi, dignities)
-        if result == 1: return 1
-        if result == 2: return -1
+        if result == 1:
+            return 1
+        if result == 2:
+            return -1
 
         # Level 5: modality of lord's sign
         result = utils.compare_signs_modalities(lord1_rashi, lord2_rashi)
-        if result == 1: return 1
-        if result == 2: return -1
+        if result == 1:
+            return 1
+        if result == 2:
+            return -1
 
         # Level 6: distance from sign to its lord (greater distance wins)
         d1 = sign1.astrological_signs_apart(lord1.sign())
@@ -283,7 +294,10 @@ class Jaimini:
         kn_rao=False (default) uses standard tiebreaker (higher rashi number wins)
         """
         signs = list(self.signs())
-        signs.sort(key=cmp_to_key(lambda a, b: self._compare_strength(a, b, kn_rao)), reverse=True)
+        signs.sort(
+            key=cmp_to_key(lambda a, b: self._compare_strength(a, b, kn_rao)),
+            reverse=True,
+        )
         return signs
 
     def jaimini_second_strength(self) -> {Sign: [Planets]}:
@@ -300,16 +314,20 @@ class Jaimini:
         mercury_Sign = self.signs()[self.planets().mercury().sign()]
 
         for sign in self.signs():
-            sourcels = [] # list to hold Planet-s that are conjunct or aspect this sign
-            jup_aspects = self.signs().rashi_aspect_from_to(jupiter_Sign,sign)
+            sourcels = []  # list to hold Planet-s that are conjunct or aspect this sign
+            jup_aspects = self.signs().rashi_aspect_from_to(jupiter_Sign, sign)
             # 1 means jupiter aspects sign from jupiter_Sign; 0 not
-            mer_aspects = self.signs().rashi_aspect_from_to(mercury_Sign,sign)
+            mer_aspects = self.signs().rashi_aspect_from_to(mercury_Sign, sign)
             lord = self.planets()[sign.lord()]
             lords_Sign = self.signs()[lord.sign()]
-            lord_aspects = self.signs().rashi_aspect_from_to(lords_Sign,sign)
-            if jupiter_Sign == sign or jup_aspects: # the object itself should be the same; means they are in the same sign
+            lord_aspects = self.signs().rashi_aspect_from_to(lords_Sign, sign)
+            if (
+                jupiter_Sign == sign or jup_aspects
+            ):  # the object itself should be the same; means they are in the same sign
                 sourcels.append(self.planets().jupiter())
-            if mercury_Sign == sign or mer_aspects: # the object itself should be the same
+            if (
+                mercury_Sign == sign or mer_aspects
+            ):  # the object itself should be the same
                 sourcels.append(self.planets().mercury())
             if lords_Sign == sign or lord_aspects:
                 sourcels.append(lord)

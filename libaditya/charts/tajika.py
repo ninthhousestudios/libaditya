@@ -18,8 +18,8 @@
 from libaditya.objects import EphContext
 from libaditya.charts import Chart
 
-class Tajika(Chart):
 
+class Tajika(Chart):
     def __init__(self, context=EphContext()):
         super().__init__(context)
 
@@ -30,7 +30,7 @@ class Tajika(Chart):
         also 30, since it is sometimes used
         """
         vargas = {}
-        for n in range(1,13):
+        for n in range(1, 13):
             vargas[n] = self.varga(n)
         vargas[30] = self.varga(30)
         return vargas

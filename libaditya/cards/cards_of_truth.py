@@ -29,7 +29,7 @@ from .cot import CoT
 class CardsOfTruth(CoT):
     """
      underneath this class, CoT represents the cards as a list of two-letter strings,
-     AH through KS. 
+     AH through KS.
 
      the index in this list represents its associated card always in the underlying representation
 
@@ -65,30 +65,34 @@ class CardsOfTruth(CoT):
         first, find the time the sunrises at longitude of the persons place of birth, but on the equator
         """
         sunrise_location = self.context.location.nearest_equatorial_crossing()
-        sunrise_time = Sun(EphContext(timeJD=self.context.timeJD.midnightJD(),location=sunrise_location)).rise()
+        sunrise_time = Sun(
+            EphContext(
+                timeJD=self.context.timeJD.midnightJD(), location=sunrise_location
+            )
+        ).rise()
         if self.context.timeJD.jd_number() >= sunrise_time.jd_number():
             # after sunrise on this day
-            # so use card associated with this calendar day 
-            card_day = [self.context.timeJD.usrmonth(),self.context.timeJD.usrday()]
+            # so use card associated with this calendar day
+            card_day = [self.context.timeJD.usrmonth(), self.context.timeJD.usrday()]
         else:
             # before sunrise on this day
             # so use card associated with previous calendar day
             # so we go back, but need to make everything switches back properly, i.e., the month or year
             month = self.context.timeJD.usrmonth()
-            day = self.context.timeJD.usrday()-1
+            day = self.context.timeJD.usrday() - 1
             if day != 0:
-                card_day = [month,day]
+                card_day = [month, day]
             else:
                 # we need to go back to the last day of the previous month
-                # i.e., the last card, but not necessarily in the normal sequence 
+                # i.e., the last card, but not necessarily in the normal sequence
                 # in python, list()[-1] is the last element of the list
                 # so if month is jaunary=element0, then month-1=december,element11
                 # then we need to know how many days are in that month
-                card_day = [month-1,cardsc.days_in_the_month(month-1)]
+                card_day = [month - 1, cardsc.days_in_the_month(month - 1)]
         # minus 1 since months are 1-12 but python is 0-indexed
-        start_card = cardsc.first_card_of_the_month[(card_day[0]-1)]
+        start_card = cardsc.first_card_of_the_month[(card_day[0] - 1)]
         # go forward the number of days from that card to find the birth card
-        birth_card = cardsc.birth_card_order[start_card+(card_day[1]-1)]
+        birth_card = cardsc.birth_card_order[start_card + (card_day[1] - 1)]
         return birth_card
 
     def _get_birth_spread(self):
@@ -110,7 +114,9 @@ class CardsOfTruth(CoT):
         if year == None:
             # find the persons current age
             year = int(self.context.timeJD.current_age())
-        year_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(cardsc.jackquad,year+1))
+        year_spread_list = self.get_birthspread_from_quadration(
+            self.birth_card(), self.quadraten(cardsc.jackquad, year + 1)
+        )
         # change planets to self.master.solar_return(year)...i.e., write solar_return
         return self.YearSpread(year_spread_list, self, which=year)
 
@@ -125,9 +131,11 @@ class CardsOfTruth(CoT):
         if day == None:
             # find current age in days
             day = int(self.context.timeJD.current_age_days())
-        day_spread_list = self.get_birthspread_from_quadration(self.birth_card(),self.quadraten(CoT.queen_quadration(),day))
+        day_spread_list = self.get_birthspread_from_quadration(
+            self.birth_card(), self.quadraten(CoT.queen_quadration(), day)
+        )
         return self.DayQuadration(day_spread_list, self, which=day)
-    
+
     class Spread:
         """
         initialize a Spread object
@@ -140,7 +148,7 @@ class CardsOfTruth(CoT):
 
         spread_list needs to have 14 numbers in it between 0 and 51.
 
-        these integers represent the cards. the integer representing a certain card is the index of that card 
+        these integers represent the cards. the integer representing a certain card is the index of that card
         in the list cards_constants.cards
 
         but Spread does not check to make sure that the spread is a valid one
@@ -176,7 +184,7 @@ class CardsOfTruth(CoT):
             return iter(self._spread)
 
         def __getitem__(self, key):
-            if isinstance(key,str):
+            if isinstance(key, str):
                 return self._spread[key]
             else:
                 # get the planet key as a string from the correct planet order
@@ -197,19 +205,22 @@ class CardsOfTruth(CoT):
             also through __getitem__, Spread()[int] where int is the planet number appropriate to the system
             """
             spread = {}
-            for spread_position,planet_key in enumerate(cardsc.planet_order[self._order]):
+            for spread_position, planet_key in enumerate(
+                cardsc.planet_order[self._order]
+            ):
                 # self._list = spread_list is a list of 14 cards in the proper positions starting from 0, the base card
                 # base card is list[0], sun is list[1], moon is list[2]
                 # for vedic mars is list[3], for solar_system mercury is list[3], etc.
                 # self._list[spread_position] as the int representation of the card at that position
                 # put this int into cardsc.cards to get the string version, e.g., "KD"
-                spread[planet_key] = self.deck()[cardsc.cards[self._list[spread_position]]]
+                spread[planet_key] = self.deck()[
+                    cardsc.cards[self._list[spread_position]]
+                ]
                 # tell the Card which planet it is
                 # it uses this, for instance, to print the glyph of the planet in the header
                 spread[planet_key]._planet = planet_key
                 # with this above, we should be able to iterate over Spread regardless of the system
             return spread
-
 
         def _place_Objects(self):
             """
@@ -222,32 +233,51 @@ class CardsOfTruth(CoT):
             # so we will need to get the plaents for the proper solar return
             for planet in self._planets:
                 # put this planet in the card of its lord
-                self.spread()[planet.lord()].set_attribute(("planets",planet))
+                self.spread()[planet.lord()].set_attribute(("planets", planet))
             for cusp in self._cusps:
                 # put this cusp in the card of its lord
-                self.spread()[cusp.lord()].set_attribute(("cusps",cusp))
+                self.spread()[cusp.lord()].set_attribute(("cusps", cusp))
 
         def richDrawing(self):
             spread = Table(box=box.SIMPLE)
 
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
-            spread.add_column(" ",justify="center",style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
+            spread.add_column(" ", justify="center", style="white")
 
-            spread.add_row(" "," "," ",self[0].richDrawing()," "," "," ")
-            spread.add_row(self[7].richDrawing(),self[6].richDrawing(),self[5].richDrawing(),self[4].richDrawing(),self[3].richDrawing(),self[2].richDrawing(),self[1].richDrawing())
-            spread.add_row(" "," ",self[9].richDrawing()," ",self[8].richDrawing()," "," ")
-            spread.add_row(" "," "," ",self[10].richDrawing()," "," "," ")
-            spread.add_row(" "," ",self[13].richDrawing(),self[12].richDrawing(),self[11].richDrawing()," "," ")
+            spread.add_row(" ", " ", " ", self[0].richDrawing(), " ", " ", " ")
+            spread.add_row(
+                self[7].richDrawing(),
+                self[6].richDrawing(),
+                self[5].richDrawing(),
+                self[4].richDrawing(),
+                self[3].richDrawing(),
+                self[2].richDrawing(),
+                self[1].richDrawing(),
+            )
+            spread.add_row(
+                " ", " ", self[9].richDrawing(), " ", self[8].richDrawing(), " ", " "
+            )
+            spread.add_row(" ", " ", " ", self[10].richDrawing(), " ", " ", " ")
+            spread.add_row(
+                " ",
+                " ",
+                self[13].richDrawing(),
+                self[12].richDrawing(),
+                self[11].richDrawing(),
+                " ",
+                " ",
+            )
 
             return spread
 
         def rich(self):
             from rich.console import Console
+
             Console().print(self.richDrawing())
 
     # the following are classes for specific kinds of spread
@@ -255,7 +285,6 @@ class CardsOfTruth(CoT):
     # this is where they get the appropriate planets and cusps and put them into the spread
 
     class BirthSpread(Spread):
-
         def __init__(self, spread_list, master, which=0):
             super().__init__(spread_list, master)
             self._planets = self._get_Planets()
@@ -277,7 +306,6 @@ class CardsOfTruth(CoT):
             return self.master.master.cusps()
 
     class YearSpread(Spread):
-
         def __init__(self, spread_list, master, which):
             super().__init__(spread_list, master, which)
             self._planets = self._get_Planets()
@@ -299,7 +327,6 @@ class CardsOfTruth(CoT):
             return self.master.master.solar_return(self.which).rashi().cusps()
 
     class DayQuadration(Spread):
-
         def __init__(self, spread_list, master, which=0):
             super().__init__(spread_list, master)
             self._planets = self._get_Planets()
@@ -311,7 +338,9 @@ class CardsOfTruth(CoT):
             get the correct Planets for this spread
             right now, natal or solar return
             """
-            chart = self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which)
+            chart = self.master.master.master.timejd(
+                self.context.timeJD.jd_number() + self.which
+            )
             return chart.rashi().planets()
 
         def _get_Cusps(self):
@@ -319,5 +348,7 @@ class CardsOfTruth(CoT):
             get the correct Cusps for this spread
             right now, natal or solar return
             """
-            chart = self.master.master.master.timejd(self.context.timeJD.jd_number()+self.which)
+            chart = self.master.master.master.timejd(
+                self.context.timeJD.jd_number() + self.which
+            )
             return chart.rashi().cusps()
