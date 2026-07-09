@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Ninth House Studios LLC
+
 # RemoteControl is the package StellariumRC
 # i changed the class Stellarium to RemoteControl, that is the only difference
 # i copied and pasted the one directory of code into remote_control
