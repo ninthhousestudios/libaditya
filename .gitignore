@@ -23,3 +23,6 @@ dart_reader/
 
 # AgentOps session artifacts
 .agents/
+
+# sutra index and guard artifacts
+.sutra/

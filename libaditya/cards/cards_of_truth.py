@@ -119,10 +119,10 @@ class CardsOfTruth(CoT):
         # chart down with it. the published birth card chart answers it: it
         # shows the Ace of Hearts on both the 30th and the 31st, so the sequence
         # holds rather than continuing.
-        # note that other lineages instead give December 31 the Joker, a 53rd
-        # card outside this deck. that convention is not implemented here -- it
-        # has no position in the quadrations, so it would need a representation
-        # of its own rather than an index into birth_card_order.
+        # other lineages instead give December 31 the Joker, a 53rd card outside
+        # this deck. the system implemented here does not use the Joker, so that
+        # convention is deliberately absent rather than pending -- the Joker has
+        # no position in the quadrations and no index into birth_card_order.
         if index >= len(cardsc.birth_card_order):
             index = len(cardsc.birth_card_order) - 1
         birth_card = cardsc.birth_card_order[index]
