@@ -68,9 +68,17 @@ class CardsOfTruth(CoT):
         first, find the time the sunrises at longitude of the persons place of birth, but on the equator
         """
         sunrise_location = self.context.location.nearest_equatorial_crossing()
+        # usr_midnightJD, not midnightJD: the branch below takes the day number
+        # from usrday()/usrmonth(), the LOCAL calendar date, so the sunrise it
+        # is compared against has to be the sunrise of that same local day.
+        # midnightJD anchors on the UTC date, and whenever the two differ this
+        # test answered a question about a different day than the one whose card
+        # was then looked up, returning a plausible card one day early. e.g. a
+        # birth at 18:43 in Seattle on Dec 24 1928 is long after sunrise, but in
+        # UTC it is Dec 25 02:43, which is before it.
         sunrise_time = Sun(
             EphContext(
-                timeJD=self.context.timeJD.midnightJD(), location=sunrise_location
+                timeJD=self.context.timeJD.usr_midnightJD(), location=sunrise_location
             )
         ).rise()
         if self.context.timeJD.jd_number() >= sunrise_time.jd_number():
@@ -86,16 +94,38 @@ class CardsOfTruth(CoT):
             if day != 0:
                 card_day = [month, day]
             else:
-                # we need to go back to the last day of the previous month
-                # i.e., the last card, but not necessarily in the normal sequence
-                # in python, list()[-1] is the last element of the list
-                # so if month is jaunary=element0, then month-1=december,element11
-                # then we need to know how many days are in that month
-                card_day = [month - 1, cardsc.days_in_the_month(month - 1)]
+                # we need to go back to the last day of the previous month.
+                # january wraps to december of the PREVIOUS YEAR: month-1 would
+                # be 0, and the -1 below then indexed first_card_of_the_month[-1],
+                # which happens to be december -- right answer, wrong reason --
+                # while days_in_the_month(0) had no case at all.
+                # the year goes in because february's last day depends on it:
+                # the day before March 1 1990 is the 28th, and handing that birth
+                # the 29th's card would be wrong in three years out of four.
+                # card_day[0] is 1-indexed throughout this method.
+                year = self.context.timeJD.usryear()
+                prev_month = 12 if month == 1 else month - 1
+                prev_year = year - 1 if month == 1 else year
+                card_day = [
+                    prev_month,
+                    cardsc.days_in_the_month(prev_month, prev_year),
+                ]
         # minus 1 since months are 1-12 but python is 0-indexed
         start_card = cardsc.first_card_of_the_month[(card_day[0] - 1)]
         # go forward the number of days from that card to find the birth card
-        birth_card = cardsc.birth_card_order[start_card + (card_day[1] - 1)]
+        index = start_card + (card_day[1] - 1)
+        # december 31 is the only date that runs past the 52-card sequence
+        # (22 + 30 = 52), and it used to raise IndexError and take the whole
+        # chart down with it. the published birth card chart answers it: it
+        # shows the Ace of Hearts on both the 30th and the 31st, so the sequence
+        # holds rather than continuing.
+        # note that other lineages instead give December 31 the Joker, a 53rd
+        # card outside this deck. that convention is not implemented here -- it
+        # has no position in the quadrations, so it would need a representation
+        # of its own rather than an index into birth_card_order.
+        if index >= len(cardsc.birth_card_order):
+            index = len(cardsc.birth_card_order) - 1
+        birth_card = cardsc.birth_card_order[index]
         return birth_card
 
     def _get_birth_spread(self):
