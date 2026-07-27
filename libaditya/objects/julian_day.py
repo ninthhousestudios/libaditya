@@ -228,6 +228,28 @@ class JulianDay:
             self.utcoffset,
         )
 
+    def usr_midnightJD(self):
+        """return the jd at midnight of this JulianDay's LOCAL calendar day
+
+        midnightJD anchors on self.datetime, the UTC calendar day. anything that
+        ALSO reads usrday()/usrmonth() has to anchor here instead, or the two
+        disagree by a whole day whenever the local and UTC dates differ -- which
+        is every evening west of Greenwich and every early morning east of it.
+        """
+        y, m, d = (
+            int(self.usrdatetime[0]),
+            int(self.usrdatetime[1]),
+            int(self.usrdatetime[2]),
+        )
+        # julday() on the LOCAL y/m/d gives local midnight expressed as though it
+        # were UTC; subtracting the offset turns it back into a real instant
+        # (usrdt() adds the offset going the other way)
+        return JulianDay(
+            swe.julday(y, m, d, 0) - self.utcoffset / 24,
+            self.utcoffset,
+            self.timezone(),
+        )
+
     def next_midnightjd(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
         return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1

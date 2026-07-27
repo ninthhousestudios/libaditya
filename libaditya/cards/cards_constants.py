@@ -179,21 +179,44 @@ birth_card_order = list(cards.__reversed__())
 # first card of the month is as follows, starting with January
 # then each day goes in order according to calendar day number, based on the savana day at the equator for a given longitude
 # e.g., February 29 after sunrise will be
+#
+# every month starts two cards further down the sequence than the one before:
+# Jan KS(0), Feb JS(2), Mar 9S(4) ... Dec 4D(22). November used to read "3D",
+# index 23, the only break in that progression -- which shifted all 29 November
+# birth cards by three and pushed November 30 past the end of the deck. "6D" is
+# index 20, and it agrees with the published birth card chart (Nov 1 = 6D,
+# Nov 30 = 3H).
 first_card_of_the_month = [
     birth_card_order.index(card)
-    for card in ["KS", "JS", "9S", "7S", "5S", "3S", "AS", "QD", "TD", "8D", "3D", "4D"]
+    for card in ["KS", "JS", "9S", "7S", "5S", "3S", "AS", "QD", "TD", "8D", "6D", "4D"]
 ]
 
 
-def days_in_the_month(month: int):
+def is_leap_year(year: int) -> bool:
     """
-    month is 0-indexed to january
-    for cards of truth, February has 29 days...so that "card" only gets that turn to play whenever it is feb.29, right?
+    proleptic Gregorian, which is the calendar the rest of the library computes
+    in: every swe.julday/swe.revjul call here leaves cal at its GREG_CAL
+    default, pre-1582 dates included. a Julian rule here would disagree with
+    them -- it would call 1500 long, while swe.revjul rolls Gregorian 1500-02-29
+    straight to March 1.
     """
-    match match:
-        case 1 | 3 | 5 | 7 | 8 | 10:
-            return 31
-        case 4 | 6 | 9 | 11 | 12:
-            return 30
-        case 2:
-            return 20
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
+def days_in_the_month(month: int, year: int = None) -> int:
+    """
+    month is 1-indexed to january
+
+    year decides February. omit it and February is 29, the length the CARD TABLE
+    uses -- the 29th has its own card (9C) that is simply only reachable in a
+    leap year. pass a year and February is that year's real length, which is
+    what a caller stepping back to "the last day of the previous month" needs:
+    the day before March 1 1990 is the 28th, not a 29th that never happened.
+    """
+    if not 1 <= month <= 12:
+        raise ValueError(f"month must be 1-12, got {month!r}")
+    if month == 2:
+        return 29 if year is None or is_leap_year(year) else 28
+    if month in (4, 6, 9, 11):
+        return 30
+    return 31
