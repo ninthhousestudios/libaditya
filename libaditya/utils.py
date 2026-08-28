@@ -439,6 +439,21 @@ def set_swe_true_sidereal_ayanamsa():
     swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
 
 
+def set_swe_sidereal_mode(ayanamsa):
+    """Apply the Swiss Ephemeris sidereal mode for a libaditya ayanamsa code.
+
+    Centralises the true-sidereal (code 97) SVP override so planets, cusps and
+    nakshatras stay consistent: a plain swe.set_sid_mode(97) would silently clamp
+    to Fagan-Bradley. Does NOT apply the 98->36 sign remap -- callers that need
+    it (planets, cusps) remap before calling; nakshatras handle 98 separately via
+    dhruva_gc_equatorial and never reach here with 98.
+    """
+    if ayanamsa == 97:
+        set_swe_true_sidereal_ayanamsa()
+    else:
+        swe.set_sid_mode(ayanamsa)
+
+
 def mkheader(obj):
     header = ""
     header += f"{obj.context.name}\n"

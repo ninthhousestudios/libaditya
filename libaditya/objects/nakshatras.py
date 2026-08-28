@@ -22,6 +22,7 @@ import swisseph as swe
 from prettytable import PrettyTable
 
 from libaditya import constants as const
+from libaditya import utils
 
 
 class Nakshatra:
@@ -143,7 +144,7 @@ class Nakshatra:
             print(f"instance of type {type(self._occupant)} cannot be in a nakshatra")
 
     def init_ash_long_Planet(self):
-        swe.set_sid_mode(self.ayanamsa)
+        utils.set_swe_sidereal_mode(self.ayanamsa)
         long = swe.calc_ut(
             self.timeJD.jd_number(), self._occupant.pnumber, swe.FLG_SIDEREAL
         )[0][0]
@@ -151,7 +152,7 @@ class Nakshatra:
         return long
 
     def init_ash_long_Cusp(self):
-        swe.set_sid_mode(self.ayanamsa)
+        utils.set_swe_sidereal_mode(self.ayanamsa)
         cusps, _, _, _ = swe.houses_ex2(
             self._occupant.timeJD.jd_number(),
             self._occupant.location.lat,

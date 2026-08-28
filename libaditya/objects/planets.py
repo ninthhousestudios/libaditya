@@ -148,9 +148,7 @@ class Planet(CelestialObject, Longitude, PlanetBala):
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
                 self._ayanamsa = 36
-            swe.set_sid_mode(self.ayanamsa())
-            if self.ayanamsa() == 97:
-                utils.set_swe_true_sidereal_ayanamsa()
+            utils.set_swe_sidereal_mode(self.ayanamsa())
         if self.system == const.TOPO or self.system == (const.SID | const.TOPO):
             swe.set_topo(loc[0], loc[1], loc[2])
         # for draconic charts i choose -8 to indicate that system

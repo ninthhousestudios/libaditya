@@ -25,6 +25,7 @@ from .longitude import Longitude
 from .context import EphContext
 
 from libaditya import constants as const
+from libaditya import utils
 
 
 class Cusp(Longitude):
@@ -180,9 +181,9 @@ class Cusps:
         if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
             flag = swe.FLG_SIDEREAL
             if self.ayanamsa == 98:
-                swe.set_sid_mode(36)
+                utils.set_swe_sidereal_mode(36)
             else:
-                swe.set_sid_mode(self.ayanamsa)
+                utils.set_swe_sidereal_mode(self.ayanamsa)
         cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
             self.jd, self.location.lat, self.location.long, self.hsys, flag
         )
