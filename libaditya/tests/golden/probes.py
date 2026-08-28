@@ -428,6 +428,193 @@ def probe_ayanamsa_sweep(chart) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# event / search views (GM-4): fixed stars, eclipses, rise/trans, heliacal,
+# mooncross.
+#
+# These are the iterative-search surface -- the highest-risk part of the
+# pyswisseph -> swisseph_rs migration, because the Rust port changes both their
+# RETURN TYPES and their FAILURE behaviour (crossings raise NoConvergence).
+# Every search here is seeded from the case's PINNED reference time/location, so
+# a fixture is reproducible forever, and every call is wrapped in ``capture`` so
+# a rejection (a high-latitude no-event day, an engine that refuses a body) is
+# frozen as a visible ``__error__`` leaf that trips the diff like any other
+# value rather than crashing the run.
+#
+# Where libaditya's own wrapper is lossy -- ``next_crossing_of_rahu`` formats a
+# string, ``rise_trans`` discards the swe retflag -- the probe drops to the raw
+# ``swe`` call (as ``ayanamsa_sweep`` already does) to preserve full precision
+# AND the retflag/return-shape, which is exactly the return-type surface the
+# migration is most likely to move.  Where the wrapper preserves everything (the
+# eclipse ``SWERashi`` methods return the raw swe tuple; ``FixedStar`` exposes
+# every coordinate; ``next_evening_first`` returns whole JulianDays) the probe
+# rides the library API.
+# --------------------------------------------------------------------------- #
+def probe_fixed_star(fs) -> dict:
+    """Full raw state of one FixedStar (raw attrs, never a rounding accessor)."""
+    return {
+        "long": fs.long,
+        "lat": fs.lat,
+        "dist": fs.dist,
+        "long_speed": fs.long_speed,
+        "lat_speed": fs.lat_speed,
+        "dist_speed": fs.dist_speed,
+        "right_ascension": fs._right_ascension,
+        "declination": fs._declination,
+        "equatorial_distance": fs._equatorial_distance,
+        "name": fs._name,
+        "returned_swe_id": fs.returned_swe_id,
+        "swe_id": fs.swe_id(),
+        "retflags": fs._retflags,
+        "magnitude": fs.magnitude(),
+    }
+
+
+def probe_fixed_stars(chart) -> dict:
+    """Freeze the STAR_SAMPLE in two configs: the case's own frame and the SVP path.
+
+    ``base`` uses the chart's own ``sysflg`` (the ordinary fixstar2_ut path).
+    ``true_sidereal_svp`` forces ``sysflg=SID, ayanamsa=97`` so FixedStar takes
+    the ``utils.set_swe_true_sidereal_ayanamsa`` (USER_UT SVP) branch -- the
+    verified-but-fiddly config the HD/stars code relies on.  Per-star + per-config
+    capture keeps a single unresolvable name from sinking the whole view.
+    """
+    from dataclasses import replace
+
+    from libaditya import constants as const
+    from libaditya.stars.fixed_star import FixedStar
+    from .subjects import STAR_SAMPLE
+
+    ctx = chart.context
+    svp_ctx = replace(ctx, sysflg=const.SID, ayanamsa=97)
+    configs = {"base": ctx, "true_sidereal_svp": svp_ctx}
+    return {
+        cfg: {
+            star: capture(lambda star=star, c=c: probe_fixed_star(FixedStar(star, c)))
+            for star in STAR_SAMPLE
+        }
+        for cfg, c in configs.items()
+    }
+
+
+def probe_eclipses(rashi) -> dict:
+    """Next & previous solar (loc + glob) and lunar eclipse, raw swe tuples.
+
+    The ``SWERashi`` wrappers return the swe result verbatim -- ``(retflag, tret)``
+    for the glob/lunar searches and ``(retflag, tret, attr)`` for the local solar
+    search -- so freezing them locks the eclipse instants, the whole tret contact
+    array, the local-circumstance ``attr`` array AND the retflag (the failure /
+    return-shape surface).  All six seed from the case's pinned ``timeJD``.
+    """
+    return {
+        "next_solar_loc": capture(rashi.next_solar_eclipse_here),
+        "prev_solar_loc": capture(rashi.previous_solar_eclipse_here),
+        "next_solar_glob": capture(rashi.next_solar_eclipse),
+        "prev_solar_glob": capture(rashi.previous_solar_eclipse),
+        "next_lunar": capture(rashi.next_lunar_eclipse),
+        "prev_lunar": capture(rashi.previous_lunar_eclipse),
+    }
+
+
+def probe_rise_trans(chart) -> dict:
+    """Raw swe.rise_trans for Sun & Moon over rise / set / mtransit / itransit.
+
+    Frozen from the raw call (not the library ``rise_trans``, which returns only a
+    JulianDay) to also pin the retflag and the full tret contact array -- the
+    return shape most at risk in the migration.  All four events carry
+    ``BIT_HINDU_RISING`` (the library default).  swe demands a registered
+    geographic position for the meridian transits, so ``set_topo`` is asserted to
+    the case's own location first, making the transits deterministic regardless of
+    prior global swe state; rise/set take the geopos from the call itself.
+    """
+    import swisseph as swe
+
+    jd = chart.context.timeJD.jd_number()
+    geopos = chart.context.location.swe_location()
+    swe.set_topo(*geopos)
+    events = {
+        "rise": swe.CALC_RISE,
+        "set": swe.CALC_SET,
+        "mtransit": swe.CALC_MTRANSIT,
+        "itransit": swe.CALC_ITRANSIT,
+    }
+    bodies = {"sun": 0, "moon": 1}
+
+    def _one(pnum: int, flag: int) -> dict:
+        retflag, tret = swe.rise_trans(jd, pnum, flag | swe.BIT_HINDU_RISING, geopos)
+        return {"retflag": retflag, "tret": list(tret)}
+
+    return {
+        body: {
+            name: capture(lambda p=pnum, f=flag: _one(p, f))
+            for name, flag in events.items()
+        }
+        for body, pnum in bodies.items()
+    }
+
+
+def probe_heliacal(rashi) -> dict:
+    """next_evening_first / next_morning_last for Moon, Mercury, Venus.
+
+    Each library method returns a list of whole JulianDays (start / optimum / end
+    of the heliacal window from swe.heliacal_ut with its 4-tuple atmosphere and
+    6-tuple observer defaults), so reduce_julianday freezes every window jd and
+    its revjul calendar tuple.  Per body+method capture freezes an engine that
+    refuses a body / date.
+    """
+    planets = rashi.planets()
+    bodies = {
+        "moon": planets.moon(),
+        "mercury": planets.mercury(),
+        "venus": planets.venus(),
+    }
+    return {
+        name: {
+            "evening_first": capture(body.next_evening_first),
+            "morning_last": capture(body.next_morning_last),
+        }
+        for name, body in bodies.items()
+    }
+
+
+def probe_mooncross(chart) -> dict:
+    """Raw swe.mooncross_node_ut (next Moon/true-node conjunction) from pinned jd.
+
+    Frozen raw rather than through ``Moon.next_crossing_of_rahu`` (which formats a
+    lossy string) so the crossing instant keeps full precision.  In swisseph_rs
+    this is one of the calls that raises NoConvergence -- capture would freeze
+    that as an __error__ leaf, tripping the diff.
+    """
+    import swisseph as swe
+
+    jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(
+        chart.context.timeJD.jd_number()
+    )
+    return {
+        "jd_cross": jd_cross,
+        "moon_longitude": moon_longitude,
+        "moon_latitude": moon_latitude,
+    }
+
+
+def probe_events(chart) -> dict:
+    """Assemble the GM-4 event/search view for one case.
+
+    Fixed stars run LAST: the SVP path mutates the global swe sidereal mode, and
+    the other event calls (eclipses, rise/trans, heliacal, mooncross) are all
+    frame-geometric and seed their own args, so keeping the star probe last means
+    no sub-view can observe the SVP global-state mutation.
+    """
+    rashi = chart.rashi()
+    return {
+        "eclipses": capture(lambda: probe_eclipses(rashi)),
+        "rise_trans": capture(lambda: probe_rise_trans(chart)),
+        "heliacal": capture(lambda: probe_heliacal(rashi)),
+        "mooncross": capture(lambda: probe_mooncross(chart)),
+        "fixed_stars": capture(lambda: probe_fixed_stars(chart)),
+    }
+
+
+# --------------------------------------------------------------------------- #
 # snapshot assembly
 # --------------------------------------------------------------------------- #
 def build_snapshot(chart) -> dict:
@@ -468,6 +655,8 @@ def produce_record(case: Case) -> dict:
             snapshot[view] = capture(lambda: probe_ayanamsa_sweep(chart))
         elif view == "vedic_derived":
             snapshot[view] = capture(lambda: probe_vedic_derived(chart))
+        elif view == "events":
+            snapshot[view] = capture(lambda: probe_events(chart))
         else:  # a case named a view the probe layer does not implement
             snapshot[view] = {"__error__": f"unknown view: {view}"}
     record = {

@@ -108,6 +108,28 @@ VARGA_AMSHAS = [
     -240,
 ]
 
+# Fixed-star sample frozen by the GM-4 "events" view.  Nomenclature (swe_id)
+# names, deliberately spread across the sky and across the special cases the
+# star code cares about: five bright zodiacal/near-zodiacal stars (Aldebaran,
+# Regulus, Spica, Antares, plus Sirius the brightest) exercise the ordinary
+# fixstar2_ut path; Arcturus adds a high-declination body; ``SgrA*`` is the
+# Galactic Center the nakshatra / gal-centre-ayanamsa code drives internally;
+# and ``cSgr`` is the star added specifically to fix the true-sidereal boundary
+# (commit eed4866), so it rides the SVP path it was introduced for.  Each star
+# is frozen in TWO configs by ``probe_fixed_stars`` -- the case's own sysflg and
+# the true-sidereal SVP (USER_UT) path (sysflg=SID, ayanamsa=97) that maps to
+# ``utils.set_swe_true_sidereal_ayanamsa`` -- the verified-but-fiddly mapping.
+STAR_SAMPLE = [
+    "alfCMa",  # Sirius (brightest)
+    "alfTau",  # Aldebaran (zodiacal, Taurus)
+    "alfLeo",  # Regulus (zodiacal, Leo)
+    "alfVir",  # Spica (zodiacal, Virgo; Citra reference)
+    "alfSco",  # Antares (zodiacal, Scorpio)
+    "alfBoo",  # Arcturus (high declination)
+    "SgrA*",  # Galactic Center (used internally by the nakshatra / gal-centre code)
+    "cSgr",  # 62 Sgr -- the true-sidereal boundary star (commit eed4866)
+]
+
 
 @dataclass(frozen=True)
 class Subject:
@@ -219,7 +241,7 @@ def cases() -> list[Case]:
             "nyc-aditya",
             s["nyc"],
             "aditya",
-            extra_views=("houses_by_system", "vedic_derived"),
+            extra_views=("houses_by_system", "vedic_derived", "events"),
         ),
         Case(
             "nyc-aditya-zodiac",
@@ -263,7 +285,12 @@ def cases() -> list[Case]:
         # Every subject carries the "vedic_derived" view under BOTH aditya-default
         # and sidereal-Lahiri (the GM-3 subset), so the panchanga/vimshottari/
         # jaimini/avastha/yoga layer is frozen against two ayanamsas per geometry.
-        Case("sydney-aditya", s["sydney"], "aditya", extra_views=("vedic_derived",)),
+        Case(
+            "sydney-aditya",
+            s["sydney"],
+            "aditya",
+            extra_views=("vedic_derived", "events"),
+        ),
         Case(
             "sydney-sidereal-lahiri",
             s["sydney"],
@@ -282,7 +309,7 @@ def cases() -> list[Case]:
             "reykjavik-aditya",
             s["reykjavik"],
             "aditya",
-            extra_views=("houses_by_system", "vedic_derived"),
+            extra_views=("houses_by_system", "vedic_derived", "events"),
         ),
         Case(
             "reykjavik-sidereal-lahiri",
@@ -296,7 +323,7 @@ def cases() -> list[Case]:
             s["equator"],
             "aditya",
             # J2000 epoch: freeze the full get_ayanamsa() code sweep here.
-            extra_views=("ayanamsa_sweep", "vedic_derived"),
+            extra_views=("ayanamsa_sweep", "vedic_derived", "events"),
         ),
         Case(
             "equator-sidereal-lahiri",
@@ -306,7 +333,10 @@ def cases() -> list[Case]:
             extra_views=("vedic_derived",),
         ),
         Case(
-            "yamakoti-aditya", s["yamakoti"], "aditya", extra_views=("vedic_derived",)
+            "yamakoti-aditya",
+            s["yamakoti"],
+            "aditya",
+            extra_views=("vedic_derived", "events"),
         ),
         Case(
             "yamakoti-sidereal-lahiri",

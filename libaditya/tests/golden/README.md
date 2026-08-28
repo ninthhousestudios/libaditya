@@ -85,7 +85,14 @@ Each fixture is `{schema, meta, snapshot}`:
   `vedic_derived` (the higher-level Vedic layer — `jaimini` chara karakas /
   arudha padas / first- and third-strength rankings; `avasthas`, all five
   Parashara systems per karaka; and `yogas`, the nabhasa / panchamahapurusha /
-  solar / lunar sets with each yoga's fired flag and `to_move` metric).
+  solar / lunar sets with each yoga's fired flag and `to_move` metric), and
+  `events` (the GM-4 iterative-search layer — `fixed_stars` for a representative
+  star sample frozen in both the case frame and the true-sidereal SVP/USER_UT
+  path, `eclipses` next/previous solar loc+glob and lunar as raw swe tuples,
+  `rise_trans` raw Sun/Moon rise/set/mtransit/itransit incl. `BIT_HINDU_RISING`,
+  `heliacal` next evening-first / morning-last for Moon/Mercury/Venus, and
+  `mooncross` the next Moon/node crossing — every search seeded from the
+  subject's pinned time/location).
 
 A fixture contains **nothing clock-derived**, so it is reproducible forever.
 Runtime facts that legitimately vary (backend identity, ephemeris data release,
@@ -128,6 +135,17 @@ sidereal-Lahiri case (`sydney`, `reykjavik`, `yamakoti`) gain one here — so th
 panchanga / vimshottari / jaimini / avastha / yoga layer is frozen against two
 ayanamsas per chart geometry. (`panchanga` and `vimshottari` themselves stay in
 *every* case, since they already were; GM-3 only extended their contents.)
+
+The `events` view (GM-4) is a search layer that depends almost entirely on the
+subject's pinned time/location rather than the zodiac/circle config, so it rides
+just **one `aditya` case per subject** (`nyc`, `sydney`, `reykjavik`, `equator`,
+`yamakoti`) — one freeze per coordinate/era edge is enough, and `reykjavik`'s
+high latitude specifically exercises the no-rise / no-event failure paths.
+Every call is wrapped so a rejection freezes as a visible `__error__` leaf.
+Fixed stars run last within the view because the true-sidereal SVP path mutates
+the global swe sidereal mode; the other searches are frame-geometric and seed
+their own args, so the probe is order-independent (verified by running the
+`events` cases in isolation).
 
 ## Precision & tolerance — why it's tight
 
@@ -176,6 +194,10 @@ values (verified against seeds 0/1/1234/random):
   body's `house_pos`), and the ayanamsa-code sweep. GM-3 adds the derived Vedic
   layer — panchanga rise/set instants, vimshottari boundary calendar tuples, and
   the `vedic_derived` view (jaimini, avasthas, rashi yogas) — plus a plain
-  sidereal-Lahiri case for each remaining subject. GM-4..GM-6 extend the
-  remaining view set, subjects, and per-field tolerance policy on top of this
-  infrastructure.
+  sidereal-Lahiri case for each remaining subject. GM-4 adds the `events` view —
+  the iterative-search surface (fixed stars incl. the true-sidereal SVP path,
+  eclipses, rise/trans, heliacal, mooncross), the part of the migration most
+  likely to move (swisseph_rs changes these functions' return types and raises
+  `NoConvergence` on crossings), rode on one aditya case per subject so every
+  coordinate/era edge is covered. GM-5..GM-6 extend the remaining subjects and
+  per-field tolerance policy on top of this infrastructure.
