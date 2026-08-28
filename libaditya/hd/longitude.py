@@ -46,6 +46,10 @@ class YiLongitude:
 
     def __init__(self, longitude, gate_one=hdc.gate_one):
         self._longitude = longitude
+        # the gate 1 anchor this instance measures from; the class attribute is
+        # only the default, so a per-instance value (e.g. EphContext.hd_gate_one
+        # via HDLongitude) actually takes effect in init_gate() and elapsed()
+        self.gate_one = gate_one
         # declaring variables that are initialized in self.init_gate()
         self._distance = 0
         self._hexagrams = 0
