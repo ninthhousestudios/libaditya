@@ -1,0 +1,1352 @@
+{
+  "meta": {
+    "case": "equator-sidereal-lahiri",
+    "config": "sidereal",
+    "config_kwargs": {
+      "ayanamsa": 1
+    },
+    "context": {
+      "amsha": 1,
+      "ayanamsa": 1,
+      "circle": {
+        "__enum__": "Circle.ZODIAC"
+      },
+      "cot_planet_order": "vedic",
+      "cot_savana_day": true,
+      "hsys": "C",
+      "location": {
+        "alt": 0.0,
+        "lat": 0.0,
+        "long": 0.0,
+        "placename": "Null Island",
+        "planet": "Earth",
+        "utcoffset": 0.0
+      },
+      "name": "equator",
+      "rashi_aspects": "quadrant",
+      "rashi_temporary_friendships": true,
+      "sign_names": "zodiac",
+      "sysflg": 65536,
+      "timeJD": {
+        "datetime": [
+          2000,
+          1,
+          1,
+          12.0
+        ],
+        "jd": 2451545.0,
+        "utcoffset": 0.0
+      }
+    },
+    "subject": "equator"
+  },
+  "schema": 1,
+  "snapshot": {
+    "ephemeris": {
+      "obliquity": 23.437676720534085
+    },
+    "navamsa": {
+      "amsha": 9,
+      "lagna_sign": 9,
+      "planets": {
+        "Chiron": {
+          "amsha_index": 8,
+          "amsha_longitude": 249.87988774697624
+        },
+        "Earth": {
+          "amsha_index": 10,
+          "amsha_longitude": 328.6412670265811
+        },
+        "Jupiter": {
+          "amsha_index": 0,
+          "amsha_longitude": 12.598817763355044
+        },
+        "Ketu": {
+          "amsha_index": 0,
+          "amsha_longitude": 0.9072272814273674
+        },
+        "Mars": {
+          "amsha_index": 7,
+          "amsha_longitude": 216.99072201748095
+        },
+        "Mercury": {
+          "amsha_index": 2,
+          "amsha_longitude": 72.3244924092246
+        },
+        "Moon": {
+          "amsha_index": 11,
+          "amsha_longitude": 355.2347503300821
+        },
+        "Neptune": {
+          "amsha_index": 11,
+          "amsha_longitude": 354.0581760821924
+        },
+        "Pluto": {
+          "amsha_index": 8,
+          "amsha_longitude": 248.41406017568806
+        },
+        "Rahu": {
+          "amsha_index": 6,
+          "amsha_longitude": 180.9072272814276
+        },
+        "Saturn": {
+          "amsha_index": 4,
+          "amsha_longitude": 148.88188762459362
+        },
+        "Sun": {
+          "amsha_index": 4,
+          "amsha_longitude": 148.64126702658086
+        },
+        "Uranus": {
+          "amsha_index": 3,
+          "amsha_longitude": 98.60389893804722
+        },
+        "Venus": {
+          "amsha_index": 5,
+          "amsha_longitude": 159.4130947024637
+        }
+      }
+    },
+    "panchanga": {
+      "karana": "bava",
+      "karana_elapsed": 2.954831478166753,
+      "karana_index": [
+        25,
+        0
+      ],
+      "karana_number": 50.49247191302779,
+      "karana_remaining": 3.045168521833247,
+      "nakshatra": "svāti",
+      "tithi": 26,
+      "tithi_elapsed": 2.954831478166753,
+      "tithi_number": 26,
+      "tithi_remaining": 9.045168521833247,
+      "tithi_type": "nanda",
+      "vara": "śanivāra",
+      "yoga_elapsed": 2.652890817406994,
+      "yoga_index": 7,
+      "yoga_name": "dhṛti",
+      "yoga_raw": 7.1989668113055245,
+      "yoga_remaining": 10.680442515926341
+    },
+    "rashi": {
+      "armc": 280.457072438026,
+      "ascmc": [
+        347.52067711857586,
+        255.7578653142555,
+        280.457072438026,
+        156.14677751397093,
+        347.52067711857586,
+        347.52067711857586,
+        156.14677751397093,
+        167.52067711857583
+      ],
+      "ascmc_speed": [
+        391.02686304240495,
+        332.9370350615409,
+        360.98564733498665,
+        5.464941050726852e-14,
+        391.02686304240495,
+        391.02686304240495,
+        -5.4649410507268547e-14,
+        391.02686304240495
+      ],
+      "cusps": [
+        {
+          "amsha_index": 11,
+          "amsha_longitude": 347.52067711857586,
+          "daily_speed": 391.02686304240495,
+          "ecliptic_index": 11,
+          "ecliptic_longitude": 347.52067711857586,
+          "nakshatra": {
+            "ashvini_longitude": 347.52067711857586,
+            "ayanamsa": 1,
+            "base_longitude": 347.52067711857586,
+            "index": 26,
+            "naksize": 13.333333333333334,
+            "name": "Revati"
+          },
+          "number": 1,
+          "sign": 12,
+          "sign_name": "Pisces"
+        },
+        {
+          "amsha_index": 0,
+          "amsha_longitude": 19.05342536754458,
+          "daily_speed": 364.5970010036326,
+          "ecliptic_index": 0,
+          "ecliptic_longitude": 19.05342536754458,
+          "nakshatra": {
+            "ashvini_longitude": 19.05342536754458,
+            "ayanamsa": 1,
+            "base_longitude": 19.05342536754458,
+            "index": 1,
+            "naksize": 13.333333333333334,
+            "name": "Bharani"
+          },
+          "number": 2,
+          "sign": 1,
+          "sign_name": "Aries"
+        },
+        {
+          "amsha_index": 1,
+          "amsha_longitude": 48.107631310919075,
+          "daily_speed": 337.17087083691854,
+          "ecliptic_index": 1,
+          "ecliptic_longitude": 48.107631310919075,
+          "nakshatra": {
+            "ashvini_longitude": 48.107631310919075,
+            "ayanamsa": 1,
+            "base_longitude": 48.107631310919075,
+            "index": 3,
+            "naksize": 13.333333333333334,
+            "name": "Rohini"
+          },
+          "number": 3,
+          "sign": 2,
+          "sign_name": "Taurus"
+        },
+        {
+          "amsha_index": 2,
+          "amsha_longitude": 75.7578653142555,
+          "daily_speed": 332.9370350615409,
+          "ecliptic_index": 2,
+          "ecliptic_longitude": 75.7578653142555,
+          "nakshatra": {
+            "ashvini_longitude": 75.7578653142555,
+            "ayanamsa": 1,
+            "base_longitude": 75.7578653142555,
+            "index": 5,
+            "naksize": 13.333333333333334,
+            "name": "Ardra"
+          },
+          "number": 4,
+          "sign": 3,
+          "sign_name": "Gemini"
+        },
+        {
+          "amsha_index": 3,
+          "amsha_longitude": 104.18729917997288,
+          "daily_speed": 354.8382252347131,
+          "ecliptic_index": 3,
+          "ecliptic_longitude": 104.18729917997288,
+          "nakshatra": {
+            "ashvini_longitude": 104.18729917997288,
+            "ayanamsa": 1,
+            "base_longitude": 104.18729917997288,
+            "index": 7,
+            "naksize": 13.333333333333334,
+            "name": "Pushya"
+          },
+          "number": 5,
+          "sign": 4,
+          "sign_name": "Cancer"
+        },
+        {
+          "amsha_index": 4,
+          "amsha_longitude": 134.99620171680348,
+          "daily_speed": 385.3438728720081,
+          "ecliptic_index": 4,
+          "ecliptic_longitude": 134.99620171680348,
+          "nakshatra": {
+            "ashvini_longitude": 134.99620171680348,
+            "ayanamsa": 1,
+            "base_longitude": 134.99620171680348,
+            "index": 10,
+            "naksize": 13.333333333333334,
+            "name": "P. Phalguni"
+          },
+          "number": 6,
+          "sign": 5,
+          "sign_name": "Leo"
+        },
+        {
+          "amsha_index": 5,
+          "amsha_longitude": 167.52067711857583,
+          "daily_speed": 391.02686304240495,
+          "ecliptic_index": 5,
+          "ecliptic_longitude": 167.52067711857583,
+          "nakshatra": {
+            "ashvini_longitude": 167.52067711857583,
+            "ayanamsa": 1,
+            "base_longitude": 167.52067711857583,
+            "index": 12,
+            "naksize": 13.333333333333334,
+            "name": "Hasta"
+          },
+          "number": 7,
+          "sign": 6,
+          "sign_name": "Virgo"
+        },
+        {
+          "amsha_index": 6,
+          "amsha_longitude": 199.05342536754458,
+          "daily_speed": 364.5970010036326,
+          "ecliptic_index": 6,
+          "ecliptic_longitude": 199.05342536754458,
+          "nakshatra": {
+            "ashvini_longitude": 199.05342536754458,
+            "ayanamsa": 1,
+            "base_longitude": 199.05342536754458,
+            "index": 14,
+            "naksize": 13.333333333333334,
+            "name": "Svati"
+          },
+          "number": 8,
+          "sign": 7,
+          "sign_name": "Libra"
+        },
+        {
+          "amsha_index": 7,
+          "amsha_longitude": 228.10763131091906,
+          "daily_speed": 337.17087083691854,
+          "ecliptic_index": 7,
+          "ecliptic_longitude": 228.10763131091906,
+          "nakshatra": {
+            "ashvini_longitude": 228.10763131091906,
+            "ayanamsa": 1,
+            "base_longitude": 228.10763131091906,
+            "index": 17,
+            "naksize": 13.333333333333334,
+            "name": "Jyeshtha"
+          },
+          "number": 9,
+          "sign": 8,
+          "sign_name": "Scorpio"
+        },
+        {
+          "amsha_index": 8,
+          "amsha_longitude": 255.7578653142555,
+          "daily_speed": 332.9370350615409,
+          "ecliptic_index": 8,
+          "ecliptic_longitude": 255.7578653142555,
+          "nakshatra": {
+            "ashvini_longitude": 255.7578653142555,
+            "ayanamsa": 1,
+            "base_longitude": 255.7578653142555,
+            "index": 19,
+            "naksize": 13.333333333333334,
+            "name": "P. Ashadha"
+          },
+          "number": 10,
+          "sign": 9,
+          "sign_name": "Sagittarius"
+        },
+        {
+          "amsha_index": 9,
+          "amsha_longitude": 284.1872991799729,
+          "daily_speed": 354.8382252347131,
+          "ecliptic_index": 9,
+          "ecliptic_longitude": 284.1872991799729,
+          "nakshatra": {
+            "ashvini_longitude": 284.1872991799729,
+            "ayanamsa": 1,
+            "base_longitude": 284.1872991799729,
+            "index": 21,
+            "naksize": 13.333333333333334,
+            "name": "Shravana"
+          },
+          "number": 11,
+          "sign": 10,
+          "sign_name": "Capricorn"
+        },
+        {
+          "amsha_index": 10,
+          "amsha_longitude": 314.99620171680357,
+          "daily_speed": 385.3438728720081,
+          "ecliptic_index": 10,
+          "ecliptic_longitude": 314.99620171680357,
+          "nakshatra": {
+            "ashvini_longitude": 314.99620171680357,
+            "ayanamsa": 1,
+            "base_longitude": 314.99620171680357,
+            "index": 23,
+            "naksize": 13.333333333333334,
+            "name": "Shatabhisha"
+          },
+          "number": 12,
+          "sign": 11,
+          "sign_name": "Aquarius"
+        }
+      ],
+      "lagna_sign": 12,
+      "planets": {
+        "Chiron": {
+          "amsha": 1,
+          "amsha_index": 7,
+          "amsha_longitude": 227.76443197188627,
+          "ayanamsa_id": 1,
+          "declination": -18.14095360760712,
+          "dist": 10.663522124406862,
+          "dist_speed": -0.006437711347239575,
+          "ecliptic_index": 7,
+          "ecliptic_longitude": 227.76443197188627,
+          "equatorial_distance": 10.663522124406864,
+          "id": "Chiron",
+          "lat": 4.071729018738274,
+          "lat_speed": 0.006151602612856024,
+          "long": 227.76443197188627,
+          "long_speed": 0.11426700391853133,
+          "nakshatra": {
+            "ashvini_longitude": 227.76443197188627,
+            "ayanamsa": 1,
+            "base_longitude": 227.76443197188627,
+            "index": 17,
+            "naksize": 13.333333333333334,
+            "name": "Jyeshtha"
+          },
+          "pnumber": 15,
+          "retrograde": false,
+          "right_ascension": 250.66965199045632,
+          "sign": 8,
+          "sign_name": "Scorpio",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Earth": {
+          "amsha": 1,
+          "amsha_index": 2,
+          "amsha_longitude": 76.5156963362868,
+          "ayanamsa_id": 1,
+          "declination": 0.0,
+          "dist": 0.983327625899437,
+          "dist_speed": -7.350767763854887e-06,
+          "ecliptic_index": 2,
+          "ecliptic_longitude": 76.5156963362868,
+          "equatorial_distance": 0.0,
+          "id": "Earth",
+          "lat": 0.0002278220043998656,
+          "lat_speed": -6.202644010067374e-06,
+          "long": 76.5156963362868,
+          "long_speed": 1.0193939403991448,
+          "nakshatra": {
+            "ashvini_longitude": 0.0,
+            "ayanamsa": 1,
+            "base_longitude": 76.5156963362868,
+            "index": 0,
+            "naksize": 13.333333333333334,
+            "name": "Ashvini"
+          },
+          "pnumber": 14,
+          "retrograde": false,
+          "right_ascension": 0.0,
+          "sign": 3,
+          "sign_name": "Gemini",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Jupiter": {
+          "amsha": 1,
+          "amsha_index": 0,
+          "amsha_longitude": 1.3998686403727827,
+          "ayanamsa_id": 1,
+          "declination": 8.594265367949102,
+          "dist": 4.621174921082641,
+          "dist_speed": 0.01552083469905975,
+          "ecliptic_index": 0,
+          "ecliptic_longitude": 1.3998686403727827,
+          "equatorial_distance": 4.62117492108264,
+          "id": "Jupiter",
+          "lat": -1.2621877297145114,
+          "lat_speed": 0.00517591601461844,
+          "long": 1.3998686403727827,
+          "long_speed": 0.04072104564201175,
+          "nakshatra": {
+            "ashvini_longitude": 1.3998686403727791,
+            "ayanamsa": 1,
+            "base_longitude": 1.3998686403727827,
+            "index": 0,
+            "naksize": 13.333333333333334,
+            "name": "Ashvini"
+          },
+          "pnumber": 5,
+          "retrograde": false,
+          "right_ascension": 23.86785966932689,
+          "sign": 1,
+          "sign_name": "Aries",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Ketu": {
+          "amsha": 1,
+          "amsha_index": 9,
+          "amsha_longitude": 280.1008030312697,
+          "ayanamsa_id": 1,
+          "declination": -19.213227787967465,
+          "dist": 0.002445481916784866,
+          "dist_speed": 1.1563606052824495e-05,
+          "ecliptic_index": 9,
+          "ecliptic_longitude": 280.1008030312697,
+          "equatorial_distance": 31.02450872019246,
+          "id": "Ketu",
+          "lat": -7.48061907919836e-17,
+          "lat_speed": 3.740948081905308e-13,
+          "long": 280.1008030312697,
+          "long_speed": -0.05477883567589598,
+          "nakshatra": {
+            "ashvini_longitude": 99.33979734246583,
+            "ayanamsa": 1,
+            "base_longitude": 280.1008030312697,
+            "index": 7,
+            "naksize": 13.333333333333334,
+            "name": "Pushya"
+          },
+          "pnumber": 8,
+          "retrograde": true,
+          "right_ascension": 305.4328495964595,
+          "sign": 10,
+          "sign_name": "Capricorn",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Mars": {
+          "amsha": 1,
+          "amsha_index": 10,
+          "amsha_longitude": 304.11008022416456,
+          "ayanamsa_id": 1,
+          "declination": -13.182482220143845,
+          "dist": 1.8496878384478859,
+          "dist_speed": 0.00542481510777972,
+          "ecliptic_index": 10,
+          "ecliptic_longitude": 304.11008022416456,
+          "equatorial_distance": 1.849687838447886,
+          "id": "Mars",
+          "lat": -1.067785320690334,
+          "lat_speed": 0.012472646297101144,
+          "long": 304.11008022416456,
+          "long_speed": 0.7756338236236202,
+          "nakshatra": {
+            "ashvini_longitude": 304.11008022416456,
+            "ayanamsa": 1,
+            "base_longitude": 304.11008022416456,
+            "index": 22,
+            "naksize": 13.333333333333334,
+            "name": "Danishtha"
+          },
+          "pnumber": 4,
+          "retrograde": false,
+          "right_ascension": 330.51681129044584,
+          "sign": 11,
+          "sign_name": "Aquarius",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Mercury": {
+          "amsha": 1,
+          "amsha_index": 8,
+          "amsha_longitude": 248.03605471213606,
+          "ayanamsa_id": 1,
+          "declination": -24.418901171463062,
+          "dist": 1.4154694494721023,
+          "dist_speed": 0.004619774882133725,
+          "ecliptic_index": 8,
+          "ecliptic_longitude": 248.03605471213606,
+          "equatorial_distance": 1.4154694494721023,
+          "id": "Mercury",
+          "lat": -0.9948284489909135,
+          "lat_speed": -0.09749735328995332,
+          "long": 248.03605471213606,
+          "long_speed": 1.5562179000060092,
+          "nakshatra": {
+            "ashvini_longitude": 248.03605471213606,
+            "ayanamsa": 1,
+            "base_longitude": 248.03605471213606,
+            "index": 18,
+            "naksize": 13.333333333333334,
+            "name": "Mula"
+          },
+          "pnumber": 2,
+          "retrograde": false,
+          "right_ascension": 272.07464546539063,
+          "sign": 9,
+          "sign_name": "Sagittarius",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Moon": {
+          "amsha": 1,
+          "amsha_index": 6,
+          "amsha_longitude": 199.47052781445356,
+          "ayanamsa_id": 1,
+          "declination": -10.900637655722555,
+          "dist": 0.0026899891531058707,
+          "dist_speed": 1.8580403141415465e-05,
+          "ecliptic_index": 6,
+          "ecliptic_longitude": 199.47052781445356,
+          "equatorial_distance": 0.002689989153105871,
+          "id": "Moon",
+          "lat": 5.170741090512516,
+          "lat_speed": -0.1780441887990223,
+          "long": 199.47052781445356,
+          "long_speed": 12.021263914007855,
+          "nakshatra": {
+            "ashvini_longitude": 199.47052781445356,
+            "ayanamsa": 1,
+            "base_longitude": 199.47052781445356,
+            "index": 14,
+            "naksize": 13.333333333333334,
+            "name": "Svati"
+          },
+          "pnumber": 1,
+          "retrograde": false,
+          "right_ascension": 222.4521672894344,
+          "sign": 7,
+          "sign_name": "Libra",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Neptune": {
+          "amsha": 1,
+          "amsha_index": 9,
+          "amsha_longitude": 279.33979734246583,
+          "ayanamsa_id": 1,
+          "declination": -19.213227787967465,
+          "dist": 31.02450872019246,
+          "dist_speed": 0.00675528223841582,
+          "ecliptic_index": 9,
+          "ecliptic_longitude": 279.33979734246583,
+          "equatorial_distance": 31.02450872019246,
+          "id": "Neptune",
+          "lat": 0.23500333993467126,
+          "lat_speed": -0.00022842388760631855,
+          "long": 279.33979734246583,
+          "long_speed": 0.035529886793291734,
+          "nakshatra": {
+            "ashvini_longitude": 279.33979734246583,
+            "ayanamsa": 1,
+            "base_longitude": 279.33979734246583,
+            "index": 20,
+            "naksize": 13.333333333333334,
+            "name": "U. Ashadha"
+          },
+          "pnumber": 8,
+          "retrograde": false,
+          "right_ascension": 305.4328495964595,
+          "sign": 10,
+          "sign_name": "Capricorn",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Pluto": {
+          "amsha": 1,
+          "amsha_index": 7,
+          "amsha_longitude": 227.6015622417431,
+          "ayanamsa_id": 1,
+          "declination": -11.394290784866081,
+          "dist": 31.064342205995743,
+          "dist_speed": -0.00791430461197581,
+          "ecliptic_index": 7,
+          "ecliptic_longitude": 227.6015622417431,
+          "equatorial_distance": 31.064342205995743,
+          "id": "Pluto",
+          "lat": 10.855236906904231,
+          "lat_speed": 0.0014620001662852022,
+          "long": 227.6015622417431,
+          "long_speed": 0.03511308356729794,
+          "nakshatra": {
+            "ashvini_longitude": 227.6015622417431,
+            "ayanamsa": 1,
+            "base_longitude": 227.6015622417431,
+            "index": 17,
+            "naksize": 13.333333333333334,
+            "name": "Jyeshtha"
+          },
+          "pnumber": 9,
+          "retrograde": false,
+          "right_ascension": 251.41918763776874,
+          "sign": 8,
+          "sign_name": "Scorpio",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Rahu": {
+          "amsha": 1,
+          "amsha_index": 3,
+          "amsha_longitude": 100.10080303126973,
+          "ayanamsa_id": 1,
+          "declination": 19.26447467094137,
+          "dist": 0.002445481916784866,
+          "dist_speed": 1.1563606052824495e-05,
+          "ecliptic_index": 3,
+          "ecliptic_longitude": 100.10080303126973,
+          "equatorial_distance": 0.002445481916784852,
+          "id": "Rahu",
+          "lat": -7.48061907919836e-17,
+          "lat_speed": 3.740948081905308e-13,
+          "long": 100.10080303126973,
+          "long_speed": -0.05477883567589598,
+          "nakshatra": {
+            "ashvini_longitude": 100.10080303126973,
+            "ayanamsa": 1,
+            "base_longitude": 100.10080303126973,
+            "index": 7,
+            "naksize": 13.333333333333334,
+            "name": "Pushya"
+          },
+          "pnumber": 11,
+          "retrograde": true,
+          "right_ascension": 126.27467615809914,
+          "sign": 4,
+          "sign_name": "Cancer",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Saturn": {
+          "amsha": 1,
+          "amsha_index": 0,
+          "amsha_longitude": 16.54243195828818,
+          "ayanamsa_id": 1,
+          "declination": 12.614773409003512,
+          "dist": 8.652798338038874,
+          "dist_speed": 0.014379442698832224,
+          "ecliptic_index": 0,
+          "ecliptic_longitude": 16.54243195828818,
+          "equatorial_distance": 8.652798338038874,
+          "id": "Saturn",
+          "lat": -2.444842235911262,
+          "lat_speed": 0.004746942596469249,
+          "long": 16.54243195828818,
+          "long_speed": -0.019985166737793946,
+          "nakshatra": {
+            "ashvini_longitude": 16.54243195828819,
+            "ayanamsa": 1,
+            "base_longitude": 16.54243195828818,
+            "index": 1,
+            "naksize": 13.333333333333334,
+            "name": "Bharani"
+          },
+          "pnumber": 6,
+          "retrograde": true,
+          "right_ascension": 38.76540174586071,
+          "sign": 1,
+          "sign_name": "Aries",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Sun": {
+          "amsha": 1,
+          "amsha_index": 8,
+          "amsha_longitude": 256.5156963362868,
+          "ayanamsa_id": 1,
+          "declination": -23.03242992519719,
+          "dist": 0.983327625899437,
+          "dist_speed": -7.350767763854887e-06,
+          "ecliptic_index": 8,
+          "ecliptic_longitude": 256.5156963362868,
+          "equatorial_distance": 0.983327625899437,
+          "id": "Sun",
+          "lat": 0.0002278220043998656,
+          "lat_speed": -6.202644010067374e-06,
+          "long": 256.5156963362868,
+          "long_speed": 1.0193939403991448,
+          "nakshatra": {
+            "ashvini_longitude": 256.5156963362868,
+            "ayanamsa": 1,
+            "base_longitude": 256.5156963362868,
+            "index": 19,
+            "naksize": 13.333333333333334,
+            "name": "P. Ashadha"
+          },
+          "pnumber": 0,
+          "retrograde": false,
+          "right_ascension": 281.2783857046965,
+          "sign": 9,
+          "sign_name": "Sagittarius",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Uranus": {
+          "amsha": 1,
+          "amsha_index": 9,
+          "amsha_longitude": 290.9559887708942,
+          "ayanamsa_id": 1,
+          "declination": -17.020309449270027,
+          "dist": 20.727166302377483,
+          "dist_speed": 0.009909717380979259,
+          "ecliptic_index": 9,
+          "ecliptic_longitude": 290.9559887708942,
+          "equatorial_distance": 20.727166302377476,
+          "id": "Uranus",
+          "lat": -0.6583223357593786,
+          "lat_speed": 0.0002459805830960109,
+          "long": 290.9559887708942,
+          "long_speed": 0.050303306949123695,
+          "nakshatra": {
+            "ashvini_longitude": 290.9559887708942,
+            "ayanamsa": 1,
+            "base_longitude": 290.9559887708942,
+            "index": 21,
+            "naksize": 13.333333333333334,
+            "name": "Shravana"
+          },
+          "pnumber": 7,
+          "retrograde": false,
+          "right_ascension": 317.47485143159076,
+          "sign": 10,
+          "sign_name": "Capricorn",
+          "sysflg": 65792,
+          "system": 65536
+        },
+        "Venus": {
+          "amsha": 1,
+          "amsha_index": 7,
+          "amsha_longitude": 217.7125660780515,
+          "ayanamsa_id": 1,
+          "declination": -18.44891746010817,
+          "dist": 1.1375792133038662,
+          "dist_speed": 0.006485851802080404,
+          "ecliptic_index": 7,
+          "ecliptic_longitude": 217.7125660780515,
+          "equatorial_distance": 1.1375792133038662,
+          "id": "Venus",
+          "lat": 2.066349731041694,
+          "lat_speed": -0.0280788850263489,
+          "long": 217.7125660780515,
+          "long_speed": 1.209002898081081,
+          "nakshatra": {
+            "ashvini_longitude": 217.7125660780515,
+            "ayanamsa": 1,
+            "base_longitude": 217.7125660780515,
+            "index": 16,
+            "naksize": 13.333333333333334,
+            "name": "Anuradha"
+          },
+          "pnumber": 3,
+          "retrograde": false,
+          "right_ascension": 239.89276954574922,
+          "sign": 8,
+          "sign_name": "Scorpio",
+          "sysflg": 65792,
+          "system": 65536
+        }
+      }
+    },
+    "shashtyamsha": {
+      "amsha": 60,
+      "lagna_sign": 12,
+      "planets": {
+        "Chiron": {
+          "amsha_index": 11,
+          "amsha_longitude": 345.86591831317673
+        },
+        "Earth": {
+          "amsha_index": 9,
+          "amsha_longitude": 270.9417801772079
+        },
+        "Jupiter": {
+          "amsha_index": 2,
+          "amsha_longitude": 83.99211842236696
+        },
+        "Ketu": {
+          "amsha_index": 8,
+          "amsha_longitude": 246.04818187618366
+        },
+        "Mars": {
+          "amsha_index": 8,
+          "amsha_longitude": 246.6048134498742
+        },
+        "Mercury": {
+          "amsha_index": 4,
+          "amsha_longitude": 122.16328272816463
+        },
+        "Moon": {
+          "amsha_index": 2,
+          "amsha_longitude": 88.23166886721447
+        },
+        "Neptune": {
+          "amsha_index": 6,
+          "amsha_longitude": 200.38784054794814
+        },
+        "Pluto": {
+          "amsha_index": 11,
+          "amsha_longitude": 336.0937345045859
+        },
+        "Rahu": {
+          "amsha_index": 8,
+          "amsha_longitude": 246.04818187618366
+        },
+        "Saturn": {
+          "amsha_index": 9,
+          "amsha_longitude": 272.5459174972908
+        },
+        "Sun": {
+          "amsha_index": 9,
+          "amsha_longitude": 270.94178017720697
+        },
+        "Uranus": {
+          "amsha_index": 5,
+          "amsha_longitude": 177.3593262536524
+        },
+        "Venus": {
+          "amsha_index": 3,
+          "amsha_longitude": 102.75396468309009
+        }
+      }
+    },
+    "vimshottari": {
+      "age": -17.28521254951228,
+      "first_lord": 5,
+      "periods": [
+        {
+          "length": 6574.359600000001,
+          "start_jd": 2445231.7109409487,
+          "sub": [
+            {
+              "length": 986.1539400000001,
+              "start_jd": 2445231.7109409487,
+              "sub": []
+            },
+            {
+              "length": 876.58128,
+              "start_jd": 2446217.864880949,
+              "sub": []
+            },
+            {
+              "length": 1040.94027,
+              "start_jd": 2447094.446160949,
+              "sub": []
+            },
+            {
+              "length": 931.36761,
+              "start_jd": 2448135.386430949,
+              "sub": []
+            },
+            {
+              "length": 383.50431000000003,
+              "start_jd": 2449066.754040949,
+              "sub": []
+            },
+            {
+              "length": 1095.7266,
+              "start_jd": 2449450.2583509493,
+              "sub": []
+            },
+            {
+              "length": 328.71798,
+              "start_jd": 2450545.9849509494,
+              "sub": []
+            },
+            {
+              "length": 547.8633,
+              "start_jd": 2450874.7029309496,
+              "sub": []
+            },
+            {
+              "length": 383.50431000000003,
+              "start_jd": 2451422.5662309495,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 5843.8752,
+          "start_jd": 2451806.070540949,
+          "sub": [
+            {
+              "length": 779.18336,
+              "start_jd": 2451806.070540949,
+              "sub": []
+            },
+            {
+              "length": 925.28024,
+              "start_jd": 2452585.253900949,
+              "sub": []
+            },
+            {
+              "length": 827.88232,
+              "start_jd": 2453510.534140949,
+              "sub": []
+            },
+            {
+              "length": 340.89272000000005,
+              "start_jd": 2454338.416460949,
+              "sub": []
+            },
+            {
+              "length": 973.9792,
+              "start_jd": 2454679.309180949,
+              "sub": []
+            },
+            {
+              "length": 292.19376000000005,
+              "start_jd": 2455653.288380949,
+              "sub": []
+            },
+            {
+              "length": 486.9896,
+              "start_jd": 2455945.482140949,
+              "sub": []
+            },
+            {
+              "length": 340.89272000000005,
+              "start_jd": 2456432.471740949,
+              "sub": []
+            },
+            {
+              "length": 876.58128,
+              "start_jd": 2456773.364460949,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 6939.6018,
+          "start_jd": 2457649.945740949,
+          "sub": [
+            {
+              "length": 1098.770285,
+              "start_jd": 2457649.945740949,
+              "sub": []
+            },
+            {
+              "length": 983.1102550000002,
+              "start_jd": 2458748.716025949,
+              "sub": []
+            },
+            {
+              "length": 404.810105,
+              "start_jd": 2459731.826280949,
+              "sub": []
+            },
+            {
+              "length": 1156.6003,
+              "start_jd": 2460136.6363859493,
+              "sub": []
+            },
+            {
+              "length": 346.98009,
+              "start_jd": 2461293.2366859494,
+              "sub": []
+            },
+            {
+              "length": 578.30015,
+              "start_jd": 2461640.2167759496,
+              "sub": []
+            },
+            {
+              "length": 404.810105,
+              "start_jd": 2462218.5169259496,
+              "sub": []
+            },
+            {
+              "length": 1040.94027,
+              "start_jd": 2462623.3270309498,
+              "sub": []
+            },
+            {
+              "length": 925.28024,
+              "start_jd": 2463664.26730095,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 6209.1174,
+          "start_jd": 2464589.5475409487,
+          "sub": [
+            {
+              "length": 879.624965,
+              "start_jd": 2464589.5475409487,
+              "sub": []
+            },
+            {
+              "length": 362.19851500000004,
+              "start_jd": 2465469.1725059487,
+              "sub": []
+            },
+            {
+              "length": 1034.8529,
+              "start_jd": 2465831.3710209485,
+              "sub": []
+            },
+            {
+              "length": 310.45587,
+              "start_jd": 2466866.2239209483,
+              "sub": []
+            },
+            {
+              "length": 517.42645,
+              "start_jd": 2467176.6797909485,
+              "sub": []
+            },
+            {
+              "length": 362.19851500000004,
+              "start_jd": 2467694.1062409487,
+              "sub": []
+            },
+            {
+              "length": 931.36761,
+              "start_jd": 2468056.3047559485,
+              "sub": []
+            },
+            {
+              "length": 827.88232,
+              "start_jd": 2468987.6723659486,
+              "sub": []
+            },
+            {
+              "length": 983.1102550000002,
+              "start_jd": 2469815.5546859484,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 2556.6954,
+          "start_jd": 2470798.6649409486,
+          "sub": [
+            {
+              "length": 149.140565,
+              "start_jd": 2470798.6649409486,
+              "sub": []
+            },
+            {
+              "length": 426.11590000000007,
+              "start_jd": 2470947.8055059486,
+              "sub": []
+            },
+            {
+              "length": 127.83477,
+              "start_jd": 2471373.9214059487,
+              "sub": []
+            },
+            {
+              "length": 213.05795000000003,
+              "start_jd": 2471501.756175949,
+              "sub": []
+            },
+            {
+              "length": 149.140565,
+              "start_jd": 2471714.8141259486,
+              "sub": []
+            },
+            {
+              "length": 383.50431000000003,
+              "start_jd": 2471863.9546909486,
+              "sub": []
+            },
+            {
+              "length": 340.89272000000005,
+              "start_jd": 2472247.459000949,
+              "sub": []
+            },
+            {
+              "length": 404.810105,
+              "start_jd": 2472588.3517209487,
+              "sub": []
+            },
+            {
+              "length": 362.19851500000004,
+              "start_jd": 2472993.161825949,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 7304.844000000001,
+          "start_jd": 2473355.3603409487,
+          "sub": [
+            {
+              "length": 1217.4740000000002,
+              "start_jd": 2473355.3603409487,
+              "sub": []
+            },
+            {
+              "length": 365.2422,
+              "start_jd": 2474572.8343409486,
+              "sub": []
+            },
+            {
+              "length": 608.7370000000001,
+              "start_jd": 2474938.076540949,
+              "sub": []
+            },
+            {
+              "length": 426.11590000000007,
+              "start_jd": 2475546.813540949,
+              "sub": []
+            },
+            {
+              "length": 1095.7266,
+              "start_jd": 2475972.929440949,
+              "sub": []
+            },
+            {
+              "length": 973.9792,
+              "start_jd": 2477068.6560409493,
+              "sub": []
+            },
+            {
+              "length": 1156.6003,
+              "start_jd": 2478042.635240949,
+              "sub": []
+            },
+            {
+              "length": 1034.8529,
+              "start_jd": 2479199.2355409493,
+              "sub": []
+            },
+            {
+              "length": 426.11590000000007,
+              "start_jd": 2480234.088440949,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 2191.4532,
+          "start_jd": 2480660.2043409487,
+          "sub": [
+            {
+              "length": 109.57266,
+              "start_jd": 2480660.2043409487,
+              "sub": []
+            },
+            {
+              "length": 182.6211,
+              "start_jd": 2480769.777000949,
+              "sub": []
+            },
+            {
+              "length": 127.83477,
+              "start_jd": 2480952.398100949,
+              "sub": []
+            },
+            {
+              "length": 328.71798,
+              "start_jd": 2481080.232870949,
+              "sub": []
+            },
+            {
+              "length": 292.19376000000005,
+              "start_jd": 2481408.950850949,
+              "sub": []
+            },
+            {
+              "length": 346.98009,
+              "start_jd": 2481701.1446109493,
+              "sub": []
+            },
+            {
+              "length": 310.45587,
+              "start_jd": 2482048.1247009495,
+              "sub": []
+            },
+            {
+              "length": 127.83477,
+              "start_jd": 2482358.5805709497,
+              "sub": []
+            },
+            {
+              "length": 365.2422,
+              "start_jd": 2482486.41534095,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 3652.4220000000005,
+          "start_jd": 2482851.6575409486,
+          "sub": [
+            {
+              "length": 304.36850000000004,
+              "start_jd": 2482851.6575409486,
+              "sub": []
+            },
+            {
+              "length": 213.05795000000003,
+              "start_jd": 2483156.0260409485,
+              "sub": []
+            },
+            {
+              "length": 547.8633,
+              "start_jd": 2483369.0839909483,
+              "sub": []
+            },
+            {
+              "length": 486.9896,
+              "start_jd": 2483916.947290948,
+              "sub": []
+            },
+            {
+              "length": 578.30015,
+              "start_jd": 2484403.936890948,
+              "sub": []
+            },
+            {
+              "length": 517.42645,
+              "start_jd": 2484982.237040948,
+              "sub": []
+            },
+            {
+              "length": 213.05795000000003,
+              "start_jd": 2485499.6634909483,
+              "sub": []
+            },
+            {
+              "length": 608.7370000000001,
+              "start_jd": 2485712.721440948,
+              "sub": []
+            },
+            {
+              "length": 182.6211,
+              "start_jd": 2486321.4584409483,
+              "sub": []
+            }
+          ]
+        },
+        {
+          "length": 2556.6954,
+          "start_jd": 2486504.0795409484,
+          "sub": [
+            {
+              "length": 149.140565,
+              "start_jd": 2486504.0795409484,
+              "sub": []
+            },
+            {
+              "length": 383.50431000000003,
+              "start_jd": 2486653.2201059484,
+              "sub": []
+            },
+            {
+              "length": 340.89272000000005,
+              "start_jd": 2487036.7244159486,
+              "sub": []
+            },
+            {
+              "length": 404.810105,
+              "start_jd": 2487377.6171359485,
+              "sub": []
+            },
+            {
+              "length": 362.19851500000004,
+              "start_jd": 2487782.4272409487,
+              "sub": []
+            },
+            {
+              "length": 149.140565,
+              "start_jd": 2488144.6257559485,
+              "sub": []
+            },
+            {
+              "length": 426.11590000000007,
+              "start_jd": 2488293.7663209485,
+              "sub": []
+            },
+            {
+              "length": 127.83477,
+              "start_jd": 2488719.8822209486,
+              "sub": []
+            },
+            {
+              "length": 213.05795000000003,
+              "start_jd": 2488847.7169909487,
+              "sub": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
