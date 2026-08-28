@@ -7,6 +7,11 @@ with no backend change yet, and is a prerequisite for all later phases.
 
 ## Running
 
+> The task-oriented workflow (one-step CI entry, the bless discipline, tolerance
+> policy, the migration backend switch) lives in
+> [`docs/golden-master-harness.md`](../../../docs/golden-master-harness.md). This
+> file is the fixture-internals reference.
+
 Use the project venv (Python 3.13; the harness needs `libaditya` importable):
 
 ```bash
@@ -239,4 +244,12 @@ values (verified against seeds 0/1/1234/random):
   theme-coupled). When those calcs land (they are being ported from another
   project), extend `probe_bodygraph`, add their fixtures, and re-freeze; the new
   leaves will diff cleanly against a backend swap like everything else.
-- GM-6 extends the per-field tolerance policy on top of this infrastructure.
+- GM-6 is the Phase-0 gate: it froze the full GM-2..GM-5 fixture set against
+  `pyswisseph` on `master` (baseline **24/24 PASS**, a clean re-freeze diffs to
+  nothing), wired the one-step suite entry `python -m libaditya.tests` (offline
+  smoke + golden check, single exit code), and moved the run/bless/tolerance/
+  backend-switch **workflow** into the living doc
+  [`docs/golden-master-harness.md`](../../../docs/golden-master-harness.md).
+  This README stays the fixture-internals reference. The per-field tolerance
+  mechanism (`compare(..., field_tolerances=...)`) already exists here for a
+  later phase to loosen an individual noisy field without raising the global bar.
