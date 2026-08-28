@@ -92,7 +92,25 @@ Each fixture is `{schema, meta, snapshot}`:
   `rise_trans` raw Sun/Moon rise/set/mtransit/itransit incl. `BIT_HINDU_RISING`,
   `heliacal` next evening-first / morning-last for Moon/Mercury/Venus, and
   `mooncross` the next Moon/node crossing — every search seeded from the
-  subject's pinned time/location).
+  subject's pinned time/location), and `feature_modules` (the GM-5 downstream
+  feature layer — `bodygraph`, the Human Design activation set: `conscious`
+  (personality), `unconscious` (design), and `dream` bodies, each of the 13
+  bodygraph bodies + Chiron frozen as raw ecliptic longitude plus its exact
+  gate/line/color/tone/base, together with the `design_time` (88° of solar arc
+  before birth) and `dream_time` (88° of lunar arc) instants that the HD ingress
+  searches derive; and `cot`, the Cards of Truth surface: the jack/queen/king
+  `quadrations`, the `birth_card`, the `birth_spread` / `year_spreads` /
+  `day_quadrations` — each a 14-card spread plus its planet→card map and the
+  chart-body placements — and `savana_day`, the sunrise-on-the-equator boundary
+  instant that dates the birth card via `rise_trans` + `revjul`).
+
+  **HD scope.** `feature_modules.bodygraph` freezes only what libaditya actually
+  calculates today — the full *activation* set and the design/dream derivations.
+  It deliberately omits defined channels, defined centers, and type / authority
+  / profile: libaditya has no calc for those yet (the sole "defined centers"
+  logic in the tree, `DrawBodyGraph.get_defined_centers`, is entangled with SVG
+  theme mutation, and this task is scoped to the activation set, not the SVG).
+  When those calcs are ported in, extend `probe_bodygraph` and re-freeze.
 
 A fixture contains **nothing clock-derived**, so it is reproducible forever.
 Runtime facts that legitimately vary (backend identity, ephemeris data release,
@@ -147,6 +165,17 @@ the global swe sidereal mode; the other searches are frame-geometric and seed
 their own args, so the probe is order-independent (verified by running the
 `events` cases in isolation).
 
+The `feature_modules` view (GM-5) rides the **same one `aditya` case per subject**
+as `events`, for the same reason: HD activations are config-independent
+(`HDLongitude` is pinned to the tropical ecliptic regardless of circle/ayanamsa)
+and Cards of Truth is date + location driven. The Cards spreads and their
+planet-into-card placements do read the chart geometry (a body's card is keyed
+by its sign lord), so that single freeze rides the aditya geometry; a second
+geometry is not worth the repeated solar-return search cost. Year spreads and day
+quadrations are frozen for a small fixed set of ages/day-offsets (0 and 1) so the
+solar-return / forward-day searches are exercised without the run cost of a long
+sweep, and every derived-instant search is wrapped in `capture`.
+
 ## Precision & tolerance — why it's tight
 
 The most likely regression from a backend swap is **sub-arcsecond drift**, so a
@@ -199,5 +228,15 @@ values (verified against seeds 0/1/1234/random):
   eclipses, rise/trans, heliacal, mooncross), the part of the migration most
   likely to move (swisseph_rs changes these functions' return types and raises
   `NoConvergence` on crossings), rode on one aditya case per subject so every
-  coordinate/era edge is covered. GM-5..GM-6 extend the remaining subjects and
-  per-field tolerance policy on top of this infrastructure.
+  coordinate/era edge is covered. GM-5 adds the `feature_modules` view — the
+  self-contained downstream features (Human Design bodygraph activations + their
+  88°-arc design/dream searches, and the Cards of Truth quadrations / spreads /
+  savana-day boundary) — on the same one-aditya-case-per-subject footing.
+- GM-5 froze only the HD calcs that exist today (the activation set + design/
+  dream derivations). Defined channels, defined centers, and type / authority /
+  profile are **not** frozen because libaditya does not calculate them yet — they
+  live only inside the SVG drawing mixin (`DrawBodyGraph.get_defined_centers`,
+  theme-coupled). When those calcs land (they are being ported from another
+  project), extend `probe_bodygraph`, add their fixtures, and re-freeze; the new
+  leaves will diff cleanly against a backend swap like everything else.
+- GM-6 extends the per-field tolerance policy on top of this infrastructure.

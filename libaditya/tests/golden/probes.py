@@ -615,6 +615,201 @@ def probe_events(chart) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# feature-module views (GM-5): Human Design bodygraph, Cards of Truth.
+#
+# These are the self-contained downstream features that derive from the same
+# ephemeris but carry their own logic layers on top of it.  Two things make them
+# worth a golden even though they ride the ordinary positional core:
+#
+#   * both run their OWN iterative search to find a reference instant -- HD's
+#     design chart is the moment the Sun was 88 degrees of arc before birth (a
+#     solar-arc ingress search), the dream chart the same for the Moon; Cards of
+#     Truth's savana-day boundary is a sunrise-on-the-equator rise_trans.  Those
+#     searches are exactly the surface the pyswisseph -> swisseph_rs migration
+#     moves, so the derived instants are frozen whole (JulianDay -> both jd and
+#     revjul tuple) as regression detectors.
+#   * their output is a categorical projection (gate/line, card assignments) of
+#     the underlying longitudes, so a sub-arcsecond drift that crosses a gate or
+#     card boundary flips a discrete leaf that trips the diff loudly.
+#
+# SCOPE -- what libaditya actually calculates today.  The HD probe freezes the
+# full ACTIVATION set (personality + design + dream: every body's gate / line /
+# color / tone / base and raw ecliptic longitude) and the design-time / dream-
+# time derivations.  It deliberately does NOT freeze defined channels, defined
+# centers, or type / authority / profile: libaditya has no calc for those yet --
+# the only "defined centers" logic in the tree is DrawBodyGraph.get_defined_
+# centers, which is entangled with SVG theme mutation, and the task explicitly
+# scopes this to "the full activation set, not the SVG".  When those calcs are
+# ported in from the other project, extend probe_bodygraph and re-freeze.
+# --------------------------------------------------------------------------- #
+
+# HD activations are config-independent (HDLongitude is pinned to the tropical
+# ecliptic via hd_gate_one regardless of circle/ayanamsa) and Cards of Truth is
+# date+location driven, so -- like the GM-4 events view -- the feature_modules
+# view rides ONE aditya case per subject rather than the whole zodiac sweep.
+# Cards' spreads and their planet placements do read the chart geometry (a
+# planet's card is keyed by its sign lord), so that single freeze is on the
+# aditya geometry; a second geometry is not worth the solar-return search cost.
+COT_YEARS = [0, 1]  # year spread ages: 0 exercises no search, 1 one solar return
+COT_DAYS = [0, 1]  # day quadration offsets in days from birth
+
+
+def probe_hd_body(planet) -> dict:
+    """Full HD activation of one body: raw longitude + exact gate subdivisions.
+
+    ``ecliptic_longitude`` is the raw ``_longitude`` (never a rounding accessor)
+    and is the drift signal; gate / line / color / tone / base are exact integer
+    coordinates the longitude quantises into, so any drift that crosses a
+    boundary flips one of them.  ``distance_from_gate_one`` is the raw arc from
+    gate 1, the full-precision quantity those integers are cut from.
+    """
+    hd = planet.hd()
+    return {
+        "ecliptic_longitude": planet._longitude,
+        "gate_number": hd.gate_number(),
+        "line": hd.line(),
+        "color": hd.color(),
+        "tone": hd.tone(),
+        "base": hd.base(),
+        "distance_from_gate_one": hd._distance,
+    }
+
+
+def _hd_bodies(planets) -> dict:
+    """HD activation for the 13 bodygraph bodies + Chiron (which carries no gate).
+
+    ``hd13()`` is the ordered Sun..Pluto set (incl. Earth, Rahu, Ketu); Chiron is
+    appended separately and wrapped so a chart outside Chiron's ephemeris window
+    freezes a visible __error__ leaf rather than crashing the view.
+    """
+    out = {
+        name: capture(lambda p=p: probe_hd_body(p))
+        for name, p in planets.hd13().items()
+    }
+    out["Chiron"] = capture(lambda: probe_hd_body(planets.chiron()))
+    return out
+
+
+def probe_bodygraph(chart) -> dict:
+    """Personality / design / dream activations + the derived search instants.
+
+    ``design_time`` (88 deg of the Sun's arc before birth) and ``dream_time``
+    (88 deg of the Moon's) are the results of the solar-/lunar-arc ingress
+    searches ``hd.calc`` runs; freezing each context's whole ``timeJD`` pins both
+    the boundary jd and its revjul calendar tuple, so the search is a regression
+    detector.  ``personality_time`` echoes the birth instant for symmetry.
+    """
+    bg = chart.bodygraph()
+    return {
+        "conscious": _hd_bodies(bg.conscious_planets()),
+        "unconscious": _hd_bodies(bg.unconscious_planets()),
+        "dream": _hd_bodies(bg.dream_planets()),
+        "design_time": bg._unconscious_context.timeJD,
+        "dream_time": bg._dream_context.timeJD,
+        "personality_time": bg.context.timeJD,
+    }
+
+
+def probe_spread(spread) -> dict:
+    """One Cards-of-Truth spread: the 14 card codes + planet/cusp placements.
+
+    ``cards`` is the raw 14-int spread (Base, Sun, Moon ... Pluto in the context's
+    planet order) mapped to its two-letter codes -- the ordering IS the datum.
+    ``planet_cards`` is the card each planet position holds; ``placements`` is the
+    CoT grouping of the actual chart bodies into cards by sign lord (categorical,
+    circle-dependent), each frozen by identity / cusp number.
+    """
+    from libaditya.cards import cards_constants as cardsc
+
+    keys = cardsc.planet_order[spread._order]
+    return {
+        "order": spread._order,
+        "cards": [cardsc.cards[i] for i in spread._list],
+        "planet_cards": {k: spread._spread[k].card() for k in keys},
+        "placements": {
+            k: {
+                "planets": sorted(p.identity() for p in spread._spread[k].planets()),
+                "cusps": sorted(c._number for c in spread._spread[k].cusps()),
+            }
+            for k in keys
+        },
+    }
+
+
+def probe_savana_day(cot) -> dict:
+    """The savana-day (sunrise-on-the-equator) boundary that dates the birth card.
+
+    Re-derives the exact instant ``_get_birth_card`` decides against -- the Sun's
+    rise at the birth longitude *on the equator* for the local midnight day -- so
+    the boundary jd (and its revjul tuple) that picks which calendar day's card
+    is used is pinned, not just the resulting card.  This is the ``rise_trans`` +
+    ``revjul`` path the task calls out; it duplicates a couple of lines of the
+    card logic on purpose, the same way the event probes re-call raw ``swe`` to
+    freeze a value the production wrapper would otherwise round or hide.
+    """
+    from libaditya.objects import EphContext, Sun
+
+    ctx = cot.context
+    crossing = ctx.location.nearest_equatorial_crossing()
+    midnight = ctx.timeJD.usr_midnightJD()
+    sunrise = Sun(EphContext(timeJD=midnight, location=crossing)).rise()
+    return {
+        "cot_savana_day": ctx.cot_savana_day,
+        "equatorial_crossing": crossing,  # Location -> reduce_location
+        "usr_midnight": midnight,  # JulianDay
+        "sunrise": sunrise,  # JulianDay: the boundary instant
+        "usr_year": ctx.timeJD.usryear(),
+        "usr_month": ctx.timeJD.usrmonth(),
+        "usr_day": ctx.timeJD.usrday(),
+        "birth_jd": ctx.timeJD.jd_number(),
+    }
+
+
+def probe_cot(chart) -> dict:
+    """The full Cards-of-Truth surface: quadrations, birth card, and every spread.
+
+    Quadrations are the deterministic deck algorithm (jack is the seed identity,
+    queen/king its successive quadrations); the birth / year / day spreads read
+    off them.  Year spreads ride the solar-return search (age 1 exercises one
+    return), day quadrations shift the chart forward whole days -- both wrapped so
+    a search failure freezes as an __error__ leaf.
+    """
+    from libaditya.cards import cards_constants as cardsc
+
+    cot = chart.cot()
+
+    def codes(lst):
+        return [cardsc.cards[i] for i in lst]
+
+    return {
+        "quadrations": {
+            "jack": codes(cot.jack_quadration()),
+            "queen": codes(cot.queen_quadration()),
+            "king": codes(cot.king_quadration()),
+        },
+        "birth_card": cot.birth_card(),
+        "birth_spread": capture(lambda: probe_spread(cot.birth_spread())),
+        "year_spreads": {
+            str(y): capture(lambda y=y: probe_spread(cot.year_spread(y)))
+            for y in COT_YEARS
+        },
+        "day_quadrations": {
+            str(d): capture(lambda d=d: probe_spread(cot.day_quadration(d)))
+            for d in COT_DAYS
+        },
+        "savana_day": capture(lambda: probe_savana_day(cot)),
+    }
+
+
+def probe_feature_modules(chart) -> dict:
+    """Assemble the GM-5 feature-module view (HD bodygraph + Cards of Truth)."""
+    return {
+        "bodygraph": capture(lambda: probe_bodygraph(chart)),
+        "cot": capture(lambda: probe_cot(chart)),
+    }
+
+
+# --------------------------------------------------------------------------- #
 # snapshot assembly
 # --------------------------------------------------------------------------- #
 def build_snapshot(chart) -> dict:
@@ -657,6 +852,8 @@ def produce_record(case: Case) -> dict:
             snapshot[view] = capture(lambda: probe_vedic_derived(chart))
         elif view == "events":
             snapshot[view] = capture(lambda: probe_events(chart))
+        elif view == "feature_modules":
+            snapshot[view] = capture(lambda: probe_feature_modules(chart))
         else:  # a case named a view the probe layer does not implement
             snapshot[view] = {"__error__": f"unknown view: {view}"}
     record = {

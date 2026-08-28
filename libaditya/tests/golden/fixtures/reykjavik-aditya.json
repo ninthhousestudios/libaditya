@@ -775,6 +775,1284 @@
         }
       }
     },
+    "feature_modules": {
+      "bodygraph": {
+        "conscious": {
+          "Chiron": {
+            "base": 2,
+            "color": 4,
+            "distance_from_gate_one": 160.8649900630551,
+            "ecliptic_longitude": 24.114990063055092,
+            "gate_number": 42,
+            "line": 4,
+            "tone": 4
+          },
+          "Earth": {
+            "base": 1,
+            "color": 6,
+            "distance_from_gate_one": 205.2895386419361,
+            "ecliptic_longitude": 68.5395386419361,
+            "gate_number": 16,
+            "line": 3,
+            "tone": 6
+          },
+          "Jupiter": {
+            "base": 1,
+            "color": 5,
+            "distance_from_gate_one": 151.64291689932136,
+            "ecliptic_longitude": 14.892916899321351,
+            "gate_number": 21,
+            "line": 6,
+            "tone": 4
+          },
+          "Ketu": {
+            "base": 1,
+            "color": 1,
+            "distance_from_gate_one": 188.54310727729896,
+            "ecliptic_longitude": 51.79310727729896,
+            "gate_number": 23,
+            "line": 4,
+            "tone": 5
+          },
+          "Mars": {
+            "base": 5,
+            "color": 1,
+            "distance_from_gate_one": 225.04803752211595,
+            "ecliptic_longitude": 88.29803752211595,
+            "gate_number": 15,
+            "line": 1,
+            "tone": 2
+          },
+          "Mercury": {
+            "base": 2,
+            "color": 3,
+            "distance_from_gate_one": 26.6766397087697,
+            "ecliptic_longitude": 249.9266397087697,
+            "gate_number": 9,
+            "line": 5,
+            "tone": 5
+          },
+          "Moon": {
+            "base": 2,
+            "color": 3,
+            "distance_from_gate_one": 3.2625323868268765,
+            "ecliptic_longitude": 226.51253238682688,
+            "gate_number": 1,
+            "line": 4,
+            "tone": 6
+          },
+          "Neptune": {
+            "base": 1,
+            "color": 1,
+            "distance_from_gate_one": 28.152208905591067,
+            "ecliptic_longitude": 251.40220890559107,
+            "gate_number": 5,
+            "line": 1,
+            "tone": 2
+          },
+          "Pluto": {
+            "base": 3,
+            "color": 5,
+            "distance_from_gate_one": 327.90136256851713,
+            "ecliptic_longitude": 191.15136256851713,
+            "gate_number": 48,
+            "line": 2,
+            "tone": 4
+          },
+          "Rahu": {
+            "base": 1,
+            "color": 1,
+            "distance_from_gate_one": 8.543107277298958,
+            "ecliptic_longitude": 231.79310727729896,
+            "gate_number": 43,
+            "line": 4,
+            "tone": 5
+          },
+          "Saturn": {
+            "base": 4,
+            "color": 5,
+            "distance_from_gate_one": 259.4711501361732,
+            "ecliptic_longitude": 122.72115013617322,
+            "gate_number": 31,
+            "line": 1,
+            "tone": 4
+          },
+          "Sun": {
+            "base": 1,
+            "color": 6,
+            "distance_from_gate_one": 25.289538641936105,
+            "ecliptic_longitude": 248.5395386419361,
+            "gate_number": 9,
+            "line": 3,
+            "tone": 6
+          },
+          "Uranus": {
+            "base": 4,
+            "color": 1,
+            "distance_from_gate_one": 351.71081831073025,
+            "ecliptic_longitude": 214.96081831073028,
+            "gate_number": 28,
+            "line": 4,
+            "tone": 6
+          },
+          "Venus": {
+            "base": 2,
+            "color": 1,
+            "distance_from_gate_one": 340.3205768372088,
+            "ecliptic_longitude": 203.57057683720882,
+            "gate_number": 32,
+            "line": 4,
+            "tone": 1
+          }
+        },
+        "design_time": {
+          "datetime": [
+            1975,
+            9,
+            3,
+            16.20983000099659
+          ],
+          "jd": 2442659.1754095834,
+          "utcoffset": 0.0
+        },
+        "dream": {
+          "Chiron": {
+            "base": 4,
+            "color": 5,
+            "distance_from_gate_one": 161.06243433587724,
+            "ecliptic_longitude": 24.312434335877228,
+            "gate_number": 42,
+            "line": 4,
+            "tone": 5
+          },
+          "Earth": {
+            "base": 4,
+            "color": 2,
+            "distance_from_gate_one": 199.05591253515013,
+            "ecliptic_longitude": 62.30591253515013,
+            "gate_number": 20,
+            "line": 3,
+            "tone": 6
+          },
+          "Jupiter": {
+            "base": 1,
+            "color": 1,
+            "distance_from_gate_one": 151.90361937120355,
+            "ecliptic_longitude": 15.153619371203538,
+            "gate_number": 51,
+            "line": 1,
+            "tone": 2
+          },
+          "Ketu": {
+            "base": 4,
+            "color": 1,
+            "distance_from_gate_one": 188.4800856202453,
+            "ecliptic_longitude": 51.73008562024529,
+            "gate_number": 23,
+            "line": 4,
+            "tone": 2
+          },
+          "Mars": {
+            "base": 5,
+            "color": 1,
+            "distance_from_gate_one": 226.89771714985488,
+            "ecliptic_longitude": 90.14771714985488,
+            "gate_number": 15,
+            "line": 3,
+            "tone": 1
+          },
+          "Mercury": {
+            "base": 1,
+            "color": 1,
+            "distance_from_gate_one": 16.982347278801342,
+            "ecliptic_longitude": 240.23234727880134,
+            "gate_number": 34,
+            "line": 1,
+            "tone": 5
+          },
+          "Moon": {
+            "base": 1,
+            "color": 4,
+            "distance_from_gate_one": 275.26266298655355,
+            "ecliptic_longitude": 138.51266298655352,
+            "gate_number": 7,
+            "line": 6,
+            "tone": 5
+          },
+          "Neptune": {
+            "base": 1,
+            "color": 5,
+            "distance_from_gate_one": 27.921246896038184,
+            "ecliptic_longitude": 251.17124689603818,
+            "gate_number": 9,
+            "line": 6,
+            "tone": 5
+          },
+          "Pluto": {
+            "base": 2,
+            "color": 4,
+            "distance_from_gate_one": 327.7423689166928,
+            "ecliptic_longitude": 190.99236891669278,
+            "gate_number": 48,
+            "line": 2,
+            "tone": 4
+          },
+          "Rahu": {
+            "base": 4,
+            "color": 1,
+            "distance_from_gate_one": 8.48008562024529,
+            "ecliptic_longitude": 231.7300856202453,
+            "gate_number": 43,
+            "line": 4,
+            "tone": 2
+          },
+          "Saturn": {
+            "base": 4,
+            "color": 6,
+            "distance_from_gate_one": 259.6250366719092,
+            "ecliptic_longitude": 122.8750366719092,
+            "gate_number": 31,
+            "line": 1,
+            "tone": 4
+          },
+          "Sun": {
+            "base": 4,
+            "color": 2,
+            "distance_from_gate_one": 19.055912535150128,
+            "ecliptic_longitude": 242.30591253515013,
+            "gate_number": 34,
+            "line": 3,
+            "tone": 6
+          },
+          "Uranus": {
+            "base": 2,
+            "color": 5,
+            "distance_from_gate_one": 351.3644442429543,
+            "ecliptic_longitude": 214.61444424295428,
+            "gate_number": 28,
+            "line": 3,
+            "tone": 5
+          },
+          "Venus": {
+            "base": 5,
+            "color": 4,
+            "distance_from_gate_one": 333.43603656876394,
+            "ecliptic_longitude": 196.6860365687639,
+            "gate_number": 57,
+            "line": 2,
+            "tone": 6
+          }
+        },
+        "dream_time": {
+          "datetime": [
+            1975,
+            11,
+            25,
+            5.263335417956114
+          ],
+          "jd": 2442741.7193056424,
+          "utcoffset": 0.0
+        },
+        "personality_time": {
+          "datetime": [
+            1975,
+            12,
+            1,
+            9.0
+          ],
+          "jd": 2442747.875,
+          "utcoffset": 0.0
+        },
+        "unconscious": {
+          "Chiron": {
+            "base": 4,
+            "color": 3,
+            "distance_from_gate_one": 164.44346870775468,
+            "ecliptic_longitude": 27.69346870775467,
+            "gate_number": 3,
+            "line": 2,
+            "tone": 3
+          },
+          "Earth": {
+            "base": 5,
+            "color": 1,
+            "distance_from_gate_one": 117.28984799166483,
+            "ecliptic_longitude": 340.53984799166483,
+            "gate_number": 37,
+            "line": 6,
+            "tone": 4
+          },
+          "Jupiter": {
+            "base": 5,
+            "color": 4,
+            "distance_from_gate_one": 160.80640894341235,
+            "ecliptic_longitude": 24.056408943412347,
+            "gate_number": 42,
+            "line": 4,
+            "tone": 1
+          },
+          "Ketu": {
+            "base": 2,
+            "color": 4,
+            "distance_from_gate_one": 191.7262397249532,
+            "ecliptic_longitude": 54.97623972495319,
+            "gate_number": 8,
+            "line": 1,
+            "tone": 1
+          },
+          "Mars": {
+            "base": 3,
+            "color": 2,
+            "distance_from_gate_one": 208.34617883851598,
+            "ecliptic_longitude": 71.59617883851597,
+            "gate_number": 35,
+            "line": 1,
+            "tone": 3
+          },
+          "Mercury": {
+            "base": 2,
+            "color": 4,
+            "distance_from_gate_one": 322.1186191479266,
+            "ecliptic_longitude": 185.3686191479266,
+            "gate_number": 18,
+            "line": 2,
+            "tone": 4
+          },
+          "Moon": {
+            "base": 3,
+            "color": 6,
+            "distance_from_gate_one": 267.17508008507775,
+            "ecliptic_longitude": 130.42508008507778,
+            "gate_number": 33,
+            "line": 3,
+            "tone": 6
+          },
+          "Neptune": {
+            "base": 3,
+            "color": 4,
+            "distance_from_gate_one": 25.818771191455312,
+            "ecliptic_longitude": 249.0687711914553,
+            "gate_number": 9,
+            "line": 4,
+            "tone": 2
+          },
+          "Pluto": {
+            "base": 3,
+            "color": 3,
+            "distance_from_gate_one": 324.7803444570801,
+            "ecliptic_longitude": 188.0303444570801,
+            "gate_number": 18,
+            "line": 5,
+            "tone": 4
+          },
+          "Rahu": {
+            "base": 2,
+            "color": 4,
+            "distance_from_gate_one": 11.726239724953189,
+            "ecliptic_longitude": 234.9762397249532,
+            "gate_number": 14,
+            "line": 1,
+            "tone": 1
+          },
+          "Saturn": {
+            "base": 4,
+            "color": 3,
+            "distance_from_gate_one": 255.38251454079418,
+            "ecliptic_longitude": 118.63251454079418,
+            "gate_number": 56,
+            "line": 3,
+            "tone": 3
+          },
+          "Sun": {
+            "base": 5,
+            "color": 1,
+            "distance_from_gate_one": 297.28984799166483,
+            "ecliptic_longitude": 160.5398479916648,
+            "gate_number": 40,
+            "line": 6,
+            "tone": 4
+          },
+          "Uranus": {
+            "base": 5,
+            "color": 4,
+            "distance_from_gate_one": 346.5348413080298,
+            "ecliptic_longitude": 209.7848413080298,
+            "gate_number": 50,
+            "line": 4,
+            "tone": 5
+          },
+          "Venus": {
+            "base": 5,
+            "color": 2,
+            "distance_from_gate_one": 286.1964946054758,
+            "ecliptic_longitude": 149.44649460547578,
+            "gate_number": 29,
+            "line": 6,
+            "tone": 4
+          }
+        }
+      },
+      "cot": {
+        "birth_card": "4D",
+        "birth_spread": {
+          "cards": [
+            "4D",
+            "2S",
+            "8H",
+            "6C",
+            "6S",
+            "QH",
+            "TC",
+            "8D",
+            "KS",
+            "3H",
+            "AC",
+            "QC",
+            "TS",
+            "5C"
+          ],
+          "order": "vedic",
+          "placements": {
+            "Base": {
+              "cusps": [],
+              "planets": []
+            },
+            "Ecliptic": {
+              "cusps": [],
+              "planets": []
+            },
+            "Jupiter": {
+              "cusps": [
+                1
+              ],
+              "planets": [
+                "Moon",
+                "Rahu",
+                "Uranus"
+              ]
+            },
+            "Ketu": {
+              "cusps": [],
+              "planets": []
+            },
+            "Mars": {
+              "cusps": [
+                3,
+                10,
+                11,
+                12
+              ],
+              "planets": [
+                "Pluto",
+                "Venus"
+              ]
+            },
+            "Mercury": {
+              "cusps": [
+                7
+              ],
+              "planets": [
+                "Ketu",
+                "Saturn"
+              ]
+            },
+            "Moon": {
+              "cusps": [],
+              "planets": [
+                "Earth",
+                "Mars"
+              ]
+            },
+            "Neptune": {
+              "cusps": [],
+              "planets": []
+            },
+            "Pluto": {
+              "cusps": [],
+              "planets": []
+            },
+            "Rahu": {
+              "cusps": [],
+              "planets": []
+            },
+            "Saturn": {
+              "cusps": [
+                2
+              ],
+              "planets": [
+                "Mercury",
+                "Neptune",
+                "Sun"
+              ]
+            },
+            "Sun": {
+              "cusps": [
+                8
+              ],
+              "planets": []
+            },
+            "Uranus": {
+              "cusps": [],
+              "planets": []
+            },
+            "Venus": {
+              "cusps": [
+                4,
+                5,
+                6,
+                9
+              ],
+              "planets": [
+                "Chiron",
+                "Jupiter"
+              ]
+            }
+          },
+          "planet_cards": {
+            "Base": "4D",
+            "Ecliptic": "AC",
+            "Jupiter": "QH",
+            "Ketu": "3H",
+            "Mars": "6C",
+            "Mercury": "6S",
+            "Moon": "8H",
+            "Neptune": "TS",
+            "Pluto": "5C",
+            "Rahu": "KS",
+            "Saturn": "8D",
+            "Sun": "2S",
+            "Uranus": "QC",
+            "Venus": "TC"
+          }
+        },
+        "day_quadrations": {
+          "0": {
+            "cards": [
+              "4D",
+              "2S",
+              "8H",
+              "6C",
+              "6S",
+              "QH",
+              "TC",
+              "8D",
+              "KS",
+              "3H",
+              "AC",
+              "QC",
+              "TS",
+              "5C"
+            ],
+            "order": "vedic",
+            "placements": {
+              "Base": {
+                "cusps": [],
+                "planets": []
+              },
+              "Ecliptic": {
+                "cusps": [],
+                "planets": []
+              },
+              "Jupiter": {
+                "cusps": [
+                  1
+                ],
+                "planets": [
+                  "Moon",
+                  "Rahu",
+                  "Uranus"
+                ]
+              },
+              "Ketu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Mars": {
+                "cusps": [
+                  3,
+                  10,
+                  11,
+                  12
+                ],
+                "planets": [
+                  "Pluto",
+                  "Venus"
+                ]
+              },
+              "Mercury": {
+                "cusps": [
+                  7
+                ],
+                "planets": [
+                  "Ketu",
+                  "Saturn"
+                ]
+              },
+              "Moon": {
+                "cusps": [],
+                "planets": [
+                  "Earth",
+                  "Mars"
+                ]
+              },
+              "Neptune": {
+                "cusps": [],
+                "planets": []
+              },
+              "Pluto": {
+                "cusps": [],
+                "planets": []
+              },
+              "Rahu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Saturn": {
+                "cusps": [
+                  2
+                ],
+                "planets": [
+                  "Mercury",
+                  "Neptune",
+                  "Sun"
+                ]
+              },
+              "Sun": {
+                "cusps": [
+                  8
+                ],
+                "planets": []
+              },
+              "Uranus": {
+                "cusps": [],
+                "planets": []
+              },
+              "Venus": {
+                "cusps": [
+                  4,
+                  5,
+                  6,
+                  9
+                ],
+                "planets": [
+                  "Chiron",
+                  "Jupiter"
+                ]
+              }
+            },
+            "planet_cards": {
+              "Base": "4D",
+              "Ecliptic": "AC",
+              "Jupiter": "QH",
+              "Ketu": "3H",
+              "Mars": "6C",
+              "Mercury": "6S",
+              "Moon": "8H",
+              "Neptune": "TS",
+              "Pluto": "5C",
+              "Rahu": "KS",
+              "Saturn": "8D",
+              "Sun": "2S",
+              "Uranus": "QC",
+              "Venus": "TC"
+            }
+          },
+          "1": {
+            "cards": [
+              "4D",
+              "JH",
+              "6D",
+              "6S",
+              "AC",
+              "9S",
+              "7S",
+              "3D",
+              "6H",
+              "AD",
+              "TC",
+              "8C",
+              "3S",
+              "4H"
+            ],
+            "order": "vedic",
+            "placements": {
+              "Base": {
+                "cusps": [],
+                "planets": []
+              },
+              "Ecliptic": {
+                "cusps": [],
+                "planets": []
+              },
+              "Jupiter": {
+                "cusps": [
+                  1
+                ],
+                "planets": [
+                  "Moon",
+                  "Rahu",
+                  "Uranus"
+                ]
+              },
+              "Ketu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Mars": {
+                "cusps": [
+                  3,
+                  10,
+                  11,
+                  12
+                ],
+                "planets": [
+                  "Pluto",
+                  "Venus"
+                ]
+              },
+              "Mercury": {
+                "cusps": [
+                  7
+                ],
+                "planets": [
+                  "Ketu",
+                  "Saturn"
+                ]
+              },
+              "Moon": {
+                "cusps": [],
+                "planets": [
+                  "Earth",
+                  "Mars"
+                ]
+              },
+              "Neptune": {
+                "cusps": [],
+                "planets": []
+              },
+              "Pluto": {
+                "cusps": [],
+                "planets": []
+              },
+              "Rahu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Saturn": {
+                "cusps": [
+                  2
+                ],
+                "planets": [
+                  "Mercury",
+                  "Neptune",
+                  "Sun"
+                ]
+              },
+              "Sun": {
+                "cusps": [
+                  8
+                ],
+                "planets": []
+              },
+              "Uranus": {
+                "cusps": [],
+                "planets": []
+              },
+              "Venus": {
+                "cusps": [
+                  4,
+                  5,
+                  6,
+                  9
+                ],
+                "planets": [
+                  "Chiron",
+                  "Jupiter"
+                ]
+              }
+            },
+            "planet_cards": {
+              "Base": "4D",
+              "Ecliptic": "TC",
+              "Jupiter": "9S",
+              "Ketu": "AD",
+              "Mars": "6S",
+              "Mercury": "AC",
+              "Moon": "6D",
+              "Neptune": "3S",
+              "Pluto": "4H",
+              "Rahu": "6H",
+              "Saturn": "3D",
+              "Sun": "JH",
+              "Uranus": "8C",
+              "Venus": "7S"
+            }
+          }
+        },
+        "quadrations": {
+          "jack": [
+            "AH",
+            "2H",
+            "3H",
+            "4H",
+            "5H",
+            "6H",
+            "7H",
+            "8H",
+            "9H",
+            "TH",
+            "JH",
+            "QH",
+            "KH",
+            "AC",
+            "2C",
+            "3C",
+            "4C",
+            "5C",
+            "6C",
+            "7C",
+            "8C",
+            "9C",
+            "TC",
+            "JC",
+            "QC",
+            "KC",
+            "AD",
+            "2D",
+            "3D",
+            "4D",
+            "5D",
+            "6D",
+            "7D",
+            "8D",
+            "9D",
+            "TD",
+            "JD",
+            "QD",
+            "KD",
+            "AS",
+            "2S",
+            "3S",
+            "4S",
+            "5S",
+            "6S",
+            "7S",
+            "8S",
+            "9S",
+            "TS",
+            "JS",
+            "QS",
+            "KS"
+          ],
+          "king": [
+            "QC",
+            "2H",
+            "TD",
+            "QH",
+            "4C",
+            "QD",
+            "2C",
+            "AS",
+            "9H",
+            "4D",
+            "JH",
+            "6D",
+            "6S",
+            "AC",
+            "9S",
+            "7S",
+            "3D",
+            "6H",
+            "AD",
+            "TC",
+            "8C",
+            "3S",
+            "4H",
+            "5S",
+            "QS",
+            "6C",
+            "3H",
+            "AH",
+            "9D",
+            "5C",
+            "KD",
+            "JD",
+            "7D",
+            "JS",
+            "3C",
+            "8D",
+            "TH",
+            "5D",
+            "8H",
+            "KH",
+            "8S",
+            "JC",
+            "TS",
+            "5H",
+            "KC",
+            "7H",
+            "2D",
+            "2S",
+            "9C",
+            "4S",
+            "7C",
+            "KS"
+          ],
+          "queen": [
+            "3H",
+            "AC",
+            "QC",
+            "TS",
+            "5C",
+            "3D",
+            "AS",
+            "7H",
+            "7D",
+            "5S",
+            "JH",
+            "9C",
+            "9S",
+            "2H",
+            "KH",
+            "KD",
+            "6H",
+            "4C",
+            "2D",
+            "JS",
+            "8C",
+            "6D",
+            "4S",
+            "TH",
+            "TD",
+            "8S",
+            "AH",
+            "AD",
+            "QD",
+            "5H",
+            "3C",
+            "3S",
+            "9H",
+            "7C",
+            "5D",
+            "QS",
+            "JC",
+            "9D",
+            "7S",
+            "2C",
+            "KC",
+            "JD",
+            "4H",
+            "4D",
+            "2S",
+            "8H",
+            "6C",
+            "6S",
+            "QH",
+            "TC",
+            "8D",
+            "KS"
+          ]
+        },
+        "savana_day": {
+          "birth_jd": 2442747.875,
+          "cot_savana_day": true,
+          "equatorial_crossing": {
+            "alt": 40.0,
+            "lat": 0.0,
+            "long": -21.9426,
+            "placename": "Reykjavik",
+            "planet": "Earth",
+            "utcoffset": 0.0
+          },
+          "sunrise": {
+            "datetime": [
+              1975,
+              12,
+              1,
+              7.2760898396372795
+            ],
+            "jd": 2442747.80317041,
+            "utcoffset": 0.0
+          },
+          "usr_day": 1,
+          "usr_midnight": {
+            "datetime": [
+              1975,
+              12,
+              1,
+              0.0
+            ],
+            "jd": 2442747.5,
+            "utcoffset": 0.0
+          },
+          "usr_month": 12,
+          "usr_year": 1975
+        },
+        "year_spreads": {
+          "0": {
+            "cards": [
+              "4D",
+              "2S",
+              "8H",
+              "6C",
+              "6S",
+              "QH",
+              "TC",
+              "8D",
+              "KS",
+              "3H",
+              "AC",
+              "QC",
+              "TS",
+              "5C"
+            ],
+            "order": "vedic",
+            "placements": {
+              "Base": {
+                "cusps": [],
+                "planets": []
+              },
+              "Ecliptic": {
+                "cusps": [],
+                "planets": []
+              },
+              "Jupiter": {
+                "cusps": [
+                  1
+                ],
+                "planets": [
+                  "Moon",
+                  "Rahu",
+                  "Uranus"
+                ]
+              },
+              "Ketu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Mars": {
+                "cusps": [
+                  3,
+                  10,
+                  11,
+                  12
+                ],
+                "planets": [
+                  "Pluto",
+                  "Venus"
+                ]
+              },
+              "Mercury": {
+                "cusps": [
+                  7
+                ],
+                "planets": [
+                  "Ketu",
+                  "Saturn"
+                ]
+              },
+              "Moon": {
+                "cusps": [],
+                "planets": [
+                  "Earth",
+                  "Mars"
+                ]
+              },
+              "Neptune": {
+                "cusps": [],
+                "planets": []
+              },
+              "Pluto": {
+                "cusps": [],
+                "planets": []
+              },
+              "Rahu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Saturn": {
+                "cusps": [
+                  2
+                ],
+                "planets": [
+                  "Mercury",
+                  "Neptune",
+                  "Sun"
+                ]
+              },
+              "Sun": {
+                "cusps": [
+                  8
+                ],
+                "planets": []
+              },
+              "Uranus": {
+                "cusps": [],
+                "planets": []
+              },
+              "Venus": {
+                "cusps": [
+                  4,
+                  5,
+                  6,
+                  9
+                ],
+                "planets": [
+                  "Chiron",
+                  "Jupiter"
+                ]
+              }
+            },
+            "planet_cards": {
+              "Base": "4D",
+              "Ecliptic": "AC",
+              "Jupiter": "QH",
+              "Ketu": "3H",
+              "Mars": "6C",
+              "Mercury": "6S",
+              "Moon": "8H",
+              "Neptune": "TS",
+              "Pluto": "5C",
+              "Rahu": "KS",
+              "Saturn": "8D",
+              "Sun": "2S",
+              "Uranus": "QC",
+              "Venus": "TC"
+            }
+          },
+          "1": {
+            "cards": [
+              "4D",
+              "JH",
+              "6D",
+              "6S",
+              "AC",
+              "9S",
+              "7S",
+              "3D",
+              "6H",
+              "AD",
+              "TC",
+              "8C",
+              "3S",
+              "4H"
+            ],
+            "order": "vedic",
+            "placements": {
+              "Base": {
+                "cusps": [],
+                "planets": []
+              },
+              "Ecliptic": {
+                "cusps": [],
+                "planets": []
+              },
+              "Jupiter": {
+                "cusps": [],
+                "planets": [
+                  "Rahu",
+                  "Uranus"
+                ]
+              },
+              "Ketu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Mars": {
+                "cusps": [
+                  7
+                ],
+                "planets": [
+                  "Pluto"
+                ]
+              },
+              "Mercury": {
+                "cusps": [],
+                "planets": [
+                  "Jupiter",
+                  "Ketu",
+                  "Saturn"
+                ]
+              },
+              "Moon": {
+                "cusps": [
+                  2,
+                  3
+                ],
+                "planets": [
+                  "Earth"
+                ]
+              },
+              "Neptune": {
+                "cusps": [],
+                "planets": []
+              },
+              "Pluto": {
+                "cusps": [],
+                "planets": []
+              },
+              "Rahu": {
+                "cusps": [],
+                "planets": []
+              },
+              "Saturn": {
+                "cusps": [
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ],
+                "planets": [
+                  "Mars",
+                  "Mercury",
+                  "Neptune",
+                  "Sun",
+                  "Venus"
+                ]
+              },
+              "Sun": {
+                "cusps": [
+                  4,
+                  5,
+                  6
+                ],
+                "planets": []
+              },
+              "Uranus": {
+                "cusps": [],
+                "planets": []
+              },
+              "Venus": {
+                "cusps": [
+                  1
+                ],
+                "planets": [
+                  "Chiron",
+                  "Moon"
+                ]
+              }
+            },
+            "planet_cards": {
+              "Base": "4D",
+              "Ecliptic": "TC",
+              "Jupiter": "9S",
+              "Ketu": "AD",
+              "Mars": "6S",
+              "Mercury": "AC",
+              "Moon": "6D",
+              "Neptune": "3S",
+              "Pluto": "4H",
+              "Rahu": "6H",
+              "Saturn": "3D",
+              "Sun": "JH",
+              "Uranus": "8C",
+              "Venus": "7S"
+            }
+          }
+        }
+      }
+    },
     "houses_by_system": {
       "A": {
         "armc": 182.65812543503216,

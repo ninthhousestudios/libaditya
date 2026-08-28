@@ -241,7 +241,12 @@ def cases() -> list[Case]:
             "nyc-aditya",
             s["nyc"],
             "aditya",
-            extra_views=("houses_by_system", "vedic_derived", "events"),
+            extra_views=(
+                "houses_by_system",
+                "vedic_derived",
+                "events",
+                "feature_modules",
+            ),
         ),
         Case(
             "nyc-aditya-zodiac",
@@ -289,7 +294,7 @@ def cases() -> list[Case]:
             "sydney-aditya",
             s["sydney"],
             "aditya",
-            extra_views=("vedic_derived", "events"),
+            extra_views=("vedic_derived", "events", "feature_modules"),
         ),
         Case(
             "sydney-sidereal-lahiri",
@@ -309,7 +314,12 @@ def cases() -> list[Case]:
             "reykjavik-aditya",
             s["reykjavik"],
             "aditya",
-            extra_views=("houses_by_system", "vedic_derived", "events"),
+            extra_views=(
+                "houses_by_system",
+                "vedic_derived",
+                "events",
+                "feature_modules",
+            ),
         ),
         Case(
             "reykjavik-sidereal-lahiri",
@@ -323,7 +333,12 @@ def cases() -> list[Case]:
             s["equator"],
             "aditya",
             # J2000 epoch: freeze the full get_ayanamsa() code sweep here.
-            extra_views=("ayanamsa_sweep", "vedic_derived", "events"),
+            extra_views=(
+                "ayanamsa_sweep",
+                "vedic_derived",
+                "events",
+                "feature_modules",
+            ),
         ),
         Case(
             "equator-sidereal-lahiri",
@@ -336,7 +351,7 @@ def cases() -> list[Case]:
             "yamakoti-aditya",
             s["yamakoti"],
             "aditya",
-            extra_views=("vedic_derived", "events"),
+            extra_views=("vedic_derived", "events", "feature_modules"),
         ),
         Case(
             "yamakoti-sidereal-lahiri",
