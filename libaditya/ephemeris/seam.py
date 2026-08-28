@@ -86,6 +86,7 @@ FLG_HELCTR: int = int(CalcFlags.HELCTR)  # 8
 FLG_BARYCTR: int = int(CalcFlags.BARYCTR)  # 16384
 FLG_SPEED: int = int(CalcFlags.SPEED)  # 256
 FLG_SWIEPH: int = int(CalcFlags.SWIEPH)  # 2
+FLG_NONUT: int = int(CalcFlags.NONUT)  # 64 (no nutation -- Swiss sets it for sidereal)
 
 
 # --------------------------------------------------------------------------- #
@@ -193,20 +194,48 @@ def fixstar(
     star: str,
     jd: float,
     flags: int,
-) -> tuple[tuple[float, ...], int]:
-    """Position of a fixed star at ``jd`` (UT), in pyswisseph's ``swe.fixstar`` shape.
+) -> tuple[tuple[float, ...], str, int]:
+    """Position of a fixed star at ``jd`` (UT), in pyswisseph's ``fixstar`` shape.
 
-    Mirrors ``swe.fixstar(star, jd, flags) -> (xx, name, retflags)`` for the one
-    thing the nakshatra dhruva path reads -- ``[0][0]``, the coordinate array's
-    first element -- so it returns the ``(data, retflags)`` pair :func:`calc_ut`
-    does and cutover sites keep their ``[0][0]`` indexing. swisseph_rs exposes
-    only the ``fixstar2`` catalog (``(name, CalcResult)``); its SgrA* equatorial
-    longitude tracks ``swe.fixstar`` to ~5e-8 deg (engine noise floor, under the
-    golden's fixed-star tolerance).
+    Mirrors ``swe.fixstar2_ut(star, jd, flags) -> (xx, retname, retflags)`` (the
+    same shape ``swe.fixstar`` returns): the coordinate 6-tuple is element ``[0]``,
+    the canonical ``"traditional,bayer"`` name is ``[1]``, the ``retflags`` int is
+    ``[2]`` -- so the nakshatra dhruva path keeps its ``[0][0]`` indexing and the
+    fixed-star code keeps splitting ``[1]`` on the comma. swisseph_rs exposes only
+    the ``fixstar2`` catalog (``(name, CalcResult)``); against pyswisseph's own
+    ``fixstar2_ut`` it is bit-identical, and its SgrA* longitude tracks the v1
+    ``swe.fixstar`` to ~5e-8 deg (engine noise floor, under the golden tolerance).
+
+    GAP: swisseph_rs's ``fixstar2_ut`` under-reports ``flags_used`` versus
+    pyswisseph (and versus its OWN ``calc_ut``, which reports both bits): it drops
+    ``FLG_SWIEPH`` (2) always and ``FLG_NONUT`` (64, which Swiss sets whenever the
+    computation is sidereal) for a sidereal call. So it returns 256 where
+    pyswisseph returns 258 (tropical), and 65792 where pyswisseph returns 65858
+    (sidereal). The seam always drives the Swiss ephemeris
+    (``distill_config`` pins ``EphemerisSource.SWISS``), so ORing ``FLG_SWIEPH``
+    back in always, plus ``FLG_NONUT`` when the caller's ``flags`` carry the
+    sidereal bit, reconstructs the ``retflags`` pyswisseph froze.
     """
     with surfacing_errors():
-        _name, result = eph.fixstar2_ut(star, jd, to_flags(flags))
-    return result.data, int(result.flags_used)
+        name, result = eph.fixstar2_ut(star, jd, to_flags(flags))
+    retflags = int(result.flags_used) | FLG_SWIEPH
+    if flags & FLG_SIDEREAL:
+        retflags |= FLG_NONUT
+    return result.data, name, retflags
+
+
+def fixstar_mag(eph: Ephemeris, star: str) -> float:
+    """Visual magnitude of a fixed star, as ``swe.fixstar2_mag(star)[0]``.
+
+    ``swisseph_rs`` returns ``(canonical_name, magnitude)`` -- the REVERSE of
+    pyswisseph's ``(magnitude, retname)`` -- so the magnitude is element ``[1]``
+    here. Callers read a bare float (``swe.fixstar2_mag(...)[0]``), so this hands
+    back just the float. Catalog-only lookup (no jd / config dependence), but it
+    rides the object's ``eph`` like every other seam call.
+    """
+    with surfacing_errors():
+        _name, mag = eph.fixstar2_mag(star)
+    return mag
 
 
 def cotrans(

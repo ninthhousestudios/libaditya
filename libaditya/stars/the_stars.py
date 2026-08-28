@@ -32,7 +32,7 @@ unless I have manually added a different one
 my additions are first; not a lot of them
 """
 
-import swisseph as swe
+from libaditya.ephemeris import seam
 
 from libaditya.objects import EphContext, Planet
 
@@ -622,7 +622,7 @@ class TheStars:
         key = correct_nomen_name(key)
         return FixedStar(key, self.context)
 
-    def search_star_interactive(self, bitflags=swe.FLG_TROPICAL) -> FixedStar:
+    def search_star_interactive(self, bitflags=seam.FLG_TROPICAL) -> FixedStar:
         """
         this returns a FixedStar class of the specific star, if there is one, else error
         e.g., to get Aldebaran:
@@ -639,8 +639,11 @@ class TheStars:
         if not "," in pattern:
             # then they are searching a traditional name, so include wildcard
             pattern = f"{pattern}%"
-        information, name, retflags = swe.fixstar2_ut(
-            pattern, self.context.timeJD.jd_number(), bitflags
+        eph = seam.build_ephemeris(
+            self.context, self.context.sysflg, self.context.ayanamsa
+        )
+        information, name, retflags = seam.fixstar(
+            eph, pattern, self.context.timeJD.jd_number(), bitflags
         )
         print(
             f"Star: {name} appears at {information[0]} longitude on {self.context.timeJD}"

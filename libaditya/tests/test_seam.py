@@ -359,7 +359,7 @@ def run_transforms() -> bool:
     # NOT bit-for-bit -- so this locks the ~1e-6 bound the nakshatra tolerance
     # rides on, plus the (tuple data, int retflags) shape cutover sites index.
     eph = seam.build_ephemeris(_CTX, seam.FLG_TROPICAL, _CTX.ayanamsa)
-    data, retflags = seam.fixstar(eph, ",SgrA*", _JD, seam.FLG_EQUATORIAL)
+    data, name, retflags = seam.fixstar(eph, ",SgrA*", _JD, seam.FLG_EQUATORIAL)
     c_data, _c_name, c_ret = swe.fixstar(",SgrA*", _JD, swe.FLG_EQUATORIAL)
     # Compare only the ANGULAR coords (RA=data[0], dec=data[1]) -- the dhruva path
     # reads data[0][0]. The distance element (~1.65e9) matches to a ~1e-15 relative
@@ -370,8 +370,14 @@ def run_transforms() -> bool:
         star_worst <= 1e-6,
     )
     ok &= _check(
-        "fixstar returns (tuple data, int retflags)",
-        isinstance(data, tuple) and isinstance(retflags, int),
+        "fixstar returns (tuple data, str name, int retflags)",
+        isinstance(data, tuple) and isinstance(name, str) and isinstance(retflags, int),
+    )
+    # The canonical name is "traditional,bayer" -- the shape FixedStar splits on
+    # the comma into (display name, returned swe_id).
+    ok &= _check(
+        f"fixstar name is 'traditional,bayer' (got {name!r})",
+        "," in name,
     )
     return ok
 

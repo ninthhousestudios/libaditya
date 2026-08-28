@@ -18,10 +18,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
-
-from libaditya import constants as const
-from libaditya import utils
+from libaditya.ephemeris import seam
 
 from libaditya.objects import Longitude, CelestialObject, EphContext
 
@@ -97,7 +94,7 @@ class FixedStar(CelestialObject, Longitude):
     ):
         self.context = context
         self.system = self.context.sysflg
-        self.sysflg = self.system | swe.FLG_SPEED
+        self.sysflg = self.system | seam.FLG_SPEED
         self._other_names = ""
         self._swe_string = swe_string
         # swe_id is the nomenclature name of the star
@@ -119,10 +116,17 @@ class FixedStar(CelestialObject, Longitude):
             # done with this __init__
             return
         self._swe_id = correct_nomen_name(swe_id)
+        # The seam's distiller folds set_sid_mode / set_topo / the 98->36 aditya
+        # remap / the true-sidereal SVP override into a single frozen, per-call
+        # EphemerisConfig keyed on this star's system/ayanamsa. Building the eph
+        # here (once, process-shared) makes the fixed-star path frame- and
+        # order-independent -- no reliance on leftover global swe sidereal state,
+        # the hazard the old init_coords carried.
+        self._eph = seam.build_ephemeris(self.context, self.system, self.ayanamsa())
         try:
-            # if it works, the swe_id is valid
-            swe.fixstar2_ut(self._swe_id, self.context.timeJD.jd_number())
-        except:
+            # if it works, the swe_id is valid (name resolution is config-independent)
+            seam.fixstar(self._eph, self._swe_id, self.context.timeJD.jd_number(), 0)
+        except Exception:
             # if not, assume it is a search
             # so remove "," from beginning, add "%" to end for wildcard
             self._swe_id = self._swe_id[1:] + "%"
@@ -149,8 +153,11 @@ class FixedStar(CelestialObject, Longitude):
             _,
             _,
             _,
-        ) = swe.fixstar2_ut(
-            self.swe_id(), self.context.timeJD.jd_number(), swe.FLG_EQUATORIAL
+        ) = seam.fixstar(
+            self._eph,
+            self.swe_id(),
+            self.context.timeJD.jd_number(),
+            seam.FLG_EQUATORIAL,
         )[0]
         if "%" in self._swe_id:
             self._swe_id = self.returned_swe_id
@@ -162,22 +169,15 @@ class FixedStar(CelestialObject, Longitude):
         super().__init__(self.long, 1, context)
 
     def init_coords(self):
-        loc = self.context.location.swe_location()
-        # the if statements are returnless statements that initialize swe
-        # sysflg is definited in __init__; it is self.system + swe.FLG_SPEED
-        # so that we always get the speed
-        if self.system == const.SID:
-            # will need to add custom ayanamsas here
-            if self.ayanamsa() == 98:
-                self._ayanamsa = 36
-            if self.ayanamsa() == 97:
-                utils.set_swe_true_sidereal_ayanamsa()
-        if self.system == const.TOPO:
-            swe.set_topo(loc[0], loc[1], loc[2])
-        if self.system == (const.SID | const.TOPO):
-            swe.set_sid_mode(self.ayanamsa())
-            swe.set_topo(loc[0], loc[1], loc[2])
-        return swe.fixstar2_ut(
+        # sysflg is defined in __init__; it is self.system | seam.FLG_SPEED so
+        # that we always get the speed. Every ephemeris knob the old code set
+        # imperatively before this call -- set_sid_mode (incl. the 98->36 aditya
+        # remap and the ayanamsa 97 true-sidereal SVP override), set_topo -- is
+        # now folded into self._eph by the seam distiller, keyed on this star's
+        # (system, ayanamsa). So the position is a pure function of self._eph +
+        # jd + flags, with no leftover global swe state.
+        return seam.fixstar(
+            self._eph,
             self.swe_id(),
             self.context.timeJD.jd_number(),
             self.sysflg if self.sysflg >= 0 else 0,
@@ -211,7 +211,7 @@ class FixedStar(CelestialObject, Longitude):
         return self.swe_id()
 
     def magnitude(self):
-        return swe.fixstar2_mag(self.swe_id())[0]
+        return seam.fixstar_mag(self._eph, self.swe_id())
 
     def init_Stellarium(self):
         """
