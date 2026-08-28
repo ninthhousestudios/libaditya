@@ -22,7 +22,7 @@ from prettytable import PrettyTable
 from dataclasses import replace
 
 from libaditya import constants as const
-from libaditya import utils
+from libaditya.ephemeris import seam
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -109,8 +109,11 @@ class Planet(CelestialObject, Longitude, PlanetBala):
             _,
             _,
             _,
-        ) = swe.calc_ut(
-            self.context.timeJD.jd_number(), self.swe_id(), swe.FLG_EQUATORIAL
+        ) = seam.calc_ut(
+            self._eph,
+            self.context.timeJD.jd_number(),
+            self.swe_id(),
+            seam.FLG_EQUATORIAL,
         )[0]
         from .nakshatras import Nakshatra
 
@@ -143,14 +146,16 @@ class Planet(CelestialObject, Longitude, PlanetBala):
 
         was one of the earliest i wrote for this; could be clearer i think
         """
-        loc = self.context.location.swe_location()
+        # 98 (aditya) computes SIGNS under Swiss mode 36; mutate self so the remap
+        # is observable downstream (nakshatras, headers), as it was pre-seam. The
+        # distiller applies the same 98->36 remap for the config it freezes.
         if self.system == const.SID or self.system == (const.SID | const.TOPO):
             # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
                 self._ayanamsa = 36
-            utils.set_swe_sidereal_mode(self.ayanamsa())
-        if self.system == const.TOPO or self.system == (const.SID | const.TOPO):
-            swe.set_topo(loc[0], loc[1], loc[2])
+        # The seam's distiller collapses set_swe_sidereal_mode + set_topo into a
+        # single frozen EphemerisConfig, keyed on this object's system/ayanamsa.
+        self._eph = seam.build_ephemeris(self.context, self.system, self.ayanamsa())
         # for draconic charts i choose -8 to indicate that system
         # but swe doesnt accept that, so replace it if necessary
         if (
@@ -158,11 +163,11 @@ class Planet(CelestialObject, Longitude, PlanetBala):
             and self.context.sysflg != const.HELIO
             and self.context.sysflg != const.BARY
         ):
-            return swe.calc_ut(
-                self.jd, swe.SUN, self.sysflg if self.sysflg >= 0 else 0
+            return seam.calc_ut(
+                self._eph, self.jd, seam.SUN, self.sysflg if self.sysflg >= 0 else 0
             )[0]
-        return swe.calc_ut(
-            self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0
+        return seam.calc_ut(
+            self._eph, self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0
         )[0]
 
     def name(self) -> str:
@@ -229,33 +234,33 @@ class Planet(CelestialObject, Longitude, PlanetBala):
 
     def list_index(self):
         match self.pnumber:
-            case swe.SUN:
+            case seam.SUN:
                 return 0
-            case swe.MOON:
+            case seam.MOON:
                 return 1
-            case swe.MARS:
+            case seam.MARS:
                 return 2
-            case swe.MERCURY:
+            case seam.MERCURY:
                 return 3
-            case swe.JUPITER:
+            case seam.JUPITER:
                 return 4
-            case swe.VENUS:
+            case seam.VENUS:
                 return 5
-            case swe.SATURN:
+            case seam.SATURN:
                 return 6
-            case swe.TRUE_NODE:
+            case seam.TRUE_NODE:
                 return 7
-            case swe.TRUE_NODE:
+            case seam.TRUE_NODE:
                 return 8
-            case swe.URANUS:
+            case seam.URANUS:
                 return 9
-            case swe.NEPTUNE:
+            case seam.NEPTUNE:
                 return 10
-            case swe.PLUTO:
+            case seam.PLUTO:
                 return 11
-            case swe.CHIRON:
+            case seam.CHIRON:
                 return 12
-            case swe.EARTH:
+            case seam.EARTH:
                 return 13
 
     def number(self, system="vedic"):
@@ -332,8 +337,12 @@ class Planet(CelestialObject, Longitude, PlanetBala):
         in the next 24 hours from self.julianday
         """
         return (
-            (swe.calc_ut(self.timeJD.jd + 1, self.pnumber, self.sysflg)[0][0])
-            - (swe.calc_ut(self.timeJD.jd, self.pnumber, self.sysflg)[0][0])
+            (
+                seam.calc_ut(self._eph, self.timeJD.jd + 1, self.pnumber, self.sysflg)[
+                    0
+                ][0]
+            )
+            - (seam.calc_ut(self._eph, self.timeJD.jd, self.pnumber, self.sysflg)[0][0])
         )
 
     def riseset(self, rs, location=Location()):
@@ -505,7 +514,7 @@ class Planet(CelestialObject, Longitude, PlanetBala):
 
 class Sun(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.SUN, context, master)
+        super().__init__(seam.SUN, context, master)
         self._id = "Sun"
 
     def glyph(self):
@@ -654,7 +663,7 @@ class Sun(Planet):
 
 class Moon(Planet, SWEFirstLast):
     def __init__(self, context=EphContext(), master=None, nature=None):
-        super().__init__(swe.MOON, context, master)
+        super().__init__(seam.MOON, context, master)
         self._id = "Moon"
         self.attributes["nature"] = nature
 
@@ -812,7 +821,7 @@ class Moon(Planet, SWEFirstLast):
 
 class Mars(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.MARS, context, master)
+        super().__init__(seam.MARS, context, master)
         self._id = "Mars"
 
     def glyph(self):
@@ -935,7 +944,7 @@ class Mars(Planet):
 
 class Mercury(Planet, SWEFirstLast):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.MERCURY, context, master)
+        super().__init__(seam.MERCURY, context, master)
         self._id = "Mercury"
 
     def glyph(self):
@@ -1029,7 +1038,7 @@ class Mercury(Planet, SWEFirstLast):
 
 class Jupiter(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.JUPITER, context, master)
+        super().__init__(seam.JUPITER, context, master)
         self._id = "Jupiter"
 
     def glyph(self):
@@ -1154,7 +1163,7 @@ class Jupiter(Planet):
 
 class Venus(Planet, SWEFirstLast):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.VENUS, context, master)
+        super().__init__(seam.VENUS, context, master)
         self._id = "Venus"
 
     def glyph(self):
@@ -1240,7 +1249,7 @@ class Venus(Planet, SWEFirstLast):
 
 class Saturn(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.SATURN, context, master)
+        super().__init__(seam.SATURN, context, master)
         self._id = "Saturn"
 
     def glyph(self):
@@ -1363,7 +1372,7 @@ class Saturn(Planet):
 
 class Rahu(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.TRUE_NODE, context, master)
+        super().__init__(seam.TRUE_NODE, context, master)
         self.planet_name = const.names[context.names_type]["planets"][10]
         self._id = "Rahu"
 
@@ -1397,7 +1406,7 @@ class Rahu(Planet):
 
 class Ketu(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.TRUE_NODE, context, master)
+        super().__init__(seam.TRUE_NODE, context, master)
         self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
 
@@ -1434,7 +1443,7 @@ class Ketu(Planet):
 
 class Uranus(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.URANUS, context, master)
+        super().__init__(seam.URANUS, context, master)
         self._id = "Uranus"
 
     def glyph(self):
@@ -1461,7 +1470,7 @@ class Uranus(Planet):
 
 class Neptune(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.NEPTUNE, context, master)
+        super().__init__(seam.NEPTUNE, context, master)
         self._id = "Neptune"
 
     def glyph(self):
@@ -1488,7 +1497,7 @@ class Neptune(Planet):
 
 class Pluto(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.PLUTO, context, master)
+        super().__init__(seam.PLUTO, context, master)
         self._id = "Pluto"
 
     def glyph(self):
@@ -1515,7 +1524,7 @@ class Pluto(Planet):
 
 class Earth(Planet):
     def __init__(self, context=EphContext(), master=None):
-        super().__init__(swe.EARTH, context, master)
+        super().__init__(seam.EARTH, context, master)
         self._id = "Earth"
 
     def glyph(self):
@@ -1549,7 +1558,7 @@ class Earth(Planet):
 class Chiron(Planet):
     def __init__(self, context=EphContext(), master=None):
         self.planet_name = "Chiron"
-        super().__init__(swe.CHIRON, context, master)
+        super().__init__(seam.CHIRON, context, master)
         self._id = "Chiron"
 
     def type(self):
