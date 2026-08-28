@@ -41,6 +41,28 @@ from .subjects import Case, cases
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 
+# swisseph_rs and pyswisseph agree bit-for-bit on POSITIONS (long/lat/dist,
+# RA/dec, nakshatra+pada all match to <1e-9; verified libaditya/14) but diverge
+# at the engine noise floor in two derived quantities. Both globs apply to EVERY
+# case; both bounds stay far tighter than any real cutover regression (arcseconds+
+# for a mis-distilled config), so they absorb engine noise without hiding bugs:
+#
+#   *speed*  -- swisseph_rs's SEFLG_SPEED (analytic) velocities land ~1e-8 deg/day
+#     off pyswisseph, worst ~2e-8 on Chiron/outers. Its SPEED3 finite-difference
+#     path agrees to ~1e-10, but that is a DIFFERENT quantity than the golden
+#     froze under SPEED, so no flag makes them match. 1e-7 deg/day is
+#     astrologically null (no effect on pada, retrograde, or dignity). Also
+#     catches ascmcspeed / cusp daily_speed as later subsystems cut over.
+#
+#   *.amsha_longitude -- the varga map multiplies the in-sign longitude by the
+#     divisor, so D60 (x60) amplifies a ~2e-11 raw-longitude ULP gap into ~1.2e-9
+#     (observed max 1.168e-9 on Neptune). Only the highest varga trips the 1e-9
+#     default; 5e-9 gives headroom while staying tight for every lower varga.
+GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
+    ("*speed*", 1e-7),
+    ("*.amsha_longitude", 5e-9),
+]
+
 
 def fixture_path(case_id: str) -> Path:
     return FIXTURE_DIR / f"{case_id}.json"
@@ -128,6 +150,9 @@ def check(
     tol: float = DEFAULT_TOL,
     field_tolerances: list[tuple[str, float]] | None = None,
 ) -> RunReport:
+    # Default to the global engine-noise overrides; an explicit [] disables them.
+    if field_tolerances is None:
+        field_tolerances = GLOBAL_FIELD_TOLERANCES
     report = RunReport()
     for case in selected:
         path = fixture_path(case.id)
