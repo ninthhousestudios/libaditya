@@ -75,7 +75,13 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
 
     # Bind the ephemeris backend BEFORE importing anything that imports libaditya.
-    provenance = backend.select_backend(args.backend)
+    # A wrong/unavailable backend is a config error, not a bug -- report it
+    # cleanly (exit 2) instead of dumping a traceback.
+    try:
+        provenance = backend.select_backend(args.backend)
+    except (RuntimeError, ValueError, ModuleNotFoundError) as exc:
+        print(f"backend error: {exc}", file=sys.stderr)
+        return 2
 
     # Safe to pull in the libaditya-touching modules now.
     from . import harness
