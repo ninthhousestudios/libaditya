@@ -125,20 +125,45 @@ def to_flags(flags: int) -> CalcFlags:
 # --------------------------------------------------------------------------- #
 # engine wrapper
 # --------------------------------------------------------------------------- #
-# DECISION: Ephemeris(cfg) per object, not a shared base + calc_ut_with_config.
-# config.distill_config already freezes ONE EphemerisConfig per object's resolved
-# (system, ayanamsa); building one Ephemeris from it mirrors that 1:1 and keeps
-# the seam stateless. A shared engine would force every call to re-thread a
-# config, duplicating the resolution the distiller exists to do once.
+# DECISION (libaditya/23): one Ephemeris PER DISTINCT CONFIG, memoized for the
+# process lifetime -- NOT one per object. Each Ephemeris is ~4.63MB resident, and
+# an Ephemeris depends only on its EphemerisConfig (system, ayanamsa, and -- for
+# topocentric -- location); jd/body/flags are calc_ut ARGS, not construction
+# inputs. A heavy chart builds ~2,700 Planet/Cusp objects that collapse to a
+# handful of distinct configs, so caching turns ~12.5GB resident into a few MB.
+# The Ephemeris is immutable/stateless (calc_ut mutates nothing; 20k calls =
+# +0.1MB), so sharing one across every object with an identical config is safe.
+# This SUPERSEDES the seam foundation's "Ephemeris per object" decision
+# (edf7ef2), which predated knowing the 4.63MB/instance cost.
+#
+# KEY = repr(config), not the config object: EphemerisConfig is unhashable and
+# compares by identity (two value-equal configs are ``!=``), so it cannot key a
+# dict directly. Its repr is a deterministic, total serialization of every field
+# the Ephemeris derives from -- so value-equal configs share a cache slot, the
+# 98->36 ayanamsa remap folds two codes into one entry, and non-topo configs
+# (``topographic=None`` regardless of location) collapse across locations without
+# the seam having to re-derive which inputs matter. Distilling on a cache hit is
+# cheap (pure config construction, no ephemeris-file I/O); only Ephemeris(...) is.
+_EPHEMERIS_CACHE: dict[str, Ephemeris] = {}
+
+
 def build_ephemeris(context: EphContext, system: int, ayanamsa: int) -> Ephemeris:
-    """Open a per-object ``Ephemeris`` from the distilled config.
+    """Return the process-shared ``Ephemeris`` for this object's distilled config.
 
     ``system`` and ``ayanamsa`` are the PER-OBJECT resolved values
     (``Planet.system`` / ``Planet.ayanamsa()``, ``Cusps.system`` /
     ``Cusps.ayanamsa``); the distiller collapses them into a frozen
     ``EphemerisConfig`` (Swiss engine, bundled ``ephe/``, sidereal/topo knobs).
+    Objects that distill to the same config share one cached Ephemeris (see the
+    DECISION note above) rather than each opening their own ~4.63MB instance.
     """
-    return Ephemeris(distill_config(context, system, ayanamsa))
+    config = distill_config(context, system, ayanamsa)
+    key = repr(config)
+    eph = _EPHEMERIS_CACHE.get(key)
+    if eph is None:
+        eph = Ephemeris(config)
+        _EPHEMERIS_CACHE[key] = eph
+    return eph
 
 
 def calc_ut(
