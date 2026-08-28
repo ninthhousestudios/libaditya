@@ -18,11 +18,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
-
 import os
 
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 # should be .../libaditya/libaditya
 base_path = os.path.dirname(os.path.realpath(__file__))
@@ -33,30 +32,32 @@ theme_path = base_path + "/draw/themes/"
 hd_default_theme = theme_path + "default-theme.hd"
 sbc_default_theme = theme_path + "default-theme.sbc"
 
-ECL = swe.FLG_TROPICAL
-TROP = swe.FLG_TROPICAL
-EQU = swe.FLG_EQUATORIAL
-HELIO = swe.FLG_HELCTR
-BARY = swe.FLG_BARYCTR
-SID = swe.FLG_SIDEREAL
-TOPO = swe.FLG_TOPOCTR
+# Coordinate-system flags sourced from the swisseph_rs seam (value-identical to
+# the pyswisseph FLG_* ints they replaced; the seam exposes them as plain ints).
+ECL = seam.FLG_TROPICAL
+TROP = seam.FLG_TROPICAL
+EQU = seam.FLG_EQUATORIAL
+HELIO = seam.FLG_HELCTR
+BARY = seam.FLG_BARYCTR
+SID = seam.FLG_SIDEREAL
+TOPO = seam.FLG_TOPOCTR
 DRAC = -8
 
 
 def sysflgstr(sflg):
-    if sflg == swe.FLG_TROPICAL:
+    if sflg == seam.FLG_TROPICAL:
         return "Tropical"
-    if sflg == swe.FLG_EQUATORIAL:
+    if sflg == seam.FLG_EQUATORIAL:
         return "Equatorial"
-    if sflg == swe.FLG_HELCTR:
+    if sflg == seam.FLG_HELCTR:
         return "Heliocentric"
-    if sflg == swe.FLG_BARYCTR:
+    if sflg == seam.FLG_BARYCTR:
         return "Barycentric"
-    if sflg == swe.FLG_SIDEREAL:
+    if sflg == seam.FLG_SIDEREAL:
         return "Sidereal"
-    if sflg == swe.FLG_TOPOCTR:
+    if sflg == seam.FLG_TOPOCTR:
         return "Tropical Topocentric"
-    if sflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+    if sflg == (seam.FLG_SIDEREAL | seam.FLG_TOPOCTR):
         return "Sidereal Topocentric"
     if sflg == DRAC:
         return "Draconic"
@@ -73,8 +74,7 @@ def ayanamsa_name(ayanamsa):
         return "Equatorial Vedanga Jyotisha"
     if ayanamsa == 101:
         return "28 Equal Nakshatras (Krittika at Equinox)"
-    swe.set_sid_mode(ayanamsa)
-    return swe.get_ayanamsa_name(ayanamsa)
+    return seam.get_ayanamsa_name(ayanamsa)
 
 
 def circle_name(circle) -> str:

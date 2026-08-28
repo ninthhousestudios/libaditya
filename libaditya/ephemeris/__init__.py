@@ -16,8 +16,32 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-"""swisseph_rs ephemeris seam for libaditya (pyswisseph -> swisseph_rs migration)."""
+"""swisseph_rs ephemeris seam for libaditya (pyswisseph -> swisseph_rs migration).
 
+Two co-located modules, one namespace: :mod:`~libaditya.ephemeris.config` is the
+EphContext -> EphemerisConfig distiller; :mod:`~libaditya.ephemeris.seam` is the
+native surface (engine wrapper, body/flag ints, name tables, typed errors) every
+cutover routes through. Together they are the ONLY importers of ``swisseph_rs``.
+"""
+
+from libaditya.ephemeris import seam
 from libaditya.ephemeris.config import distill_config
+from libaditya.ephemeris.seam import (
+    build_ephemeris,
+    calc_ut,
+    get_ayanamsa_name,
+    house_name,
+    to_body,
+    to_flags,
+)
 
-__all__ = ["distill_config"]
+__all__ = [
+    "distill_config",
+    "seam",
+    "build_ephemeris",
+    "calc_ut",
+    "get_ayanamsa_name",
+    "house_name",
+    "to_body",
+    "to_flags",
+]
