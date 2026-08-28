@@ -23,6 +23,7 @@ import time as tmod
 import os
 
 from libaditya import constants as const
+from libaditya.ephemeris import seam
 
 
 def dms2dec(dms):
@@ -102,7 +103,7 @@ def tmod_to_jd(now):
     time a struct from the time module
     and convert it to julian day float
     """
-    return swe.julday(
+    return seam.julday(
         now.tm_year,
         now.tm_mon,
         now.tm_mday,

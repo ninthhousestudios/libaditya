@@ -18,10 +18,9 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
-
 from libaditya.objects import JulianDay, Sun, EphContext
 from libaditya.calc import Panchanga
+from libaditya.ephemeris import seam
 
 
 def lunar_new_year(year) -> Panchanga:
@@ -34,7 +33,7 @@ def lunar_new_year(year) -> Panchanga:
     if isinstance(year, JulianDay):
         year = year.year()
     # get january 1st of the previous year so we can find the winter solstice of that year
-    solstice_yearJD = JulianDay(swe.julday(year - 1, 1, 1))
+    solstice_yearJD = JulianDay(seam.julday(year - 1, 1, 1))
     solsticeSun = Sun(EphContext(timeJD=solstice_yearJD)).ingress(270)
 
     # now get a Panchanga for this time
@@ -50,7 +49,7 @@ def cardinal_points(year) -> [JulianDay]:
     return the cardinal points of the year in order
     i.e., ascending equinox, northern solstice, descedending equinox, southern solstice
     """
-    year_jd = swe.julday(year, 1, 1, 0)
+    year_jd = seam.julday(year, 1, 1, 0)
     s = Sun(EphContext(timeJD=JulianDay(year_jd)))
     return [s.ingress(0), s.ingress(90), s.ingress(180), s.ingress(270)]
 

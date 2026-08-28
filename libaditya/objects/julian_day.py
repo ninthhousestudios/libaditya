@@ -23,6 +23,7 @@ import swisseph as swe
 import time
 
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 
 nowtime = time.gmtime()
@@ -54,12 +55,12 @@ class JulianDay:
         if isinstance(jd, float) or isinstance(jd, int):
             self.jd = jd
         elif isinstance(jd, tuple):
-            self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3])
+            self.jd = seam.julday(jd[0], jd[1], jd[2], jd[3])
         elif jd == "now":
             nowtime = time.gmtime()
             jd = utils.tmod_to_jd(nowtime)
             self.jd = jd
-        self.datetime = swe.revjul(self.jd)
+        self.datetime = seam.revjul(self.jd)
         self.utcoffset = float(utcoffset)
         self._timezone = self.mktimezone(timezone)
         self.usrdatetime = self.usrdt()
@@ -219,12 +220,12 @@ class JulianDay:
 
     def midnightjd(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
-        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
+        return seam.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
 
     def midnightJD(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
         return JulianDay(
-            swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),
+            seam.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),
             self.utcoffset,
         )
 
@@ -245,19 +246,19 @@ class JulianDay:
         # were UTC; subtracting the offset turns it back into a real instant
         # (usrdt() adds the offset going the other way)
         return JulianDay(
-            swe.julday(y, m, d, 0) - self.utcoffset / 24,
+            seam.julday(y, m, d, 0) - self.utcoffset / 24,
             self.utcoffset,
             self.timezone(),
         )
 
     def next_midnightjd(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
-        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1
+        return seam.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1
 
     def next_midnightJD(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
         return JulianDay(
-            swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1,
+            seam.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0) + 1,
             self.utcoffset,
             self.timezone(),
         )
@@ -294,4 +295,4 @@ class JulianDay:
         transform utc time into user specified time with self.utcoffset and timezone string
         return a tuple (year,month,day,hour)
         """
-        return swe.revjul(self.jd + self.utcoffset / 24)
+        return seam.revjul(self.jd + self.utcoffset / 24)

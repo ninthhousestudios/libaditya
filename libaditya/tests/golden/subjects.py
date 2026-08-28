@@ -136,7 +136,7 @@ class Subject:
     """A pinned birth datum + location."""
 
     id: str
-    jd: tuple  # (year, month, day, decimal_hour_UTC) -> swe.julday
+    jd: tuple  # (year, month, day, decimal_hour_UTC) -> seam.julday
     utcoffset: float  # display only; the jd above is already UTC
     timezone: str
     lat: float

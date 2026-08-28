@@ -29,8 +29,11 @@ from libaditya.ephemeris.config import distill_config
 from libaditya.ephemeris.seam import (
     build_ephemeris,
     calc_ut,
+    day_of_week,
     get_ayanamsa_name,
     house_name,
+    julday,
+    revjul,
     to_body,
     to_flags,
 )
@@ -40,8 +43,11 @@ __all__ = [
     "seam",
     "build_ephemeris",
     "calc_ut",
+    "day_of_week",
     "get_ayanamsa_name",
     "house_name",
+    "julday",
+    "revjul",
     "to_body",
     "to_flags",
 ]

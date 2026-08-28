@@ -54,6 +54,7 @@ from swisseph_rs import (
     Body,
     CalcFlags,
     Ephemeris,
+    date as _date,
     errors,
 )
 
@@ -182,6 +183,54 @@ def calc_ut(
     """
     result = eph.calc_ut(jd, to_body(body), to_flags(flags))
     return result.data, int(result.flags_used)
+
+
+# --------------------------------------------------------------------------- #
+# calendar surface (engine-independent date math: julday / revjul / day_of_week)
+# --------------------------------------------------------------------------- #
+# ``swisseph_rs.date`` carries the same Swiss ``swe_julday`` / ``swe_revjul`` /
+# ``swe_day_of_week`` implementations, VERIFIED bit-for-bit against pyswisseph
+# 2.10.03 (2000-01-01 12h UT -> 2451545.0 and back, DOW 5). This is the pure
+# time/calendar math -- no Ephemeris, no engine config -- so it is a total,
+# engine-independent inverse pair the vimshottari/panchanga goldens freeze as
+# ``JulianDay(start).revjul`` tuples.
+#
+# GAP: unlike ``swe.julday``/``swe.revjul``, the swisseph_rs functions take NO
+# default args -- ``hour`` and ``cal`` are required positionals. The seam
+# restores pyswisseph's defaults so cutover call sites keep their arg-omitting
+# shape: ``hour`` defaults to 12.0 (Swiss noon, matching ``swe.julday(y,m,d)``)
+# and ``cal`` defaults to GREG_CAL (proleptic Gregorian throughout libaditya).
+GREG_CAL: int = 1  # swe.GREG_CAL
+JUL_CAL: int = 0  # swe.JUL_CAL
+
+
+def julday(
+    year: int,
+    month: int,
+    day: int,
+    hour: float = 12.0,
+    cal: int = GREG_CAL,
+) -> float:
+    """Calendar date -> Julian Day, as ``swe.julday(year, month, day, hour, cal)``.
+
+    ``hour`` and ``cal`` default to pyswisseph's values (Swiss noon, Gregorian)
+    so call sites that pass only ``(year, month, day)`` land on the same JD.
+    """
+    return _date.julday(year, month, day, hour, cal)
+
+
+def revjul(jd: float, cal: int = GREG_CAL) -> tuple[int, int, int, float]:
+    """Julian Day -> ``(year, month, day, decimal_hour)``, as ``swe.revjul(jd, cal)``.
+
+    Total inverse of :func:`julday` on the shared ``cal`` -- the round-trip the
+    vimshottari boundary and panchanga instant goldens freeze bit-for-bit.
+    """
+    return _date.revjul(jd, cal)
+
+
+def day_of_week(jd: float) -> int:
+    """Weekday for a Julian Day (0=Monday .. 6=Sunday), as ``swe.day_of_week(jd)``."""
+    return _date.day_of_week(jd)
 
 
 # --------------------------------------------------------------------------- #

@@ -195,9 +195,9 @@ first_card_of_the_month = [
 def is_leap_year(year: int) -> bool:
     """
     proleptic Gregorian, which is the calendar the rest of the library computes
-    in: every swe.julday/swe.revjul call here leaves cal at its GREG_CAL
+    in: every seam.julday/seam.revjul call here leaves cal at its GREG_CAL
     default, pre-1582 dates included. a Julian rule here would disagree with
-    them -- it would call 1500 long, while swe.revjul rolls Gregorian 1500-02-29
+    them -- it would call 1500 long, while seam.revjul rolls Gregorian 1500-02-29
     straight to March 1.
     """
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)

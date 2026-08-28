@@ -30,6 +30,11 @@ the dev env:
    ``swe.calc_ut(...)`` bit-for-bit and returns the ``(data-tuple, retflags-int)``
    shape pyswisseph returns, so cutover sites keep their ``[0]`` / ``[1]``.
 
+2b. CALENDAR SURFACE -- ``seam.julday`` / ``seam.revjul`` / ``seam.day_of_week``
+   reproduce the C functions bit-for-bit, form a total julday<->revjul inverse
+   pair, and restore pyswisseph's default args (``hour=12.0``, ``cal=GREG_CAL``)
+   the swisseph_rs functions drop.
+
 3. THE 3 API GAPS -- ``house_name`` and ``get_ayanamsa_name`` reproduce
    ``swe.house_name`` / ``swe.get_ayanamsa_name`` across the full tables (str and
    bytes inputs), and ``FLG_TROPICAL == swe.FLG_TROPICAL == 0``.
@@ -167,6 +172,58 @@ def run_engine() -> bool:
     return ok
 
 
+# --- 2b: calendar surface bit-for-bit + defaults + round-trip ---------------
+def run_calendar() -> bool:
+    print("seam calendar surface: julday / revjul / day_of_week vs pyswisseph")
+    ok = True
+
+    # A grid of dates spanning the Julian/Gregorian divide and modern epochs; all
+    # left at the GREG_CAL default the library computes in (proleptic Gregorian).
+    dates = [
+        (1500, 2, 29, 6.0),  # proleptic-Gregorian leap day (pre-1582)
+        (1899, 12, 31, 23.5),
+        (2000, 1, 1, 12.0),
+        (1987, 6, 17, 0.0),
+        (2026, 8, 28, 18.25),
+        (2200, 11, 5, 9.75),
+    ]
+    jd_ok = all(
+        seam.julday(y, m, d, h) == swe.julday(y, m, d, h) for y, m, d, h in dates
+    )
+    ok &= _check("julday matches swe.julday across the date grid", jd_ok)
+
+    # revjul is the inverse, and matches swe.revjul on the same JDs.
+    rev_ok = True
+    roundtrip_ok = True
+    for y, m, d, h in dates:
+        jd = seam.julday(y, m, d, h)
+        rev_ok &= seam.revjul(jd) == swe.revjul(jd)
+        roundtrip_ok &= seam.julday(*seam.revjul(jd)) == jd
+    ok &= _check("revjul matches swe.revjul on the same JDs", rev_ok)
+    ok &= _check("julday(revjul(jd)) == jd (total inverse pair)", roundtrip_ok)
+
+    dow_ok = all(
+        seam.day_of_week(seam.julday(y, m, d, h))
+        == swe.day_of_week(swe.julday(y, m, d, h))
+        for y, m, d, h in dates
+    )
+    ok &= _check("day_of_week matches swe.day_of_week (0=Mon..6=Sun)", dow_ok)
+
+    # Defaults the swisseph_rs functions drop but call sites depend on: julday
+    # omitting hour lands on Swiss noon; revjul defaults to GREG_CAL.
+    ok &= _check(
+        "julday(y,m,d) default hour==12.0 matches swe",
+        seam.julday(1999, 1, 1) == swe.julday(1999, 1, 1),
+    )
+    ok &= _check(
+        "revjul(jd) default cal==GREG_CAL matches swe",
+        seam.revjul(2451545.0) == swe.revjul(2451545.0),
+    )
+    ok &= _check("GREG_CAL == swe.GREG_CAL", seam.GREG_CAL == swe.GREG_CAL)
+    ok &= _check("JUL_CAL == swe.JUL_CAL", seam.JUL_CAL == swe.JUL_CAL)
+    return ok
+
+
 # --- 3: the 3 API gaps ------------------------------------------------------
 def run_gaps() -> bool:
     print("seam API gaps: house_name, get_ayanamsa_name (hand-rolled tables)")
@@ -239,7 +296,7 @@ def run_errors() -> bool:
 
 
 def run() -> bool:
-    return all([run_surface(), run_engine(), run_gaps(), run_errors()])
+    return all([run_surface(), run_engine(), run_calendar(), run_gaps(), run_errors()])
 
 
 def main() -> int:
