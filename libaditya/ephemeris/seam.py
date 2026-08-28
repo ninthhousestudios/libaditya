@@ -59,6 +59,7 @@ from swisseph_rs import (
     errors,
 )
 from swisseph_rs.houses import house_pos as _house_pos
+from swisseph_rs.math import cotrans as _cotrans
 
 from libaditya.ephemeris.config import distill_config
 
@@ -185,6 +186,40 @@ def calc_ut(
     """
     result = eph.calc_ut(jd, to_body(body), to_flags(flags))
     return result.data, int(result.flags_used)
+
+
+def fixstar(
+    eph: Ephemeris,
+    star: str,
+    jd: float,
+    flags: int,
+) -> tuple[tuple[float, ...], int]:
+    """Position of a fixed star at ``jd`` (UT), in pyswisseph's ``swe.fixstar`` shape.
+
+    Mirrors ``swe.fixstar(star, jd, flags) -> (xx, name, retflags)`` for the one
+    thing the nakshatra dhruva path reads -- ``[0][0]``, the coordinate array's
+    first element -- so it returns the ``(data, retflags)`` pair :func:`calc_ut`
+    does and cutover sites keep their ``[0][0]`` indexing. swisseph_rs exposes
+    only the ``fixstar2`` catalog (``(name, CalcResult)``); its SgrA* equatorial
+    longitude tracks ``swe.fixstar`` to ~5e-8 deg (engine noise floor, under the
+    golden's fixed-star tolerance).
+    """
+    with surfacing_errors():
+        _name, result = eph.fixstar2_ut(star, jd, to_flags(flags))
+    return result.data, int(result.flags_used)
+
+
+def cotrans(
+    coord: tuple[float, float, float], eps: float
+) -> tuple[float, float, float]:
+    """Rotate a ``(lon, lat, r)`` coordinate about ``eps``, as ``swe.cotrans``.
+
+    Stateless coordinate transform (``swisseph_rs.math.cotrans``); ``eps`` is the
+    ecliptic obliquity, ``-eps`` going ecliptic->equatorial and ``+eps`` the
+    reverse, exactly as ``swe.cotrans`` used it. Accepts an int coord tuple
+    (``(270, 0, 1)``) and returns floats.
+    """
+    return _cotrans(coord, eps)
 
 
 # --------------------------------------------------------------------------- #

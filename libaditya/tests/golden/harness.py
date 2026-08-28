@@ -41,11 +41,12 @@ from .subjects import Case, cases
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 
-# swisseph_rs and pyswisseph agree bit-for-bit on POSITIONS (long/lat/dist,
-# RA/dec, nakshatra+pada all match to <1e-9; verified libaditya/14) but diverge
-# at the engine noise floor in two derived quantities. Both globs apply to EVERY
-# case; both bounds stay far tighter than any real cutover regression (arcseconds+
-# for a mis-distilled config), so they absorb engine noise without hiding bugs:
+# swisseph_rs and pyswisseph agree bit-for-bit on ecliptic/equatorial POSITIONS
+# (long/lat/dist, RA/dec all match to <1e-9; verified libaditya/14), but diverge
+# at the engine noise floor in a handful of derived quantities. Every glob applies
+# to EVERY case; every bound stays far tighter than any real cutover regression
+# (arcseconds+ on a position / minutes+ on a date for a mis-distilled config), so
+# they absorb engine noise without hiding bugs:
 #
 #   *speed*  -- swisseph_rs's SEFLG_SPEED (analytic) velocities land ~1e-8 deg/day
 #     off pyswisseph, worst ~2e-8 on Chiron/outers. Its SPEED3 finite-difference
@@ -58,9 +59,26 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 #     divisor, so D60 (x60) amplifies a ~2e-11 raw-longitude ULP gap into ~1.2e-9
 #     (observed max 1.168e-9 on Neptune). Only the highest varga trips the 1e-9
 #     default; 5e-9 gives headroom while staying tight for every lower varga.
+#
+#   NAKSHATRA / YOGA / VIMSHOTTARI (libaditya/17) -- the dhruva-gc-equatorial
+#     nakshatra path (the DEFAULT ayanamsa 98) references ashvini off the Galactic
+#     Centre fixed star. swisseph_rs exposes only the fixstar2 catalog, whose SgrA*
+#     equatorial longitude tracks pyswisseph's swe.fixstar (v1) to ~5e-8 deg -- an
+#     engine noise floor, not a distiller error (positions of the bodies themselves
+#     still match <1e-9). That offset lands in every dhruva ash_long (~1.2e-7 deg),
+#     doubles into the nitya-yoga sum (~2.5e-7), and -- because a nakshatra fraction
+#     scales to the multi-year dasha length -- amplifies into the vimshottari period
+#     boundaries (~6e-5 JD ~= 5 s over decades; the datetime hour column is that
+#     JD x24). Sidereal ash_long (calc_ut path) still matches <1e-9; these globs
+#     loosen it too but stay orders tighter than any real regression.
 GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
     ("*speed*", 1e-7),
     ("*.amsha_longitude", 5e-9),
+    ("*.nakshatra.ashvini_longitude", 1e-6),
+    ("*.panchanga.yoga_*", 1e-6),
+    ("*.vimshottari.age", 1e-6),
+    ("*.vimshottari.periods*start.jd", 5e-4),
+    ("*.vimshottari.periods*start.datetime*", 1e-2),
 ]
 
 

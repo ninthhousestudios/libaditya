@@ -18,11 +18,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from prettytable import PrettyTable
 
 from libaditya import constants as const
-from libaditya import utils
+from libaditya.ephemeris import seam
 
 
 class Nakshatra:
@@ -144,21 +143,27 @@ class Nakshatra:
             print(f"instance of type {type(self._occupant)} cannot be in a nakshatra")
 
     def init_ash_long_Planet(self):
-        utils.set_swe_sidereal_mode(self.ayanamsa)
-        long = swe.calc_ut(
-            self.timeJD.jd_number(), self._occupant.pnumber, swe.FLG_SIDEREAL
+        # Nakshatras always compute the SIDEREAL longitude (degrees from ashvini)
+        # regardless of the chart's own system, so the seam eph is forced onto
+        # FLG_SIDEREAL with this nakshatra's ayanamsa; the distiller folds the
+        # true-sidereal (97 -> SVP USER_UT) and standard-code sidereal_mode in,
+        # exactly as set_swe_sidereal_mode(self.ayanamsa) did off the C global.
+        eph = seam.build_ephemeris(self.context, seam.FLG_SIDEREAL, self.ayanamsa)
+        long = seam.calc_ut(
+            eph, self.timeJD.jd_number(), self._occupant.pnumber, seam.FLG_SIDEREAL
         )[0][0]
         long = self.ketuize(long)
         return long
 
     def init_ash_long_Cusp(self):
-        utils.set_swe_sidereal_mode(self.ayanamsa)
-        cusps, _, _, _ = swe.houses_ex2(
+        eph = seam.build_ephemeris(self.context, seam.FLG_SIDEREAL, self.ayanamsa)
+        cusps, _, _, _ = seam.houses_ex2(
+            eph,
             self._occupant.timeJD.jd_number(),
             self._occupant.location.lat,
             self._occupant.location.long,
             self._occupant.hsys,
-            swe.FLG_SIDEREAL,
+            seam.FLG_SIDEREAL,
         )
         return cusps[self._occupant.cusp_index()]
 
@@ -176,16 +181,21 @@ class Nakshatra:
         from .planets import Planet
         from .cusps import Cusp
 
-        gcequ = swe.fixstar(",SgrA*", self.timeJD.jd, swe.FLG_EQUATORIAL)[0][0]
+        # Equatorial coordinates are ayanamsa-independent (no FLG_SIDEREAL bit), so
+        # a plain (geocentric, non-sidereal) seam eph reproduces the pre-seam
+        # equatorial calls that ran off whatever C global state without a sidereal
+        # flag. fixstar/calc_ut ride this eph; cotrans is stateless.
+        eph = seam.build_ephemeris(self.context, seam.FLG_TROPICAL, self.ayanamsa)
+        gcequ = seam.fixstar(eph, ",SgrA*", self.timeJD.jd, seam.FLG_EQUATORIAL)[0][0]
         mula = gcequ - (self.naksize() / 2)
         ashvini = mula - (18 * self.naksize())
         if isinstance(self._occupant, Planet):
-            equlong = swe.calc_ut(
-                self.timeJD.jd, self._occupant.pnumber, swe.FLG_EQUATORIAL
+            equlong = seam.calc_ut(
+                eph, self.timeJD.jd, self._occupant.pnumber, seam.FLG_EQUATORIAL
             )[0][0]
             equlong = self.ketuize(equlong)
         if isinstance(self._occupant, Cusp):
-            equlong = swe.cotrans(
+            equlong = seam.cotrans(
                 (self.base_longitude(), 0, 1), self.timeJD.ecliptic_obliquity()
             )[0]
         if equlong < ashvini:
@@ -217,21 +227,20 @@ class Nakshatra:
         from .cusps import Cusp
 
         # equatorial longitude of the winter solstice
-        # the swe.calc call is for the ecliptic_obliquity, which is required for coordinate transformations
+        # ecliptic_obliquity() is required for the coordinate transformation
         # according to the documentation, '-' is used to go from ecliptic to equatorial, which we are doing here
-        solequ = swe.cotrans((270, 0, 1), -swe.calc(self.timeJD.jd, swe.ECL_NUT)[0][0])[
-            0
-        ]
+        eph = seam.build_ephemeris(self.context, seam.FLG_TROPICAL, self.ayanamsa)
+        solequ = seam.cotrans((270, 0, 1), -self.timeJD.ecliptic_obliquity())[0]
         # find where equatorial ashvini starts; it is five nakshatras after dhanishta
         ashvini = 360 - (solequ + 5 * self.naksize())
         # equatorial longitude of this planet
         if isinstance(self._occupant, Planet):
-            equlong = swe.calc_ut(
-                self.timeJD.jd, self._occupant.pnumber, swe.FLG_EQUATORIAL
+            equlong = seam.calc_ut(
+                eph, self.timeJD.jd, self._occupant.pnumber, seam.FLG_EQUATORIAL
             )[0][0]
             equlong = self.ketuize(equlong)
         if isinstance(self._occupant, Cusp):
-            equlong = swe.cotrans(
+            equlong = seam.cotrans(
                 (self.base_longitude(), 0, 1), self.timeJD.ecliptic_obliquity()
             )[0]
         return (equlong + ashvini) % 360

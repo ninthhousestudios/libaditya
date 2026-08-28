@@ -330,6 +330,52 @@ def run_houses() -> bool:
     return ok
 
 
+# --- 3c: coordinate transforms (fixstar + cotrans, the nakshatra surface) ----
+def run_transforms() -> bool:
+    print("seam transforms: cotrans (bit-exact) + fixstar (SgrA* equatorial)")
+    ok = True
+
+    # cotrans is a stateless coordinate rotation about the obliquity; the nakshatra
+    # dhruva/vedanga paths pass int coord tuples and both signs of eps (ecliptic
+    # <-> equatorial). It must reproduce swe.cotrans bit-for-bit.
+    eps = swe.calc(_JD, swe.ECL_NUT)[0][0]
+    cotrans_cases = [
+        ((270, 0, 1), -eps),
+        ((123.456, 1.2, 1), eps),
+        ((0, 0, 1), -eps),
+    ]
+    worst_ct = 0.0
+    for coord, e in cotrans_cases:
+        got = seam.cotrans(coord, e)
+        want = swe.cotrans(coord, e)
+        worst_ct = max(worst_ct, max(abs(a - b) for a, b in zip(got, want)))
+    ok &= _check(
+        f"cotrans matches swe.cotrans (worst {worst_ct:.2e})", worst_ct <= _TOL
+    )
+
+    # fixstar: the dhruva path reads the Galactic Centre (SgrA*) equatorial
+    # longitude. swisseph_rs ships only the fixstar2 catalog, whose SgrA* position
+    # tracks pyswisseph's swe.fixstar (v1) to the engine noise floor (~5e-8 deg),
+    # NOT bit-for-bit -- so this locks the ~1e-6 bound the nakshatra tolerance
+    # rides on, plus the (tuple data, int retflags) shape cutover sites index.
+    eph = seam.build_ephemeris(_CTX, seam.FLG_TROPICAL, _CTX.ayanamsa)
+    data, retflags = seam.fixstar(eph, ",SgrA*", _JD, seam.FLG_EQUATORIAL)
+    c_data, _c_name, c_ret = swe.fixstar(",SgrA*", _JD, swe.FLG_EQUATORIAL)
+    # Compare only the ANGULAR coords (RA=data[0], dec=data[1]) -- the dhruva path
+    # reads data[0][0]. The distance element (~1.65e9) matches to a ~1e-15 relative
+    # ULP, whose ABSOLUTE delta (~1e-5) is meaningless magnitude, not disagreement.
+    star_worst = max(abs(data[i] - c_data[i]) for i in (0, 1))
+    ok &= _check(
+        f"fixstar SgrA* RA/dec tracks swe.fixstar (worst {star_worst:.2e} <= 1e-6)",
+        star_worst <= 1e-6,
+    )
+    ok &= _check(
+        "fixstar returns (tuple data, int retflags)",
+        isinstance(data, tuple) and isinstance(retflags, int),
+    )
+    return ok
+
+
 # --- 4: typed exceptions ----------------------------------------------------
 def run_errors() -> bool:
     print("seam.surfacing_errors: typed rejections surface, others pass through")
@@ -378,6 +424,7 @@ def run() -> bool:
             run_calendar(),
             run_gaps(),
             run_houses(),
+            run_transforms(),
             run_errors(),
         ]
     )
