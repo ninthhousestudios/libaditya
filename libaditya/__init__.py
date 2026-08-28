@@ -18,6 +18,21 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
+# --- ephemeris backend selection (must run before `import swisseph`) --------
+# Set the LIBADITYA_SWE_BACKEND environment variable to the name of an
+# API-compatible ephemeris module (e.g. "swisseph_rs") to make every
+# `import swisseph as swe` in libaditya bind to it instead of pyswisseph. This
+# is the switch the golden-master harness uses to compare backends. Unset (the
+# default) leaves pyswisseph in place and changes nothing.
+import os as _os
+import sys as _sys
+
+_swe_backend = _os.environ.get("LIBADITYA_SWE_BACKEND")
+if _swe_backend and _swe_backend not in ("swisseph", "pyswisseph"):
+    import importlib as _importlib
+
+    _sys.modules["swisseph"] = _importlib.import_module(_swe_backend)
+
 import swisseph as swe
 import pathlib
 from dataclasses import replace
