@@ -38,74 +38,13 @@
         "utcoffset": 0.0
       }
     },
+    "context_overrides": {},
     "subject": "equator"
   },
   "schema": 1,
   "snapshot": {
     "ephemeris": {
       "obliquity": 23.437676720534085
-    },
-    "navamsa": {
-      "amsha": 9,
-      "lagna_sign": 9,
-      "planets": {
-        "Chiron": {
-          "amsha_index": 8,
-          "amsha_longitude": 249.87988774697624
-        },
-        "Earth": {
-          "amsha_index": 10,
-          "amsha_longitude": 328.6412670265811
-        },
-        "Jupiter": {
-          "amsha_index": 0,
-          "amsha_longitude": 12.598817763355044
-        },
-        "Ketu": {
-          "amsha_index": 0,
-          "amsha_longitude": 0.9072272814273674
-        },
-        "Mars": {
-          "amsha_index": 7,
-          "amsha_longitude": 216.99072201748095
-        },
-        "Mercury": {
-          "amsha_index": 2,
-          "amsha_longitude": 72.3244924092246
-        },
-        "Moon": {
-          "amsha_index": 11,
-          "amsha_longitude": 355.2347503300821
-        },
-        "Neptune": {
-          "amsha_index": 11,
-          "amsha_longitude": 354.0581760821924
-        },
-        "Pluto": {
-          "amsha_index": 8,
-          "amsha_longitude": 248.41406017568806
-        },
-        "Rahu": {
-          "amsha_index": 6,
-          "amsha_longitude": 180.9072272814276
-        },
-        "Saturn": {
-          "amsha_index": 4,
-          "amsha_longitude": 148.88188762459362
-        },
-        "Sun": {
-          "amsha_index": 4,
-          "amsha_longitude": 148.64126702658086
-        },
-        "Uranus": {
-          "amsha_index": 3,
-          "amsha_longitude": 98.60389893804722
-        },
-        "Venus": {
-          "amsha_index": 5,
-          "amsha_longitude": 159.4130947024637
-        }
-      }
     },
     "panchanga": {
       "karana": "bava",
@@ -164,7 +103,8 @@
             "base_longitude": 347.52067711857586,
             "index": 26,
             "naksize": 13.333333333333334,
-            "name": "Revati"
+            "name": "Revati",
+            "pada": 1
           },
           "number": 1,
           "sign": 12,
@@ -182,7 +122,8 @@
             "base_longitude": 19.05342536754458,
             "index": 1,
             "naksize": 13.333333333333334,
-            "name": "Bharani"
+            "name": "Bharani",
+            "pada": 2
           },
           "number": 2,
           "sign": 1,
@@ -200,7 +141,8 @@
             "base_longitude": 48.107631310919075,
             "index": 3,
             "naksize": 13.333333333333334,
-            "name": "Rohini"
+            "name": "Rohini",
+            "pada": 3
           },
           "number": 3,
           "sign": 2,
@@ -218,7 +160,8 @@
             "base_longitude": 75.7578653142555,
             "index": 5,
             "naksize": 13.333333333333334,
-            "name": "Ardra"
+            "name": "Ardra",
+            "pada": 3
           },
           "number": 4,
           "sign": 3,
@@ -236,7 +179,8 @@
             "base_longitude": 104.18729917997288,
             "index": 7,
             "naksize": 13.333333333333334,
-            "name": "Pushya"
+            "name": "Pushya",
+            "pada": 4
           },
           "number": 5,
           "sign": 4,
@@ -254,7 +198,8 @@
             "base_longitude": 134.99620171680348,
             "index": 10,
             "naksize": 13.333333333333334,
-            "name": "P. Phalguni"
+            "name": "P. Phalguni",
+            "pada": 1
           },
           "number": 6,
           "sign": 5,
@@ -272,7 +217,8 @@
             "base_longitude": 167.52067711857583,
             "index": 12,
             "naksize": 13.333333333333334,
-            "name": "Hasta"
+            "name": "Hasta",
+            "pada": 3
           },
           "number": 7,
           "sign": 6,
@@ -290,7 +236,8 @@
             "base_longitude": 199.05342536754458,
             "index": 14,
             "naksize": 13.333333333333334,
-            "name": "Svati"
+            "name": "Svati",
+            "pada": 4
           },
           "number": 8,
           "sign": 7,
@@ -308,7 +255,8 @@
             "base_longitude": 228.10763131091906,
             "index": 17,
             "naksize": 13.333333333333334,
-            "name": "Jyeshtha"
+            "name": "Jyeshtha",
+            "pada": 1
           },
           "number": 9,
           "sign": 8,
@@ -326,7 +274,8 @@
             "base_longitude": 255.7578653142555,
             "index": 19,
             "naksize": 13.333333333333334,
-            "name": "P. Ashadha"
+            "name": "P. Ashadha",
+            "pada": 1
           },
           "number": 10,
           "sign": 9,
@@ -344,7 +293,8 @@
             "base_longitude": 284.1872991799729,
             "index": 21,
             "naksize": 13.333333333333334,
-            "name": "Shravana"
+            "name": "Shravana",
+            "pada": 2
           },
           "number": 11,
           "sign": 10,
@@ -362,7 +312,8 @@
             "base_longitude": 314.99620171680357,
             "index": 23,
             "naksize": 13.333333333333334,
-            "name": "Shatabhisha"
+            "name": "Shatabhisha",
+            "pada": 3
           },
           "number": 12,
           "sign": 11,
@@ -393,7 +344,8 @@
             "base_longitude": 227.76443197188627,
             "index": 17,
             "naksize": 13.333333333333334,
-            "name": "Jyeshtha"
+            "name": "Jyeshtha",
+            "pada": 1
           },
           "pnumber": 15,
           "retrograde": false,
@@ -425,7 +377,8 @@
             "base_longitude": 76.5156963362868,
             "index": 0,
             "naksize": 13.333333333333334,
-            "name": "Ashvini"
+            "name": "Ashvini",
+            "pada": 1
           },
           "pnumber": 14,
           "retrograde": false,
@@ -457,7 +410,8 @@
             "base_longitude": 1.3998686403727827,
             "index": 0,
             "naksize": 13.333333333333334,
-            "name": "Ashvini"
+            "name": "Ashvini",
+            "pada": 1
           },
           "pnumber": 5,
           "retrograde": false,
@@ -489,7 +443,8 @@
             "base_longitude": 280.1008030312697,
             "index": 7,
             "naksize": 13.333333333333334,
-            "name": "Pushya"
+            "name": "Pushya",
+            "pada": 2
           },
           "pnumber": 8,
           "retrograde": true,
@@ -521,7 +476,8 @@
             "base_longitude": 304.11008022416456,
             "index": 22,
             "naksize": 13.333333333333334,
-            "name": "Danishtha"
+            "name": "Danishtha",
+            "pada": 4
           },
           "pnumber": 4,
           "retrograde": false,
@@ -553,7 +509,8 @@
             "base_longitude": 248.03605471213606,
             "index": 18,
             "naksize": 13.333333333333334,
-            "name": "Mula"
+            "name": "Mula",
+            "pada": 3
           },
           "pnumber": 2,
           "retrograde": false,
@@ -585,7 +542,8 @@
             "base_longitude": 199.47052781445356,
             "index": 14,
             "naksize": 13.333333333333334,
-            "name": "Svati"
+            "name": "Svati",
+            "pada": 4
           },
           "pnumber": 1,
           "retrograde": false,
@@ -617,7 +575,8 @@
             "base_longitude": 279.33979734246583,
             "index": 20,
             "naksize": 13.333333333333334,
-            "name": "U. Ashadha"
+            "name": "U. Ashadha",
+            "pada": 4
           },
           "pnumber": 8,
           "retrograde": false,
@@ -649,7 +608,8 @@
             "base_longitude": 227.6015622417431,
             "index": 17,
             "naksize": 13.333333333333334,
-            "name": "Jyeshtha"
+            "name": "Jyeshtha",
+            "pada": 1
           },
           "pnumber": 9,
           "retrograde": false,
@@ -681,7 +641,8 @@
             "base_longitude": 100.10080303126973,
             "index": 7,
             "naksize": 13.333333333333334,
-            "name": "Pushya"
+            "name": "Pushya",
+            "pada": 3
           },
           "pnumber": 11,
           "retrograde": true,
@@ -713,7 +674,8 @@
             "base_longitude": 16.54243195828818,
             "index": 1,
             "naksize": 13.333333333333334,
-            "name": "Bharani"
+            "name": "Bharani",
+            "pada": 1
           },
           "pnumber": 6,
           "retrograde": true,
@@ -745,7 +707,8 @@
             "base_longitude": 256.5156963362868,
             "index": 19,
             "naksize": 13.333333333333334,
-            "name": "P. Ashadha"
+            "name": "P. Ashadha",
+            "pada": 1
           },
           "pnumber": 0,
           "retrograde": false,
@@ -777,7 +740,8 @@
             "base_longitude": 290.9559887708942,
             "index": 21,
             "naksize": 13.333333333333334,
-            "name": "Shravana"
+            "name": "Shravana",
+            "pada": 4
           },
           "pnumber": 7,
           "retrograde": false,
@@ -809,7 +773,8 @@
             "base_longitude": 217.7125660780515,
             "index": 16,
             "naksize": 13.333333333333334,
-            "name": "Anuradha"
+            "name": "Anuradha",
+            "pada": 2
           },
           "pnumber": 3,
           "retrograde": false,
@@ -821,65 +786,1307 @@
         }
       }
     },
-    "shashtyamsha": {
-      "amsha": 60,
-      "lagna_sign": 12,
-      "planets": {
-        "Chiron": {
-          "amsha_index": 11,
-          "amsha_longitude": 345.86591831317673
-        },
-        "Earth": {
-          "amsha_index": 9,
-          "amsha_longitude": 270.9417801772079
-        },
-        "Jupiter": {
-          "amsha_index": 2,
-          "amsha_longitude": 83.99211842236696
-        },
-        "Ketu": {
-          "amsha_index": 8,
-          "amsha_longitude": 246.04818187618366
-        },
-        "Mars": {
-          "amsha_index": 8,
-          "amsha_longitude": 246.6048134498742
-        },
-        "Mercury": {
-          "amsha_index": 4,
-          "amsha_longitude": 122.16328272816463
-        },
-        "Moon": {
-          "amsha_index": 2,
-          "amsha_longitude": 88.23166886721447
-        },
-        "Neptune": {
-          "amsha_index": 6,
-          "amsha_longitude": 200.38784054794814
-        },
-        "Pluto": {
-          "amsha_index": 11,
-          "amsha_longitude": 336.0937345045859
-        },
-        "Rahu": {
-          "amsha_index": 8,
-          "amsha_longitude": 246.04818187618366
-        },
-        "Saturn": {
-          "amsha_index": 9,
-          "amsha_longitude": 272.5459174972908
-        },
-        "Sun": {
-          "amsha_index": 9,
-          "amsha_longitude": 270.94178017720697
-        },
-        "Uranus": {
-          "amsha_index": 5,
-          "amsha_longitude": 177.3593262536524
-        },
-        "Venus": {
-          "amsha_index": 3,
-          "amsha_longitude": 102.75396468309009
+    "vargas": {
+      "-10": {
+        "amsha": -10,
+        "lagna_sign": 1,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 8,
+            "amsha_longitude": 267.6443197188627
+          },
+          "Earth": {
+            "amsha_index": 7,
+            "amsha_longitude": 225.15696336286794
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 13.998686403727827
+          },
+          "Ketu": {
+            "amsha_index": 8,
+            "amsha_longitude": 251.0080303126972
+          },
+          "Mars": {
+            "amsha_index": 11,
+            "amsha_longitude": 341.1008022416456
+          },
+          "Mercury": {
+            "amsha_index": 10,
+            "amsha_longitude": 320.36054712136064
+          },
+          "Moon": {
+            "amsha_index": 0,
+            "amsha_longitude": 14.705278144535612
+          },
+          "Neptune": {
+            "amsha_index": 8,
+            "amsha_longitude": 243.3979734246583
+          },
+          "Pluto": {
+            "amsha_index": 8,
+            "amsha_longitude": 266.01562241743096
+          },
+          "Rahu": {
+            "amsha_index": 2,
+            "amsha_longitude": 71.00803031269731
+          },
+          "Saturn": {
+            "amsha_index": 5,
+            "amsha_longitude": 165.4243195828818
+          },
+          "Sun": {
+            "amsha_index": 1,
+            "amsha_longitude": 45.15696336286794
+          },
+          "Uranus": {
+            "amsha_index": 11,
+            "amsha_longitude": 359.5598877089418
+          },
+          "Venus": {
+            "amsha_index": 5,
+            "amsha_longitude": 167.1256607805151
+          }
+        }
+      },
+      "-100": {
+        "amsha": -100,
+        "lagna_sign": 3,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 10,
+            "amsha_longitude": 327.6443197188627
+          },
+          "Earth": {
+            "amsha_index": 7,
+            "amsha_longitude": 225.15696336286794
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 13.998686403727827
+          },
+          "Ketu": {
+            "amsha_index": 2,
+            "amsha_longitude": 71.0080303126972
+          },
+          "Mars": {
+            "amsha_index": 11,
+            "amsha_longitude": 341.1008022416456
+          },
+          "Mercury": {
+            "amsha_index": 10,
+            "amsha_longitude": 320.36054712136064
+          },
+          "Moon": {
+            "amsha_index": 0,
+            "amsha_longitude": 14.705278144535612
+          },
+          "Neptune": {
+            "amsha_index": 2,
+            "amsha_longitude": 63.39797342465828
+          },
+          "Pluto": {
+            "amsha_index": 10,
+            "amsha_longitude": 326.01562241743096
+          },
+          "Rahu": {
+            "amsha_index": 8,
+            "amsha_longitude": 251.00803031269734
+          },
+          "Saturn": {
+            "amsha_index": 5,
+            "amsha_longitude": 165.4243195828818
+          },
+          "Sun": {
+            "amsha_index": 1,
+            "amsha_longitude": 45.15696336286794
+          },
+          "Uranus": {
+            "amsha_index": 11,
+            "amsha_longitude": 359.5598877089418
+          },
+          "Venus": {
+            "amsha_index": 1,
+            "amsha_longitude": 47.12566078051509
+          }
+        }
+      },
+      "-12": {
+        "amsha": -12,
+        "lagna_sign": 7,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 2,
+            "amsha_longitude": 63.17318366263521
+          },
+          "Earth": {
+            "amsha_index": 8,
+            "amsha_longitude": 258.18835603544153
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 16.798423684473395
+          },
+          "Ketu": {
+            "amsha_index": 1,
+            "amsha_longitude": 31.20963637523664
+          },
+          "Mars": {
+            "amsha_index": 11,
+            "amsha_longitude": 349.32096268997475
+          },
+          "Mercury": {
+            "amsha_index": 11,
+            "amsha_longitude": 336.43265654563277
+          },
+          "Moon": {
+            "amsha_index": 1,
+            "amsha_longitude": 53.646333773442734
+          },
+          "Neptune": {
+            "amsha_index": 0,
+            "amsha_longitude": 22.077568109589947
+          },
+          "Pluto": {
+            "amsha_index": 2,
+            "amsha_longitude": 61.218746900917154
+          },
+          "Rahu": {
+            "amsha_index": 7,
+            "amsha_longitude": 211.2096363752368
+          },
+          "Saturn": {
+            "amsha_index": 6,
+            "amsha_longitude": 198.50918349945815
+          },
+          "Sun": {
+            "amsha_index": 2,
+            "amsha_longitude": 78.18835603544153
+          },
+          "Uranus": {
+            "amsha_index": 5,
+            "amsha_longitude": 161.47186525073016
+          },
+          "Venus": {
+            "amsha_index": 10,
+            "amsha_longitude": 302.5507929366181
+          }
+        }
+      },
+      "-16": {
+        "amsha": -16,
+        "lagna_sign": 6,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 1,
+            "amsha_longitude": 44.23091155018028
+          },
+          "Earth": {
+            "amsha_index": 4,
+            "amsha_longitude": 144.2511413805887
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 22.397898245964523
+          },
+          "Ketu": {
+            "amsha_index": 5,
+            "amsha_longitude": 161.61284850031552
+          },
+          "Mars": {
+            "amsha_index": 6,
+            "amsha_longitude": 185.761283586633
+          },
+          "Mercury": {
+            "amsha_index": 0,
+            "amsha_longitude": 8.576875394177023
+          },
+          "Moon": {
+            "amsha_index": 10,
+            "amsha_longitude": 311.528445031257
+          },
+          "Neptune": {
+            "amsha_index": 4,
+            "amsha_longitude": 149.43675747945326
+          },
+          "Pluto": {
+            "amsha_index": 1,
+            "amsha_longitude": 41.62499586788954
+          },
+          "Rahu": {
+            "amsha_index": 5,
+            "amsha_longitude": 161.61284850031575
+          },
+          "Saturn": {
+            "amsha_index": 8,
+            "amsha_longitude": 264.6789113326109
+          },
+          "Sun": {
+            "amsha_index": 4,
+            "amsha_longitude": 144.2511413805887
+          },
+          "Uranus": {
+            "amsha_index": 11,
+            "amsha_longitude": 335.2958203343069
+          },
+          "Venus": {
+            "amsha_index": 8,
+            "amsha_longitude": 243.40105724882415
+          }
+        }
+      },
+      "-2": {
+        "amsha": -2,
+        "lagna_sign": 6,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 1,
+            "amsha_longitude": 35.528863943772535
+          },
+          "Earth": {
+            "amsha_index": 8,
+            "amsha_longitude": 243.0313926725736
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 2.7997372807455654
+          },
+          "Ketu": {
+            "amsha_index": 9,
+            "amsha_longitude": 290.20160606253944
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 308.2201604483291
+          },
+          "Mercury": {
+            "amsha_index": 8,
+            "amsha_longitude": 256.0721094242721
+          },
+          "Moon": {
+            "amsha_index": 0,
+            "amsha_longitude": 8.941055628907122
+          },
+          "Neptune": {
+            "amsha_index": 9,
+            "amsha_longitude": 288.67959468493166
+          },
+          "Pluto": {
+            "amsha_index": 1,
+            "amsha_longitude": 35.20312448348619
+          },
+          "Rahu": {
+            "amsha_index": 3,
+            "amsha_longitude": 110.20160606253947
+          },
+          "Saturn": {
+            "amsha_index": 6,
+            "amsha_longitude": 183.08486391657635
+          },
+          "Sun": {
+            "amsha_index": 2,
+            "amsha_longitude": 63.03139267257359
+          },
+          "Uranus": {
+            "amsha_index": 3,
+            "amsha_longitude": 101.91197754178836
+          },
+          "Venus": {
+            "amsha_index": 7,
+            "amsha_longitude": 225.42513215610302
+          }
+        }
+      },
+      "-20": {
+        "amsha": -20,
+        "lagna_sign": 4,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 7,
+            "amsha_longitude": 235.28863943772535
+          },
+          "Earth": {
+            "amsha_index": 3,
+            "amsha_longitude": 90.31392672573588
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 27.997372807455655
+          },
+          "Ketu": {
+            "amsha_index": 6,
+            "amsha_longitude": 202.0160606253944
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 322.20160448329125
+          },
+          "Mercury": {
+            "amsha_index": 9,
+            "amsha_longitude": 280.7210942427213
+          },
+          "Moon": {
+            "amsha_index": 0,
+            "amsha_longitude": 29.410556289071224
+          },
+          "Neptune": {
+            "amsha_index": 6,
+            "amsha_longitude": 186.79594684931658
+          },
+          "Pluto": {
+            "amsha_index": 7,
+            "amsha_longitude": 232.03124483486192
+          },
+          "Rahu": {
+            "amsha_index": 6,
+            "amsha_longitude": 202.0160606253947
+          },
+          "Saturn": {
+            "amsha_index": 11,
+            "amsha_longitude": 330.8486391657636
+          },
+          "Sun": {
+            "amsha_index": 3,
+            "amsha_longitude": 90.31392672573588
+          },
+          "Uranus": {
+            "amsha_index": 1,
+            "amsha_longitude": 59.1197754178836
+          },
+          "Venus": {
+            "amsha_index": 1,
+            "amsha_longitude": 34.25132156103018
+          }
+        }
+      },
+      "-24": {
+        "amsha": -24,
+        "lagna_sign": 6,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.34636732527042
+          },
+          "Earth": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.37671207088306
+          },
+          "Jupiter": {
+            "amsha_index": 5,
+            "amsha_longitude": 153.59684736894678
+          },
+          "Ketu": {
+            "amsha_index": 11,
+            "amsha_longitude": 332.4192727504733
+          },
+          "Mars": {
+            "amsha_index": 7,
+            "amsha_longitude": 218.6419253799495
+          },
+          "Mercury": {
+            "amsha_index": 10,
+            "amsha_longitude": 312.86531309126553
+          },
+          "Moon": {
+            "amsha_index": 7,
+            "amsha_longitude": 227.29266754688547
+          },
+          "Neptune": {
+            "amsha_index": 10,
+            "amsha_longitude": 314.1551362191799
+          },
+          "Pluto": {
+            "amsha_index": 5,
+            "amsha_longitude": 152.4374938018343
+          },
+          "Rahu": {
+            "amsha_index": 11,
+            "amsha_longitude": 332.4192727504736
+          },
+          "Saturn": {
+            "amsha_index": 5,
+            "amsha_longitude": 157.01836699891635
+          },
+          "Sun": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.37671207088306
+          },
+          "Uranus": {
+            "amsha_index": 7,
+            "amsha_longitude": 232.94373050146032
+          },
+          "Venus": {
+            "amsha_index": 9,
+            "amsha_longitude": 275.1015858732362
+          }
+        }
+      },
+      "-240": {
+        "amsha": -240,
+        "lagna_sign": 2,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 1,
+            "amsha_longitude": 36.34636732527042
+          },
+          "Earth": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.37671207088306
+          },
+          "Jupiter": {
+            "amsha_index": 5,
+            "amsha_longitude": 153.59684736894678
+          },
+          "Ketu": {
+            "amsha_index": 7,
+            "amsha_longitude": 212.41927275047328
+          },
+          "Mars": {
+            "amsha_index": 7,
+            "amsha_longitude": 218.6419253799495
+          },
+          "Mercury": {
+            "amsha_index": 10,
+            "amsha_longitude": 312.86531309126553
+          },
+          "Moon": {
+            "amsha_index": 7,
+            "amsha_longitude": 227.29266754688547
+          },
+          "Neptune": {
+            "amsha_index": 8,
+            "amsha_longitude": 254.1551362191799
+          },
+          "Pluto": {
+            "amsha_index": 1,
+            "amsha_longitude": 32.43749380183431
+          },
+          "Rahu": {
+            "amsha_index": 7,
+            "amsha_longitude": 212.41927275047362
+          },
+          "Saturn": {
+            "amsha_index": 5,
+            "amsha_longitude": 157.01836699891635
+          },
+          "Sun": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.37671207088306
+          },
+          "Uranus": {
+            "amsha_index": 11,
+            "amsha_longitude": 352.94373050146027
+          },
+          "Venus": {
+            "amsha_index": 9,
+            "amsha_longitude": 275.1015858732362
+          }
+        }
+      },
+      "-27": {
+        "amsha": -27,
+        "lagna_sign": 1,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 0,
+            "amsha_longitude": 29.639663240929167
+          },
+          "Earth": {
+            "amsha_index": 8,
+            "amsha_longitude": 265.9238010797434
+          },
+          "Jupiter": {
+            "amsha_index": 1,
+            "amsha_longitude": 37.79645329006513
+          },
+          "Ketu": {
+            "amsha_index": 0,
+            "amsha_longitude": 2.7216818442824433
+          },
+          "Mars": {
+            "amsha_index": 9,
+            "amsha_longitude": 290.9721660524432
+          },
+          "Mercury": {
+            "amsha_index": 7,
+            "amsha_longitude": 216.9734772276737
+          },
+          "Moon": {
+            "amsha_index": 11,
+            "amsha_longitude": 345.7042509902461
+          },
+          "Neptune": {
+            "amsha_index": 11,
+            "amsha_longitude": 342.1745282465774
+          },
+          "Pluto": {
+            "amsha_index": 0,
+            "amsha_longitude": 25.242180527063624
+          },
+          "Rahu": {
+            "amsha_index": 6,
+            "amsha_longitude": 182.72168184428278
+          },
+          "Saturn": {
+            "amsha_index": 2,
+            "amsha_longitude": 86.64566287378085
+          },
+          "Sun": {
+            "amsha_index": 2,
+            "amsha_longitude": 85.92380107974338
+          },
+          "Uranus": {
+            "amsha_index": 9,
+            "amsha_longitude": 295.8116968141428
+          },
+          "Venus": {
+            "amsha_index": 3,
+            "amsha_longitude": 118.23928410739074
+          }
+        }
+      },
+      "-3": {
+        "amsha": -3,
+        "lagna_sign": 4,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 11,
+            "amsha_longitude": 353.2932959156588
+          },
+          "Earth": {
+            "amsha_index": 6,
+            "amsha_longitude": 199.54708900886038
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 4.199605921118349
+          },
+          "Ketu": {
+            "amsha_index": 1,
+            "amsha_longitude": 30.30240909380916
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 312.3302406724937
+          },
+          "Mercury": {
+            "amsha_index": 8,
+            "amsha_longitude": 264.10816413640816
+          },
+          "Moon": {
+            "amsha_index": 10,
+            "amsha_longitude": 328.41158344336066
+          },
+          "Neptune": {
+            "amsha_index": 9,
+            "amsha_longitude": 298.0193920273975
+          },
+          "Pluto": {
+            "amsha_index": 11,
+            "amsha_longitude": 352.8046867252293
+          },
+          "Rahu": {
+            "amsha_index": 7,
+            "amsha_longitude": 210.30240909380922
+          },
+          "Saturn": {
+            "amsha_index": 4,
+            "amsha_longitude": 139.62729587486453
+          },
+          "Sun": {
+            "amsha_index": 0,
+            "amsha_longitude": 19.547089008860382
+          },
+          "Uranus": {
+            "amsha_index": 5,
+            "amsha_longitude": 152.86796631268254
+          },
+          "Venus": {
+            "amsha_index": 7,
+            "amsha_longitude": 233.13769823415453
+          }
+        }
+      },
+      "-4": {
+        "amsha": -4,
+        "lagna_sign": 6,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 1,
+            "amsha_longitude": 41.05772788754507
+          },
+          "Earth": {
+            "amsha_index": 8,
+            "amsha_longitude": 246.06278534514718
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 5.599474561491131
+          },
+          "Ketu": {
+            "amsha_index": 0,
+            "amsha_longitude": 10.40321212507888
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 316.44032089665825
+          },
+          "Mercury": {
+            "amsha_index": 11,
+            "amsha_longitude": 332.14421884854426
+          },
+          "Moon": {
+            "amsha_index": 0,
+            "amsha_longitude": 17.882111257814245
+          },
+          "Neptune": {
+            "amsha_index": 0,
+            "amsha_longitude": 7.359189369863316
+          },
+          "Pluto": {
+            "amsha_index": 1,
+            "amsha_longitude": 40.406248966972385
+          },
+          "Rahu": {
+            "amsha_index": 6,
+            "amsha_longitude": 190.40321212507894
+          },
+          "Saturn": {
+            "amsha_index": 6,
+            "amsha_longitude": 186.1697278331527
+          },
+          "Sun": {
+            "amsha_index": 2,
+            "amsha_longitude": 66.06278534514718
+          },
+          "Uranus": {
+            "amsha_index": 3,
+            "amsha_longitude": 113.82395508357672
+          },
+          "Venus": {
+            "amsha_index": 10,
+            "amsha_longitude": 300.85026431220604
+          }
+        }
+      },
+      "-40": {
+        "amsha": -40,
+        "lagna_sign": 6,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 5,
+            "amsha_longitude": 170.5772788754507
+          },
+          "Earth": {
+            "amsha_index": 10,
+            "amsha_longitude": 300.62785345147176
+          },
+          "Jupiter": {
+            "amsha_index": 1,
+            "amsha_longitude": 55.99474561491131
+          },
+          "Ketu": {
+            "amsha_index": 7,
+            "amsha_longitude": 224.0321212507888
+          },
+          "Mars": {
+            "amsha_index": 5,
+            "amsha_longitude": 164.4032089665825
+          },
+          "Mercury": {
+            "amsha_index": 10,
+            "amsha_longitude": 321.44218848544256
+          },
+          "Moon": {
+            "amsha_index": 1,
+            "amsha_longitude": 58.82111257814245
+          },
+          "Neptune": {
+            "amsha_index": 6,
+            "amsha_longitude": 193.59189369863316
+          },
+          "Pluto": {
+            "amsha_index": 5,
+            "amsha_longitude": 164.06248966972385
+          },
+          "Rahu": {
+            "amsha_index": 7,
+            "amsha_longitude": 224.03212125078937
+          },
+          "Saturn": {
+            "amsha_index": 10,
+            "amsha_longitude": 301.6972783315272
+          },
+          "Sun": {
+            "amsha_index": 10,
+            "amsha_longitude": 300.62785345147176
+          },
+          "Uranus": {
+            "amsha_index": 9,
+            "amsha_longitude": 298.2395508357672
+          },
+          "Venus": {
+            "amsha_index": 4,
+            "amsha_longitude": 128.50264312206036
+          }
+        }
+      },
+      "-45": {
+        "amsha": -45,
+        "lagna_sign": 11,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 6,
+            "amsha_longitude": 199.3994387348821
+          },
+          "Earth": {
+            "amsha_index": 8,
+            "amsha_longitude": 263.2063351329057
+          },
+          "Jupiter": {
+            "amsha_index": 2,
+            "amsha_longitude": 62.99408881677523
+          },
+          "Ketu": {
+            "amsha_index": 3,
+            "amsha_longitude": 94.5361364071374
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 304.9536100874053
+          },
+          "Mercury": {
+            "amsha_index": 8,
+            "amsha_longitude": 241.6224620461229
+          },
+          "Moon": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.17375165041028
+          },
+          "Neptune": {
+            "amsha_index": 2,
+            "amsha_longitude": 60.2908804109623
+          },
+          "Pluto": {
+            "amsha_index": 6,
+            "amsha_longitude": 192.0703008784393
+          },
+          "Rahu": {
+            "amsha_index": 3,
+            "amsha_longitude": 94.53613640713803
+          },
+          "Saturn": {
+            "amsha_index": 0,
+            "amsha_longitude": 24.40943812296814
+          },
+          "Sun": {
+            "amsha_index": 8,
+            "amsha_longitude": 263.2063351329057
+          },
+          "Uranus": {
+            "amsha_index": 7,
+            "amsha_longitude": 223.01949469023816
+          },
+          "Venus": {
+            "amsha_index": 3,
+            "amsha_longitude": 107.06547351231791
+          }
+        }
+      },
+      "-60": {
+        "amsha": -60,
+        "lagna_sign": 11,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 6,
+            "amsha_longitude": 195.86591831317605
+          },
+          "Earth": {
+            "amsha_index": 11,
+            "amsha_longitude": 330.94178017720765
+          },
+          "Jupiter": {
+            "amsha_index": 2,
+            "amsha_longitude": 83.99211842236696
+          },
+          "Ketu": {
+            "amsha_index": 5,
+            "amsha_longitude": 156.0481818761832
+          },
+          "Mars": {
+            "amsha_index": 6,
+            "amsha_longitude": 186.60481344987375
+          },
+          "Mercury": {
+            "amsha_index": 0,
+            "amsha_longitude": 2.1632827281638356
+          },
+          "Moon": {
+            "amsha_index": 8,
+            "amsha_longitude": 268.23166886721367
+          },
+          "Neptune": {
+            "amsha_index": 3,
+            "amsha_longitude": 110.38784054794974
+          },
+          "Pluto": {
+            "amsha_index": 6,
+            "amsha_longitude": 186.09373450458577
+          },
+          "Rahu": {
+            "amsha_index": 11,
+            "amsha_longitude": 336.04818187618406
+          },
+          "Saturn": {
+            "amsha_index": 9,
+            "amsha_longitude": 272.5459174972908
+          },
+          "Sun": {
+            "amsha_index": 5,
+            "amsha_longitude": 150.94178017720765
+          },
+          "Uranus": {
+            "amsha_index": 2,
+            "amsha_longitude": 87.3593262536508
+          },
+          "Venus": {
+            "amsha_index": 10,
+            "amsha_longitude": 312.75396468309054
+          }
+        }
+      },
+      "12": {
+        "amsha": 12,
+        "lagna_sign": 8,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 7,
+            "amsha_longitude": 213.17318366263498
+          },
+          "Earth": {
+            "amsha_index": 6,
+            "amsha_longitude": 198.18835603544153
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 16.798423684473395
+          },
+          "Ketu": {
+            "amsha_index": 4,
+            "amsha_longitude": 121.20963637523664
+          },
+          "Mars": {
+            "amsha_index": 1,
+            "amsha_longitude": 49.32096268997475
+          },
+          "Mercury": {
+            "amsha_index": 3,
+            "amsha_longitude": 96.43265654563311
+          },
+          "Moon": {
+            "amsha_index": 7,
+            "amsha_longitude": 233.64633377344308
+          },
+          "Neptune": {
+            "amsha_index": 3,
+            "amsha_longitude": 112.07756810959017
+          },
+          "Pluto": {
+            "amsha_index": 7,
+            "amsha_longitude": 211.21874690091727
+          },
+          "Rahu": {
+            "amsha_index": 4,
+            "amsha_longitude": 121.20963637523664
+          },
+          "Saturn": {
+            "amsha_index": 6,
+            "amsha_longitude": 198.50918349945815
+          },
+          "Sun": {
+            "amsha_index": 6,
+            "amsha_longitude": 198.1883560354413
+          },
+          "Uranus": {
+            "amsha_index": 8,
+            "amsha_longitude": 251.4718652507304
+          },
+          "Venus": {
+            "amsha_index": 3,
+            "amsha_longitude": 92.55079293661811
+          }
+        }
+      },
+      "2": {
+        "amsha": 2,
+        "lagna_sign": 12,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 3,
+            "amsha_longitude": 95.52886394377254
+          },
+          "Earth": {
+            "amsha_index": 5,
+            "amsha_longitude": 153.0313926725736
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 2.7997372807455654
+          },
+          "Ketu": {
+            "amsha_index": 6,
+            "amsha_longitude": 200.20160606253944
+          },
+          "Mars": {
+            "amsha_index": 8,
+            "amsha_longitude": 248.22016044832912
+          },
+          "Mercury": {
+            "amsha_index": 4,
+            "amsha_longitude": 136.07210942427207
+          },
+          "Moon": {
+            "amsha_index": 1,
+            "amsha_longitude": 38.94105562890712
+          },
+          "Neptune": {
+            "amsha_index": 6,
+            "amsha_longitude": 198.67959468493166
+          },
+          "Pluto": {
+            "amsha_index": 3,
+            "amsha_longitude": 95.20312448348619
+          },
+          "Rahu": {
+            "amsha_index": 6,
+            "amsha_longitude": 200.2016060625395
+          },
+          "Saturn": {
+            "amsha_index": 1,
+            "amsha_longitude": 33.08486391657636
+          },
+          "Sun": {
+            "amsha_index": 5,
+            "amsha_longitude": 153.0313926725736
+          },
+          "Uranus": {
+            "amsha_index": 7,
+            "amsha_longitude": 221.91197754178836
+          },
+          "Venus": {
+            "amsha_index": 2,
+            "amsha_longitude": 75.42513215610302
+          }
+        }
+      },
+      "3": {
+        "amsha": 3,
+        "lagna_sign": 11,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 10,
+            "amsha_longitude": 323.29329591565875
+          },
+          "Earth": {
+            "amsha_index": 7,
+            "amsha_longitude": 229.54708900886038
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 4.199605921118349
+          },
+          "Ketu": {
+            "amsha_index": 4,
+            "amsha_longitude": 120.30240909380916
+          },
+          "Mars": {
+            "amsha_index": 6,
+            "amsha_longitude": 192.3302406724937
+          },
+          "Mercury": {
+            "amsha_index": 0,
+            "amsha_longitude": 24.108164136408277
+          },
+          "Moon": {
+            "amsha_index": 7,
+            "amsha_longitude": 238.41158344336077
+          },
+          "Neptune": {
+            "amsha_index": 3,
+            "amsha_longitude": 118.01939202739754
+          },
+          "Pluto": {
+            "amsha_index": 10,
+            "amsha_longitude": 322.8046867252293
+          },
+          "Rahu": {
+            "amsha_index": 10,
+            "amsha_longitude": 300.30240909380916
+          },
+          "Saturn": {
+            "amsha_index": 1,
+            "amsha_longitude": 49.627295874864544
+          },
+          "Sun": {
+            "amsha_index": 1,
+            "amsha_longitude": 49.547089008860326
+          },
+          "Uranus": {
+            "amsha_index": 5,
+            "amsha_longitude": 152.8679663126826
+          },
+          "Venus": {
+            "amsha_index": 9,
+            "amsha_longitude": 293.1376982341545
+          }
+        }
+      },
+      "30": {
+        "amsha": 30,
+        "lagna_sign": 12,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 11,
+            "amsha_longitude": 352.93295915658837
+          },
+          "Earth": {
+            "amsha_index": 4,
+            "amsha_longitude": 135.47089008860394
+          },
+          "Jupiter": {
+            "amsha_index": 1,
+            "amsha_longitude": 41.99605921118348
+          },
+          "Ketu": {
+            "amsha_index": 4,
+            "amsha_longitude": 123.02409093809183
+          },
+          "Mars": {
+            "amsha_index": 4,
+            "amsha_longitude": 123.3024067249371
+          },
+          "Mercury": {
+            "amsha_index": 8,
+            "amsha_longitude": 241.08164136408232
+          },
+          "Moon": {
+            "amsha_index": 7,
+            "amsha_longitude": 224.11583443360723
+          },
+          "Neptune": {
+            "amsha_index": 3,
+            "amsha_longitude": 100.19392027397407
+          },
+          "Pluto": {
+            "amsha_index": 11,
+            "amsha_longitude": 348.04686725229294
+          },
+          "Rahu": {
+            "amsha_index": 4,
+            "amsha_longitude": 123.02409093809183
+          },
+          "Saturn": {
+            "amsha_index": 4,
+            "amsha_longitude": 136.2729587486454
+          },
+          "Sun": {
+            "amsha_index": 4,
+            "amsha_longitude": 135.47089008860348
+          },
+          "Uranus": {
+            "amsha_index": 2,
+            "amsha_longitude": 88.6796631268262
+          },
+          "Venus": {
+            "amsha_index": 1,
+            "amsha_longitude": 51.376982341545045
+          }
+        }
+      },
+      "60": {
+        "amsha": 60,
+        "lagna_sign": 12,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 11,
+            "amsha_longitude": 345.86591831317673
+          },
+          "Earth": {
+            "amsha_index": 9,
+            "amsha_longitude": 270.9417801772079
+          },
+          "Jupiter": {
+            "amsha_index": 2,
+            "amsha_longitude": 83.99211842236696
+          },
+          "Ketu": {
+            "amsha_index": 8,
+            "amsha_longitude": 246.04818187618366
+          },
+          "Mars": {
+            "amsha_index": 8,
+            "amsha_longitude": 246.6048134498742
+          },
+          "Mercury": {
+            "amsha_index": 4,
+            "amsha_longitude": 122.16328272816463
+          },
+          "Moon": {
+            "amsha_index": 2,
+            "amsha_longitude": 88.23166886721447
+          },
+          "Neptune": {
+            "amsha_index": 6,
+            "amsha_longitude": 200.38784054794814
+          },
+          "Pluto": {
+            "amsha_index": 11,
+            "amsha_longitude": 336.0937345045859
+          },
+          "Rahu": {
+            "amsha_index": 8,
+            "amsha_longitude": 246.04818187618366
+          },
+          "Saturn": {
+            "amsha_index": 9,
+            "amsha_longitude": 272.5459174972908
+          },
+          "Sun": {
+            "amsha_index": 9,
+            "amsha_longitude": 270.94178017720697
+          },
+          "Uranus": {
+            "amsha_index": 5,
+            "amsha_longitude": 177.3593262536524
+          },
+          "Venus": {
+            "amsha_index": 3,
+            "amsha_longitude": 102.75396468309009
+          }
+        }
+      },
+      "7": {
+        "amsha": 7,
+        "lagna_sign": 10,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 5,
+            "amsha_longitude": 154.35102380320404
+          },
+          "Earth": {
+            "amsha_index": 5,
+            "amsha_longitude": 175.60987435400762
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 9.799080482609478
+          },
+          "Ketu": {
+            "amsha_index": 5,
+            "amsha_longitude": 160.70562121888793
+          },
+          "Mars": {
+            "amsha_index": 10,
+            "amsha_longitude": 328.77056156915205
+          },
+          "Mercury": {
+            "amsha_index": 9,
+            "amsha_longitude": 296.2523829849524
+          },
+          "Moon": {
+            "amsha_index": 10,
+            "amsha_longitude": 316.2936947011749
+          },
+          "Neptune": {
+            "amsha_index": 5,
+            "amsha_longitude": 155.37858139726063
+          },
+          "Pluto": {
+            "amsha_index": 5,
+            "amsha_longitude": 153.2109356922017
+          },
+          "Rahu": {
+            "amsha_index": 11,
+            "amsha_longitude": 340.70562121888815
+          },
+          "Saturn": {
+            "amsha_index": 3,
+            "amsha_longitude": 115.79702370801726
+          },
+          "Sun": {
+            "amsha_index": 11,
+            "amsha_longitude": 355.6098743540076
+          },
+          "Uranus": {
+            "amsha_index": 7,
+            "amsha_longitude": 236.69192139625943
+          },
+          "Venus": {
+            "amsha_index": 2,
+            "amsha_longitude": 83.98796254636068
+          }
+        }
+      },
+      "9": {
+        "amsha": 9,
+        "lagna_sign": 9,
+        "planets": {
+          "Chiron": {
+            "amsha_index": 8,
+            "amsha_longitude": 249.87988774697624
+          },
+          "Earth": {
+            "amsha_index": 10,
+            "amsha_longitude": 328.6412670265811
+          },
+          "Jupiter": {
+            "amsha_index": 0,
+            "amsha_longitude": 12.598817763355044
+          },
+          "Ketu": {
+            "amsha_index": 0,
+            "amsha_longitude": 0.9072272814273674
+          },
+          "Mars": {
+            "amsha_index": 7,
+            "amsha_longitude": 216.99072201748095
+          },
+          "Mercury": {
+            "amsha_index": 2,
+            "amsha_longitude": 72.3244924092246
+          },
+          "Moon": {
+            "amsha_index": 11,
+            "amsha_longitude": 355.2347503300821
+          },
+          "Neptune": {
+            "amsha_index": 11,
+            "amsha_longitude": 354.0581760821924
+          },
+          "Pluto": {
+            "amsha_index": 8,
+            "amsha_longitude": 248.41406017568806
+          },
+          "Rahu": {
+            "amsha_index": 6,
+            "amsha_longitude": 180.9072272814276
+          },
+          "Saturn": {
+            "amsha_index": 4,
+            "amsha_longitude": 148.88188762459362
+          },
+          "Sun": {
+            "amsha_index": 4,
+            "amsha_longitude": 148.64126702658086
+          },
+          "Uranus": {
+            "amsha_index": 3,
+            "amsha_longitude": 98.60389893804722
+          },
+          "Venus": {
+            "amsha_index": 5,
+            "amsha_longitude": 159.4130947024637
+          }
         }
       }
     },

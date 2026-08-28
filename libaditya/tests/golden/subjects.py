@@ -39,27 +39,73 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-# House-system letters swept for the high-latitude subject.  A wide, well-known
-# spread: quadrant systems that degrade toward the poles (P, K, R, C, O) next to
-# robust equal/whole variants (A, V, W) plus the space-division oddballs
-# (X meridian, H horizon, T Polich-Page, B Alcabitius, M Morinus, G Gauquelin).
-# Each is computed inside per-system error capture, so an engine that rejects a
-# letter freezes that rejection rather than crashing the run.
+# House-system letters swept per the GM-2 decision: the FULL Swiss-Ephemeris
+# house-system set, not just the letters libaditya drives through its API.  This
+# is cheap insurance that catches ``house_name``/``house_pos`` gaps across every
+# ``hsys`` blanket-wide -- the casing of the frozen ``house_name`` strings is the
+# workaround GM-2 exists to lock.  The set is the whole uppercase ``A``..``Y``
+# range that ``swe.house_name`` names, plus lowercase ``i`` (Sunshine / alt.),
+# the one letter whose calculation genuinely differs from its uppercase form.
+# Each system is computed inside per-system error capture, so an engine that
+# rejects a letter freezes that rejection rather than crashing the run.
 HOUSE_SYSTEMS = [
-    "P",
-    "K",
-    "O",
-    "R",
-    "C",
-    "A",
-    "V",
-    "W",
-    "X",
-    "H",
-    "T",
-    "B",
-    "M",
-    "G",
+    "A",  # equal
+    "B",  # Alcabitius
+    "C",  # Campanus
+    "D",  # equal (MC)
+    "E",  # equal
+    "F",  # Carter poli-equ.
+    "G",  # Gauquelin sectors
+    "H",  # horizon/azimut
+    "I",  # Sunshine
+    "J",  # Savard-A
+    "K",  # Koch
+    "L",  # Pullen SD
+    "M",  # Morinus
+    "N",  # equal / 1=Aries
+    "O",  # Porphyry
+    "P",  # Placidus
+    "Q",  # Pullen SR
+    "R",  # Regiomontanus
+    "S",  # Sripati
+    "T",  # Polich/Page
+    "U",  # Krusinski-Pisa-Goelzer
+    "V",  # equal/Vehlow
+    "W",  # equal / whole sign
+    "X",  # axial rotation / Meridian
+    "Y",  # APC houses
+    "i",  # Sunshine / alt. (distinct from uppercase 'I')
+]
+
+# Vargas frozen for every case.  The positive parivritti D-series saptavargas
+# (D1 = rashi is already fully covered by the ``rashi`` view, so it is omitted
+# here) plus the full set of special negative-amsha "deity" vargas enumerated in
+# ``Chart.varga()``'s docstring.  A varga projection depends on the underlying
+# rashi longitudes and the circle, so it is legitimate per-config coverage.
+VARGA_AMSHAS = [
+    # positive parivritti D-series
+    2,
+    3,
+    7,
+    9,
+    12,
+    30,
+    60,
+    # special negative-amsha (deity) vargas
+    -2,
+    -3,
+    -4,
+    -10,
+    -12,
+    -16,
+    -20,
+    -24,
+    -27,
+    -40,
+    -45,
+    -60,
+    -100,
+    -240,
 ]
 
 
@@ -80,13 +126,24 @@ class Subject:
 
 @dataclass(frozen=True)
 class Case:
-    """One frozen computation: a subject rendered under one configuration."""
+    """One frozen computation: a subject rendered under one configuration.
+
+    ``config`` names the ``Chart`` builder method invoked with ``config_kwargs``
+    (``aditya`` / ``tropical`` / ``sidereal`` / ``heliocentric`` / ``barycentric``
+    / ``draconic``).  ``context_overrides`` is applied *after* that method via
+    ``Chart._new_chart(**overrides)``, for knobs the builders set themselves and
+    so cannot take as a keyword without a duplicate-argument clash -- the raw
+    ``sysflg`` (equatorial ``const.EQU``, topocentric ``const.TOPO`` /
+    ``const.SID | const.TOPO``) and the ``circle`` (an Aditya chart forced onto
+    ``Circle.ZODIAC``).
+    """
 
     id: str
     subject: Subject
-    config: str  # Chart method: "aditya" | "tropical" | "sidereal"
+    config: str  # Chart method: "aditya" | "tropical" | "sidereal" | ...
     config_kwargs: dict = field(default_factory=dict)  # e.g. {"ayanamsa": 1}
-    extra_views: tuple = ()  # e.g. ("houses_by_system",)
+    context_overrides: dict = field(default_factory=dict)  # applied via _new_chart
+    extra_views: tuple = ()  # e.g. ("houses_by_system", "ayanamsa_sweep")
 
 
 SUBJECTS = {
@@ -145,21 +202,74 @@ SUBJECTS = {
 
 
 def cases() -> list[Case]:
-    """The ordered case matrix frozen by the harness."""
+    """The ordered case matrix frozen by the harness.
+
+    Constants (``const.*`` sysflag values, the ``Circle`` enum) are imported
+    lazily here rather than at module top: the harness selects the ephemeris
+    backend *before* it first imports ``libaditya``, and ``cases()`` only ever
+    runs after that (it is reached through ``harness``).
+    """
+    from libaditya import constants as const
+    from libaditya.objects import Circle
+
     s = SUBJECTS
     return [
-        Case("nyc-aditya", s["nyc"], "aditya"),
+        # --- nyc: the full zodiac/system sweep on one modern mid-latitude subject
+        Case("nyc-aditya", s["nyc"], "aditya", extra_views=("houses_by_system",)),
+        Case(
+            "nyc-aditya-zodiac",
+            s["nyc"],
+            "aditya",
+            context_overrides={"circle": Circle.ZODIAC},
+        ),
         Case("nyc-tropical", s["nyc"], "tropical"),
+        Case("nyc-heliocentric", s["nyc"], "heliocentric"),
+        Case("nyc-barycentric", s["nyc"], "barycentric"),
+        Case("nyc-draconic", s["nyc"], "draconic"),
+        Case(
+            "nyc-equatorial",
+            s["nyc"],
+            "aditya",
+            context_overrides={"sysflg": const.EQU},
+        ),
+        Case(
+            "nyc-topocentric",  # tropical topocentric (FLG_TOPOCTR alone; TROP == 0)
+            s["nyc"],
+            "tropical",
+            context_overrides={"sysflg": const.TOPO},
+        ),
+        # representative ayanamsa set: 1 Lahiri, 3 Raman, 5 Krishnamurti,
+        # 27 True Citra (sidereal() default), 36 GAL_CENT_MULA_WILHELM (the code
+        # aditya's 98 internally maps signs to), 97 true-sidereal, 98 aditya-default.
         Case("nyc-sidereal-lahiri", s["nyc"], "sidereal", {"ayanamsa": 1}),
+        Case("nyc-sidereal-raman", s["nyc"], "sidereal", {"ayanamsa": 3}),
+        Case("nyc-sidereal-krishnamurti", s["nyc"], "sidereal", {"ayanamsa": 5}),
         Case("nyc-sidereal-truecitra", s["nyc"], "sidereal", {"ayanamsa": 27}),
+        Case("nyc-sidereal-galcentmula", s["nyc"], "sidereal", {"ayanamsa": 36}),
+        Case("nyc-sidereal-truesidereal", s["nyc"], "sidereal", {"ayanamsa": 97}),
+        Case("nyc-sidereal-adityadefault", s["nyc"], "sidereal", {"ayanamsa": 98}),
+        # --- other subjects: spread the remaining coordinate/era edges
         Case("sydney-aditya", s["sydney"], "aditya"),
+        Case(
+            "sydney-topocentric-sidereal",  # the SID | TOPO topocentric branch
+            s["sydney"],
+            "sidereal",
+            {"ayanamsa": 1},
+            context_overrides={"sysflg": const.SID | const.TOPO},
+        ),
         Case(
             "reykjavik-aditya",
             s["reykjavik"],
             "aditya",
             extra_views=("houses_by_system",),
         ),
-        Case("equator-aditya", s["equator"], "aditya"),
+        Case(
+            "equator-aditya",
+            s["equator"],
+            "aditya",
+            # J2000 epoch: freeze the full get_ayanamsa() code sweep here.
+            extra_views=("ayanamsa_sweep",),
+        ),
         Case("equator-sidereal-lahiri", s["equator"], "sidereal", {"ayanamsa": 1}),
         Case("yamakoti-aditya", s["yamakoti"], "aditya"),
     ]
@@ -184,4 +294,7 @@ def build_chart(case: Case):
         )
     base = Chart(EphContext(name=s.id, timeJD=jd, location=location))
     configure = getattr(base, case.config)
-    return configure(**case.config_kwargs)
+    chart = configure(**case.config_kwargs)
+    if case.context_overrides:
+        chart = chart._new_chart(**case.context_overrides)
+    return chart

@@ -43,7 +43,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .canonical import canonicalize
-from .subjects import HOUSE_SYSTEMS, Case, build_chart
+from .subjects import HOUSE_SYSTEMS, VARGA_AMSHAS, Case, build_chart
 
 SCHEMA_VERSION = 1
 
@@ -106,11 +106,24 @@ def reduce_context(ctx, recurse):
     )
 
 
+def _nak_pada(nak) -> int:
+    """Quarter (1..4) of the nakshatra the body falls in.
+
+    Derived from the raw ``ash_long`` rather than a display accessor (the library
+    exposes no ``pada`` method); ``index()`` already carries the 27- vs 28-fold
+    (ayanamsa 101) modulus, so ``within`` is the in-nakshatra arc in ``[0, size)``.
+    """
+    size = nak.naksize()
+    within = nak.ash_long - nak.index() * size
+    return int(within / (size / 4)) + 1
+
+
 def reduce_nakshatra(nak, recurse):
     return recurse(
         {
             "name": nak.identity(),
             "index": nak.index(),
+            "pada": _nak_pada(nak),
             "ashvini_longitude": nak.ash_long,
             "base_longitude": nak.base_long,
             "naksize": nak.naksize(),
@@ -256,17 +269,71 @@ def probe_vimshottari(rashi) -> dict:
 
 
 def _houses_for(chart, hsys: str) -> dict:
-    cusps = chart._new_chart(hsys=hsys).rashi().cusps()
+    rashi = chart._new_chart(hsys=hsys).rashi()
+    cusps = rashi.cusps()
     return {
+        # house_system() returns swe.house_name(hsys) -- freezing it per system
+        # locks the casing workaround GM-2 exists to guard.
         "house_system": cusps.house_system(),
         "cusps": [c._longitude for c in cusps],
         "ascmc": list(cusps.ascmc),
         "armc": cusps.armc(),
+        # house_pos of every body under this system (swe.house_pos wrapper);
+        # per-body capture so an engine that rejects one body freezes only that.
+        "house_pos": {
+            p.identity(): capture(lambda p=p: rashi.house_position(p.identity()))
+            for p in rashi.planets()
+        },
     }
 
 
 def probe_houses_by_system(chart) -> dict:
     return {h: capture(lambda h=h: _houses_for(chart, h)) for h in HOUSE_SYSTEMS}
+
+
+# Swiss-Ephemeris sidereal-mode codes 0..46 are the named ayanamsas (47 is the
+# empty boundary, frozen to document it); the harness sweeps them at one pinned
+# epoch to catch int -> SiderealMode mapping drift across the whole table.  The
+# library's own custom codes (97 true-sidereal, 98 aditya-default, 99/100/101
+# Vedanga variants) are swept through const.ayanamsa_name, which resolves them
+# without touching swe.set_sid_mode.
+AYANAMSA_SWE_CODES = list(range(0, 48))
+AYANAMSA_LIB_CODES = [97, 98, 99, 100, 101]
+
+
+def _ayanamsa_swe_entry(jd: float, code: int) -> dict:
+    import swisseph as swe
+
+    from libaditya import constants as const
+
+    swe.set_sid_mode(code)
+    return {
+        "swe_value": swe.get_ayanamsa_ut(jd),
+        "swe_name": swe.get_ayanamsa_name(code),
+        "lib_name": const.ayanamsa_name(code),
+    }
+
+
+def _ayanamsa_lib_entry(code: int) -> dict:
+    from libaditya import constants as const
+
+    # 97..101 are libaditya-internal codes with no swe.set_sid_mode; only the
+    # library's int -> name resolution is exercised here.
+    return {"lib_name": const.ayanamsa_name(code)}
+
+
+def probe_ayanamsa_sweep(chart) -> dict:
+    """Freeze get_ayanamsa() across the full sidereal-mode table at one epoch."""
+    jd = chart.context.timeJD.jd_number()
+    swe_codes = {
+        str(code): capture(lambda code=code: _ayanamsa_swe_entry(jd, code))
+        for code in AYANAMSA_SWE_CODES
+    }
+    lib_codes = {
+        str(code): capture(lambda code=code: _ayanamsa_lib_entry(code))
+        for code in AYANAMSA_LIB_CODES
+    }
+    return {"epoch_jd": jd, "swe_modes": swe_codes, "lib_modes": lib_codes}
 
 
 # --------------------------------------------------------------------------- #
@@ -277,8 +344,10 @@ def build_snapshot(chart) -> dict:
     jd = chart.context.timeJD
     snapshot = {
         "rashi": capture(lambda: probe_rashi(rashi)),
-        "navamsa": capture(lambda: probe_varga(chart, 9)),
-        "shashtyamsha": capture(lambda: probe_varga(chart, 60)),
+        "vargas": {
+            str(amsha): capture(lambda amsha=amsha: probe_varga(chart, amsha))
+            for amsha in VARGA_AMSHAS
+        },
         "panchanga": capture(lambda: probe_panchanga(rashi)),
         "vimshottari": capture(lambda: probe_vimshottari(rashi)),
         "ephemeris": capture(lambda: {"obliquity": jd.ecliptic_obliquity()}),
@@ -292,6 +361,7 @@ def build_meta(case: Case, chart) -> dict:
         "subject": case.subject.id,
         "config": case.config,
         "config_kwargs": case.config_kwargs,
+        "context_overrides": case.context_overrides,
         "context": chart.context,
     }
 
@@ -303,6 +373,8 @@ def produce_record(case: Case) -> dict:
     for view in case.extra_views:
         if view == "houses_by_system":
             snapshot[view] = capture(lambda: probe_houses_by_system(chart))
+        elif view == "ayanamsa_sweep":
+            snapshot[view] = capture(lambda: probe_ayanamsa_sweep(chart))
         else:  # a case named a view the probe layer does not implement
             snapshot[view] = {"__error__": f"unknown view: {view}"}
     record = {

@@ -69,10 +69,14 @@ Each fixture is `{schema, meta, snapshot}`:
   `EphContext`: julian day, location, ayanamsa, sysflg, circle, hsys) so a
   fixture is self-describing.
 - `snapshot` holds the computed views: `rashi` (all planets' raw positions /
-  speeds / RA-dec / nakshatra, the house cusps, `ascmc`/`armc`, lagna),
-  `navamsa` (D9) and `shashtyamsha` (D60) amsha positions, `panchanga`,
-  `vimshottari`, `ephemeris` (obliquity), and — for the high-latitude subject —
-  `houses_by_system` across the full `HOUSE_SYSTEMS` set.
+  speeds / RA-dec / nakshatra + pada, the house cusps, `ascmc`/`armc`, lagna),
+  `vargas` (a dict keyed by amsha over `VARGA_AMSHAS` — the positive parivritti
+  D-series plus every special negative-amsha "deity" varga), `panchanga`,
+  `vimshottari`, `ephemeris` (obliquity), and — as `extra_views` on specific
+  cases — `houses_by_system` (every hsys in the full `HOUSE_SYSTEMS` set, each
+  with its cusps, `ascmc`/`armc`, the `house_name` casing string, and every
+  body's `house_pos`) and `ayanamsa_sweep` (the whole Swiss-Ephemeris
+  sidereal-mode table plus libaditya's custom codes, frozen at one epoch).
 
 A fixture contains **nothing clock-derived**, so it is reproducible forever.
 Runtime facts that legitimately vary (backend identity, ephemeris data release,
@@ -93,8 +97,18 @@ likely to diverge on:
 | `equator`   | 2000-01-01 12:00  | 0 N, 0 E ("Null Island") | savana-day / equatorial edge |
 | `yamakoti`  | 2024-03-20 06:06  | library default location | freezes the zero-argument default code path |
 
-The case matrix (`subjects.cases()`) renders these under `aditya`, `tropical`,
-and sidereal (Lahiri, True Citra) configurations.
+The case matrix (`subjects.cases()`) runs `nyc` through the full zodiac/system
+sweep — `aditya` (both `Circle.ADITYA` and, via a `context_overrides` circle
+swap, `Circle.ZODIAC`), `tropical`, `heliocentric`, `barycentric`, `draconic`,
+`equatorial` (a `sysflg=const.EQU` override), `topocentric` (a
+`sysflg=const.TOPO` override), and sidereal across a representative ayanamsa set
+(1 Lahiri, 3 Raman, 5 Krishnamurti, 27 True Citra, 36 Gal.Center/Mula, 97
+true-sidereal, 98 aditya-default). The remaining subjects cover the other edges:
+`sydney` adds the `SID | TOPO` topocentric branch, `reykjavik` carries the full
+`houses_by_system` sweep, and `equator` (≈ J2000) carries the `ayanamsa_sweep`.
+Configuration knobs the builder methods set for themselves — the raw `sysflg`
+and `circle` — are applied *after* the builder via `Chart._new_chart`, since
+passing them as keywords would clash with the value the builder already sets.
 
 ## Precision & tolerance — why it's tight
 
@@ -138,6 +152,8 @@ values (verified against seeds 0/1/1234/random):
 - Anything that can raise (a house system an engine rejects, a broken chart
   path) is frozen as a visible `{"__error__": ...}` leaf, not swallowed — a
   backend that changes an error then trips the diff like any other value.
-- Coverage is intentionally a solid core, not exhaustive; GM-2..GM-6 extend the
-  view set, subjects, and per-field tolerance policy on top of this
+- GM-1 froze the core; GM-2 extends it to the full zodiac/system config sweep,
+  the whole varga set, the complete house-system table (`house_name` + every
+  body's `house_pos`), and the ayanamsa-code sweep. GM-3..GM-6 extend the
+  remaining view set, subjects, and per-field tolerance policy on top of this
   infrastructure.
