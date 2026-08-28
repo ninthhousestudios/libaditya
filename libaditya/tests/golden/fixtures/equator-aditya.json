@@ -1039,6 +1039,32 @@
     },
     "feature_modules": {
       "bodygraph": {
+        "activated_gates": [
+          1,
+          2,
+          5,
+          9,
+          10,
+          13,
+          19,
+          21,
+          24,
+          26,
+          27,
+          29,
+          30,
+          31,
+          33,
+          34,
+          38,
+          39,
+          41,
+          42,
+          48,
+          50,
+          59,
+          60
+        ],
         "conscious": {
           "Chiron": {
             "base": 2,
@@ -1167,6 +1193,35 @@
             "tone": 2
           }
         },
+        "defined_centers": {
+          "ajna": false,
+          "head": false,
+          "ji": true,
+          "root": true,
+          "sacral": true,
+          "solar": true,
+          "spleen": true,
+          "throat": true,
+          "will": false
+        },
+        "defined_channels": [
+          [
+            10,
+            34
+          ],
+          [
+            13,
+            33
+          ],
+          [
+            27,
+            50
+          ],
+          [
+            30,
+            41
+          ]
+        ],
         "design_time": {
           "datetime": [
             1999,

@@ -119,6 +119,62 @@ how_many_colors = how_many_lines * 6
 how_many_tone = how_many_colors * 6
 how_many_base = how_many_tone * 5
 
+# --------------------------------------------------------------------------- #
+# Channel / center topology of the bodygraph.
+#
+# The nine centers, in the fixed top-to-bottom order the bodygraph is drawn and
+# evaluated in (``ji`` is the G/identity centre, ``solar`` the solar plexus,
+# ``will`` the heart/ego).  These strings double as the theme keys the drawing
+# code colours by, so the calc and the SVG speak the same names.
+centers = ["head", "ajna", "throat", "ji", "sacral", "root", "spleen", "solar", "will"]
+
+# The 36 channels.  Each key is the channel's two gate numbers as a sorted
+# ``(low, high)`` tuple; the value is the pair of centers it connects.  A channel
+# is *defined* (activated) when BOTH its gates are activated, and a center is
+# *defined* when at least one defined channel touches it -- see hd.definition.
+#
+# This is the complete, canonical HD channel set.  The older center logic that
+# lived inside the SVG draw mixin (DrawBodyGraph.get_defined_centers) was missing
+# the 10-20 integration channel (Awakening, G<->Throat); it is included here.
+channels = {
+    (47, 64): ("head", "ajna"),  # Abstraction
+    (24, 61): ("head", "ajna"),  # Awareness
+    (4, 63): ("head", "ajna"),  # Logic
+    (17, 62): ("ajna", "throat"),  # Acceptance
+    (23, 43): ("ajna", "throat"),  # Structuring
+    (11, 56): ("ajna", "throat"),  # Curiosity
+    (7, 31): ("throat", "ji"),  # The Alpha
+    (1, 8): ("throat", "ji"),  # Inspiration
+    (13, 33): ("throat", "ji"),  # The Prodigal
+    (10, 20): ("throat", "ji"),  # Awakening (absent from the old draw logic)
+    (5, 15): ("ji", "sacral"),  # Rhythm
+    (2, 14): ("ji", "sacral"),  # The Beat
+    (29, 46): ("ji", "sacral"),  # Discovery
+    (25, 51): ("ji", "will"),  # Initiation
+    (42, 53): ("sacral", "root"),  # Maturation
+    (3, 60): ("sacral", "root"),  # Mutation
+    (9, 52): ("sacral", "root"),  # Concentration
+    (16, 48): ("throat", "spleen"),  # The Wavelength
+    (20, 57): ("throat", "spleen"),  # The Brainwave
+    (35, 36): ("throat", "solar"),  # Transitoriness
+    (12, 22): ("throat", "solar"),  # Openness
+    (21, 45): ("throat", "will"),  # Money
+    (37, 40): ("solar", "will"),  # Community
+    (26, 44): ("spleen", "will"),  # Surrender
+    (6, 59): ("sacral", "solar"),  # Mating
+    (27, 50): ("sacral", "spleen"),  # Preservation
+    (34, 57): ("sacral", "spleen"),  # Power (integration)
+    (10, 34): ("sacral", "ji"),  # Exploration (integration)
+    (20, 34): ("sacral", "throat"),  # Charisma (integration)
+    (10, 57): ("spleen", "ji"),  # Perfected Form (integration)
+    (32, 54): ("spleen", "root"),  # Transformation
+    (28, 38): ("spleen", "root"),  # Struggle
+    (18, 58): ("spleen", "root"),  # Judgment
+    (19, 49): ("solar", "root"),  # Synthesis
+    (39, 55): ("solar", "root"),  # Emoting
+    (30, 41): ("solar", "root"),  # Recognition
+}
+
 # elements of tuples in entry
 # [0] = string representation of the gate number
 # [1] = hexagram of gate

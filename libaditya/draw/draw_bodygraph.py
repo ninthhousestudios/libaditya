@@ -40,7 +40,7 @@ class DrawBodyGraph:
         # initialize the theme from the theme_file
         theme = const.init_theme(theme_file)
         theme["gates"] = self.gates_theme(theme["gates"])
-        theme = self.get_defined_centers(theme, self.all_gates())
+        theme = self.get_defined_centers(theme, self.activated_gates())
         d = self.draw_bodygraph(
             d,
             theme,
@@ -64,151 +64,18 @@ class DrawBodyGraph:
 
     def get_defined_centers(self, theme, gates):
         """
-        determine which centers are defined
-        center colors and undefined centers are given in theme
-        we check if a center is defined, if it is we leave the
-        theme[center] alone; if the center is undefined, we change
-        that to theme[center]=undefined
+        recolor the theme so every UNDEFINED center takes theme["undefined"]
+
+        the center-definition calc itself lives in hd.definition (shared with
+        Bodygraph.defined_centers); this only applies its verdict to the theme,
+        leaving a defined center's own color untouched.  ``gates`` is whatever
+        Bodygraph.activated_gates() hands over (integer gate numbers).
         """
+        from libaditya.hd import definition as hddef
 
-        # gates[n] is a floating point gate.line
-        # so transform to int(gate)
-        gates = [int(str(x).split(".")[0]) for x in gates]
-
-        head = False
-        ajna = False
-        throat = False
-        ji = False
-        sacral = False
-        root = False
-        spleen = False
-        solar = False
-        will = False
-
-        if 64 in gates and 47 in gates:
-            head = True
-            ajna = True
-        if 61 in gates and 24 in gates:
-            head = True
-            ajna = True
-        if 63 in gates and 4 in gates:
-            head = True
-            ajna = True
-        if 17 in gates and 62 in gates:
-            ajna = True
-            throat = True
-        if 43 in gates and 23 in gates:
-            ajna = True
-            throat = True
-        if 11 in gates and 56 in gates:
-            ajna = True
-            throat = True
-        if 31 in gates and 7 in gates:
-            throat = True
-            ji = True
-        if 8 in gates and 1 in gates:
-            throat = True
-            ji = True
-        if 33 in gates and 13 in gates:
-            throat = True
-            ji = True
-        if 15 in gates and 5 in gates:
-            ji = True
-            sacral = True
-        if 2 in gates and 14 in gates:
-            ji = True
-            sacral = True
-        if 46 in gates and 29 in gates:
-            ji = True
-            sacral = True
-        if 42 in gates and 53 in gates:
-            sacral = True
-            root = True
-        if 3 in gates and 60 in gates:
-            sacral = True
-            root = True
-        if 9 in gates and 52 in gates:
-            sacral = True
-            root = True
-        if 16 in gates and 48 in gates:
-            throat = True
-            spleen = True
-        if 20 in gates and 57 in gates:
-            throat = True
-            spleen = True
-        if 35 in gates and 36 in gates:
-            throat = True
-            solar = True
-        if 12 in gates and 22 in gates:
-            throat = True
-            solar = True
-        if 45 in gates and 21 in gates:
-            throat = True
-            will = True
-        if 25 in gates and 51 in gates:
-            ji = True
-            will = True
-        if 37 in gates and 40 in gates:
-            solar = True
-            will = True
-        if 44 in gates and 26 in gates:
-            spleen = True
-            will = True
-        if 59 in gates and 6 in gates:
-            sacral = True
-            solar = True
-        if 27 in gates and 50 in gates:
-            sacral = True
-            spleen = True
-        if 34 in gates and 57 in gates:
-            sacral = True
-            spleen = True
-        if 34 in gates and 10 in gates:
-            sacral = True
-            ji = True
-        if 34 in gates and 20 in gates:
-            sacral = True
-            throat = True
-        if 32 in gates and 54 in gates:
-            spleen = True
-            root = True
-        if 57 in gates and 10 in gates:
-            spleen = True
-            ji = True
-        if 28 in gates and 38 in gates:
-            spleen = True
-            root = True
-        if 18 in gates and 58 in gates:
-            spleen = True
-            root = True
-        if 49 in gates and 19 in gates:
-            solar = True
-            root = True
-        if 55 in gates and 39 in gates:
-            solar = True
-            root = True
-        if 30 in gates and 41 in gates:
-            solar = True
-            root = True
-
-        if not head:
-            theme["head"] = theme["undefined"]
-        if not ajna:
-            theme["ajna"] = theme["undefined"]
-        if not throat:
-            theme["throat"] = theme["undefined"]
-        if not ji:
-            theme["ji"] = theme["undefined"]
-        if not sacral:
-            theme["sacral"] = theme["undefined"]
-        if not root:
-            theme["root"] = theme["undefined"]
-        if not spleen:
-            theme["spleen"] = theme["undefined"]
-        if not solar:
-            theme["solar"] = theme["undefined"]
-        if not will:
-            theme["will"] = theme["undefined"]
+        for center, is_defined in hddef.defined_centers(gates).items():
+            if not is_defined:
+                theme[center] = theme["undefined"]
 
         return theme
 

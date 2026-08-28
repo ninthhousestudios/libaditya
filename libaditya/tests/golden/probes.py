@@ -707,6 +707,12 @@ def probe_bodygraph(chart) -> dict:
         "design_time": bg._unconscious_context.timeJD,
         "dream_time": bg._dream_context.timeJD,
         "personality_time": bg.context.timeJD,
+        # definition layer (hd.definition): the activated gate set (personality +
+        # design, Chiron excluded) and what it defines.  Categorical, so a drift
+        # that crosses a gate boundary and completes/breaks a channel flips a leaf.
+        "activated_gates": sorted(bg.activated_gates()),
+        "defined_channels": [list(pair) for pair in bg.defined_channels()],
+        "defined_centers": bg.defined_centers(),
     }
 
 

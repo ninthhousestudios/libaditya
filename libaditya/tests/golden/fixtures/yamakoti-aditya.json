@@ -777,6 +777,29 @@
     },
     "feature_modules": {
       "bodygraph": {
+        "activated_gates": [
+          2,
+          8,
+          10,
+          15,
+          23,
+          25,
+          26,
+          27,
+          30,
+          31,
+          32,
+          36,
+          37,
+          42,
+          43,
+          46,
+          51,
+          55,
+          57,
+          60,
+          63
+        ],
         "conscious": {
           "Chiron": {
             "base": 4,
@@ -905,6 +928,31 @@
             "tone": 2
           }
         },
+        "defined_centers": {
+          "ajna": true,
+          "head": false,
+          "ji": true,
+          "root": false,
+          "sacral": false,
+          "solar": false,
+          "spleen": true,
+          "throat": true,
+          "will": true
+        },
+        "defined_channels": [
+          [
+            10,
+            57
+          ],
+          [
+            23,
+            43
+          ],
+          [
+            25,
+            51
+          ]
+        ],
         "design_time": {
           "datetime": [
             2023,

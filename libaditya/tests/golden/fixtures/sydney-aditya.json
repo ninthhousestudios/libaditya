@@ -777,6 +777,27 @@
     },
     "feature_modules": {
       "bodygraph": {
+        "activated_gates": [
+          1,
+          3,
+          7,
+          10,
+          15,
+          25,
+          27,
+          30,
+          32,
+          37,
+          43,
+          46,
+          48,
+          55,
+          56,
+          60,
+          61,
+          62,
+          64
+        ],
         "conscious": {
           "Chiron": {
             "base": 2,
@@ -905,6 +926,23 @@
             "tone": 5
           }
         },
+        "defined_centers": {
+          "ajna": false,
+          "head": false,
+          "ji": false,
+          "root": true,
+          "sacral": true,
+          "solar": false,
+          "spleen": false,
+          "throat": false,
+          "will": false
+        },
+        "defined_channels": [
+          [
+            3,
+            60
+          ]
+        ],
         "design_time": {
           "datetime": [
             1935,

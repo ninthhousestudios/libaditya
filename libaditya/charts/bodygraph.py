@@ -25,6 +25,7 @@ from libaditya.objects import Planets
 import libaditya.constants as const
 from libaditya.hd import calc as hdcalc
 from libaditya.hd import constants as hdc
+from libaditya.hd import definition as hddef
 
 from libaditya.draw.draw_bodygraph import DrawBodyGraph
 
@@ -80,6 +81,35 @@ class Bodygraph(DrawBodyGraph):
         are the same as the conscious ones for the bodygraph
         """
         return self._dream_planets
+
+    def activated_gates(self):
+        """
+        the set of integer gate numbers activated in the bodygraph
+
+        personality (conscious) + design (unconscious), read straight off each
+        body's gate number.  Chiron is excluded -- it activates no gate, so it
+        cannot complete a channel or define a center.  the dream planets belong
+        to the separate dreamgraph and are not part of definition.
+        """
+        gates = set()
+        for planets in (self.conscious_planets(), self.unconscious_planets()):
+            for planet in planets.hd13().values():
+                gates.add(planet.hd().gate_number())
+        return gates
+
+    def defined_channels(self):
+        """
+        the channels defined in this bodygraph, as sorted (low_gate, high_gate)
+        pairs -- a channel is defined when both of its gates are activated
+        """
+        return hddef.defined_channels(self.activated_gates())
+
+    def defined_centers(self):
+        """
+        {center: bool} for all 9 centers -- a center is defined when at least one
+        defined channel touches it (see hd.definition)
+        """
+        return hddef.defined_centers(self.activated_gates())
 
     def _new_bodygraph(self, **kwargs):
         return Bodygraph(context=replace(self.context, **kwargs))
