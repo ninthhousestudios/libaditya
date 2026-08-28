@@ -18,14 +18,14 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from prettytable import PrettyTable
+
+from libaditya.ephemeris import seam
 
 from .longitude import Longitude
 from .context import EphContext
 
 from libaditya import constants as const
-from libaditya import utils
 
 
 class Cusp(Longitude):
@@ -36,7 +36,7 @@ class Cusp(Longitude):
         self.timeJD = self.context.timeJD
         self.jd = self.timeJD.jd
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
-        self.hname = swe.house_name(self.hsys)
+        self.hname = seam.house_name(self.hsys)
         self._ayanamsa = self.context.ayanamsa
         super().__init__(longitude, amsha, self.context)
         #        self.longituDE = longitude # a Longitude class
@@ -128,7 +128,7 @@ class Cusps:
         self.timeJD = self.context.timeJD
         self.jd = self.timeJD.jd
         self.system = self.context.sysflg  # if it is sidereal or sidereal topocentric
-        self.hname = swe.house_name(self.hsys)
+        self.hname = seam.house_name(self.hsys)
         self.ayanamsa = self.context.ayanamsa
         if cusps == None:
             self.cusps, self.ascmc, self.ascmcspeed = (
@@ -177,15 +177,21 @@ class Cusps:
         find our house cusps
         cusps will be a 12-tuple with cusps 1-12
         """
-        flag = 0
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            flag = swe.FLG_SIDEREAL
-            if self.ayanamsa == 98:
-                utils.set_swe_sidereal_mode(36)
-            else:
-                utils.set_swe_sidereal_mode(self.ayanamsa)
-        cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
-            self.jd, self.location.lat, self.location.long, self.hsys, flag
+        # The distiller folds set_swe_sidereal_mode (incl. the aditya 98->36 remap)
+        # into the frozen EphemerisConfig, so the flag below only carries the
+        # SIDEREAL bit. Force FLG_SIDEREAL as the eph's system whenever the old
+        # code set a sidereal mode -- i.e. system is SID or TOPO -- so the config
+        # gets sidereal_mode(self.ayanamsa); TOPO alone reached the mode-setting
+        # branch under pyswisseph too. When tropical (flag 0) the sidereal_mode is
+        # ignored by houses_ex2, so the non-sidereal branch keeps self.system.
+        if self.system == seam.FLG_SIDEREAL or self.system == seam.FLG_TOPOCTR:
+            flag = seam.FLG_SIDEREAL
+            eph = seam.build_ephemeris(self.context, seam.FLG_SIDEREAL, self.ayanamsa)
+        else:
+            flag = seam.FLG_TROPICAL
+            eph = seam.build_ephemeris(self.context, self.system, self.ayanamsa)
+        cusps, ascmc, speeds, ascmcspeeds = seam.houses_ex2(
+            eph, self.jd, self.location.lat, self.location.long, self.hsys, flag
         )
         retcusps = []
         for n, cusp in enumerate(cusps):
@@ -240,7 +246,7 @@ class Cusps:
 
     def mkheader(self):
         """
-        the function swe.houses(time,lat,long,hsys) take lat first
+        the house-cusp call (jd, lat, long, hsys) takes lat first
         """
         draconic = "Draconic " if self.context.sysflg == const.DRAC else ""
         sidereal = "Sidereal " if self.context.sysflg == const.SID else ""

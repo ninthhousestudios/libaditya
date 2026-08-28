@@ -54,9 +54,11 @@ from swisseph_rs import (
     Body,
     CalcFlags,
     Ephemeris,
+    HouseSystem,
     date as _date,
     errors,
 )
+from swisseph_rs.houses import house_pos as _house_pos
 
 from libaditya.ephemeris.config import distill_config
 
@@ -270,6 +272,17 @@ _HOUSE_NAMES: dict[str, str] = {
 }
 
 
+def _hsys_letter(hsys: str | bytes) -> str:
+    """Normalise a house-system code to its single ``str`` letter.
+
+    Call sites pass ``context.hsys.encode()`` (``bytes``) or a bare ``str``; both
+    the name table and the ``HouseSystem`` construction key off one letter.
+    """
+    if isinstance(hsys, (bytes, bytearray)):
+        hsys = hsys.decode("ascii", "ignore")
+    return hsys[:1]
+
+
 def house_name(hsys: str | bytes) -> str:
     """House-system name for a code letter, as ``swe.house_name`` returns it.
 
@@ -277,9 +290,88 @@ def house_name(hsys: str | bytes) -> str:
     ``context.hsys.encode()``). Unknown codes return ``''``, mirroring
     pyswisseph.
     """
-    if isinstance(hsys, (bytes, bytearray)):
-        hsys = hsys.decode("ascii", "ignore")
-    return _HOUSE_NAMES.get(hsys[:1], "")
+    return _HOUSE_NAMES.get(_hsys_letter(hsys), "")
+
+
+# --------------------------------------------------------------------------- #
+# house cusps + positions
+# --------------------------------------------------------------------------- #
+# swisseph_rs returns a structured ``HouseResult`` (``.cusps`` / ``.cusp_speeds``
+# raw 1-based C arrays, ``.ascmc`` / ``.ascmc_speeds`` as ``AscMc`` objects with
+# ``.as_array()``), where pyswisseph's ``swe.houses_ex2`` returns the flat
+# ``(cusps, ascmc, cusp_speeds, ascmc_speeds)`` tuples cusps.py already unpacks.
+# These wrappers restore the pyswisseph shape:
+#
+# * CUSP INDEXING. The swisseph_rs cusp array is the raw Swiss C layout -- index
+#   0 a dummy, the valid cusps at 1.., trailing slots zero-padded to length 37
+#   (Gauquelin's 36-sector maximum). pyswisseph's binding drops the dummy and
+#   trims to the live count: 36 cusps for Gauquelin ('G'), 12 otherwise. Slicing
+#   ``[1 : 1 + n]`` reproduces that exactly (verified bit-identical, incl. G).
+# * HOUSE SYSTEM. ``HouseSystem(ord(letter))`` reconstructs from the code letter
+#   ('I'/'i' distinct: Sunshine vs Sunshine/alt.).
+_GAUQUELIN_LETTER: str = "G"
+
+
+def houses_ex2(
+    eph: Ephemeris,
+    jd: float,
+    lat: float,
+    lon: float,
+    hsys: str | bytes,
+    flags: int,
+) -> tuple[tuple[float, ...], tuple[float, ...], tuple[float, ...], tuple[float, ...]]:
+    """House cusps + speeds at ``jd`` (UT), in pyswisseph's return shape.
+
+    Mirrors ``swe.houses_ex2(jd, lat, lon, hsys, flags) ->
+    (cusps, ascmc, cusp_speeds, ascmc_speeds)``. ``eph`` carries the sidereal
+    knobs (the distiller folds ``set_sid_mode`` into its config, incl. the aditya
+    98->36 remap); the ``flags`` int still carries the ``FLG_SIDEREAL`` bit so the
+    backend applies the ayanamsa shift, exactly as pyswisseph did off its global.
+    ``cusps``/``cusp_speeds`` are trimmed to the live 1-based cusps (36 for
+    Gauquelin, 12 otherwise); ``ascmc``/``ascmc_speeds`` are the 8-element angle
+    arrays.
+    """
+    letter = _hsys_letter(hsys)
+    with surfacing_errors():
+        result = eph.houses_ex2(jd, to_flags(flags), lat, lon, HouseSystem(ord(letter)))
+    n = 36 if letter == _GAUQUELIN_LETTER else 12
+    cusps = tuple(result.cusps[1 : 1 + n])
+    cusp_speeds = tuple(result.cusp_speeds[1 : 1 + n])
+    return (
+        cusps,
+        tuple(result.ascmc.as_array()),
+        cusp_speeds,
+        tuple(result.ascmc_speeds.as_array()),
+    )
+
+
+def house_pos(
+    armc: float,
+    geolat: float,
+    eps: float,
+    xpin: tuple[float, float],
+    hsys: str | bytes,
+    sundec: float | None = None,
+) -> float:
+    """Continuous house position (1.0..13.0; Gauquelin 1.0..37.0) of a body.
+
+    Mirrors ``swe.house_pos(armc, geolat, eps, xpin, hsys)``. ``xpin`` is the
+    body's ``(ecliptic_longitude, ecliptic_latitude)``. swisseph_rs is stateless,
+    so the Sunshine systems ('I'/'i') -- which pyswisseph served off the Sun
+    declination its last houses call cached -- need ``sundec`` passed explicitly
+    (the Sun's equatorial declination); every other system ignores it.
+    """
+    letter = _hsys_letter(hsys)
+    try:
+        return _house_pos(armc, geolat, eps, HouseSystem(ord(letter)), xpin, sundec)
+    except CError:
+        # GAP: pyswisseph's swe.house_pos ignores the C ``serr`` out-param and
+        # returns the (zero) hpos the engine bails to -- notably Koch ('K') in
+        # circumpolar areas (high latitudes). swisseph_rs surfaces that serr as a
+        # CError instead of returning 0. Reproduce pyswisseph's sentinel 0.0 so
+        # the high-latitude Koch house_pos stays faithful; typed rejections other
+        # than CError (InvalidHouseSystem, ...) still propagate.
+        return 0.0
 
 
 # --------------------------------------------------------------------------- #
@@ -364,6 +456,7 @@ def get_ayanamsa_name(code: int) -> str:
 # leaf rather than being swallowed. That is the contract :func:`surfacing_errors`
 # makes explicit and greppable.
 SwissephError = errors.SwissephError
+CError = errors.CError
 NoConvergence = errors.NoConvergence
 InvalidHouseSystem = errors.InvalidHouseSystem
 InvalidSiderealMode = errors.InvalidSiderealMode

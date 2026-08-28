@@ -18,9 +18,9 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from dataclasses import dataclass, replace
 
+from libaditya.ephemeris import seam
 from libaditya.objects import Planet, RashiBala
 from libaditya.calc import Varga
 from libaditya.calc import vimshottari
@@ -170,7 +170,7 @@ class Rashi(
 
     def house_position(self, planet: str, hsys=None) -> float:
         """
-        a wrapper for the function swe.house_pos()
+        a wrapper for the seam's house_pos (formerly swe.house_pos)
         planet is the Planet.identity(), i.e., the english name of the desired planet
         """
         armc = self.cusps().armc()
@@ -180,7 +180,13 @@ class Rashi(
         planet_coords = (planet.ecliptic_longitude(), planet.latitude())
         if hsys == None:
             hsys = self.context.hsys
-        return swe.house_pos(armc, lat, eo, planet_coords, hsys.encode())
+        # Sunshine ('I'/'i') house_pos needs the Sun's equatorial declination that
+        # pyswisseph served off the global its last houses call cached; the
+        # stateless seam takes it explicitly (other systems ignore it). Read the
+        # RAW _declination -- the .declination() accessor rounds to context.toround,
+        # which would drift the position past the golden's 1e-9 tolerance.
+        sundec = self.planets()["Sun"]._declination
+        return seam.house_pos(armc, lat, eo, planet_coords, hsys, sundec)
 
     def Master(self):
         """

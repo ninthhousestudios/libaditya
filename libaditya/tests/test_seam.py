@@ -39,6 +39,13 @@ the dev env:
    ``swe.house_name`` / ``swe.get_ayanamsa_name`` across the full tables (str and
    bytes inputs), and ``FLG_TROPICAL == swe.FLG_TROPICAL == 0``.
 
+3b. HOUSES SURFACE -- ``houses_ex2`` unwraps swisseph_rs's structured
+   ``HouseResult`` to pyswisseph's ``(cusps, ascmc, cusp_speeds, ascmc_speeds)``
+   shape (live cusp count 36 for Gauquelin, 12 otherwise), and ``house_pos``
+   matches ``swe.house_pos`` across the letter set -- including the Sunshine
+   sundec pass-through and the Koch circumpolar 0.0 sentinel pyswisseph returns
+   where swisseph_rs raises a CError.
+
 4. TYPED EXCEPTIONS -- ``surfacing_errors`` re-raises swisseph_rs SwissephError
    (so the golden's ``capture()`` freezes it) and lets non-backend errors pass.
 
@@ -255,6 +262,74 @@ def run_gaps() -> bool:
     return ok
 
 
+# --- 3b: house cusps + positions --------------------------------------------
+# Arbitrary ecliptic (longitude, latitude) for the house_pos sweep, and a high
+# ecliptic latitude at a high geo-latitude that pushes Koch ('K') into its
+# circumpolar-failure branch.
+_HP_XPIN = (137.246, 1.284)
+_CIRCUMPOLAR_LAT = 64.15  # Reykjavik-ish; Koch fails circumpolar here
+_CIRCUMPOLAR_XPIN = (90.0, 66.0)  # declination beyond 90 - lat -> Koch bails
+
+
+def run_houses() -> bool:
+    print("seam houses: houses_ex2 + house_pos vs pyswisseph (full letter set)")
+    ok = True
+    swe.set_ephe_path(const.ephe_path)
+    lat, lon = _LOC.lat, _LOC.long
+    eph = seam.build_ephemeris(_CTX, seam.FLG_TROPICAL, 0)
+
+    # The Sun's equatorial declination -- what the Sunshine ('I'/'i') systems need
+    # passed explicitly (pyswisseph serves it off the global its last houses call
+    # cached; the swe.houses_ex2 in the loop below refreshes that global to match).
+    sundec = seam.calc_ut(eph, _JD, seam.SUN, seam.FLG_EQUATORIAL)[0][1]
+    eps = swe.calc_ut(_JD, swe.ECL_NUT, 0)[0][0]
+
+    worst_cusp = worst_ascmc = worst_speed = hp_worst = 0.0
+    count_ok = True
+    for c in _HOUSE_LETTERS:
+        cusps, ascmc, speeds, ascmcspeeds = seam.houses_ex2(eph, _JD, lat, lon, c, 0)
+        c_cusps, c_ascmc, c_speeds, c_ascmcspeeds = swe.houses_ex2(
+            _JD, lat, lon, c.encode(), 0
+        )
+        # Live cusp count: 36 for Gauquelin ('G'), 12 otherwise -- as pyswisseph.
+        count_ok &= len(cusps) == len(c_cusps)
+        worst_cusp = max(worst_cusp, max(abs(a - b) for a, b in zip(cusps, c_cusps)))
+        worst_ascmc = max(worst_ascmc, max(abs(a - b) for a, b in zip(ascmc, c_ascmc)))
+        worst_speed = max(
+            worst_speed, max(abs(a - b) for a, b in zip(speeds, c_speeds))
+        )
+        # house_pos: seam takes sundec explicitly; pyswisseph reads it off the
+        # global the swe.houses_ex2 above just cached, so both see one Sun decl.
+        armc = ascmc[2]
+        hp = seam.house_pos(armc, lat, eps, _HP_XPIN, c, sundec)
+        c_hp = swe.house_pos(armc, lat, eps, _HP_XPIN, c.encode())
+        hp_worst = max(hp_worst, abs(hp - c_hp))
+
+    ok &= _check(f"houses_ex2 cusps match (worst {worst_cusp:.2e})", worst_cusp <= _TOL)
+    ok &= _check(
+        f"houses_ex2 ascmc match (worst {worst_ascmc:.2e})", worst_ascmc <= _TOL
+    )
+    # cusp speeds carry the intrinsic finite-difference engine noise (~1e-7).
+    ok &= _check(
+        f"houses_ex2 cusp speeds match (worst {worst_speed:.2e})", worst_speed <= 1e-7
+    )
+    ok &= _check("cusp count 36 for 'G', 12 otherwise (matches pyswisseph)", count_ok)
+    ok &= _check(
+        f"house_pos matches for all letters (worst {hp_worst:.2e})", hp_worst <= _TOL
+    )
+
+    # GAP: Koch circumpolar. pyswisseph's swe.house_pos ignores the C serr and
+    # returns 0.0; swisseph_rs raises CError. The seam reproduces the 0.0 sentinel.
+    kc, kascmc, *_ = swe.houses_ex2(_JD, _CIRCUMPOLAR_LAT, lon, b"K", 0)
+    seam_koch = seam.house_pos(kascmc[2], _CIRCUMPOLAR_LAT, eps, _CIRCUMPOLAR_XPIN, "K")
+    swe_koch = swe.house_pos(kascmc[2], _CIRCUMPOLAR_LAT, eps, _CIRCUMPOLAR_XPIN, b"K")
+    ok &= _check(
+        "Koch circumpolar house_pos -> 0.0 sentinel (matches swe, not a CError)",
+        seam_koch == swe_koch == 0.0,
+    )
+    return ok
+
+
 # --- 4: typed exceptions ----------------------------------------------------
 def run_errors() -> bool:
     print("seam.surfacing_errors: typed rejections surface, others pass through")
@@ -296,7 +371,16 @@ def run_errors() -> bool:
 
 
 def run() -> bool:
-    return all([run_surface(), run_engine(), run_calendar(), run_gaps(), run_errors()])
+    return all(
+        [
+            run_surface(),
+            run_engine(),
+            run_calendar(),
+            run_gaps(),
+            run_houses(),
+            run_errors(),
+        ]
+    )
 
 
 def main() -> int:
