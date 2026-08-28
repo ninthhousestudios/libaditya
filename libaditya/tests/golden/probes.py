@@ -241,14 +241,26 @@ def probe_panchanga(rashi) -> dict:
         "yoga_name": pan.yoga_name(),
         "nakshatra": pan.nakshatra(),
         "vara": pan.vara(),
+        # rise/set via swe.rise_trans (BIT_HINDU_RISING). Each returns a
+        # JulianDay -> reduce_julianday freezes both the boundary jd and its
+        # revjul calendar tuple. Reference time is the subject's pinned timeJD,
+        # so these are reproducible; per-event capture freezes a rejection (e.g.
+        # a high-latitude no-rise day) as a visible __error__ leaf.
+        "sunrise": capture(pan.sunrise),
+        "sunset": capture(pan.sunset),
+        "moonrise": capture(pan.moonrise),
+        "moonset": capture(pan.moonset),
     }
 
 
 def _vimshottari_period(period) -> dict:
     start, length, subs = period
-    start_jd = start.jd if hasattr(start, "jd") else start
+    # ``start`` is a JulianDay produced by JulianDay.shift (julday/revjul round
+    # trips); passing it whole lets reduce_julianday freeze BOTH the boundary jd
+    # and its revjul calendar tuple, which is the julday<->revjul path GM-3 is
+    # meant to pin. A bare float (defensive, shouldn't occur) is wrapped alike.
     return {
-        "start_jd": start_jd,
+        "start": start if hasattr(start, "jd") else {"jd": start},
         # raw period length as the library expresses it (years * yrlen, i.e. days)
         "length": length,
         "sub": [_vimshottari_period(s) for s in subs],
@@ -265,6 +277,85 @@ def probe_vimshottari(rashi) -> dict:
         "first_lord": first_lord,
         "age": age,
         "periods": [_vimshottari_period(p) for p in periods],
+    }
+
+
+# --------------------------------------------------------------------------- #
+# derived Vedic views (GM-3): jaimini, avasthas, rashi yogas
+#
+# These compound the underlying sidereal positions, so they are sensitive
+# regression detectors -- small positional drift changes karaka order, a sign's
+# strength rank, an avastha state, or whether a yoga fires.  They are only
+# astrologically meaningful on a Vedic chart, so subjects.cases() attaches the
+# "vedic_derived" extra view to the aditya-default and sidereal-Lahiri cases
+# only, not the tropical/heliocentric/etc. sweep.
+# --------------------------------------------------------------------------- #
+def probe_jaimini(rashi) -> dict:
+    """Chara karakas, arudha padas, and the two ranked/classified strengths.
+
+    Signs are frozen by their number (1..12) and karakas/planets by identity, so
+    the record is a stable categorical projection: order IS the datum (karakas
+    run AK..DK strongest-first, first_strength strongest-first).
+    """
+    karakas = [p.identity() for p in rashi.planets().jaimini_karakas()]
+    return {
+        "chara_karakas": karakas,  # ordered AK, AmK, ... DK (7 karakas)
+        "atmakaraka": karakas[0],
+        "darakaraka": karakas[-1],
+        "arudha_lagna": rashi.pada().sign(),  # AL: pada of the lagna
+        "upapada_lagna": rashi.upapada().sign(),  # UL: pada of the 12th
+        "arudha_padas": {
+            str(sign.sign()): pada.sign() for sign, pada in rashi.padas().items()
+        },
+        # jaimini_first_strength: all 12 signs strongest->weakest (8 tiebreakers)
+        "first_strength": [s.sign() for s in rashi.jaimini_first_strength()],
+        # jaimini_third_strength: {sign: (value, Kendra/Panapara/Apoklima)}
+        "third_strength": {
+            str(sign.sign()): list(cls)
+            for sign, cls in rashi.jaimini_third_strength().items()
+        },
+    }
+
+
+def probe_avasthas(rashi) -> dict:
+    """All 5 Parashara avastha systems, read from the Rashi's precomputed dicts.
+
+    Each is keyed by karaka name; Baladi/Jagradadi/Deeptadi/Shayanadi map to a
+    single state string, Lajjitaadi to a dict of avastha -> contributing factors
+    (source/planet/strength ...), whose strengths carry full-precision aspect
+    values.  Shayanadi additionally depends on a rise_trans sunrise, so it
+    doubles as a rise/set regression detector.
+    """
+    return {
+        "lajjitaadi": rashi._lajjitaadi_avasthas,
+        "baladi": rashi._baladi_avasthas,
+        "jagradadi": rashi._jagradadi_avasthas,
+        "deeptadi": rashi._deeptadi_avasthas,
+        "shayanadi": rashi._shayanadi_avasthas,
+    }
+
+
+def probe_yogas(rashi) -> dict:
+    """Nabhasa (+ akriti), Panchamahapurusha, Solar and Lunar yogas.
+
+    Each method returns a list of dataclasses which canonicalize serialises by
+    field; freezing the whole list (name, category, to_move / present, planets)
+    captures both which yogas fire and every yoga's to_move distance metric.
+    """
+    return {
+        "nabhasa": rashi.nabhasa_yogas(),
+        "panchamahapurusha": rashi.panchamahapurusha_yogas(),
+        "solar": rashi.solar_yogas(),
+        "lunar": rashi.lunar_yogas(),
+    }
+
+
+def probe_vedic_derived(chart) -> dict:
+    rashi = chart.rashi()
+    return {
+        "jaimini": capture(lambda: probe_jaimini(rashi)),
+        "avasthas": capture(lambda: probe_avasthas(rashi)),
+        "yogas": capture(lambda: probe_yogas(rashi)),
     }
 
 
@@ -375,6 +466,8 @@ def produce_record(case: Case) -> dict:
             snapshot[view] = capture(lambda: probe_houses_by_system(chart))
         elif view == "ayanamsa_sweep":
             snapshot[view] = capture(lambda: probe_ayanamsa_sweep(chart))
+        elif view == "vedic_derived":
+            snapshot[view] = capture(lambda: probe_vedic_derived(chart))
         else:  # a case named a view the probe layer does not implement
             snapshot[view] = {"__error__": f"unknown view: {view}"}
     record = {

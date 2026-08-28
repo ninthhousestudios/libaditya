@@ -55,7 +55,47 @@
       ],
       "karana_number": 37.99387868290264,
       "karana_remaining": 0.03672790258416114,
+      "moonrise": {
+        "datetime": [
+          1990,
+          2,
+          14,
+          2.6043500639498234
+        ],
+        "jd": 2447936.608514586,
+        "utcoffset": -5.0
+      },
+      "moonset": {
+        "datetime": [
+          1990,
+          2,
+          14,
+          14.12167938798666
+        ],
+        "jd": 2447937.088403308,
+        "utcoffset": -5.0
+      },
       "nakshatra": "hasta",
+      "sunrise": {
+        "datetime": [
+          1990,
+          2,
+          14,
+          11.93505384027958
+        ],
+        "jd": 2447936.99729391,
+        "utcoffset": -5.0
+      },
+      "sunset": {
+        "datetime": [
+          1990,
+          2,
+          14,
+          22.41454568132758
+        ],
+        "jd": 2447937.4339394034,
+        "utcoffset": -5.0
+      },
       "tithi": 19,
       "tithi_elapsed": 11.963272097415839,
       "tithi_number": 19,
@@ -2090,465 +2130,2197 @@
         }
       }
     },
+    "vedic_derived": {
+      "avasthas": {
+        "baladi": {
+          "Jupiter": "Kumara",
+          "Mars": "Yuva",
+          "Mercury": "Vriddha",
+          "Moon": "Kumara",
+          "Saturn": "Mrita",
+          "Sun": "Bala",
+          "Venus": "Mrita"
+        },
+        "deeptadi": {
+          "Jupiter": "Shanta",
+          "Mars": "Shanta",
+          "Mercury": "Mudita",
+          "Moon": "Shanta",
+          "Saturn": "Shanta",
+          "Sun": "Shanta",
+          "Venus": "Shanta"
+        },
+        "jagradadi": {
+          "Jupiter": "Sushupti",
+          "Mars": "Sushupti",
+          "Mercury": "Swapna",
+          "Moon": "Sushupti",
+          "Saturn": "Sushupti",
+          "Sun": "Sushupti",
+          "Venus": "Sushupti"
+        },
+        "lajjitaadi": {
+          "Jupiter": {
+            "delighted": [
+              {
+                "planet": "Sun",
+                "source": "aspect",
+                "strength": 23.95866583483088
+              },
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 20.960968966123346
+              },
+              {
+                "planet": "Mars",
+                "source": "aspect",
+                "strength": 39.7866595494304
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Mercury",
+                "source": "aspect",
+                "strength": 1.5773168553046162
+              },
+              {
+                "planet": "Venus",
+                "source": "aspect",
+                "strength": 18.95962386519591
+              },
+              {
+                "lord": "Mercury",
+                "source": "sign",
+                "strength": 60
+              }
+            ]
+          },
+          "Mars": {
+            "delighted": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 43.18473229303811
+              },
+              {
+                "planet": "Jupiter",
+                "source": "aspect",
+                "strength": 54.9466648873576
+              },
+              {
+                "lord": "Jupiter",
+                "source": "sign",
+                "strength": 60
+              }
+            ],
+            "shamed": [
+              {
+                "planet": "Saturn",
+                "source": "conjunction",
+                "strength": 60
+              },
+              {
+                "detail": "in 5th sign",
+                "source": "condition"
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Saturn",
+                "source": "conjunction",
+                "strength": 60
+              }
+            ]
+          },
+          "Mercury": {
+            "agitated": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 35.17231053847104
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 35.17231053847104
+              }
+            ]
+          },
+          "Moon": {
+            "delighted": [
+              {
+                "planet": "Sun",
+                "source": "aspect",
+                "strength": 36.01836395129209
+              },
+              {
+                "planet": "Mercury",
+                "source": "aspect",
+                "strength": 24.827689461528962
+              },
+              {
+                "lord": "Mercury",
+                "source": "sign",
+                "strength": 60
+              }
+            ]
+          },
+          "Saturn": {
+            "agitated": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 41.14799627393097
+              }
+            ],
+            "delighted": [
+              {
+                "planet": "Venus",
+                "source": "conjunction",
+                "strength": 60
+              }
+            ],
+            "shamed": [
+              {
+                "planet": "Mars",
+                "source": "conjunction",
+                "strength": 60
+              },
+              {
+                "detail": "in 5th sign",
+                "source": "condition"
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 41.14799627393097
+              },
+              {
+                "planet": "Mars",
+                "source": "conjunction",
+                "strength": 60
+              }
+            ]
+          },
+          "Sun": {
+            "agitated": [
+              {
+                "planet": "Saturn",
+                "source": "aspect",
+                "strength": 8.665440900892236
+              }
+            ],
+            "delighted": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 17.963272097415825
+              },
+              {
+                "planet": "Mars",
+                "source": "aspect",
+                "strength": 6.925997804773033
+              },
+              {
+                "planet": "Jupiter",
+                "source": "aspect",
+                "strength": 56.979332917415434
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Venus",
+                "source": "aspect",
+                "strength": 1.7192388837144108
+              },
+              {
+                "planet": "Saturn",
+                "source": "aspect",
+                "strength": 8.665440900892236
+              },
+              {
+                "lord": "Saturn",
+                "source": "sign",
+                "strength": 60
+              }
+            ]
+          },
+          "Venus": {
+            "agitated": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 40.70087493242232
+              }
+            ],
+            "shamed": [
+              {
+                "planet": "Mars",
+                "source": "conjunction",
+                "strength": 60
+              },
+              {
+                "planet": "Saturn",
+                "source": "conjunction",
+                "strength": 60
+              },
+              {
+                "detail": "in 5th sign",
+                "source": "condition"
+              }
+            ],
+            "starved": [
+              {
+                "planet": "Moon",
+                "source": "aspect",
+                "strength": 40.70087493242232
+              },
+              {
+                "planet": "Saturn",
+                "source": "conjunction",
+                "strength": 60
+              }
+            ]
+          }
+        },
+        "shayanadi": {
+          "Jupiter": "Nidra",
+          "Mars": "Shayana",
+          "Mercury": "Bhojana",
+          "Moon": "Kautuka",
+          "Saturn": "Netrapani",
+          "Sun": "Kautuka",
+          "Venus": "Netrapani"
+        }
+      },
+      "jaimini": {
+        "arudha_lagna": 2,
+        "arudha_padas": {
+          "1": 5,
+          "10": 8,
+          "11": 7,
+          "12": 3,
+          "2": 4,
+          "3": 5,
+          "4": 8,
+          "5": 2,
+          "6": 2,
+          "7": 11,
+          "8": 10,
+          "9": 6
+        },
+        "atmakaraka": "Venus",
+        "chara_karakas": [
+          "Venus",
+          "Saturn",
+          "Moon",
+          "Mars",
+          "Mercury",
+          "Jupiter",
+          "Sun"
+        ],
+        "darakaraka": "Sun",
+        "first_strength": [
+          9,
+          10,
+          6,
+          11,
+          3,
+          12,
+          2,
+          8,
+          5,
+          1,
+          7,
+          4
+        ],
+        "third_strength": {
+          "1": [
+            0,
+            "Apoklima"
+          ],
+          "10": [
+            0,
+            "Apoklima"
+          ],
+          "11": [
+            1,
+            "Panapara"
+          ],
+          "12": [
+            2,
+            "Kendra"
+          ],
+          "2": [
+            1,
+            "Panapara"
+          ],
+          "3": [
+            1,
+            "Panapara"
+          ],
+          "4": [
+            0,
+            "Apoklima"
+          ],
+          "5": [
+            2,
+            "Kendra"
+          ],
+          "6": [
+            1,
+            "Panapara"
+          ],
+          "7": [
+            0,
+            "Apoklima"
+          ],
+          "8": [
+            1,
+            "Panapara"
+          ],
+          "9": [
+            2,
+            "Kendra"
+          ]
+        },
+        "upapada_lagna": 5
+      },
+      "yogas": {
+        "lunar": [
+          {
+            "name": "Anapha",
+            "planets": [],
+            "present": false
+          },
+          {
+            "name": "Sunapha",
+            "planets": [],
+            "present": false
+          },
+          {
+            "name": "Durudhara",
+            "planets": [],
+            "present": false
+          },
+          {
+            "name": "Kemadruma",
+            "planets": [],
+            "present": true
+          }
+        ],
+        "nabhasa": [
+          {
+            "category": "Sankhya",
+            "condition": "planets in 5 houses",
+            "name": "Pasa",
+            "to_move": 0,
+            "translation": "noose"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 6 houses",
+            "name": "Dama",
+            "to_move": 1,
+            "translation": "garland"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 4 houses",
+            "name": "Kedara",
+            "to_move": 1,
+            "translation": "field"
+          },
+          {
+            "category": "Ashraya",
+            "condition": "all planets in dual signs",
+            "name": "Nala",
+            "to_move": 2,
+            "translation": "reed"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 7 houses",
+            "name": "Veena",
+            "to_move": 2,
+            "translation": "lute"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 3 houses",
+            "name": "Sula",
+            "to_move": 2,
+            "translation": "spike"
+          },
+          {
+            "houses": [
+              2,
+              5,
+              8,
+              11
+            ],
+            "name": "Vapi Panaphara",
+            "to_move": 2,
+            "translation": "pond"
+          },
+          {
+            "houses": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "name": "Sara",
+            "to_move": 2,
+            "translation": "arrow"
+          },
+          {
+            "category": "Dala",
+            "condition": "all benefics in kendras",
+            "name": "Mala",
+            "to_move": 3,
+            "translation": "garland"
+          },
+          {
+            "category": "Dala",
+            "condition": "all malefics in kendras",
+            "name": "Sarpa",
+            "to_move": 3,
+            "translation": "serpent"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 2 houses",
+            "name": "Yuga",
+            "to_move": 3,
+            "translation": "yoke"
+          },
+          {
+            "houses": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "name": "Nauka",
+            "to_move": 3,
+            "translation": "boat"
+          },
+          {
+            "houses": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "name": "Ardha Chandra Artha Panaphara",
+            "to_move": 3,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "name": "Ardha Chandra Dharma Panaphara",
+            "to_move": 3,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              1,
+              3,
+              5,
+              7,
+              9,
+              11
+            ],
+            "name": "Chakra",
+            "to_move": 3,
+            "translation": "wheel"
+          },
+          {
+            "category": "Sankhya",
+            "condition": "planets in 1 houses",
+            "name": "Gola",
+            "to_move": 4,
+            "translation": "globe"
+          },
+          {
+            "houses": [
+              1,
+              5,
+              9
+            ],
+            "name": "Sringataka",
+            "to_move": 4,
+            "translation": "mountain having three peaks"
+          },
+          {
+            "houses": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "name": "Kuta",
+            "to_move": 4,
+            "translation": "peak"
+          },
+          {
+            "houses": [
+              11,
+              12,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "name": "Ardha Chandra Kama Panaphara",
+            "to_move": 4,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "name": "Ardha Chandra Kama Apoklima",
+            "to_move": 4,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "name": "Ardha Chandra Artha Apoklima",
+            "to_move": 4,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              12,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "name": "Ardha Chandra Moksha Apoklima",
+            "to_move": 4,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              2,
+              6,
+              10
+            ],
+            "name": "Hala Artha",
+            "to_move": 5,
+            "translation": "plough"
+          },
+          {
+            "houses": [
+              3,
+              7,
+              11
+            ],
+            "name": "Hala Kama",
+            "to_move": 5,
+            "translation": "plough"
+          },
+          {
+            "houses": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              1
+            ],
+            "name": "Chatra",
+            "to_move": 5,
+            "translation": "parasol"
+          },
+          {
+            "houses": [
+              10,
+              11,
+              12,
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Chapa",
+            "to_move": 5,
+            "translation": "bow"
+          },
+          {
+            "houses": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              1,
+              2
+            ],
+            "name": "Ardha Chandra Moksha Panaphara",
+            "to_move": 5,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "name": "Ardha Chandra Dharma Apoklima",
+            "to_move": 5,
+            "translation": "half moon"
+          },
+          {
+            "houses": [
+              2,
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "name": "Samudra",
+            "to_move": 5,
+            "translation": "sea"
+          },
+          {
+            "category": "Ashraya",
+            "condition": "all planets in movable signs",
+            "name": "Rajju",
+            "to_move": 6,
+            "translation": "rope"
+          },
+          {
+            "category": "Ashraya",
+            "condition": "all planets in fixed signs",
+            "name": "Musala",
+            "to_move": 6,
+            "translation": "pestle"
+          },
+          {
+            "houses": [
+              4,
+              7
+            ],
+            "name": "Gada 4/7",
+            "to_move": 6,
+            "translation": "mace"
+          },
+          {
+            "houses": [
+              7,
+              10
+            ],
+            "name": "Gada 7/10",
+            "to_move": 6,
+            "translation": "mace"
+          },
+          {
+            "houses": [
+              1,
+              7
+            ],
+            "name": "Sakata",
+            "to_move": 6,
+            "translation": "cart"
+          },
+          {
+            "houses": [
+              1,
+              4,
+              7,
+              10
+            ],
+            "name": "Kamala",
+            "to_move": 6,
+            "translation": "lotus"
+          },
+          {
+            "houses": [
+              3,
+              6,
+              9,
+              12
+            ],
+            "name": "Vapi Apoklima",
+            "to_move": 6,
+            "translation": "pond"
+          },
+          {
+            "houses": [
+              1,
+              4,
+              7,
+              10
+            ],
+            "name": "Yava",
+            "to_move": 6,
+            "translation": "barleycorn"
+          },
+          {
+            "houses": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Yupa",
+            "to_move": 6,
+            "translation": "sacrificial pillar"
+          },
+          {
+            "houses": [
+              7,
+              8,
+              9,
+              10
+            ],
+            "name": "Shakti",
+            "to_move": 6,
+            "translation": "power"
+          },
+          {
+            "houses": [
+              10,
+              11,
+              12,
+              1
+            ],
+            "name": "Danda",
+            "to_move": 6,
+            "translation": "rod"
+          },
+          {
+            "houses": [
+              4,
+              8,
+              12
+            ],
+            "name": "Hala Moksha",
+            "to_move": 7,
+            "translation": "plough"
+          },
+          {
+            "houses": [
+              1,
+              4
+            ],
+            "name": "Gada 1/4",
+            "to_move": 7,
+            "translation": "mace"
+          },
+          {
+            "houses": [
+              10,
+              1
+            ],
+            "name": "Gada 10/1",
+            "to_move": 7,
+            "translation": "mace"
+          },
+          {
+            "houses": [
+              4,
+              10
+            ],
+            "name": "Vihaga",
+            "to_move": 7,
+            "translation": "skygoer"
+          },
+          {
+            "houses": [
+              1,
+              4,
+              7,
+              10
+            ],
+            "name": "Vajra",
+            "to_move": 7,
+            "translation": "thunderbolt"
+          }
+        ],
+        "panchamahapurusha": [
+          {
+            "dignity": "N",
+            "house": 5,
+            "name": "Ruchaka",
+            "planet": "Mars",
+            "present": false,
+            "translation": "radiant"
+          },
+          {
+            "dignity": "F",
+            "house": 6,
+            "name": "Bhadra",
+            "planet": "Mercury",
+            "present": false,
+            "translation": "blessed"
+          },
+          {
+            "dignity": "GE",
+            "house": 11,
+            "name": "Hamsa",
+            "planet": "Jupiter",
+            "present": false,
+            "translation": "swan"
+          },
+          {
+            "dignity": "E",
+            "house": 5,
+            "name": "Malavya",
+            "planet": "Venus",
+            "present": false,
+            "translation": "of Malava"
+          },
+          {
+            "dignity": "E",
+            "house": 5,
+            "name": "Sasa",
+            "planet": "Saturn",
+            "present": false,
+            "translation": "rabbit"
+          }
+        ],
+        "solar": [
+          {
+            "name": "Vosi",
+            "planets": [
+              "Mercury"
+            ],
+            "present": true
+          },
+          {
+            "name": "Vesi",
+            "planets": [],
+            "present": false
+          },
+          {
+            "name": "Ubhayachari",
+            "planets": [
+              "Mercury"
+            ],
+            "present": false
+          }
+        ]
+      }
+    },
     "vimshottari": {
       "age": -6.903224241181852,
       "first_lord": 3,
       "periods": [
         {
           "length": 3652.4220000000005,
-          "start_jd": 2445415.0886910576,
+          "start": {
+            "datetime": [
+              1983,
+              3,
+              21,
+              14.128585383296013
+            ],
+            "jd": 2445415.0886910576,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 304.36850000000004,
-              "start_jd": 2445415.0886910576,
+              "start": {
+                "datetime": [
+                  1983,
+                  3,
+                  21,
+                  14.128585383296013
+                ],
+                "jd": 2445415.0886910576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 213.05795000000003,
-              "start_jd": 2445719.4571910575,
+              "start": {
+                "datetime": [
+                  1984,
+                  1,
+                  19,
+                  22.972585380077362
+                ],
+                "jd": 2445719.4571910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 547.8633,
-              "start_jd": 2445932.5151410573,
+              "start": {
+                "datetime": [
+                  1984,
+                  8,
+                  20,
+                  0.3633853755891323
+                ],
+                "jd": 2445932.5151410573,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 486.9896,
-              "start_jd": 2446480.378441057,
+              "start": {
+                "datetime": [
+                  1986,
+                  2,
+                  18,
+                  21.082585372030735
+                ],
+                "jd": 2446480.378441057,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 578.30015,
-              "start_jd": 2446967.368041057,
+              "start": {
+                "datetime": [
+                  1987,
+                  6,
+                  20,
+                  20.832985371351242
+                ],
+                "jd": 2446967.368041057,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 517.42645,
-              "start_jd": 2447545.668191057,
+              "start": {
+                "datetime": [
+                  1989,
+                  1,
+                  19,
+                  4.036585371941328
+                ],
+                "jd": 2447545.668191057,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 213.05795000000003,
-              "start_jd": 2448063.0946410573,
+              "start": {
+                "datetime": [
+                  1990,
+                  6,
+                  20,
+                  14.271385375410318
+                ],
+                "jd": 2448063.0946410573,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 608.7370000000001,
-              "start_jd": 2448276.152591057,
+              "start": {
+                "datetime": [
+                  1991,
+                  1,
+                  19,
+                  15.662185370922089
+                ],
+                "jd": 2448276.152591057,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 182.6211,
-              "start_jd": 2448884.8895910573,
+              "start": {
+                "datetime": [
+                  1992,
+                  9,
+                  19,
+                  9.350185375660658
+                ],
+                "jd": 2448884.8895910573,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 2556.6954,
-          "start_jd": 2449067.5106910574,
+          "start": {
+            "datetime": [
+              1993,
+              3,
+              21,
+              0.25658537819981575
+            ],
+            "jd": 2449067.5106910574,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 149.140565,
-              "start_jd": 2449067.5106910574,
+              "start": {
+                "datetime": [
+                  1993,
+                  3,
+                  21,
+                  0.25658537819981575
+                ],
+                "jd": 2449067.5106910574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 383.50431000000003,
-              "start_jd": 2449216.6512560574,
+              "start": {
+                "datetime": [
+                  1993,
+                  8,
+                  17,
+                  3.630145378410816
+                ],
+                "jd": 2449216.6512560574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 340.89272000000005,
-              "start_jd": 2449600.1555660577,
+              "start": {
+                "datetime": [
+                  1994,
+                  9,
+                  4,
+                  15.733585383743048
+                ],
+                "jd": 2449600.1555660577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 404.810105,
-              "start_jd": 2449941.0482860575,
+              "start": {
+                "datetime": [
+                  1995,
+                  8,
+                  11,
+                  13.158865381032228
+                ],
+                "jd": 2449941.0482860575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 362.19851500000004,
-              "start_jd": 2450345.8583910577,
+              "start": {
+                "datetime": [
+                  1996,
+                  9,
+                  19,
+                  8.60138538479805
+                ],
+                "jd": 2450345.8583910577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 149.140565,
-              "start_jd": 2450708.0569060575,
+              "start": {
+                "datetime": [
+                  1997,
+                  9,
+                  16,
+                  13.36574538052082
+                ],
+                "jd": 2450708.0569060575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 426.11590000000007,
-              "start_jd": 2450857.1974710575,
+              "start": {
+                "datetime": [
+                  1998,
+                  2,
+                  12,
+                  16.73930538073182
+                ],
+                "jd": 2450857.1974710575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 127.83477,
-              "start_jd": 2451283.3133710576,
+              "start": {
+                "datetime": [
+                  1999,
+                  4,
+                  14,
+                  19.520905382931232
+                ],
+                "jd": 2451283.3133710576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 213.05795000000003,
-              "start_jd": 2451411.1481410577,
+              "start": {
+                "datetime": [
+                  1999,
+                  8,
+                  20,
+                  15.555385384708643
+                ],
+                "jd": 2451411.1481410577,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 6574.359600000001,
-          "start_jd": 2451624.2060910575,
+          "start": {
+            "datetime": [
+              2000,
+              3,
+              20,
+              16.946185380220413
+            ],
+            "jd": 2451624.2060910575,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 986.1539400000001,
-              "start_jd": 2451624.2060910575,
+              "start": {
+                "datetime": [
+                  2000,
+                  3,
+                  20,
+                  16.946185380220413
+                ],
+                "jd": 2451624.2060910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 876.58128,
-              "start_jd": 2452610.3600310576,
+              "start": {
+                "datetime": [
+                  2002,
+                  12,
+                  1,
+                  20.640745382755995
+                ],
+                "jd": 2452610.3600310576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1040.94027,
-              "start_jd": 2453486.9413110577,
+              "start": {
+                "datetime": [
+                  2005,
+                  4,
+                  26,
+                  10.591465383768082
+                ],
+                "jd": 2453486.9413110577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 931.36761,
-              "start_jd": 2454527.881581058,
+              "start": {
+                "datetime": [
+                  2008,
+                  3,
+                  2,
+                  9.15794538706541
+                ],
+                "jd": 2454527.881581058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 383.50431000000003,
-              "start_jd": 2455459.249191058,
+              "start": {
+                "datetime": [
+                  2010,
+                  9,
+                  19,
+                  17.980585388839245
+                ],
+                "jd": 2455459.249191058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1095.7266,
-              "start_jd": 2455842.753501058,
+              "start": {
+                "datetime": [
+                  2011,
+                  10,
+                  8,
+                  6.084025394171476
+                ],
+                "jd": 2455842.753501058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 328.71798,
-              "start_jd": 2456938.4801010583,
+              "start": {
+                "datetime": [
+                  2014,
+                  10,
+                  7,
+                  23.522425398230553
+                ],
+                "jd": 2456938.4801010583,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 547.8633,
-              "start_jd": 2457267.1980810585,
+              "start": {
+                "datetime": [
+                  2015,
+                  9,
+                  1,
+                  16.753945402801037
+                ],
+                "jd": 2457267.1980810585,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 383.50431000000003,
-              "start_jd": 2457815.0613810583,
+              "start": {
+                "datetime": [
+                  2017,
+                  3,
+                  2,
+                  13.47314539924264
+                ],
+                "jd": 2457815.0613810583,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 5843.8752,
-          "start_jd": 2458198.5656910576,
+          "start": {
+            "datetime": [
+              2018,
+              3,
+              21,
+              1.5765853822231293
+            ],
+            "jd": 2458198.5656910576,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 779.18336,
-              "start_jd": 2458198.5656910576,
+              "start": {
+                "datetime": [
+                  2018,
+                  3,
+                  21,
+                  1.5765853822231293
+                ],
+                "jd": 2458198.5656910576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 925.28024,
-              "start_jd": 2458977.7490510577,
+              "start": {
+                "datetime": [
+                  2020,
+                  5,
+                  8,
+                  5.977225385606289
+                ],
+                "jd": 2458977.7490510577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 827.88232,
-              "start_jd": 2459903.029291058,
+              "start": {
+                "datetime": [
+                  2022,
+                  11,
+                  19,
+                  12.702985391020775
+                ],
+                "jd": 2459903.029291058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 340.89272000000005,
-              "start_jd": 2460730.911611058,
+              "start": {
+                "datetime": [
+                  2025,
+                  2,
+                  24,
+                  9.878665387630463
+                ],
+                "jd": 2460730.911611058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 973.9792,
-              "start_jd": 2461071.8043310577,
+              "start": {
+                "datetime": [
+                  2026,
+                  1,
+                  31,
+                  7.303945384919643
+                ],
+                "jd": 2461071.8043310577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 292.19376000000005,
-              "start_jd": 2462045.7835310576,
+              "start": {
+                "datetime": [
+                  2028,
+                  10,
+                  1,
+                  6.8047453835606575
+                ],
+                "jd": 2462045.7835310576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 486.9896,
-              "start_jd": 2462337.977291058,
+              "start": {
+                "datetime": [
+                  2029,
+                  7,
+                  20,
+                  11.45498538762331
+                ],
+                "jd": 2462337.977291058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 340.89272000000005,
-              "start_jd": 2462824.966891058,
+              "start": {
+                "datetime": [
+                  2030,
+                  11,
+                  19,
+                  11.205385386943817
+                ],
+                "jd": 2462824.966891058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 876.58128,
-              "start_jd": 2463165.8596110577,
+              "start": {
+                "datetime": [
+                  2031,
+                  10,
+                  26,
+                  8.630665384232998
+                ],
+                "jd": 2463165.8596110577,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 6939.6018,
-          "start_jd": 2464042.4408910577,
+          "start": {
+            "datetime": [
+              2034,
+              3,
+              20,
+              22.581385385245085
+            ],
+            "jd": 2464042.4408910577,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 1098.770285,
-              "start_jd": 2464042.4408910577,
+              "start": {
+                "datetime": [
+                  2034,
+                  3,
+                  20,
+                  22.581385385245085
+                ],
+                "jd": 2464042.4408910577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 983.1102550000002,
-              "start_jd": 2465141.211176058,
+              "start": {
+                "datetime": [
+                  2037,
+                  3,
+                  23,
+                  17.068225387483835
+                ],
+                "jd": 2465141.211176058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 404.810105,
-              "start_jd": 2466124.321431058,
+              "start": {
+                "datetime": [
+                  2039,
+                  12,
+                  1,
+                  19.714345391839743
+                ],
+                "jd": 2466124.321431058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1156.6003,
-              "start_jd": 2466529.131536058,
+              "start": {
+                "datetime": [
+                  2041,
+                  1,
+                  9,
+                  15.156865395605564
+                ],
+                "jd": 2466529.131536058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 346.98009,
-              "start_jd": 2467685.731836058,
+              "start": {
+                "datetime": [
+                  2044,
+                  3,
+                  11,
+                  5.564065396785736
+                ],
+                "jd": 2467685.731836058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 578.30015,
-              "start_jd": 2468032.7119260584,
+              "start": {
+                "datetime": [
+                  2045,
+                  2,
+                  21,
+                  5.086225401610136
+                ],
+                "jd": 2468032.7119260584,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 404.810105,
-              "start_jd": 2468611.0120760584,
+              "start": {
+                "datetime": [
+                  2046,
+                  9,
+                  22,
+                  12.289825402200222
+                ],
+                "jd": 2468611.0120760584,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1040.94027,
-              "start_jd": 2469015.8221810586,
+              "start": {
+                "datetime": [
+                  2047,
+                  11,
+                  1,
+                  7.7323454059660435
+                ],
+                "jd": 2469015.8221810586,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 925.28024,
-              "start_jd": 2470056.7624510587,
+              "start": {
+                "datetime": [
+                  2050,
+                  9,
+                  7,
+                  6.298825409263372
+                ],
+                "jd": 2470056.7624510587,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 6209.1174,
-          "start_jd": 2470982.0426910575,
+          "start": {
+            "datetime": [
+              2053,
+              3,
+              20,
+              13.024585381150246
+            ],
+            "jd": 2470982.0426910575,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 879.624965,
-              "start_jd": 2470982.0426910575,
+              "start": {
+                "datetime": [
+                  2053,
+                  3,
+                  20,
+                  13.024585381150246
+                ],
+                "jd": 2470982.0426910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 362.19851500000004,
-              "start_jd": 2471861.6676560575,
+              "start": {
+                "datetime": [
+                  2055,
+                  8,
+                  17,
+                  4.023745380342007
+                ],
+                "jd": 2471861.6676560575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1034.8529,
-              "start_jd": 2472223.8661710573,
+              "start": {
+                "datetime": [
+                  2056,
+                  8,
+                  13,
+                  8.788105376064777
+                ],
+                "jd": 2472223.8661710573,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 310.45587,
-              "start_jd": 2473258.719071057,
+              "start": {
+                "datetime": [
+                  2059,
+                  6,
+                  14,
+                  5.257705371826887
+                ],
+                "jd": 2473258.719071057,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 517.42645,
-              "start_jd": 2473569.1749410573,
+              "start": {
+                "datetime": [
+                  2060,
+                  4,
+                  19,
+                  16.198585376143456
+                ],
+                "jd": 2473569.1749410573,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 362.19851500000004,
-              "start_jd": 2474086.6013910575,
+              "start": {
+                "datetime": [
+                  2061,
+                  9,
+                  19,
+                  2.433385379612446
+                ],
+                "jd": 2474086.6013910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 931.36761,
-              "start_jd": 2474448.7999060573,
+              "start": {
+                "datetime": [
+                  2062,
+                  9,
+                  16,
+                  7.1977453753352165
+                ],
+                "jd": 2474448.7999060573,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 827.88232,
-              "start_jd": 2475380.1675160574,
+              "start": {
+                "datetime": [
+                  2065,
+                  4,
+                  4,
+                  16.02038537710905
+                ],
+                "jd": 2475380.1675160574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 983.1102550000002,
-              "start_jd": 2476208.0498360572,
+              "start": {
+                "datetime": [
+                  2067,
+                  7,
+                  11,
+                  13.196065373718739
+                ],
+                "jd": 2476208.0498360572,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 2556.6954,
-          "start_jd": 2477191.1600910574,
+          "start": {
+            "datetime": [
+              2070,
+              3,
+              20,
+              15.842185378074646
+            ],
+            "jd": 2477191.1600910574,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 149.140565,
-              "start_jd": 2477191.1600910574,
+              "start": {
+                "datetime": [
+                  2070,
+                  3,
+                  20,
+                  15.842185378074646
+                ],
+                "jd": 2477191.1600910574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 426.11590000000007,
-              "start_jd": 2477340.3006560574,
+              "start": {
+                "datetime": [
+                  2070,
+                  8,
+                  16,
+                  19.215745378285646
+                ],
+                "jd": 2477340.3006560574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 127.83477,
-              "start_jd": 2477766.4165560575,
+              "start": {
+                "datetime": [
+                  2071,
+                  10,
+                  16,
+                  21.997345380485058
+                ],
+                "jd": 2477766.4165560575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 213.05795000000003,
-              "start_jd": 2477894.2513260576,
+              "start": {
+                "datetime": [
+                  2072,
+                  2,
+                  21,
+                  18.03182538226247
+                ],
+                "jd": 2477894.2513260576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 149.140565,
-              "start_jd": 2478107.3092760574,
+              "start": {
+                "datetime": [
+                  2072,
+                  9,
+                  21,
+                  19.42262537777424
+                ],
+                "jd": 2478107.3092760574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 383.50431000000003,
-              "start_jd": 2478256.4498410574,
+              "start": {
+                "datetime": [
+                  2073,
+                  2,
+                  17,
+                  22.79618537798524
+                ],
+                "jd": 2478256.4498410574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 340.89272000000005,
-              "start_jd": 2478639.9541510576,
+              "start": {
+                "datetime": [
+                  2074,
+                  3,
+                  8,
+                  10.89962538331747
+                ],
+                "jd": 2478639.9541510576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 404.810105,
-              "start_jd": 2478980.8468710575,
+              "start": {
+                "datetime": [
+                  2075,
+                  2,
+                  12,
+                  8.324905380606651
+                ],
+                "jd": 2478980.8468710575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 362.19851500000004,
-              "start_jd": 2479385.6569760577,
+              "start": {
+                "datetime": [
+                  2076,
+                  3,
+                  23,
+                  3.7674253843724728
+                ],
+                "jd": 2479385.6569760577,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 7304.844000000001,
-          "start_jd": 2479747.8554910575,
+          "start": {
+            "datetime": [
+              2077,
+              3,
+              20,
+              8.531785380095243
+            ],
+            "jd": 2479747.8554910575,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 1217.4740000000002,
-              "start_jd": 2479747.8554910575,
+              "start": {
+                "datetime": [
+                  2077,
+                  3,
+                  20,
+                  8.531785380095243
+                ],
+                "jd": 2479747.8554910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 365.2422,
-              "start_jd": 2480965.3294910574,
+              "start": {
+                "datetime": [
+                  2080,
+                  7,
+                  19,
+                  19.90778537839651
+                ],
+                "jd": 2480965.3294910574,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 608.7370000000001,
-              "start_jd": 2481330.5716910576,
+              "start": {
+                "datetime": [
+                  2081,
+                  7,
+                  20,
+                  1.7205853834748268
+                ],
+                "jd": 2481330.5716910576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 426.11590000000007,
-              "start_jd": 2481939.308691058,
+              "start": {
+                "datetime": [
+                  2083,
+                  3,
+                  20,
+                  19.408585388213396
+                ],
+                "jd": 2481939.308691058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1095.7266,
-              "start_jd": 2482365.424591058,
+              "start": {
+                "datetime": [
+                  2084,
+                  5,
+                  19,
+                  22.190185390412807
+                ],
+                "jd": 2482365.424591058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 973.9792,
-              "start_jd": 2483461.151191058,
+              "start": {
+                "datetime": [
+                  2087,
+                  5,
+                  20,
+                  15.628585394471884
+                ],
+                "jd": 2483461.151191058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1156.6003,
-              "start_jd": 2484435.130391058,
+              "start": {
+                "datetime": [
+                  2090,
+                  1,
+                  18,
+                  15.129385393112898
+                ],
+                "jd": 2484435.130391058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 1034.8529,
-              "start_jd": 2485591.730691058,
+              "start": {
+                "datetime": [
+                  2093,
+                  3,
+                  20,
+                  5.53658539429307
+                ],
+                "jd": 2485591.730691058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 426.11590000000007,
-              "start_jd": 2486626.583591058,
+              "start": {
+                "datetime": [
+                  2096,
+                  1,
+                  19,
+                  2.0061853900551796
+                ],
+                "jd": 2486626.583591058,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]
         },
         {
           "length": 2191.4532,
-          "start_jd": 2487052.6994910575,
+          "start": {
+            "datetime": [
+              2097,
+              3,
+              20,
+              4.78778538107872
+            ],
+            "jd": 2487052.6994910575,
+            "utcoffset": -5.0
+          },
           "sub": [
             {
               "length": 109.57266,
-              "start_jd": 2487052.6994910575,
+              "start": {
+                "datetime": [
+                  2097,
+                  3,
+                  20,
+                  4.78778538107872
+                ],
+                "jd": 2487052.6994910575,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 182.6211,
-              "start_jd": 2487162.2721510576,
+              "start": {
+                "datetime": [
+                  2097,
+                  7,
+                  7,
+                  18.531625382602215
+                ],
+                "jd": 2487162.2721510576,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 127.83477,
-              "start_jd": 2487344.8932510577,
+              "start": {
+                "datetime": [
+                  2098,
+                  1,
+                  6,
+                  9.438025385141373
+                ],
+                "jd": 2487344.8932510577,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 328.71798,
-              "start_jd": 2487472.728021058,
+              "start": {
+                "datetime": [
+                  2098,
+                  5,
+                  14,
+                  5.472505386918783
+                ],
+                "jd": 2487472.728021058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 292.19376000000005,
-              "start_jd": 2487801.446001058,
+              "start": {
+                "datetime": [
+                  2099,
+                  4,
+                  7,
+                  22.704025391489267
+                ],
+                "jd": 2487801.446001058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 346.98009,
-              "start_jd": 2488093.639761058,
+              "start": {
+                "datetime": [
+                  2100,
+                  1,
+                  25,
+                  3.35426539555192
+                ],
+                "jd": 2488093.639761058,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 310.45587,
-              "start_jd": 2488440.6198510583,
+              "start": {
+                "datetime": [
+                  2101,
+                  1,
+                  7,
+                  2.87642540037632
+                ],
+                "jd": 2488440.6198510583,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 127.83477,
-              "start_jd": 2488751.0757210585,
+              "start": {
+                "datetime": [
+                  2101,
+                  11,
+                  13,
+                  13.817305404692888
+                ],
+                "jd": 2488751.0757210585,
+                "utcoffset": -5.0
+              },
               "sub": []
             },
             {
               "length": 365.2422,
-              "start_jd": 2488878.9104910586,
+              "start": {
+                "datetime": [
+                  2102,
+                  3,
+                  21,
+                  9.851785406470299
+                ],
+                "jd": 2488878.9104910586,
+                "utcoffset": -5.0
+              },
               "sub": []
             }
           ]

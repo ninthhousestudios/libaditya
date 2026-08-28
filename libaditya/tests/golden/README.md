@@ -71,12 +71,21 @@ Each fixture is `{schema, meta, snapshot}`:
 - `snapshot` holds the computed views: `rashi` (all planets' raw positions /
   speeds / RA-dec / nakshatra + pada, the house cusps, `ascmc`/`armc`, lagna),
   `vargas` (a dict keyed by amsha over `VARGA_AMSHAS` — the positive parivritti
-  D-series plus every special negative-amsha "deity" varga), `panchanga`,
-  `vimshottari`, `ephemeris` (obliquity), and — as `extra_views` on specific
-  cases — `houses_by_system` (every hsys in the full `HOUSE_SYSTEMS` set, each
-  with its cusps, `ascmc`/`armc`, the `house_name` casing string, and every
-  body's `house_pos`) and `ayanamsa_sweep` (the whole Swiss-Ephemeris
-  sidereal-mode table plus libaditya's custom codes, frozen at one epoch).
+  D-series plus every special negative-amsha "deity" varga), `panchanga`
+  (tithi / karana / yoga / nakshatra / vara plus the four `rise_trans`
+  rise/set instants — sunrise, sunset, moonrise, moonset — each frozen as a
+  JulianDay so both the boundary jd and its revjul calendar tuple are pinned),
+  `vimshottari` (dasha/antardasha boundaries; each period's `start` is the whole
+  JulianDay, freezing the boundary jd *and* its revjul calendar tuple to guard
+  the julday↔revjul round-trip), `ephemeris` (obliquity), and — as `extra_views`
+  on specific cases — `houses_by_system` (every hsys in the full `HOUSE_SYSTEMS`
+  set, each with its cusps, `ascmc`/`armc`, the `house_name` casing string, and
+  every body's `house_pos`), `ayanamsa_sweep` (the whole Swiss-Ephemeris
+  sidereal-mode table plus libaditya's custom codes, frozen at one epoch), and
+  `vedic_derived` (the higher-level Vedic layer — `jaimini` chara karakas /
+  arudha padas / first- and third-strength rankings; `avasthas`, all five
+  Parashara systems per karaka; and `yogas`, the nabhasa / panchamahapurusha /
+  solar / lunar sets with each yoga's fired flag and `to_move` metric).
 
 A fixture contains **nothing clock-derived**, so it is reproducible forever.
 Runtime facts that legitimately vary (backend identity, ephemeris data release,
@@ -109,6 +118,16 @@ true-sidereal, 98 aditya-default). The remaining subjects cover the other edges:
 Configuration knobs the builder methods set for themselves — the raw `sysflg`
 and `circle` — are applied *after* the builder via `Chart._new_chart`, since
 passing them as keywords would clash with the value the builder already sets.
+
+The `vedic_derived` view (GM-3) is astrologically meaningful only on a Vedic
+chart, so rather than the whole zodiac/system sweep it rides a deliberate
+subset: **every subject under both aditya-default and sidereal-Lahiri**. Each
+subject therefore has an `aditya` case and a plain `sidereal` (ayanamsa 1) case
+carrying the view — the three subjects that previously lacked a plain
+sidereal-Lahiri case (`sydney`, `reykjavik`, `yamakoti`) gain one here — so the
+panchanga / vimshottari / jaimini / avastha / yoga layer is frozen against two
+ayanamsas per chart geometry. (`panchanga` and `vimshottari` themselves stay in
+*every* case, since they already were; GM-3 only extended their contents.)
 
 ## Precision & tolerance — why it's tight
 
@@ -152,8 +171,11 @@ values (verified against seeds 0/1/1234/random):
 - Anything that can raise (a house system an engine rejects, a broken chart
   path) is frozen as a visible `{"__error__": ...}` leaf, not swallowed — a
   backend that changes an error then trips the diff like any other value.
-- GM-1 froze the core; GM-2 extends it to the full zodiac/system config sweep,
+- GM-1 froze the core; GM-2 extended it to the full zodiac/system config sweep,
   the whole varga set, the complete house-system table (`house_name` + every
-  body's `house_pos`), and the ayanamsa-code sweep. GM-3..GM-6 extend the
+  body's `house_pos`), and the ayanamsa-code sweep. GM-3 adds the derived Vedic
+  layer — panchanga rise/set instants, vimshottari boundary calendar tuples, and
+  the `vedic_derived` view (jaimini, avasthas, rashi yogas) — plus a plain
+  sidereal-Lahiri case for each remaining subject. GM-4..GM-6 extend the
   remaining view set, subjects, and per-field tolerance policy on top of this
   infrastructure.

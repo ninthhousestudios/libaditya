@@ -215,7 +215,12 @@ def cases() -> list[Case]:
     s = SUBJECTS
     return [
         # --- nyc: the full zodiac/system sweep on one modern mid-latitude subject
-        Case("nyc-aditya", s["nyc"], "aditya", extra_views=("houses_by_system",)),
+        Case(
+            "nyc-aditya",
+            s["nyc"],
+            "aditya",
+            extra_views=("houses_by_system", "vedic_derived"),
+        ),
         Case(
             "nyc-aditya-zodiac",
             s["nyc"],
@@ -241,15 +246,31 @@ def cases() -> list[Case]:
         # representative ayanamsa set: 1 Lahiri, 3 Raman, 5 Krishnamurti,
         # 27 True Citra (sidereal() default), 36 GAL_CENT_MULA_WILHELM (the code
         # aditya's 98 internally maps signs to), 97 true-sidereal, 98 aditya-default.
-        Case("nyc-sidereal-lahiri", s["nyc"], "sidereal", {"ayanamsa": 1}),
+        Case(
+            "nyc-sidereal-lahiri",
+            s["nyc"],
+            "sidereal",
+            {"ayanamsa": 1},
+            extra_views=("vedic_derived",),
+        ),
         Case("nyc-sidereal-raman", s["nyc"], "sidereal", {"ayanamsa": 3}),
         Case("nyc-sidereal-krishnamurti", s["nyc"], "sidereal", {"ayanamsa": 5}),
         Case("nyc-sidereal-truecitra", s["nyc"], "sidereal", {"ayanamsa": 27}),
         Case("nyc-sidereal-galcentmula", s["nyc"], "sidereal", {"ayanamsa": 36}),
         Case("nyc-sidereal-truesidereal", s["nyc"], "sidereal", {"ayanamsa": 97}),
         Case("nyc-sidereal-adityadefault", s["nyc"], "sidereal", {"ayanamsa": 98}),
-        # --- other subjects: spread the remaining coordinate/era edges
-        Case("sydney-aditya", s["sydney"], "aditya"),
+        # --- other subjects: spread the remaining coordinate/era edges.
+        # Every subject carries the "vedic_derived" view under BOTH aditya-default
+        # and sidereal-Lahiri (the GM-3 subset), so the panchanga/vimshottari/
+        # jaimini/avastha/yoga layer is frozen against two ayanamsas per geometry.
+        Case("sydney-aditya", s["sydney"], "aditya", extra_views=("vedic_derived",)),
+        Case(
+            "sydney-sidereal-lahiri",
+            s["sydney"],
+            "sidereal",
+            {"ayanamsa": 1},
+            extra_views=("vedic_derived",),
+        ),
         Case(
             "sydney-topocentric-sidereal",  # the SID | TOPO topocentric branch
             s["sydney"],
@@ -261,17 +282,39 @@ def cases() -> list[Case]:
             "reykjavik-aditya",
             s["reykjavik"],
             "aditya",
-            extra_views=("houses_by_system",),
+            extra_views=("houses_by_system", "vedic_derived"),
+        ),
+        Case(
+            "reykjavik-sidereal-lahiri",
+            s["reykjavik"],
+            "sidereal",
+            {"ayanamsa": 1},
+            extra_views=("vedic_derived",),
         ),
         Case(
             "equator-aditya",
             s["equator"],
             "aditya",
             # J2000 epoch: freeze the full get_ayanamsa() code sweep here.
-            extra_views=("ayanamsa_sweep",),
+            extra_views=("ayanamsa_sweep", "vedic_derived"),
         ),
-        Case("equator-sidereal-lahiri", s["equator"], "sidereal", {"ayanamsa": 1}),
-        Case("yamakoti-aditya", s["yamakoti"], "aditya"),
+        Case(
+            "equator-sidereal-lahiri",
+            s["equator"],
+            "sidereal",
+            {"ayanamsa": 1},
+            extra_views=("vedic_derived",),
+        ),
+        Case(
+            "yamakoti-aditya", s["yamakoti"], "aditya", extra_views=("vedic_derived",)
+        ),
+        Case(
+            "yamakoti-sidereal-lahiri",
+            s["yamakoti"],
+            "sidereal",
+            {"ayanamsa": 1},
+            extra_views=("vedic_derived",),
+        ),
     ]
 
 
