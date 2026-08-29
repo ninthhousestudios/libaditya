@@ -86,7 +86,6 @@ FLG_HELCTR: int = int(CalcFlags.HELCTR)  # 8
 FLG_BARYCTR: int = int(CalcFlags.BARYCTR)  # 16384
 FLG_SPEED: int = int(CalcFlags.SPEED)  # 256
 FLG_SWIEPH: int = int(CalcFlags.SWIEPH)  # 2
-FLG_NONUT: int = int(CalcFlags.NONUT)  # 64 (no nutation -- Swiss sets it for sidereal)
 
 
 # --------------------------------------------------------------------------- #
@@ -206,22 +205,13 @@ def fixstar(
     ``fixstar2_ut`` it is bit-identical, and its SgrA* longitude tracks the v1
     ``swe.fixstar`` to ~5e-8 deg (engine noise floor, under the golden tolerance).
 
-    GAP: swisseph_rs's ``fixstar2_ut`` under-reports ``flags_used`` versus
-    pyswisseph (and versus its OWN ``calc_ut``, which reports both bits): it drops
-    ``FLG_SWIEPH`` (2) always and ``FLG_NONUT`` (64, which Swiss sets whenever the
-    computation is sidereal) for a sidereal call. So it returns 256 where
-    pyswisseph returns 258 (tropical), and 65792 where pyswisseph returns 65858
-    (sidereal). The seam always drives the Swiss ephemeris
-    (``distill_config`` pins ``EphemerisSource.SWISS``), so ORing ``FLG_SWIEPH``
-    back in always, plus ``FLG_NONUT`` when the caller's ``flags`` carry the
-    sidereal bit, reconstructs the ``retflags`` pyswisseph froze.
+    ``flags_used`` comes straight from the engine (pyswisseph-rs>=0.1.2, which
+    fixed swisseph-rs/165 so ``fixstar2_ut`` reports the full retflag -- 258
+    tropical, 65858 sidereal -- exactly as pyswisseph and its own ``calc_ut`` do).
     """
     with surfacing_errors():
         name, result = eph.fixstar2_ut(star, jd, to_flags(flags))
-    retflags = int(result.flags_used) | FLG_SWIEPH
-    if flags & FLG_SIDEREAL:
-        retflags |= FLG_NONUT
-    return result.data, name, retflags
+    return result.data, name, int(result.flags_used)
 
 
 def fixstar_mag(eph: Ephemeris, star: str) -> float:

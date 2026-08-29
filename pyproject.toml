@@ -3,7 +3,7 @@ name = "libaditya"
 version = "0.3.4"
 description = "Astrological calculation library for Adityas. It is capable of calculating using tropical zodiac, tropical adityas, or sidereal signs. It can do any ayanamsa for naskhatras, including tropcial/sidereal nakshatras, or both sidereal or both tropical (right now, Vedanga Jyotisha ayanamsa). It has basic HD calculations in it; will include more soon. see README for more information on trying it."
 readme = "README.md"
-requires-python = ">=3.10,<=3.13"
+requires-python = ">=3.11,<=3.13"
 dependencies = [
     # for some legacy chart drawing the implemented before
     # one is human design bodygraphs
@@ -19,6 +19,10 @@ dependencies = [
     # this requires the user to have open a running stellarium instance with the
     # http server running through the RemoteControl plugin
     "pyswisseph>=2.10.3.2",
+    # native swisseph_rs backend (the ephemeris seam imports swisseph_rs); 0.1.2
+    # ships the fixstar2 flags_used fix (swisseph-rs/165) the seam relied on a
+    # shim to paper over -- see libaditya/24.
+    "pyswisseph-rs>=0.1.2",
     "requests>=2.32.5",
     "rich>=14.3.2",
     "toml>=0.10.2",
