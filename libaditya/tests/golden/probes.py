@@ -387,27 +387,29 @@ def probe_houses_by_system(chart) -> dict:
 # epoch to catch int -> SiderealMode mapping drift across the whole table.  The
 # library's own custom codes (97 true-sidereal, 98 aditya-default, 99/100/101
 # Vedanga variants) are swept through const.ayanamsa_name, which resolves them
-# without touching swe.set_sid_mode.
+# without reaching the seam's sidereal path.
 AYANAMSA_SWE_CODES = list(range(0, 48))
 AYANAMSA_LIB_CODES = [97, 98, 99, 100, 101]
 
 
-def _ayanamsa_swe_entry(jd: float, code: int) -> dict:
-    import swisseph as swe
-
-    import libaditya
+def _ayanamsa_swe_entry(chart, jd: float, code: int) -> dict:
     from libaditya import constants as const
+    from libaditya.ephemeris import seam
 
-    # This reference probe reads pyswisseph's ayanamsa table DIRECTLY (the frozen
-    # golden's source of truth). Some modes (e.g. 10) carry a sun-position term
-    # that needs the bundled ephemeris files, so point pyswisseph at them here --
-    # libaditya's domain code no longer sets swe's global ephe path at import
-    # (post libaditya/21; it threads ephe_path per-call through the seam instead).
-    swe.set_ephe_path(libaditya.base_path + "/ephe/")
-    swe.set_sid_mode(code)
+    # Cut over to the seam (libaditya/26): build a SIDEREAL ephemeris for this
+    # code through the distiller and read its ayanamsa arc + name from the seam,
+    # so this view tests swisseph_rs against the pyswisseph-frozen golden like
+    # every other cut-over probe -- not a raw-``swisseph`` reference probe that
+    # re-emits the golden and breaks under LIBADITYA_SWE_BACKEND=swisseph_rs
+    # (swisseph_rs is not a C drop-in; the module-level set_sid_mode/... it read
+    # do not exist). The distiller handles 47 (out-of-range -> Fagan/Bradley
+    # clamp, matching C) and threads the bundled ephe/ path per-config, so the
+    # sun-position modes (e.g. 10) still resolve. Verified 0.0 apart from the
+    # frozen golden across the whole 0..47 table, so no re-bless was needed.
+    eph = seam.build_ephemeris(chart.context, seam.FLG_SIDEREAL, code)
     return {
-        "swe_value": swe.get_ayanamsa_ut(jd),
-        "swe_name": swe.get_ayanamsa_name(code),
+        "swe_value": seam.get_ayanamsa_ut(eph, jd),
+        "swe_name": seam.get_ayanamsa_name(code),
         "lib_name": const.ayanamsa_name(code),
     }
 
@@ -424,7 +426,7 @@ def probe_ayanamsa_sweep(chart) -> dict:
     """Freeze get_ayanamsa() across the full sidereal-mode table at one epoch."""
     jd = chart.context.timeJD.jd_number()
     swe_codes = {
-        str(code): capture(lambda code=code: _ayanamsa_swe_entry(jd, code))
+        str(code): capture(lambda code=code: _ayanamsa_swe_entry(chart, jd, code))
         for code in AYANAMSA_SWE_CODES
     }
     lib_codes = {
@@ -448,13 +450,15 @@ def probe_ayanamsa_sweep(chart) -> dict:
 # value rather than crashing the run.
 #
 # Where libaditya's own wrapper is lossy -- ``next_crossing_of_rahu`` formats a
-# string, ``rise_trans`` discards the swe retflag -- the probe drops to the raw
-# ``swe`` call (as ``ayanamsa_sweep`` already does) to preserve full precision
-# AND the retflag/return-shape, which is exactly the return-type surface the
-# migration is most likely to move.  Where the wrapper preserves everything (the
-# eclipse ``SWERashi`` methods return the raw swe tuple; ``FixedStar`` exposes
-# every coordinate; ``next_evening_first`` returns whole JulianDays) the probe
-# rides the library API.
+# string, ``rise_trans`` collapses to a bare jd -- the probe calls the seam
+# directly and RECONSTRUCTS the pyswisseph return shape (``probe_rise_trans``
+# rebuilds ``{retflag, tret}`` around the seam's single jd) to preserve full
+# precision AND the retflag/return-shape, which is exactly the return-type
+# surface the migration is most likely to move.  Where the wrapper preserves
+# everything (the eclipse ``SWERashi`` methods return the raw swe tuple;
+# ``FixedStar`` exposes every coordinate; ``next_evening_first`` returns whole
+# JulianDays) the probe rides the library API.  Either way the value comes from
+# swisseph_rs through the seam -- no probe re-imports raw ``swisseph`` anymore.
 # --------------------------------------------------------------------------- #
 def probe_fixed_star(fs) -> dict:
     """Full raw state of one FixedStar (raw attrs, never a rounding accessor)."""

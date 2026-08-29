@@ -808,6 +808,23 @@ def get_ayanamsa_name(code: int) -> str:
     return ""
 
 
+def get_ayanamsa_ut(eph: Ephemeris, jd: float) -> float:
+    """Ayanamsa arc at ``jd`` (UT), degrees -- as pyswisseph's legacy ``swe.get_ayanamsa_ut``.
+
+    Second API gap in the ayanamsa surface: swisseph_rs's
+    ``Ephemeris.get_ayanamsa_ut`` aliases ``swe_get_ayanamsa_ex_ut``, which ADDS
+    nutation; pyswisseph's legacy ``swe.get_ayanamsa_ut(jd)`` does NOT. Passing
+    ``NONUT`` reproduces the legacy (no-nutation) value bit-for-bit -- verified
+    0.0 apart from the pyswisseph-frozen golden across the full 0..47 sidereal
+    table (without it, every code is a constant ~0.00387 deg / ~13.9" high, the
+    J2000 nutation-in-longitude term).
+
+    The sidereal mode is the ``eph``'s own config, not a global set_sid_mode, so
+    build ``eph`` with the target ayanamsa via :func:`build_ephemeris` first.
+    """
+    return eph.get_ayanamsa_ut(jd, CalcFlags.NONUT)
+
+
 # --------------------------------------------------------------------------- #
 # typed exceptions
 # --------------------------------------------------------------------------- #
