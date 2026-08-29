@@ -94,7 +94,6 @@ dependencies = [
     { name = "metar" },
     { name = "more-itertools" },
     { name = "prettytable" },
-    { name = "pyswisseph" },
     { name = "pyswisseph-rs" },
     { name = "requests" },
     { name = "rich" },
@@ -112,7 +111,6 @@ requires-dist = [
     { name = "metar", specifier = ">=1.11.0" },
     { name = "more-itertools", specifier = ">=10.8.0" },
     { name = "prettytable", specifier = ">=3.17.0" },
-    { name = "pyswisseph", specifier = ">=2.10.3.2" },
     { name = "pyswisseph-rs", specifier = ">=0.1.2" },
     { name = "requests", specifier = ">=2.32.5" },
     { name = "rich", specifier = ">=14.3.2" },
@@ -181,21 +179,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887", size = 4968631, upload-time = "2025-06-21T13:39:12.283Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
-]
-
-[[package]]
-name = "pyswisseph"
-version = "2.10.3.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/66/a6/db70d67a00dda42ebd033538c086879328f4c17f670eafe8aca2f11abfef/pyswisseph-2.10.3.2.tar.gz", hash = "sha256:c54c305e83dbd5d2b71e58d8a69d8ee41de24c4d3328ce09e2af860a3537624d", size = 6940913, upload-time = "2023-06-04T17:05:53.293Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/ae/33731d803062c513f144d1ef4f20b679cf42f3c8806f6591d78f58bab4b2/pyswisseph-2.10.3.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:b83407a030d653ead529c07bebac72acf55426140b1b4dbf89026a1369806df6", size = 793996, upload-time = "2023-06-04T17:04:47.043Z" },
-    { url = "https://files.pythonhosted.org/packages/17/a3/2f8872cea3a7fe305db7ae2315cddd9c1b6c6ae5c51e75eff31bc44924a5/pyswisseph-2.10.3.2-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:458ee64b79fe593c68fa636ba00db81d131e5a6bd028685493bfb64b879e2d72", size = 1767751, upload-time = "2023-06-04T17:04:49.216Z" },
-    { url = "https://files.pythonhosted.org/packages/76/fa/b284fe0900f00a030754727e2c190fe16597da39ff7b6faf744cab4e3c74/pyswisseph-2.10.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e00d7e08aeafe00938603bc118874b6ca7871c5aaa55aafca8fa2c6d76aff812", size = 1818961, upload-time = "2023-06-04T17:04:50.799Z" },
-    { url = "https://files.pythonhosted.org/packages/d0/e4/364678f730c52f35396d5cfc622621c18c2c5b41435253b7cd6c1befa3fc/pyswisseph-2.10.3.2-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:b574cc5a39ea73f8916663254c8ac15c56f09735d68e9cba1e6f958a49bb45bd", size = 2307855, upload-time = "2023-06-04T17:04:52.645Z" },
-    { url = "https://files.pythonhosted.org/packages/5f/49/0561232481fa7c2fd3eb75e101bd6f749153d40b7baefa0fc1c5d8a74511/pyswisseph-2.10.3.2-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:e5cf469ef1ebbf4d426eea862b45c8ec00ab827247f69758d038924e5efb3a9d", size = 2329849, upload-time = "2023-06-04T17:04:54.099Z" },
-    { url = "https://files.pythonhosted.org/packages/08/20/0862ac62cb4ca4db18021ddf9fa20d7c4180144c1438ded6ccaa6b1d1021/pyswisseph-2.10.3.2-cp311-cp311-win32.whl", hash = "sha256:0b2208aa72e4a9265ffa6281180684bbce78becfede209ce3d1623736aade184", size = 874571, upload-time = "2023-06-04T17:04:55.596Z" },
-    { url = "https://files.pythonhosted.org/packages/f8/52/fe2e12caae15650f0fbc585bb3f740cd5ac6f7662d85e915ae38d456b7db/pyswisseph-2.10.3.2-cp311-cp311-win_amd64.whl", hash = "sha256:2b4a24f7954e1456ecbd3bb091b7c2a8a2e9838ff56e0d8af0f9e897fa84eb25", size = 1015881, upload-time = "2023-06-04T17:04:57.843Z" },
 ]
 
 [[package]]

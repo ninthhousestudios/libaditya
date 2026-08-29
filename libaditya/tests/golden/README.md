@@ -31,27 +31,18 @@ Exit code is `0` when every selected case passes, `1` otherwise (suitable for
 CI). Intended output changes are consciously re-blessed with `--update`; the
 diff of the fixture files under review is the record of what moved.
 
-## Choosing a backend
+## The engine
 
-The golden fixtures are **always** frozen from `pyswisseph` (the reference C
-engine). `--backend` chooses the *candidate* that gets compared against that
-frozen truth — the golden itself never changes when the backend does.
+`swisseph_rs` is the **sole** ephemeris engine: `libaditya`'s seam
+(`libaditya/ephemeris/seam.py`) imports it directly, so `backend.py` no longer
+swaps anything — `--backend` is a single-choice knob (`swisseph_rs`) kept so the
+run report can name the engine and its provenance.
 
-`libaditya` binds the engine with `import swisseph as swe` at import time, so a
-non-default engine must be selected **before** `libaditya` is imported. The
-library reads the `LIBADITYA_SWE_BACKEND` environment variable at the very top
-of `libaditya/__init__.py` and, if set to an API-compatible module name, aliases
-it in as `swisseph`. Because `python -m libaditya.tests.golden` imports
-`libaditya` before any harness code runs, request an alternate backend like:
-
-```bash
-LIBADITYA_SWE_BACKEND=swisseph_rs \
-  .venv/bin/python -m libaditya.tests.golden --backend=swisseph_rs
-```
-
-`--backend=pyswisseph` (the default) needs no environment setup. If `--backend`
-names an engine the library did not actually bind, the harness fails loudly with
-the exact command to use rather than silently comparing the wrong engine.
+The fixtures were originally frozen from `pyswisseph` 2.10.03 (the reference C
+engine) to gate the migration; `swisseph_rs` reproduces them within the
+documented per-field tolerances. Phase 3 (libaditya/4) dropped `pyswisseph`, so
+there is no second engine to compare against anymore — the equivalence is baked
+into the frozen fixtures.
 
 ## Fixture layout
 

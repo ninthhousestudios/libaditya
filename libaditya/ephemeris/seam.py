@@ -34,11 +34,12 @@ calls into this seam. Concentrating the native surface here means:
   hand-rolled name tables (the enum ``.name()`` gives wrong casing), and
   :data:`FLG_TROPICAL` is the ``0`` flag.
 
-VALIDATION MODEL (whole arc): the seam imports ``swisseph_rs`` DIRECTLY, so a
-cut-over subsystem hits ``swisseph_rs`` regardless of ``LIBADITYA_SWE_BACKEND``.
-Running ``python -m libaditya.tests.golden`` on the DEFAULT (pyswisseph) backend
-therefore tests each cut-over subsystem's ``swisseph_rs`` output against the
-pyswisseph-frozen golden. Green = faithful.
+VALIDATION MODEL: the seam imports ``swisseph_rs`` DIRECTLY -- it is the sole
+importer of an ephemeris engine, and the only one left after Phase 3
+(libaditya/4) dropped C pyswisseph. ``python -m libaditya.tests.golden`` tests
+the seam's ``swisseph_rs`` output against the golden fixtures (originally frozen
+from pyswisseph 2.10.03, within the documented per-field tolerances). Green =
+faithful.
 
 This module stands up the seam and nothing else: it cuts over NO subsystem's
 function calls. Only :mod:`libaditya.constants` sources its body/flag aliases and

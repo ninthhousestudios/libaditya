@@ -24,9 +24,10 @@ C-style "set a global, then call" ephemeris state -- ``set_sid_mode`` /
 SVP override, and C's silent clamp of out-of-range ayanamsa codes -- into one
 frozen, per-call ``EphemerisConfig``.
 
-Every mapping below is verified bit-for-bit against pyswisseph 2.10.03 (the C
-values reproduce exactly at ``Ephemeris(cfg).calc_ut``; see
-``libaditya/tests/test_distiller.py``).
+Every mapping below was verified bit-for-bit against pyswisseph 2.10.03 during
+the migration (the C values reproduced exactly at ``Ephemeris(cfg).calc_ut``).
+That equivalence is now baked into the golden fixtures (frozen from pyswisseph);
+the standalone distiller reference test was retired with pyswisseph in Phase 3.
 """
 
 from __future__ import annotations

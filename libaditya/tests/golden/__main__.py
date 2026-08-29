@@ -18,13 +18,13 @@
 
 """Single runnable entry point for the golden harness.
 
-    python -m libaditya.tests.golden --backend=pyswisseph          # check
+    python -m libaditya.tests.golden                               # check
     python -m libaditya.tests.golden --update                      # (re)freeze
     python -m libaditya.tests.golden --case nyc-aditya --case sydney-aditya
     python -m libaditya.tests.golden --list
 
-The backend is chosen *before* libaditya is imported (see ``backend``), so the
-heavy ``harness`` import is deferred until after ``select_backend`` has run.
+The single engine (``swisseph_rs``) is validated up front (see ``backend``), so
+the heavy ``harness`` import is deferred until after ``select_backend`` has run.
 """
 
 from __future__ import annotations
@@ -44,8 +44,8 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "--backend",
         default=backend.DEFAULT_BACKEND,
         choices=sorted(backend.BACKENDS),
-        help="ephemeris engine the CANDIDATE runs on (goldens are always frozen "
-        "from pyswisseph). default: %(default)s",
+        help="ephemeris engine to run (swisseph_rs is the sole engine post-"
+        "migration; retained as a single-choice knob). default: %(default)s",
     )
     parser.add_argument(
         "--update",
@@ -106,11 +106,8 @@ def main(argv: list[str] | None = None) -> int:
     print()
 
     if args.update:
-        if args.backend != backend.DEFAULT_BACKEND:
-            print(
-                f"WARNING: freezing goldens from {args.backend!r}, not the "
-                f"reference {backend.DEFAULT_BACKEND!r}.\n"
-            )
+        # swisseph_rs is now the sole engine and the freeze source of truth
+        # (pyswisseph was dropped in Phase 3, libaditya/4).
         report = harness.freeze(selected)
         for outcome in report.outcomes:
             mark = "froze" if outcome.status == "frozen" else "ERROR"

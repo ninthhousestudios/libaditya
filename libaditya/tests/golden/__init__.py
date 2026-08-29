@@ -20,9 +20,9 @@
 pyswisseph -> swisseph_rs migration).
 
 This package intentionally imports NOTHING from ``libaditya`` at module load
-time.  The backend that ``libaditya`` binds to (``import swisseph as swe``) has
-to be selected *before* ``libaditya`` is first imported -- see
-``backend.select_backend``.  Keep the heavy imports (``subjects``, ``probes``,
-``harness``) inside functions or import them only after the backend is chosen,
+time.  ``backend.select_backend`` validates the engine (``swisseph_rs``, the
+sole engine post-migration) and reports its provenance *before* the heavy
+imports (``subjects``, ``probes``, ``harness``, which pull in ``libaditya``)
+run.  Keep those inside functions or import them only after the backend check,
 which is what ``__main__`` does.
 """

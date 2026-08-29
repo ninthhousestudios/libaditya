@@ -15,7 +15,8 @@ For the *internals* — the fixture file layout, the pinned subject matrix, the
 canonical serializer's determinism guarantees, and the per-view probe design —
 see the reference beside the code: [`libaditya/tests/golden/README.md`](../libaditya/tests/golden/README.md).
 This doc is the workflow: how to run it, how to re-bless a fixture, why the
-tolerance is what it is, and how to point the candidate at another engine.
+tolerance is what it is, and (historically) how the migration pointed the
+candidate at another engine.
 
 All commands assume the project venv (Python 3.13, with `libaditya`
 importable):
@@ -34,9 +35,9 @@ python -m libaditya.tests
 ```
 
 It runs the smoke test (`libaditya.tests.legacy_smoke`, a fast shape/sanity
-check of the public API) followed by the golden check on the default
-`pyswisseph` backend, and exits `0` only if both pass. This is the command to
-wire into CI or run before a commit.
+check of the public API) followed by the golden check on `swisseph_rs`
+(libaditya's sole ephemeris engine), and exits `0` only if both pass. This is
+the command to wire into CI or run before a commit.
 
 ## Running the golden check directly
 
@@ -95,10 +96,11 @@ python -m libaditya.tests.golden --update --case nyc-aditya
    the record of exactly what moved and by how much — it belongs in the same
    commit as the code change, and a reviewer reads it as part of the review.
 
-Freezing is always done from `pyswisseph`, the reference engine. If you
-`--update` while a non-default backend is bound the harness prints a loud
-warning — you almost never want to bake another engine's numbers in as the
-golden truth.
+The fixtures were originally frozen from `pyswisseph` 2.10.03 (the C reference)
+to gate the migration. Post-migration `swisseph_rs` is the sole engine, so a
+`--update` now re-freezes from it — which means you must be doubly sure the
+movement is intended, since there is no longer a second engine to cross-check
+against.
 
 ## Tolerance — why it is tight, and how to loosen one field
 
@@ -136,36 +138,28 @@ The glob matches paths like `snapshot.panchanga.vara` or
 is real; a per-field loosening is a documented concession, not a blanket
 `--tolerance` bump.
 
-## Pointing the candidate at another engine (the migration switch)
+## The engine (historical: the migration switch)
 
-The golden fixtures are **always** frozen from `pyswisseph`. `--backend` chooses
-the *candidate* that gets compared against that frozen truth — the golden itself
-never changes when the backend does. That is the entire migration test: freeze
-the C engine once, then run the Rust engine as the candidate and demand it still
-matches.
+`swisseph_rs` is now the **sole** ephemeris engine. `libaditya`'s ephemeris seam
+(`libaditya/ephemeris/seam.py`) imports it directly, so there is nothing to swap
+and `--backend` is a single-choice knob kept only so the run report can name the
+engine and its provenance.
 
-`libaditya` binds the engine with `import swisseph as swe` at import time, so an
-alternate engine must be selected **before** `libaditya` is imported. The
-library reads the `LIBADITYA_SWE_BACKEND` environment variable at the top of
-`libaditya/__init__.py` and, if set to an API-compatible module name, aliases it
-in as `swisseph`. Because `python -m libaditya.tests.golden` imports `libaditya`
-before any harness code runs, request the alternate engine through the
-environment:
-
-```bash
-LIBADITYA_SWE_BACKEND=swisseph_rs \
-  python -m libaditya.tests.golden --backend=swisseph_rs
-```
-
-`--backend=pyswisseph` (the default) needs no environment setup. If `--backend`
-names an engine the library did not actually bind, the harness fails loudly with
-the exact command to use rather than silently comparing the wrong engine — so a
-green run genuinely means the named engine reproduced the reference numbers.
+Historically this section documented the migration switch: the fixtures were
+frozen once from C `pyswisseph`, and `--backend` / the `LIBADITYA_SWE_BACKEND`
+environment variable pointed the *candidate* at `swisseph_rs` (aliased into
+`sys.modules['swisseph']` before `libaditya` bound `import swisseph as swe`).
+Phase 3 (libaditya/4) dropped `pyswisseph` and removed that machinery; the seam
+is the only importer of an ephemeris engine and it imports `swisseph_rs`
+unconditionally. The bit-for-bit reference tests (`test_seam.py`,
+`test_distiller.py`) that compared the seam against C `pyswisseph` were retired
+with it — their equivalence is now baked into the fixtures below.
 
 ## Baseline
 
-The Phase-0 baseline frozen on `master`: **24 cases, 24/24 PASS** against
+The baseline: **24 cases, 24/24 PASS**. The fixtures were originally frozen from
 `pyswisseph` 2.10.03 (module version `20230604`), ephemeris `sepl_18.se1`
-(`SWISSEPH 1 / Copyright Astrodienst AG, Switzerland, 1998`). A clean re-freeze
-produces zero diff, confirming the committed fixtures match current master
-output exactly. This is the number every later phase must preserve.
+(`SWISSEPH 1 / Copyright Astrodienst AG, Switzerland, 1998`), and `swisseph_rs`
+reproduces them (within the documented per-field speed/search tolerances). A
+clean check against `swisseph_rs` is 24/24 green; this is the number every
+change must preserve.

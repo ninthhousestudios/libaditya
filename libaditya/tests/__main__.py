@@ -20,12 +20,13 @@
 
     python -m libaditya.tests
 
-Runs the offline smoke test and then the golden-master regression check (on the
-default ``pyswisseph`` backend) in sequence, and exits non-zero if either fails.
-This is the single command CI or a human runs to gate a change.
+Runs the offline smoke test and then the golden-master regression check (on
+``swisseph_rs``, libaditya's sole ephemeris engine) in sequence, and exits
+non-zero if either fails. This is the single command CI or a human runs to gate
+a change.
 
-For anything beyond the default run -- a backend swap, re-blessing fixtures, a
-case subset, a looser tolerance -- drive the golden harness directly:
+For anything beyond the default run -- re-blessing fixtures, a case subset, a
+looser tolerance -- drive the golden harness directly:
 
     python -m libaditya.tests.golden --help
 

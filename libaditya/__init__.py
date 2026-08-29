@@ -18,26 +18,13 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-# --- ephemeris backend selection (harness-only; VESTIGIAL for libaditya) -----
-# HISTORICAL: libaditya's domain modules used to bind the engine with
-# `import swisseph as swe`, so setting LIBADITYA_SWE_BACKEND to an API-compatible
-# module name aliased sys.modules["swisseph"] before those imports ran.
-#
-# Post-cutover (libaditya/21) NO domain module imports swisseph -- every
-# ephemeris call goes through libaditya.ephemeris.seam onto swisseph_rs directly.
-# So this alias no longer affects libaditya's own runtime. It is retained ONLY
-# for the golden harness's backend contract (tests/golden/backend.py) and the
-# seam/distiller reference tests, which still `import swisseph` to compare the
-# seam against C pyswisseph. Unset (the default) it is inert.
-import os as _os
-import sys as _sys
-
-_swe_backend = _os.environ.get("LIBADITYA_SWE_BACKEND")
-if _swe_backend and _swe_backend not in ("swisseph", "pyswisseph"):
-    import importlib as _importlib
-
-    _sys.modules["swisseph"] = _importlib.import_module(_swe_backend)
-
+# HISTORICAL (Phase 3, libaditya/4): libaditya's domain modules once bound the
+# engine with `import swisseph as swe`, and a LIBADITYA_SWE_BACKEND env var could
+# alias sys.modules["swisseph"] to a candidate before those imports ran. Since
+# the Phase 2 cutover (libaditya/21) every ephemeris call goes through
+# libaditya.ephemeris.seam onto swisseph_rs directly, and C pyswisseph has been
+# dropped -- so no module imports "swisseph" and there is nothing left to alias.
+# The env var is gone; swisseph_rs is the sole engine.
 import pathlib
 from dataclasses import replace
 from rich.console import Console
