@@ -19,10 +19,10 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import math
-import swisseph as swe
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 KARAKAS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
 GRAHAS = KARAKAS + ["Rahu", "Ketu"]
@@ -434,22 +434,28 @@ class ShayanadiAvasthas:
         planets = self.planets()
         context = self.context
         birth_jd = context.timeJD.jd_number()
+        # rise/set instants are frame-independent (geopos passed explicitly), so a
+        # plain tropical Ephemeris is the minimal, correct config -- the seam
+        # memoizes it per its shared cache.
+        eph = seam.build_ephemeris(context, seam.FLG_TROPICAL, context.ayanamsa)
         # find the most recent sunrise before birth
         # rise_trans finds the *next* rise, so start from ~1 day before birth
-        sunrise_jd = swe.rise_trans(
+        sunrise_jd = seam.rise_trans(
+            eph,
             birth_jd - 1,
-            swe.SUN,
-            swe.CALC_RISE | swe.BIT_HINDU_RISING,
+            seam.SUN,
+            seam.CALC_RISE | seam.BIT_HINDU_RISING,
             context.location.swe_location(),
-        )[1][0]
+        )
         # if that sunrise is still after birth (shouldn't happen), go back further
         if sunrise_jd > birth_jd:
-            sunrise_jd = swe.rise_trans(
+            sunrise_jd = seam.rise_trans(
+                eph,
                 birth_jd - 2,
-                swe.SUN,
-                swe.CALC_RISE | swe.BIT_HINDU_RISING,
+                seam.SUN,
+                seam.CALC_RISE | seam.BIT_HINDU_RISING,
                 context.location.swe_location(),
-            )[1][0]
+            )
         birth_ghatis = (birth_jd - sunrise_jd) * 60
 
         result = {}

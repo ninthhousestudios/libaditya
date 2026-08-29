@@ -17,9 +17,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
-
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 from libaditya.objects import JulianDay
 
@@ -41,7 +40,8 @@ class SWEFirstLast:
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
             return
         return utils.toJD(
-            swe.heliacal_ut(
+            seam.heliacal_ut(
+                self._eph,
                 self.timeJD.jd_number(),
                 self.context.location.swe_location(),
                 # need to figure out how to get current information for the place
@@ -52,7 +52,7 @@ class SWEFirstLast:
                 # a 6-tuple of values relative to an observer and various observing situations
                 (0, 0, 0, 0, 0, 0),
                 self.identity(),
-                swe.EVENING_FIRST,
+                seam.EVENING_FIRST,
                 # this is the ephemeris flag, i think
                 self.sysflg,
             ),
@@ -63,7 +63,8 @@ class SWEFirstLast:
         if self.identity() not in ["Moon", "Mercury", "Venus"]:
             return
         return utils.toJD(
-            swe.heliacal_ut(
+            seam.heliacal_ut(
+                self._eph,
                 self.timeJD.jd_number(),
                 self.context.location.swe_location(),
                 # need to figure out how to get current information for the place
@@ -74,7 +75,7 @@ class SWEFirstLast:
                 # a 6-tuple of values relative to an observer and various observing situations
                 (0, 0, 0, 0, 0, 0),
                 self.identity(),
-                swe.MORNING_LAST,
+                seam.MORNING_LAST,
                 # this is the ephemeris flag, i think
                 self.sysflg,
             ),

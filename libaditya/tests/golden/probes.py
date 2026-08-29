@@ -516,32 +516,33 @@ def probe_eclipses(rashi) -> dict:
 
 
 def probe_rise_trans(chart) -> dict:
-    """Raw swe.rise_trans for Sun & Moon over rise / set / mtransit / itransit.
+    """Sun & Moon rise / set / mtransit / itransit through the seam.
 
-    Frozen from the raw call (not the library ``rise_trans``, which returns only a
-    JulianDay) to also pin the retflag and the full tret contact array -- the
-    return shape most at risk in the migration.  All four events carry
-    ``BIT_HINDU_RISING`` (the library default).  swe demands a registered
-    geographic position for the meridian transits, so ``set_topo`` is asserted to
-    the case's own location first, making the transits deterministic regardless of
-    prior global swe state; rise/set take the geopos from the call itself.
+    swisseph_rs's ``RiseSetResult`` carries only ``.time`` -- pyswisseph left
+    tret[1..9] zero and returned retflag 0 for a found event, while a miss RAISES
+    (surfacing through ``capture`` as an __error__ leaf).  So this reconstructs the
+    pyswisseph-frozen ``{retflag, tret}`` shape around the seam's single jd
+    (retflag 0, tret[0] the event time, the rest padded 0.0), keeping the frozen
+    fixtures bit-faithful while routing the call through the seam (swisseph_rs).
+    All four events carry ``BIT_HINDU_RISING`` (the library default); the seam is
+    stateless and takes geopos in the call, so the transits need no ``set_topo``.
     """
-    import swisseph as swe
+    from libaditya.ephemeris import seam
 
     jd = chart.context.timeJD.jd_number()
     geopos = chart.context.location.swe_location()
-    swe.set_topo(*geopos)
+    eph = seam.build_ephemeris(chart.context, seam.FLG_TROPICAL, chart.context.ayanamsa)
     events = {
-        "rise": swe.CALC_RISE,
-        "set": swe.CALC_SET,
-        "mtransit": swe.CALC_MTRANSIT,
-        "itransit": swe.CALC_ITRANSIT,
+        "rise": seam.CALC_RISE,
+        "set": seam.CALC_SET,
+        "mtransit": seam.CALC_MTRANSIT,
+        "itransit": seam.CALC_ITRANSIT,
     }
-    bodies = {"sun": 0, "moon": 1}
+    bodies = {"sun": seam.SUN, "moon": seam.MOON}
 
     def _one(pnum: int, flag: int) -> dict:
-        retflag, tret = swe.rise_trans(jd, pnum, flag | swe.BIT_HINDU_RISING, geopos)
-        return {"retflag": retflag, "tret": list(tret)}
+        t = seam.rise_trans(eph, jd, pnum, flag | seam.BIT_HINDU_RISING, geopos)
+        return {"retflag": 0, "tret": [t] + [0.0] * 9}
 
     return {
         body: {
@@ -577,17 +578,20 @@ def probe_heliacal(rashi) -> dict:
 
 
 def probe_mooncross(chart) -> dict:
-    """Raw swe.mooncross_node_ut (next Moon/true-node conjunction) from pinned jd.
+    """Next Moon/true-node conjunction from the pinned jd, through the seam.
 
-    Frozen raw rather than through ``Moon.next_crossing_of_rahu`` (which formats a
-    lossy string) so the crossing instant keeps full precision.  In swisseph_rs
-    this is one of the calls that raises NoConvergence -- capture would freeze
-    that as an __error__ leaf, tripping the diff.
+    Routes ``mooncross_node_ut`` through the seam (not ``Moon.next_crossing_of_rahu``,
+    which formats a lossy string) so the crossing instant keeps full precision.  The
+    seam calls swisseph_rs's ET-frame ``mooncross_node`` to match pyswisseph's
+    UT-named-but-ET-valued return bit-for-bit (see the seam wrapper).  swisseph_rs
+    raises NoConvergence where the search fails -- capture would freeze that as an
+    __error__ leaf, tripping the diff.
     """
-    import swisseph as swe
+    from libaditya.ephemeris import seam
 
-    jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(
-        chart.context.timeJD.jd_number()
+    eph = seam.build_ephemeris(chart.context, seam.FLG_TROPICAL, chart.context.ayanamsa)
+    jd_cross, moon_longitude, moon_latitude = seam.mooncross_node_ut(
+        eph, chart.context.timeJD.jd_number()
     )
     return {
         "jd_cross": jd_cross,

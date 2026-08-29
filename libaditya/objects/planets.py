@@ -348,16 +348,17 @@ class Planet(CelestialObject, Longitude, PlanetBala):
     def riseset(self, rs, location=Location()):
         """
         :rs flag for rise, set, or one of the two meridian transits
-        swe.CALC_RISE, swe.CALC_SET, swe.MTRANSIT, swe.ITRANSIT
+        seam.CALC_RISE, seam.CALC_SET, seam.CALC_MTRANSIT, seam.CALC_ITRANSIT
         :location a Location class for where this is for
         """
         return JulianDay(
-            swe.rise_trans(
-                self.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
+            seam.rise_trans(
+                self._eph,
+                self.timeJD.jd_number(),  # midnightjd() if (rs == seam.CALC_RISE) else self.jd,
                 self.pnumber,
-                rs | swe.BIT_HINDU_RISING,
+                rs | seam.BIT_HINDU_RISING,
                 location.swe_location(),
-            )[1][0],
+            ),
             self.timeJD.utcoffset,
             self.timeJD.timezone(),
         )
@@ -530,7 +531,7 @@ class Sun(Planet):
         return Sun
 
     def sunrise_yamakoti(self) -> JulianDay:
-        return self.riseset(swe.CALC_RISE, Yamakoti)
+        return self.riseset(seam.CALC_RISE, Yamakoti)
 
     def lowest_daily_speed(self) -> float:
         """
@@ -686,8 +687,8 @@ class Moon(Planet, SWEFirstLast):
         """
         JulianDay of the next time Moon is conjunct true node Rahu
         """
-        jd_cross, moon_longitude, moon_latitude = swe.mooncross_node_ut(
-            self.context.timeJD.jd_number()
+        jd_cross, moon_longitude, moon_latitude = seam.mooncross_node_ut(
+            self._eph, self.context.timeJD.jd_number()
         )
         crossJD = JulianDay(jd_cross, self.context.timeJD.utcoffset)
         ret = ""

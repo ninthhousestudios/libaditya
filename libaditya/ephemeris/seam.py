@@ -55,7 +55,10 @@ from swisseph_rs import (
     CalcFlags,
     EclipseFlags,
     Ephemeris,
+    HeliacalEventType,
+    HeliacalFlags,
     HouseSystem,
+    RiseSetFlags,
     date as _date,
     errors,
 )
@@ -381,6 +384,133 @@ def lun_eclipse_when(
         0.0,
     )
     return int(r.flags), tret
+
+
+# --------------------------------------------------------------------------- #
+# rise / set / meridian-transit + heliacal + node crossings (search surface)
+# --------------------------------------------------------------------------- #
+# The last iterative-search family. swisseph_rs replaces pyswisseph's flat return
+# tuples with typed structs (RiseSetResult/.time, HeliacalEvent/.start_visible..,
+# MoonCrossing/.jd/.longitude/.latitude) and raises SwissephError subclasses where
+# pyswisseph returned a sentinel retflag. These wrappers restore the shape each
+# call site already consumes, and the rsmi / event-type flag ints below are the
+# value-identical drop-ins for swe.CALC_*/BIT_HINDU_RISING and the heliacal event
+# codes (verified int-equal to pyswisseph 2.10.03; sourced from the enums so a
+# future value shift is caught here, not at the call sites).
+CALC_RISE: int = int(RiseSetFlags.RISE)  # 1
+CALC_SET: int = int(RiseSetFlags.SET)  # 2
+CALC_MTRANSIT: int = int(RiseSetFlags.MTRANSIT)  # 4
+CALC_ITRANSIT: int = int(RiseSetFlags.ITRANSIT)  # 8
+BIT_HINDU_RISING: int = int(RiseSetFlags.HINDU_RISING)  # 896
+
+HELIACAL_RISING: int = int(HeliacalEventType.MORNING_FIRST)  # 1
+HELIACAL_SETTING: int = int(HeliacalEventType.EVENING_LAST)  # 2
+EVENING_FIRST: int = int(HeliacalEventType.EVENING_FIRST)  # 3
+MORNING_LAST: int = int(HeliacalEventType.MORNING_LAST)  # 4
+
+
+def rise_trans(
+    eph: Ephemeris,
+    tjd_ut: float,
+    body: int | str,
+    rsmi: int,
+    geopos: tuple[float, float, float],
+    flags: int = FLG_SWIEPH,
+    atpress: float = 0.0,
+    attemp: float = 0.0,
+) -> float:
+    """Rise / set / meridian-transit instant, as ``swe.rise_trans(...)[1][0]``.
+
+    Mirrors ``swe.rise_trans(tjdut, body, rsmi, geopos, atpress, attemp, flags)``,
+    whose ``(retflag, tret)`` return the call sites index ``[1][0]`` for the event
+    jd. swisseph_rs collapses that to ``RiseSetResult.time`` (the meaningful tret[0];
+    pyswisseph left tret[1..9] zero) and RAISES on a no-event / circumpolar body
+    rather than returning the ``retflag == -2`` sentinel -- so a found event is
+    exactly ``.time`` and a miss surfaces through :func:`surfacing_errors` as the
+    golden ``__error__`` leaf. ``rsmi`` is the ``CALC_*`` | ``BIT_HINDU_RISING`` int
+    the call sites already build. ``body`` is a libaditya body id (int) or, for the
+    fixed-star path, a catalog name (str) routed through the ``starname`` slot.
+    """
+    if isinstance(body, str):
+        target, starname = Body.SUN, body
+    else:
+        target, starname = to_body(body), None
+    with surfacing_errors():
+        r = eph.rise_trans(
+            tjd_ut,
+            target,
+            starname,
+            to_flags(flags),
+            RiseSetFlags(rsmi),
+            geopos,
+            atpress,
+            attemp,
+        )
+    return r.time
+
+
+def heliacal_ut(
+    eph: Ephemeris,
+    tjd_start: float,
+    geopos: tuple[float, ...],
+    atmo: tuple[float, ...],
+    observer: tuple[float, ...],
+    object_name: str,
+    event: int,
+    flags: int,
+    helflag: int = 0,
+) -> tuple[float, float, float]:
+    """Heliacal window jds, as ``swe.heliacal_ut(...) -> (start, optimum, end)``.
+
+    Mirrors ``swe.heliacal_ut(tjdut, geopos, atmo, observer, objname, eventtype,
+    flags)``: three Julian days -- start of visibility, optimum visibility, end of
+    visibility -- which the SWEFirstLast / CelestialObject mixins hand straight to
+    ``utils.toJD``. swisseph_rs returns a ``HeliacalEvent`` struct and splits the
+    single pyswisseph ``flags`` int into ``epheflag`` (the ordinary ephemeris bits
+    the call sites pass as ``sysflg``) and a separate ``HeliacalFlags`` (``helflag``,
+    the ``HELFLAG_*`` bits -- none are set by libaditya, so it defaults to 0). The
+    ``atmo`` 4-tuple / ``observer`` 6-tuple are passed through as lists.
+    """
+    with surfacing_errors():
+        r = eph.heliacal_ut(
+            tjd_start,
+            list(geopos),
+            list(atmo),
+            list(observer),
+            object_name,
+            HeliacalEventType(event),
+            to_flags(flags),
+            HeliacalFlags(helflag),
+        )
+    return r.start_visible, r.optimum_visibility, r.end_visible
+
+
+def mooncross_node_ut(
+    eph: Ephemeris,
+    tjd_ut: float,
+    flags: int = FLG_SWIEPH,
+) -> tuple[float, float, float]:
+    """Next Moon/node conjunction, as ``swe.mooncross_node_ut(tjdut, flags)``.
+
+    Mirrors ``swe.mooncross_node_ut -> (jd_cross, xlon, xlat)``, which the Moon
+    wrapper unpacks and the golden freezes whole. swisseph_rs returns a
+    ``MoonCrossing`` struct (``.jd`` / ``.longitude`` / ``.latitude``).
+
+    DECISION: this calls swisseph_rs's ET-frame ``mooncross_node`` -- NOT its
+    ``mooncross_node_ut``. pyswisseph's ``swe.mooncross_node_ut`` returns the
+    crossing jd in the ET/TT frame (it converts the UT start to ET for the search
+    but does NOT convert the found jd back to UT), so it matches swisseph_rs's
+    ``mooncross_node`` BIT-FOR-BIT (jd/lon/lat all 0.0 apart, verified across all
+    five event cases), while swisseph_rs's own ``mooncross_node_ut`` -- which DOES
+    return true UT -- lands ~delta-T (~69 s) earlier and would break the
+    pyswisseph-frozen golden. Faithfulness to the frozen truth wins: the crossing
+    is ~13.6 days out, so seeding the ET search from the UT jd shifts the start by
+    delta-T but not which crossing is found. A no-convergence surfaces through
+    :func:`surfacing_errors` as the golden ``__error__`` leaf.
+    """
+    with surfacing_errors():
+        r = eph.mooncross_node(tjd_ut, to_flags(flags))
+    return r.jd, r.longitude, r.latitude
 
 
 # --------------------------------------------------------------------------- #

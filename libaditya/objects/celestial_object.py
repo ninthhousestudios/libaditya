@@ -17,10 +17,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from dataclasses import replace
 
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 from libaditya.objects import JulianDay
 from libaditya.hd.longitude import HDLongitude
@@ -140,40 +140,54 @@ class CelestialObject:
     # SWE FUNCTIONS
     # that apply to planets and fixed stars; it uses Object.swe_id(), so the proper thing it gotten
 
-    def rise_trans(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
+    def _rise_trans_eph(self):
+        """Process-shared Ephemeris for the rise/set/transit search.
+
+        Rise/set instants are frame-independent (geopos is passed to the seam
+        explicitly and the epheflag defaults to SWIEPH, so the ayanamsa is
+        irrelevant), so a plain tropical config is the minimal, correct one -- the
+        seam still memoizes it per its shared cache. Works for both the Planet and
+        FixedStar mixers, neither of whose per-object ``_eph`` is needed here.
+        """
+        return seam.build_ephemeris(
+            self.context, seam.FLG_TROPICAL, self.context.ayanamsa
+        )
+
+    def rise_trans(self, bitflags=seam.BIT_HINDU_RISING, location=None) -> JulianDay:
         if location:
             self.context = replace(self.context, location=location)
         timeJD = JulianDay(
-            swe.rise_trans(
-                self.context.timeJD.jd_number(),  # midnightjd() if (rs == swe.CALC_RISE) else self.jd,
+            seam.rise_trans(
+                self._rise_trans_eph(),
+                self.context.timeJD.jd_number(),  # midnightjd() if (rs == seam.CALC_RISE) else self.jd,
                 self.swe_id(),
                 bitflags,
                 self.context.location.swe_location(),
-            )[1][0],
+            ),
             self.context.timeJD.utcoffset,
         )
         return timeJD
 
-    def rise(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
+    def rise(self, bitflags=seam.BIT_HINDU_RISING, location=None) -> JulianDay:
         """
         next rising time for this planet (can do stars...need to add something for that)
         """
         # an object instantied by using Stellarium. it will have this information from that
         if utils.is_stellarium_id(self.swe_id()):
             return self._rise
-        return self.rise_trans(bitflags=bitflags | swe.CALC_RISE, location=location)
+        return self.rise_trans(bitflags=bitflags | seam.CALC_RISE, location=location)
 
-    def set(self, bitflags=swe.BIT_HINDU_RISING, location=None) -> JulianDay:
+    def set(self, bitflags=seam.BIT_HINDU_RISING, location=None) -> JulianDay:
         """
         next setting time for this planet (can do stars...need to add something for that)
         """
         if utils.is_stellarium_id(self.swe_id()):
             return self._set
-        return self.rise_trans(bitflags=bitflags | swe.CALC_SET, location=location)
+        return self.rise_trans(bitflags=bitflags | seam.CALC_SET, location=location)
 
     def next_heliacal_event(self, atmosphere, observer, event=None):
         """
-        swe.heliacal_ut() returns 3 jd numbers
+        seam.heliacal_ut() returns 3 jd numbers
         start of visbility, optimum visbility, end of visbility
 
         there are options in this function to factor in place based considerations
@@ -184,7 +198,8 @@ class CelestialObject:
             # Moon doesnt have these
             return
         return utils.toJD(
-            swe.heliacal_ut(
+            seam.heliacal_ut(
+                self._rise_trans_eph(),
                 self.context.timeJD.jd_number(),
                 self.context.location.swe_location(),
                 # need to figure out how to get current information for the place
@@ -205,13 +220,15 @@ class CelestialObject:
     def next_heliacal_rising(
         self, atmosphere=(0, 0, 0, 0), observer=(0, 0, 0, 0, 0, 0)
     ):
-        return self.next_heliacal_event(atmosphere, observer, event=swe.HELIACAL_RISING)
+        return self.next_heliacal_event(
+            atmosphere, observer, event=seam.HELIACAL_RISING
+        )
 
     def next_heliacal_setting(
         self, atmosphere=(0, 0, 0, 0), observer=(0, 0, 0, 0, 0, 0)
     ):
         return self.next_heliacal_event(
-            atmosphere, observer, event=swe.HELIACAL_SETTING
+            atmosphere, observer, event=seam.HELIACAL_SETTING
         )
 
     def altitude(self):

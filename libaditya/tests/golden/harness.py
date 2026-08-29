@@ -80,6 +80,21 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 #     Only the ``tret`` time slots move; 1e-7 gives an order of headroom while
 #     staying far tighter than any real regression (a mislocated eclipse moves by
 #     minutes/hours, not milliseconds).
+#
+#   RISE/SET/TRANSIT (libaditya/20) -- swisseph_rs's rise_trans root-find lands
+#     ~1.8e-6 JD (~0.15 s) off pyswisseph's, an iterative-search noise floor (the
+#     class the eclipse note names) and eph-config-independent (a tropical vs
+#     sidereal Ephemeris gives the same instant). It moves the events.rise_trans
+#     tret[0] and the panchanga sunrise/sunset/moonrise/moonset jds; the derived
+#     datetime hour column is that JD x24 (~4.3e-5 h). mooncross needs NO tolerance
+#     -- the seam calls swisseph_rs's ET-frame node crossing, which reproduces
+#     pyswisseph's UT-named-but-ET-valued return bit-for-bit (0.0 apart).
+#
+#   HELIACAL (libaditya/20) -- the heliacal-visibility search runs its OWN
+#     atmospheric root-find, so swisseph_rs lands the window jds ~1.3e-4 JD (~11 s)
+#     off pyswisseph's -- the same iterative class, looser because the search is
+#     harder (a visibility DATE is what matters; 11 s is null). Positions still
+#     match <1e-9. The datetime hour column is that JD x24 (~3.2e-3 h).
 GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
     ("*speed*", 1e-7),
     ("*.amsha_longitude", 5e-9),
@@ -89,6 +104,13 @@ GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
     ("*.vimshottari.periods*start.jd", 5e-4),
     ("*.vimshottari.periods*start.datetime*", 1e-2),
     ("*.events.eclipses.*", 1e-7),
+    ("*.events.rise_trans.*", 5e-6),
+    ("*.panchanga.*rise.jd", 5e-6),
+    ("*.panchanga.*set.jd", 5e-6),
+    ("*.panchanga.*rise.datetime*", 1e-4),
+    ("*.panchanga.*set.datetime*", 1e-4),
+    ("*.events.heliacal.*.jd", 5e-4),
+    ("*.events.heliacal.*.datetime*", 1e-2),
 ]
 
 

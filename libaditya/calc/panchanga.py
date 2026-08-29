@@ -18,7 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from datetime import date
 from dataclasses import replace
 from typing import Self
@@ -26,6 +25,7 @@ from typing import Self
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import print_functions as printf
+from libaditya.ephemeris import seam
 
 from libaditya.objects import Sun, Moon, EphContext, JulianDay
 
@@ -125,16 +125,16 @@ class Panchanga:
         """
         return a JulianDay
         """
-        return self._sun.riseset(swe.CALC_RISE, self.location)
+        return self._sun.riseset(seam.CALC_RISE, self.location)
 
     def sunset(self):
-        return self._sun.riseset(swe.CALC_SET, self.location)
+        return self._sun.riseset(seam.CALC_SET, self.location)
 
     def moonrise(self):
-        return self._moon.riseset(swe.CALC_RISE, self.location)
+        return self._moon.riseset(seam.CALC_RISE, self.location)
 
     def moonset(self):
-        return self._moon.riseset(swe.CALC_SET, self.location)
+        return self._moon.riseset(seam.CALC_SET, self.location)
 
     def init_tithi(self):
         traw = (
@@ -395,20 +395,20 @@ class Panchanga:
         dmmoon = self._moon.daily_motion()
 
         print(
-            f"\nSunrise {self.timeJD.date()} at {self.location.place()}:\n{self._sun.riseset(swe.CALC_RISE, self.location)}\n"
+            f"\nSunrise {self.timeJD.date()} at {self.location.place()}:\n{self._sun.riseset(seam.CALC_RISE, self.location)}\n"
         )
         print(
-            f"Sunset {self.timeJD.date()} at {self.location.place()}:\n{self._sun.riseset(swe.CALC_SET, self.location)}\n"
+            f"Sunset {self.timeJD.date()} at {self.location.place()}:\n{self._sun.riseset(seam.CALC_SET, self.location)}\n"
         )
 
         # give moonrise for three days, the one before, this one, and the one after
         # yesterpanch = Panchanga(panch.shift("b", "day", 1))
         # morrowpanch = Panchanga(panch.shift("f", "day", 1))
         print(
-            f"Moonrise {self.timeJD.date()} at {self.location.place()}: \n{self._moon.riseset(swe.CALC_RISE, self.location)}"
+            f"Moonrise {self.timeJD.date()} at {self.location.place()}: \n{self._moon.riseset(seam.CALC_RISE, self.location)}"
         )
         print(
-            f"\nMoonset {self.timeJD.date()} at {self.location.place()}: \n{self._moon.riseset(swe.CALC_SET, self.location)}"
+            f"\nMoonset {self.timeJD.date()} at {self.location.place()}: \n{self._moon.riseset(seam.CALC_SET, self.location)}"
         )
 
         print(f"\nTithi: {self.tithi()}")
