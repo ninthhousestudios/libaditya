@@ -534,20 +534,20 @@ def mooncross_node_ut(
     wrapper unpacks and the golden freezes whole. swisseph_rs returns a
     ``MoonCrossing`` struct (``.jd`` / ``.longitude`` / ``.latitude``).
 
-    DECISION: this calls swisseph_rs's ET-frame ``mooncross_node`` -- NOT its
-    ``mooncross_node_ut``. pyswisseph's ``swe.mooncross_node_ut`` returns the
-    crossing jd in the ET/TT frame (it converts the UT start to ET for the search
-    but does NOT convert the found jd back to UT), so it matches swisseph_rs's
-    ``mooncross_node`` BIT-FOR-BIT (jd/lon/lat all 0.0 apart, verified across all
-    five event cases), while swisseph_rs's own ``mooncross_node_ut`` -- which DOES
-    return true UT -- lands ~delta-T (~69 s) earlier and would break the
-    pyswisseph-frozen golden. Faithfulness to the frozen truth wins: the crossing
-    is ~13.6 days out, so seeding the ET search from the UT jd shifts the start by
-    delta-T but not which crossing is found. A no-convergence surfaces through
-    :func:`surfacing_errors` as the golden ``__error__`` leaf.
+    DECISION (libaditya/25): this calls swisseph_rs's true-UT ``mooncross_node_ut``,
+    which is PHYSICALLY CORRECT and DELIBERATELY BREAKS bit-parity with pyswisseph.
+    pyswisseph's ``swe.mooncross_node_ut`` is buggy: it converts the UT start to ET
+    for the search but does NOT convert the found jd back to UT, so its "UT" result
+    is actually the ET/TT-frame instant -- ~delta-T (~69 s, ~8e-4 JD in 2026) late.
+    That bug matches swisseph_rs's ET-frame ``mooncross_node`` bit-for-bit, and the
+    seam originally reproduced it (see pyswisseph-rs/32); we now trade that parity
+    for correctness. The ~69 s shift is astrologically null (the crossing is ~13.6
+    days out), and the affected ``events.mooncross.jd_cross`` golden leaf was
+    surgically re-blessed from this corrected value. A no-convergence surfaces
+    through :func:`surfacing_errors` as the golden ``__error__`` leaf.
     """
     with surfacing_errors():
-        r = eph.mooncross_node(tjd_ut, to_flags(flags))
+        r = eph.mooncross_node_ut(tjd_ut, to_flags(flags))
     return r.jd, r.longitude, r.latitude
 
 

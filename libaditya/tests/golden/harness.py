@@ -87,8 +87,12 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 #     sidereal Ephemeris gives the same instant). It moves the events.rise_trans
 #     tret[0] and the panchanga sunrise/sunset/moonrise/moonset jds; the derived
 #     datetime hour column is that JD x24 (~4.3e-5 h). mooncross needs NO tolerance
-#     -- the seam calls swisseph_rs's ET-frame node crossing, which reproduces
-#     pyswisseph's UT-named-but-ET-valued return bit-for-bit (0.0 apart).
+#     -- the seam calls swisseph_rs's true-UT node crossing and the mooncross golden
+#     leaf was re-blessed from that corrected value (libaditya/25), so candidate and
+#     golden agree bit-for-bit again (the ~delta-T ~8e-4 JD gap is baked into the
+#     fixture, not absorbed by a tolerance). pyswisseph's own mooncross_node_ut is
+#     buggy -- it returns the ET-frame instant under a _ut name -- so it no longer
+#     defines this leaf's truth.
 #
 #   HELIACAL (libaditya/20) -- the heliacal-visibility search runs its OWN
 #     atmospheric root-find, so swisseph_rs lands the window jds ~1.3e-4 JD (~11 s)

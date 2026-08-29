@@ -589,10 +589,11 @@ def probe_mooncross(chart) -> dict:
 
     Routes ``mooncross_node_ut`` through the seam (not ``Moon.next_crossing_of_rahu``,
     which formats a lossy string) so the crossing instant keeps full precision.  The
-    seam calls swisseph_rs's ET-frame ``mooncross_node`` to match pyswisseph's
-    UT-named-but-ET-valued return bit-for-bit (see the seam wrapper).  swisseph_rs
-    raises NoConvergence where the search fails -- capture would freeze that as an
-    __error__ leaf, tripping the diff.
+    seam calls swisseph_rs's true-UT ``mooncross_node_ut`` -- physically correct and
+    deliberately NOT bit-parity with pyswisseph's buggy ET-framed return; the
+    ``jd_cross`` golden leaf was re-blessed from this value (libaditya/25, see the
+    seam wrapper).  swisseph_rs raises NoConvergence where the search fails --
+    capture would freeze that as an __error__ leaf, tripping the diff.
     """
     from libaditya.ephemeris import seam
 
