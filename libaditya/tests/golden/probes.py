@@ -449,16 +449,19 @@ def probe_ayanamsa_sweep(chart) -> dict:
 # frozen as a visible ``__error__`` leaf that trips the diff like any other
 # value rather than crashing the run.
 #
-# Where libaditya's own wrapper is lossy -- ``next_crossing_of_rahu`` formats a
-# string, ``rise_trans`` collapses to a bare jd -- the probe calls the seam
-# directly and RECONSTRUCTS the pyswisseph return shape (``probe_rise_trans``
-# rebuilds ``{retflag, tret}`` around the seam's single jd) to preserve full
-# precision AND the retflag/return-shape, which is exactly the return-type
-# surface the migration is most likely to move.  Where the wrapper preserves
-# everything (the eclipse ``SWERashi`` methods return the raw swe tuple;
-# ``FixedStar`` exposes every coordinate; ``next_evening_first`` returns whole
-# JulianDays) the probe rides the library API.  Either way the value comes from
-# swisseph_rs through the seam -- no probe re-imports raw ``swisseph`` anymore.
+# Every value here comes from swisseph_rs through the seam -- no probe imports
+# raw ``swisseph``. The probe reaches it one of two ways depending on whether
+# libaditya's own wrapper is lossy:
+#   * lossy wrapper -- ``next_crossing_of_rahu`` formats a string, the seam's
+#     ``rise_trans`` collapses to a bare jd -- so the probe calls the seam
+#     directly and RECONSTRUCTS the pyswisseph return shape (``probe_rise_trans``
+#     rebuilds ``{retflag, tret}`` around the seam's single jd) to preserve full
+#     precision AND the retflag/return-shape, which is exactly the return-type
+#     surface the migration is most likely to move.
+#   * faithful wrapper -- the eclipse ``SWERashi`` methods return the seam's
+#     swe-shaped tuple, ``FixedStar`` exposes every coordinate, and
+#     ``next_evening_first`` returns whole JulianDays -- so the probe rides the
+#     library API unchanged.
 # --------------------------------------------------------------------------- #
 def probe_fixed_star(fs) -> dict:
     """Full raw state of one FixedStar (raw attrs, never a rounding accessor)."""
