@@ -17,7 +17,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from prettytable import PrettyTable
 from dataclasses import replace
 
@@ -64,7 +63,7 @@ class Planet(CelestialObject, Longitude, PlanetBala):
         self.jd = self.timeJD.jd
         self._ayanamsa = self.context.ayanamsa
         self.system = self.context.sysflg
-        self.sysflg = self.system | swe.FLG_SPEED
+        self.sysflg = self.system | seam.FLG_SPEED
         self.sysflgstr = const.sysflgstr(context.sysflg)
         # if a longitude is passed, we are in a varga not equal to 1
         (
@@ -505,7 +504,7 @@ class Planet(CelestialObject, Longitude, PlanetBala):
 
     def __str__(self):
         ayanamsa = ""
-        if self.system == swe.FLG_SIDEREAL:
+        if self.system == seam.FLG_SIDEREAL:
             ayanamsa = f"\nUsing {const.ayanamsa_name(self.ayanamsa())} ayanamsa"
         return (
             f"amsha {self.amsha()}\n{self.planet_name}{self.retrostr()} {self.ecliptic_longitude()} degrees ({self.longitude()}) {self.system_name()} longitude{ayanamsa}\n"
@@ -2077,7 +2076,7 @@ class Planets:
     def mkheader(self):
         header = f"{self.sysflgstr} coordinates\n"
         header += f"{const.circle_name(self.context.circle)}\n"
-        if self.system == swe.FLG_SIDEREAL:
+        if self.system == seam.FLG_SIDEREAL:
             # for sidereal signs we actually use swisseph 36
             # dhruva equatorial is only for nakshatras
             if self.ayanamsa == 98:
@@ -2085,14 +2084,14 @@ class Planets:
                 header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
             else:
                 header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        elif self.system == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+        elif self.system == (seam.FLG_SIDEREAL | seam.FLG_TOPOCTR):
             if self.ayanamsa == 98:
                 self.ayanamsa = 36
             header += f"{self.context.location}\n"
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
         else:
             header += f"{const.ayanamsa_name(self.ayanamsa)} ayanamsa\n"
-        if self.system == swe.FLG_TOPOCTR:
+        if self.system == seam.FLG_TOPOCTR:
             header += f"{self.context.location}\n"
         header += f"{self.timeJD}\n"
         return header

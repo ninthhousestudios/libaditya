@@ -560,7 +560,7 @@ def parse_position_argument(position):
 #    planets.append(pnames["Ketu"])  # index 11
 #    planets.append([])
 #    planets.append([])
-#    planets.append(pnames["Earth"])  # so we can use swe.EARTH
+#    planets.append(pnames["Earth"])  # so we can use the Earth body
 #    planets.append("Chiron")
 #
 #    zodiac.append(znames["Aries"])

@@ -21,7 +21,6 @@
 import os
 import pathlib
 from dataclasses import replace
-import swisseph as swe
 
 from libaditya import constants as const
 
@@ -64,7 +63,8 @@ class Chart(API):
     _initializing_ecliptic = False
 
     def __init__(self, context=EphContext()):
-        swe.set_ephe_path(self.ephe_path)
+        # ephe path is carried per-call by the seam's distiller (config._EPHE_PATH);
+        # no global swe.set_ephe_path needed.
         self.context = context
         self._Rashi = Rashi(self.context, self)
         if not Chart._initializing_ecliptic:

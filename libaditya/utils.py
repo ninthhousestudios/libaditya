@@ -18,7 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 import time as tmod
 import os
 
@@ -422,50 +421,17 @@ def is_stellarium_id(swe_id):
     return "HIP" in swe_id or " " in swe_id
 
 
-def set_swe_true_sidereal_ayanamsa():
-    """
-    this is used by calling TheStars.set_true_sidereal_hd_ayanamsa()
-    this sets the swe ayanamsa to the true sidereal ayanamsa, so that when we intialize
-    our stars they have the appropriate coordinates for what we are doing
-
-    define a custom ayanamsha
-    this is from the faq at masteringthezodiac.com
-    • Ayanamsa: User Defined SVP
-    • Fixed Sidereal Vernal Point: 31.2836
-    • Yearly Incremental SVP: 0.00
-    • Reference Year: 2000
-    reference year means January 1, 2000
-    Then choose the true sidereal-M (Midpoint) setting
-    """
-    swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, 2451545.0, 31.2836)
-
-
-def set_swe_sidereal_mode(ayanamsa):
-    """Apply the Swiss Ephemeris sidereal mode for a libaditya ayanamsa code.
-
-    Centralises the true-sidereal (code 97) SVP override so planets, cusps and
-    nakshatras stay consistent: a plain swe.set_sid_mode(97) would silently clamp
-    to Fagan-Bradley. Does NOT apply the 98->36 sign remap -- callers that need
-    it (planets, cusps) remap before calling; nakshatras handle 98 separately via
-    dhruva_gc_equatorial and never reach here with 98.
-    """
-    if ayanamsa == 97:
-        set_swe_true_sidereal_ayanamsa()
-    else:
-        swe.set_sid_mode(ayanamsa)
-
-
 def mkheader(obj):
     header = ""
     header += f"{obj.context.name}\n"
     header += f"Varga {obj.context.amsha} {obj.varga_name()}\n"
     header += f"{obj.sysflgstr} coordinates\n"
     header += f"{const.circle_name(obj.context.circle)}\n"
-    header += f"House system {swe.house_name(obj.context.hsys.encode())}\n"
+    header += f"House system {seam.house_name(obj.context.hsys.encode())}\n"
     digplace = "rashi" if obj.context.rashi_temporary_friendships else "varga"
     header += f"Dignities based on {digplace}\n"
     header += f"{obj.context.rashi_aspects} rashi aspects\n"
-    if obj.context.sysflg == swe.FLG_SIDEREAL:
+    if obj.context.sysflg == seam.FLG_SIDEREAL:
         # for sidereal signs we actually use swisseph 36
         # dhruva equatorial is only for nakshatras
         if obj.context.ayanamsa == 98:
@@ -473,7 +439,7 @@ def mkheader(obj):
             header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"
         else:
             header += f"{const.ayanamsa_name(obj.context.ayanamsa)} ayanamsa\n"
-    elif obj.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR):
+    elif obj.context.sysflg == (seam.FLG_SIDEREAL | seam.FLG_TOPOCTR):
         if obj.context.ayanamsa == 98:
             header += f"{const.ayanamsa_name(36)} ayanamsa for signs\n"
             header += f"{const.ayanamsa_name(98)} ayanamsa for nakshatras\n"

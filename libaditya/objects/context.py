@@ -53,7 +53,7 @@ class EphContext:
 
     # calculation options
 
-    sysflg: int = const.ECL # | swe.SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
+    sysflg: int = const.ECL # | SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
     amsha: int = 1 # amsha is the varga; default is 1
     ayanamsa: int = 98
     hsys: str = "C"
@@ -91,7 +91,7 @@ class EphContext:
 
     # calculation options
 
-    sysflg: int = const.ECL  # | swe.SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
+    sysflg: int = const.ECL  # | SWEIPH there is supposed to be an option about which ephemeris to use; not sure where it is here
     amsha: int = 1  # amsha is the varga; default is 1
     ayanamsa: int = 98
     hsys: str = "C"

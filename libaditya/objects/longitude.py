@@ -18,11 +18,11 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from typing import Self
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 from .context import EphContext, Circle
 
@@ -174,7 +174,10 @@ class Longitude:
         return float of rahus "ecliptic_longitude"
         """
         if self.context.sysflg == const.DRAC:
-            return swe.calc_ut(self.jd, swe.TRUE_NODE)[0][0]
+            eph = seam.build_ephemeris(
+                self.context, self.context.sysflg, self.ayanamsa()
+            )
+            return seam.calc_ut(eph, self.jd, seam.TRUE_NODE, seam.FLG_SWIEPH)[0][0]
         else:
             return 0
 

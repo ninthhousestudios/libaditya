@@ -103,6 +103,21 @@ class _SiderealSettings:
     bits: SiderealBits | None = None
 
 
+def base_config() -> EphemerisConfig:
+    """The config-independent base ``EphemerisConfig`` (Swiss engine, bundled ``ephe/``).
+
+    No sidereal or topocentric knobs -- the tropical baseline every distilled
+    config starts from. Used for calcs that depend only on ``jd`` and the
+    ephemeris data, not on the object's zodiac (e.g. ecliptic obliquity /
+    nutation, which pyswisseph read off ``swe.calc(jd, ECL_NUT)`` with no sid
+    mode in play).
+    """
+    return EphemerisConfig(
+        ephemeris_source=EphemerisSource.SWISS,
+        ephe_path=_EPHE_PATH,
+    )
+
+
 def distill_config(
     context: EphContext,
     system: int,

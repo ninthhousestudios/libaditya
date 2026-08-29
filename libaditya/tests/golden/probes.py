@@ -395,8 +395,15 @@ AYANAMSA_LIB_CODES = [97, 98, 99, 100, 101]
 def _ayanamsa_swe_entry(jd: float, code: int) -> dict:
     import swisseph as swe
 
+    import libaditya
     from libaditya import constants as const
 
+    # This reference probe reads pyswisseph's ayanamsa table DIRECTLY (the frozen
+    # golden's source of truth). Some modes (e.g. 10) carry a sun-position term
+    # that needs the bundled ephemeris files, so point pyswisseph at them here --
+    # libaditya's domain code no longer sets swe's global ephe path at import
+    # (post libaditya/21; it threads ephe_path per-call through the seam instead).
+    swe.set_ephe_path(libaditya.base_path + "/ephe/")
     swe.set_sid_mode(code)
     return {
         "swe_value": swe.get_ayanamsa_ut(jd),

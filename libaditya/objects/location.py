@@ -18,7 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from metar import Metar
 
 from libaditya import constants as const
@@ -120,7 +119,7 @@ class Location:
     def get_metar(self, icao=None):
         """
         get metar for icao
-        this will be used for swe.heliacal_ut() and any other place-based things like that
+        this will be used for heliacal calculations and any other place-based things like that
         for atmospheric pressure, tempature, and the dewpoint can hopefully be used to calculate relative humidity
 
         need to figure out if i can get past data; this is only current data
@@ -169,13 +168,14 @@ class Location:
         #            return (metar.press.value("mb"),metar.temp.value("c"),0)
         return (0, 0, 0)
 
-    def swe_location_azalt(self, coords=swe.ECL2HOR):
+    def swe_location_azalt(self, coords=0):
         """
-        return a tuple suitable for swe.azalt()
+        return a tuple suitable for an azalt() call
         to compute azimuth and altitde at this Location and JulianDay
 
-        default coords is eclipitc to azimuthal
-        other option is swe.EQU2HOR
+        default coords 0 is ecliptic-to-horizon (swisseph ECL2HOR);
+        the other option is 1 (EQU2HOR). coords is unused here -- callers
+        supply it to azalt themselves.
         """
         geopos = self.swe_location()
         atpress = self.atmospheric_pressure()

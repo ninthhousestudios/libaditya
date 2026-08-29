@@ -311,7 +311,9 @@ class Ecliptic:
         self._true_sidereal_master = self.master().sidereal(ayanamsa=97)
         self.context.sysflg = const.SID
         self.context.ayanamsa = 97
-        utils.set_swe_true_sidereal_ayanamsa()
+        # ayanamsa 97 (true-sidereal SVP) is applied per-calc by the seam's
+        # distiller (config._resolve_sidereal); the old global swe.set_sid_mode
+        # override this replaced fed nothing the seam reads.
         self._constellations = self._init_Constellations()
         self._boundaries = self._init_boundaries()
         self._init_constellation_lengths()

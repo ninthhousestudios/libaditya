@@ -18,8 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
-
 import time
 
 from libaditya import utils
@@ -264,7 +262,7 @@ class JulianDay:
         )
 
     def ecliptic_obliquity(self):
-        return swe.calc(self.jd, swe.ECL_NUT)[0][0]
+        return seam.ecliptic_obliquity(self.jd)
 
     def shift(self, dir, unit, number):
         """

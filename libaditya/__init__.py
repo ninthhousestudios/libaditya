@@ -18,12 +18,17 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-# --- ephemeris backend selection (must run before `import swisseph`) --------
-# Set the LIBADITYA_SWE_BACKEND environment variable to the name of an
-# API-compatible ephemeris module (e.g. "swisseph_rs") to make every
-# `import swisseph as swe` in libaditya bind to it instead of pyswisseph. This
-# is the switch the golden-master harness uses to compare backends. Unset (the
-# default) leaves pyswisseph in place and changes nothing.
+# --- ephemeris backend selection (harness-only; VESTIGIAL for libaditya) -----
+# HISTORICAL: libaditya's domain modules used to bind the engine with
+# `import swisseph as swe`, so setting LIBADITYA_SWE_BACKEND to an API-compatible
+# module name aliased sys.modules["swisseph"] before those imports ran.
+#
+# Post-cutover (libaditya/21) NO domain module imports swisseph -- every
+# ephemeris call goes through libaditya.ephemeris.seam onto swisseph_rs directly.
+# So this alias no longer affects libaditya's own runtime. It is retained ONLY
+# for the golden harness's backend contract (tests/golden/backend.py) and the
+# seam/distiller reference tests, which still `import swisseph` to compare the
+# seam against C pyswisseph. Unset (the default) it is inert.
 import os as _os
 import sys as _sys
 
@@ -33,7 +38,6 @@ if _swe_backend and _swe_backend not in ("swisseph", "pyswisseph"):
 
     _sys.modules["swisseph"] = _importlib.import_module(_swe_backend)
 
-import swisseph as swe
 import pathlib
 from dataclasses import replace
 from rich.console import Console
@@ -55,8 +59,6 @@ from libaditya import print_functions as printf
 base_path = os.path.dirname(os.path.realpath(__file__))
 # the
 package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
-
-swe.set_ephe_path(base_path + "/ephe/")
 
 console = Console()
 

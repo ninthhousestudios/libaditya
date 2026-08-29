@@ -65,7 +65,7 @@ from swisseph_rs import (
 from swisseph_rs.houses import house_pos as _house_pos
 from swisseph_rs.math import cotrans as _cotrans
 
-from libaditya.ephemeris.config import distill_config
+from libaditya.ephemeris.config import base_config, distill_config
 
 if TYPE_CHECKING:
     from libaditya.objects.context import EphContext
@@ -114,6 +114,12 @@ MEAN_NODE: int = int(Body.MEAN_NODE)  # 10
 TRUE_NODE: int = int(Body.TRUE_NODE)  # 11
 EARTH: int = int(Body.EARTH)  # 14
 CHIRON: int = int(Body.CHIRON)  # 15
+
+# ECL_NUT is not a body but pyswisseph's special ``swe.calc(jd, ECL_NUT)`` code
+# that returns obliquity + nutation instead of a position. swisseph_rs models it
+# as ``Body.ECLIPTIC_NUTATION`` (same raw ipl id, -1), so it rides ``calc`` like
+# any body -- see :func:`ecliptic_obliquity`.
+ECL_NUT: int = int(Body.ECLIPTIC_NUTATION)  # -1
 
 
 def to_body(pnumber: int) -> Body:
@@ -190,6 +196,38 @@ def calc_ut(
     """
     result = eph.calc_ut(jd, to_body(body), to_flags(flags))
     return result.data, int(result.flags_used)
+
+
+# Config-independent baseline Ephemeris (tropical, bundled ``ephe/``), built once
+# and shared for the process lifetime. Backs calcs that read only jd + ephemeris
+# data -- ``ecliptic_obliquity`` -- where pyswisseph called ``swe.calc`` off the
+# global engine with no sid mode in play, so no per-object config is needed.
+_DEFAULT_EPHEMERIS: Ephemeris | None = None
+
+
+def default_ephemeris() -> Ephemeris:
+    """The process-shared tropical baseline ``Ephemeris`` (see the note above)."""
+    global _DEFAULT_EPHEMERIS
+    if _DEFAULT_EPHEMERIS is None:
+        _DEFAULT_EPHEMERIS = Ephemeris(base_config())
+    return _DEFAULT_EPHEMERIS
+
+
+def ecliptic_obliquity(jd: float) -> float:
+    """True obliquity of the ecliptic of date, as ``swe.calc(jd, ECL_NUT)[0][0]``.
+
+    pyswisseph's ``swe.calc(jd, swe.ECL_NUT)`` returns ``(true_eps, mean_eps,
+    d_psi, d_eps, ...)`` -- element ``[0]`` is the true (nutation-included)
+    obliquity the nakshatra/rashi coordinate transforms feed into ``cotrans``.
+    swisseph_rs returns the same 6-tuple from ``calc(jd, ECLIPTIC_NUTATION)``, so
+    ``.data[0]`` is bit-identical to the pyswisseph value (verified 0.0 apart at
+    the golden's frozen leaf). ET-frame ``calc`` (not ``calc_ut``) and the
+    default ``FLG_SWIEPH`` flag reproduce pyswisseph's flagless call exactly.
+    Obliquity depends only on ``jd``, so this rides the shared default Ephemeris
+    rather than any object's per-config one.
+    """
+    result = default_ephemeris().calc(jd, Body.ECLIPTIC_NUTATION, to_flags(FLG_SWIEPH))
+    return result.data[0]
 
 
 def fixstar(

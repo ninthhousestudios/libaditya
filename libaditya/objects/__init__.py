@@ -1,13 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (C) 2026 Ninth House Studios LLC
 
-import swisseph as swe
-import os
-import pathlib
-
-base_path = os.path.dirname(pathlib.Path(__file__).parent)
-
-swe.set_ephe_path(base_path + "/ephe/")
+# ephe path is carried per-call by the seam's distiller (config._EPHE_PATH);
+# no global swe.set_ephe_path needed at import time.
 from .julian_day import JulianDay
 from .planets import *
 from .location import Location, Yamakoti
