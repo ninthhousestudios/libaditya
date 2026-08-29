@@ -17,10 +17,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
 from dataclasses import replace
 
 from libaditya import utils
+from libaditya.ephemeris import seam
 
 from libaditya.objects import JulianDay, EphContext
 
@@ -28,18 +28,31 @@ from libaditya.objects import JulianDay, EphContext
 class SWERashi:
     """
     swe functions that seem best placed in the Rashi
-    e.g., swe.sol_eclipse_when_loc(), the next solar eclipse for a location
+    e.g., seam.sol_eclipse_when_loc(), the next solar eclipse for a location
     can easily adjust Rashi to do horary, prashna, or whatever. most of the calculations are there
     the rest is mostly api
     """
+
+    def _eclipse_eph(self):
+        """Process-shared Ephemeris for the eclipse searches.
+
+        Eclipse instants are frame-independent (they take geopos explicitly and
+        ignore the sidereal ayanamsa), so a plain tropical config is the minimal,
+        correct config -- the seam still memoizes it per the shared cache.
+        """
+        return seam.build_ephemeris(
+            self.context, seam.FLG_TROPICAL, self.context.ayanamsa
+        )
 
     def next_solar_eclipse_here(self):
         """
         return the next solar eclipse
         return the Chart of that eclipse, or the context?
         """
-        return swe.sol_eclipse_when_loc(
-            self.context.timeJD.jd_number(), self.context.location.swe_location()
+        return seam.sol_eclipse_when_loc(
+            self._eclipse_eph(),
+            self.context.timeJD.jd_number(),
+            self.context.location.swe_location(),
         )
 
     def next_solar_eclipse_here_maximum(self):
@@ -55,14 +68,15 @@ class SWERashi:
         return the previous solar eclipse
         return the Chart of that eclipse, or the context?
         """
-        return swe.sol_eclipse_when_loc(
+        return seam.sol_eclipse_when_loc(
+            self._eclipse_eph(),
             self.context.timeJD.jd_number(),
             self.context.location.swe_location(),
             backwards=True,
         )
 
     def previous_solar_eclipse_here_maximum(self):
-        return repalce(
+        return replace(
             self.context,
             timeJD=JulianDay(
                 self.previous_solar_eclipse_here()[1][0], self.context.timeJD.utcoffset
@@ -81,7 +95,9 @@ class SWERashi:
 
         return the EphContext of the next solar eclipse
         """
-        return swe.sol_eclipse_when_glob(self.context.timeJD.jd_number(), etype)
+        return seam.sol_eclipse_when_glob(
+            self._eclipse_eph(), self.context.timeJD.jd_number(), etype
+        )
 
     def next_solar_eclipse_maximum(self, etype=0) -> EphContext:
         return replace(
@@ -103,8 +119,11 @@ class SWERashi:
 
         return the EphContext of the next solar eclipse
         """
-        return swe.sol_eclipse_when_glob(
-            self.context.timeJD.jd_number(), etype, backwards=True
+        return seam.sol_eclipse_when_glob(
+            self._eclipse_eph(),
+            self.context.timeJD.jd_number(),
+            etype,
+            backwards=True,
         )
 
     def previous_solar_eclipse_maximum(self, etype=0) -> EphContext:
@@ -127,7 +146,9 @@ class SWERashi:
 
         return the EphContext of the next lunar eclipse
         """
-        return swe.lun_eclipse_when(self.context.timeJD.jd_number(), etype)
+        return seam.lun_eclipse_when(
+            self._eclipse_eph(), self.context.timeJD.jd_number(), etype
+        )
 
     def next_lunar_eclipse_maximum(self, etype=0) -> EphContext:
         return replace(
@@ -149,8 +170,11 @@ class SWERashi:
 
         return the EphContext of the next lunar eclipse
         """
-        return swe.lun_eclipse_when(
-            self.context.timeJD.jd_number(), etype, backwards=True
+        return seam.lun_eclipse_when(
+            self._eclipse_eph(),
+            self.context.timeJD.jd_number(),
+            etype,
+            backwards=True,
         )
 
     def previous_lunar_eclipse_maximum(self, etype=0) -> EphContext:

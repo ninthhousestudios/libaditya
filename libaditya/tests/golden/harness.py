@@ -71,6 +71,15 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 #     boundaries (~6e-5 JD ~= 5 s over decades; the datetime hour column is that
 #     JD x24). Sidereal ash_long (calc_ut path) still matches <1e-9; these globs
 #     loosen it too but stay orders tighter than any real regression.
+#
+#   ECLIPSES (libaditya/19) -- the sol/lun eclipse searches are Newton-iterated to
+#     an internal convergence threshold, and swisseph_rs lands the contact instants
+#     ~1e-8 JD (~1 ms) off pyswisseph's -- an iterative-search noise floor, the same
+#     class as rise_trans / the fixstar SgrA* offset, NOT a distiller error (the
+#     retflags and the whole local-circumstance ``attr`` array still match <1e-9).
+#     Only the ``tret`` time slots move; 1e-7 gives an order of headroom while
+#     staying far tighter than any real regression (a mislocated eclipse moves by
+#     minutes/hours, not milliseconds).
 GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
     ("*speed*", 1e-7),
     ("*.amsha_longitude", 5e-9),
@@ -79,6 +88,7 @@ GLOBAL_FIELD_TOLERANCES: list[tuple[str, float]] = [
     ("*.vimshottari.age", 1e-6),
     ("*.vimshottari.periods*start.jd", 5e-4),
     ("*.vimshottari.periods*start.datetime*", 1e-2),
+    ("*.events.eclipses.*", 1e-7),
 ]
 
 

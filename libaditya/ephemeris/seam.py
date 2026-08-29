@@ -53,6 +53,7 @@ from typing import TYPE_CHECKING, Iterator
 from swisseph_rs import (
     Body,
     CalcFlags,
+    EclipseFlags,
     Ephemeris,
     HouseSystem,
     date as _date,
@@ -239,6 +240,147 @@ def cotrans(
     (``(270, 0, 1)``) and returns floats.
     """
     return _cotrans(coord, eps)
+
+
+# --------------------------------------------------------------------------- #
+# eclipse searches (structured result -> pyswisseph (retflag, tret[, attr]))
+# --------------------------------------------------------------------------- #
+# swisseph_rs returns typed structs (SolarEclipseLocal/.time_maximum/.attr,
+# SolarEclipseGlobal, LunarEclipseGlobal) where pyswisseph's
+# ``swe.sol_eclipse_when_*`` / ``swe.lun_eclipse_when`` return the flat
+# ``(retflag, tret[, attr])`` the SWERashi mixin freezes verbatim. These wrappers
+# restore that shape field-for-field so the mixin keeps its ``[1][0]`` (max-eclipse
+# jd) indexing and the golden freezes the whole 10-slot ``tret`` / 20-slot ``attr``:
+#
+# * TRET PADDING. pyswisseph's ``tret`` is always 10 floats; the struct carries
+#   only the meaningful contacts, so the trailing slots (and the lunar slot 1,
+#   which pyswisseph documents as unused ``?``) are padded 0.0 -- matching the
+#   pyswisseph-frozen golden exactly.
+# * RETFLAG. ``int(result.flags)`` is the ECL_* type/visibility bit union
+#   pyswisseph returns as the first tuple element.
+# * SIGNATURE. Mirrors ``swe.*`` (``flags``/``ecltype`` defaults, ``backwards``
+#   keyword) with ``eph`` threaded first like every other seam call, so SWERashi
+#   calls them exactly as it called ``swe`` -- no behaviour change. (The mixin's
+#   glob/lunar calls pass their ``etype`` into the ``flags`` position, as they did
+#   against pyswisseph; preserved here so the frozen golden stays bit-faithful.)
+def sol_eclipse_when_loc(
+    eph: Ephemeris,
+    tjd_start: float,
+    geopos: tuple[float, float, float],
+    flags: int = FLG_SWIEPH,
+    backwards: bool = False,
+) -> tuple[int, tuple[float, ...], tuple[float, ...]]:
+    """Local solar eclipse search, as ``swe.sol_eclipse_when_loc`` returns it.
+
+    Mirrors ``swe.sol_eclipse_when_loc(tjd, geopos, flags, backwards) ->
+    (retflag, tret, attr)``: ``tret`` is the 10-slot contact array (max / 1st-4th
+    contact / sunrise / sunset, padded), ``attr`` the 20-slot local-circumstance
+    array (magnitude / ratios / azimuth-altitude / saros, padded).
+    """
+    with surfacing_errors():
+        r = eph.sol_eclipse_when_loc(tjd_start, to_flags(flags), geopos, backwards)
+    tret = (
+        r.time_maximum,
+        r.time_first_contact,
+        r.time_second_contact,
+        r.time_third_contact,
+        r.time_fourth_contact,
+        r.time_sunrise,
+        r.time_sunset,
+        0.0,
+        0.0,
+        0.0,
+    )
+    a = r.attr
+    attr = (
+        a.magnitude,
+        a.diameter_ratio,
+        a.obscuration,
+        a.core_diameter_km,
+        a.azimuth,
+        a.true_altitude,
+        a.apparent_altitude,
+        a.elongation,
+        a.nasa_magnitude,
+        a.saros_series,
+        a.saros_member,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+    )
+    return int(r.flags), tret, attr
+
+
+def sol_eclipse_when_glob(
+    eph: Ephemeris,
+    tjd_start: float,
+    flags: int = FLG_SWIEPH,
+    ecltype: int = 0,
+    backwards: bool = False,
+) -> tuple[int, tuple[float, ...]]:
+    """Global solar eclipse search, as ``swe.sol_eclipse_when_glob`` returns it.
+
+    Mirrors ``swe.sol_eclipse_when_glob(tjd, flags, ecltype, backwards) ->
+    (retflag, tret)``: ``tret`` slots are max / local-noon (ra conjunction) /
+    begin / end / totality begin-end / centerline begin-end, the last two
+    (annular-total transition) padded 0.0.
+    """
+    with surfacing_errors():
+        r = eph.sol_eclipse_when_glob(
+            tjd_start, to_flags(flags), EclipseFlags(ecltype), backwards
+        )
+    tret = (
+        r.time_maximum,
+        r.time_ra_conjunction,
+        r.time_begin,
+        r.time_end,
+        r.time_totality_begin,
+        r.time_totality_end,
+        r.time_centerline_begin,
+        r.time_centerline_end,
+        0.0,
+        0.0,
+    )
+    return int(r.flags), tret
+
+
+def lun_eclipse_when(
+    eph: Ephemeris,
+    tjd_start: float,
+    flags: int = FLG_SWIEPH,
+    ecltype: int = 0,
+    backwards: bool = False,
+) -> tuple[int, tuple[float, ...]]:
+    """Global lunar eclipse search, as ``swe.lun_eclipse_when`` returns it.
+
+    Mirrors ``swe.lun_eclipse_when(tjd, flags, ecltype, backwards) ->
+    (retflag, tret)``: ``tret`` slots are max / (unused) / partial begin-end /
+    totality begin-end / penumbral begin-end, trailing slots padded 0.0. Slot 1 is
+    the ``?`` pyswisseph documents as unused, held 0.0 to match its return.
+    """
+    with surfacing_errors():
+        r = eph.lun_eclipse_when(
+            tjd_start, to_flags(flags), EclipseFlags(ecltype), backwards
+        )
+    tret = (
+        r.time_maximum,
+        0.0,
+        r.time_partial_begin,
+        r.time_partial_end,
+        r.time_totality_begin,
+        r.time_totality_end,
+        r.time_penumbral_begin,
+        r.time_penumbral_end,
+        0.0,
+        0.0,
+    )
+    return int(r.flags), tret
 
 
 # --------------------------------------------------------------------------- #
