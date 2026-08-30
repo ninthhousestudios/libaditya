@@ -1718,19 +1718,22 @@ class Planets:
     def init_Planets(self):
         ret = {}
 
+        # Work on a per-call copy: natural_planets is module-level, and popping
+        # from it would strip Chiron from every chart built later in the process.
+        planets = dict(natural_planets)
+
         # chiron can only be computed in a certain time frame
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
-            if "Chiron" in natural_planets.keys():
-                natural_planets.pop("Chiron")
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
+            planets.pop("Chiron", None)
 
         #        # add Earth if using barycentric or heliocentric
         #        if self.system == const.BARY or self.system == const.HELIO:
         #            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-        #            natural_planets["Earth"] = Earth
+        #            planets["Earth"] = Earth
 
-        for planet, constructor in natural_planets.items():
+        for planet, constructor in planets.items():
             ret[planet] = constructor(self.context, self)
 
         return ret
