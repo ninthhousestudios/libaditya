@@ -77,10 +77,13 @@ class Planet(CelestialObject, Longitude, PlanetBala):
         ) = self.init_coords()
         # deal with Ketu; i tried to put this in Ketu's class, but it didnt work comletely
         # this works because self.pnumber for Ketu is set to Rahu
-        # so at this point self.long with be Rahu's longitude, which we then change to Ketu's
+        # so at this point self.long with be Rahu's longitude, which we then change to Ketu's.
+        # NB: keep self.pnumber at the Swiss north-node id -- Ketu has no Swiss body id, and
+        # downstream code (nakshatra's init_ash_long_Planet, rise/set) reads pnumber and applies
+        # its own antipode correction. Overwriting it here (it used to become 8, i.e. Neptune)
+        # made every pnumber-driven calc compute Neptune's values for Ketu.
         if isinstance(self, Ketu):
             self.long = (self.long - 180) % 360
-            self.pnumber = 8
         # if we are not doing heliocentric or barycentric, then Earth will be opposite the Sun
         # this is really for the purpose of HD, which uses Earth as opposite the Sun
         if (
@@ -112,6 +115,12 @@ class Planet(CelestialObject, Longitude, PlanetBala):
         ) = swe.calc_ut(
             self.context.timeJD.jd_number(), self.swe_id(), swe.FLG_EQUATORIAL
         )[0]
+        # swe_id() is the north-node id for Ketu, so the line above returns the north node's
+        # equatorial coordinates. Ketu is the exact antipode on the celestial sphere:
+        # RA + 180 (mod 360), declination negated. Equatorial distance is unsigned, so unchanged.
+        if isinstance(self, Ketu):
+            self._right_ascension = (self._right_ascension + 180) % 360
+            self._declination = -self._declination
         from .nakshatras import Nakshatra
 
         self._nakshatra = Nakshatra(self)
