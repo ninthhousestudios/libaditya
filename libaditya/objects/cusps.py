@@ -167,7 +167,11 @@ class Cusps:
             longitude = longitude.amsha_longitude()
         dists = {}
         for cusp in self:
-            dist = abs(cusp.amsha_longitude() - longitude)
+            # circular angular distance: a cusp at 1 deg is 2 deg from a point at
+            # 359 deg, not 358 -- plain subtraction misranks cusps across the 0/360 wrap
+            dist = abs(cusp.amsha_longitude() - longitude) % 360
+            if dist > 180:
+                dist = 360 - dist
             dists[cusp.number()] = dist
         dists = {k: v for k, v in sorted(dists.items(), key=lambda item: item[1])}
         return list(dists)[0]
