@@ -66,7 +66,21 @@ All objects are chainable. Most things work with zero arguments via sensible def
 
 ## Testing
 
-Basic tests in `libaditya/tests.py`. Example TOML charts in `libaditya/toml-test/`.
+Golden-master regression harness under `libaditya/tests/golden/`. Freezes the
+numeric output of every calculation as git-tracked fixtures; definition of done
+is "this stays green."
+
+```bash
+.venv/bin/python -m libaditya.tests.golden            # check against frozen goldens
+.venv/bin/python -m libaditya.tests.golden --update   # re-freeze after a BLESSED change
+.venv/bin/python -m libaditya.tests.golden --list     # list the case matrix
+```
+
+Only re-bless with `--update` after independently verifying the moved values are
+correct; the fixture diff is the record of what changed. See
+`libaditya/tests/golden/README.md` (fixture internals) and
+`docs/golden-master-harness.md` (workflow). Example TOML charts in
+`libaditya/toml-test/`.
 
 ## Notable APIs
 
