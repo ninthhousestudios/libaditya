@@ -24,8 +24,6 @@ from libaditya import constants as const
 
 from libaditya.objects import EphContext, Circle, JulianDay
 from libaditya.calc import Varga, Rashi
-from libaditya.cards import CardsOfTruth
-import libaditya.stars as stars
 
 from .api import API
 from .bodygraph import Bodygraph
@@ -218,6 +216,7 @@ class Chart(API):
         """
         create a CardsOfTruth instantce for this context
         """
+        from libaditya.cards import CardsOfTruth
         return CardsOfTruth(context=replace(self.context,**kwargs),master=self.rashi())
 
     def draconic(self, **kwargs):
@@ -279,8 +278,10 @@ class Chart(API):
         this is TheStars, used when you know the nomenclature name of the star, the (,)noMen name, because they all look a bit like that
         this is implemented so that you can choose or not to put the ","
         """
-        return stars.TheStars(self.context,stellarium)
+        import libaditya.stars as _stars
+        return _stars.TheStars(self.context,stellarium)
 
     def ecliptic(self):
+        import libaditya.stars as _stars
         self_true_sidereal = self.sidereal(ayanamsa=97,signize=False)
-        return stars.the_stars.Ecliptic(self_true_sidereal.context,master=self)
+        return _stars.the_stars.Ecliptic(self_true_sidereal.context,master=self)

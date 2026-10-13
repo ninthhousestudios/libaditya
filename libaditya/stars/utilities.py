@@ -119,7 +119,7 @@ def swe_make_star(names=[""]) -> str:
             print("Error: \n")
             print(response)
             return
-        id_line = f"#0# {nomen_name.replace(",","")}, "
+        id_line = f"#0# {nomen_name.replace(',','')}, "
         id_line += str(ids[1]+", "+ids[0]+"\n")
         ret.append(id_line)
         ret.append(f"{nomen_to_long_form(nomen_name)}{nomen_name},ICRS,{ra_hour},{ra_minute},{ra_sec},{dec_degree},{dec_minute},{dec_sec},{pmra},{pmde},{rad_vel},{parallax},{magV}\n")
@@ -214,7 +214,7 @@ def swe_star_to_python(swe_star: str) -> str:
 
     other_classes=""
     for common_name in common_names:
-        other_classes += f"{common_name.replace(" ","")} = {long_form_name}\n"
+        other_classes += f"{common_name.replace(' ','')} = {long_form_name}\n"
     other_classes += "\n\n"
 
     if other_names is not None:

@@ -14,9 +14,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from rich import box
-from rich.table import Table
-from rich.console import Console
 
 from libaditya import utils
 from libaditya.objects import EphContext, Sun, JulianDay
@@ -65,7 +62,16 @@ class CardsOfTruth(CoT):
         first, find the time the sunrises at longitude of the persons place of birth, but on the equator
         """
         sunrise_location = self.context.location.nearest_equatorial_crossing()
-        sunrise_time = Sun(EphContext(timeJD=self.context.timeJD.midnightJD(),location=sunrise_location)).rise()
+        # usr_midnightJD, not midnightJD: the branch below takes the day number
+        # from usrday()/usrmonth(), the LOCAL calendar date, so the sunrise it
+        # is compared against has to be the sunrise of that same local day.
+        # midnightJD anchors on the UTC date, and whenever the two differ the
+        # test answered a question about a different day than the one whose
+        # card was then looked up — one day early, silently. Witness: Anver
+        # Joffrey 1928-12-24 18:43 Seattle returned 8H where the reference is 7H;
+        # 18:43 is long after sunrise, but in UTC the birth is 1928-12-25
+        # 02:43, which is before it. SPEC-COT-001 E-6, fixed 2026-07-27.
+        sunrise_time = Sun(EphContext(timeJD=self.context.timeJD.usr_midnightJD(),location=sunrise_location)).rise()
         if self.context.timeJD.jd_number() >= sunrise_time.jd_number():
             # after sunrise on this day
             # so use card associated with this calendar day 
@@ -79,16 +85,35 @@ class CardsOfTruth(CoT):
             if day != 0:
                 card_day = [month,day]
             else:
-                # we need to go back to the last day of the previous month
-                # i.e., the last card, but not necessarily in the normal sequence 
-                # in python, list()[-1] is the last element of the list
-                # so if month is jaunary=element0, then month-1=december,element11
-                # then we need to know how many days are in that month
-                card_day = [month-1,cardsc.days_in_the_month(month-1)]
+                # we need to go back to the last day of the previous month.
+                # January wraps to December of the PREVIOUS YEAR: month-1 would
+                # be 0, and the -1 below then indexed first_card_of_the_month[-1],
+                # which happens to BE December — right answer, wrong reason, and
+                # days_in_the_month(0) had no case and returned None.
+                # The year goes in because February's last day depends on it:
+                # the day before 1 March 1990 is the 28th, and handing that
+                # birth the 29th's card would be wrong in three years of four.
+                # card_day[0] is 1-indexed throughout this method.
+                year = self.context.timeJD.usryear()
+                prev_month = 12 if month == 1 else month-1
+                prev_year = year-1 if month == 1 else year
+                card_day = [prev_month,
+                            cardsc.days_in_the_month(prev_month, prev_year)]
         # minus 1 since months are 1-12 but python is 0-indexed
         start_card = cardsc.first_card_of_the_month[(card_day[0]-1)]
         # go forward the number of days from that card to find the birth card
-        birth_card = cardsc.birth_card_order[start_card+(card_day[1]-1)]
+        index = start_card+(card_day[1]-1)
+        # 31 December is the ONLY date that runs past the 52-card sequence
+        # (22 + 30 = 52), and the published table answers it: it shows the Ace
+        # of Hearts, the same card as 30 December. The sequence repeats rather
+        # than continuing — there is no 53rd card and no Joker. Before this,
+        # the bare index raised IndexError and took the whole chart down.
+        # 30 November used to overflow too; that was the November constant
+        # (E-4), not a second special case, and it is gone with it.
+        # SPEC-COT-001 E-5, verified 2026-07-27 against The-Birth-Card-Chart.
+        if index >= len(cardsc.birth_card_order):
+            index = len(cardsc.birth_card_order) - 1
+        birth_card = cardsc.birth_card_order[index]
         return birth_card
 
     def _get_birth_spread(self):
@@ -228,6 +253,8 @@ class CardsOfTruth(CoT):
                 self.spread()[cusp.lord()].set_attribute(("cusps",cusp))
 
         def richDrawing(self):
+            from rich import box
+            from rich.table import Table
             spread = Table(box=box.SIMPLE)
 
             spread.add_column(" ",justify="center",style="white")

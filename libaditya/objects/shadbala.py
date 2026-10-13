@@ -161,7 +161,7 @@ class PlanetBala:
                 return self.virupas_between(90)
             if self.ecliptic_longitude() >= 180 and self.ecliptic_longitude() < 270:
                 return self.virupas_between(270)
-            if self.ecliptic_longitude() >= 270 and self.ecliptic_longitude() < 0:
+            if self.ecliptic_longitude() >= 270 and self.ecliptic_longitude() < 360:
                 return self.virupas_between(270)
         elif self.identity() == "Moon" or self.identity() == "Saturn":
             # both have 60 points at the southern solstice, i.e., 270 degrees ecliptic longitude

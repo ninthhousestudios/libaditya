@@ -33,9 +33,8 @@ import swisseph as swe
 
 from libaditya.objects import EphContext, Planet
 
-from .fixed_star import correct_nomen_name 
+from .fixed_star import correct_nomen_name
 from .fixed_star import FixedStar
-from .stellarium import Stellarium
 from .utilities import *
 
 
@@ -352,7 +351,7 @@ class Ecliptic:
             if constellation.name() == "Aries" and begin > 359:
                 length = end+(360-begin)
             elif constellation.name() == "Pisces" and begin < 1:
-                length = (360+end) - beginning
+                length = (360+end) - begin
             else:
                 length = end - begin
             constellation.set_attribute(("length",length))
@@ -385,20 +384,19 @@ class Ecliptic:
         """
         take a float longitude and return the name of its constellation
         """
-        bounds = self.boundaries().copy()
-        # so that if the beginning is 359.994 is changes to -.00599 so that "and" statements works in checking where the long is
-        if bounds[0] < 1:
-            bounds.append(bounds[0]+360)
-        else:
-            bounds.append(bounds[0])
-        if bounds[0] > 359:
-            bounds[0] = -(360-bounds[0])
+        bounds = self.boundaries()
         cnames = const.names["eng"]["zodiac"].copy()
         cnames.insert(8,const.names["eng"]["ophiucus"])
+        # measure everything modulo 360 so a constellation that straddles 0 (e.g., Aries
+        # beginning at 359.992, or Pisces ending at 0.3) still contains longitudes on
+        # both sides of the wrap; a plain "bounds[n] <= long < bounds[n+1]" test let
+        # 359.995 fall past the last bound and raised IndexError
+        long = long % 360
         for n in range(0,len(bounds)):
-            #print(f"l_to_c: {n=} {long=} {bounds[n]=} {bounds[(n+1)%13]=}")
-            if long >= bounds[n] and long < bounds[n+1]:
-                in_long = long - bounds[n]
+            span = (bounds[(n+1)%len(bounds)] - bounds[n]) % 360
+            offset = (long - bounds[n]) % 360
+            if offset < span:
+                in_long = offset
                 if self.context.toround[0]:
                     in_long = round(in_long, self.context.toround[1])
                 return f"{utils.dec2dmsstr(in_long)} {cnames[n]} ({round((in_long/self[cnames[n]].length())*100,3)} %)"
@@ -515,8 +513,9 @@ class TheStars:
         click "Server Enabled"; that will turn the server on, then you can use the default ip, port, and password options here
         if you want it to load automatically, check "Enable automatically on startup"
         """
+        from .stellarium import Stellarium
         try:
-            return Stellarium(self.context,ip,port,password) 
-        except:
+            return Stellarium(self.context,ip,port,password)
+        except Exception:
             print("Stellarium not available...")
             return

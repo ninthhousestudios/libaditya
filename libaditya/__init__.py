@@ -16,31 +16,75 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
+import os
 import pathlib
-from dataclasses import replace
-from rich.console import Console
 
-from libaditya.objects import *
-from libaditya.calc import *
-from libaditya.charts import * 
-from libaditya.hd import *
-from libaditya.stars import *
-from libaditya.cards import *
+base_path = os.path.dirname(os.path.realpath(__file__))
+package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
+swe.set_ephe_path(base_path + "/ephe/")
+
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read
 from libaditya import write
 from libaditya import print_functions as printf
 
+_LAZY_IMPORTS = {
+    'JulianDay': 'libaditya.objects.julian_day',
+    'Planet': 'libaditya.objects.planets',
+    'Planets': 'libaditya.objects.planets',
+    'Sun': 'libaditya.objects.planets',
+    'Moon': 'libaditya.objects.planets',
+    'Mars': 'libaditya.objects.planets',
+    'Mercury': 'libaditya.objects.planets',
+    'Venus': 'libaditya.objects.planets',
+    'Jupiter': 'libaditya.objects.planets',
+    'Saturn': 'libaditya.objects.planets',
+    'Rahu': 'libaditya.objects.planets',
+    'Ketu': 'libaditya.objects.planets',
+    'Longitude': 'libaditya.objects.longitude',
+    'Location': 'libaditya.objects.location',
+    'Yamakoti': 'libaditya.objects.location',
+    'EphContext': 'libaditya.objects.context',
+    'Circle': 'libaditya.objects.context',
+    'Cusp': 'libaditya.objects.cusps',
+    'Cusps': 'libaditya.objects.cusps',
+    'Nakshatra': 'libaditya.objects.nakshatras',
+    'Nakshatras': 'libaditya.objects.nakshatras',
+    'RashiBala': 'libaditya.objects.shadbala',
+    'Sign': 'libaditya.objects.signs',
+    'Signs': 'libaditya.objects.signs',
+    'Panchanga': 'libaditya.calc.panchanga',
+    'Varga': 'libaditya.calc.varga',
+    'Rashi': 'libaditya.calc.rashi',
+    'Jaimini': 'libaditya.charts.jaimini',
+    'API': 'libaditya.charts.api',
+    'Chart': 'libaditya.charts.chart',
+    'Tajika': 'libaditya.charts.tajika',
+    'HDLongitude': 'libaditya.hd.longitude',
+    'YiLongitude': 'libaditya.hd.longitude',
+    'TheStars': 'libaditya.stars.the_stars',
+    'Deck': 'libaditya.cards.deck',
+    'CardsOfTruth': 'libaditya.cards.cards_of_truth',
+    'CoT': 'libaditya.cards.cot',
+}
 
-# base_path means for libaditya src itself
-base_path = os.path.dirname(os.path.realpath(__file__))
-# the 
-package_path = os.path.dirname(pathlib.Path(__file__).parent)+"/"
 
-swe.set_ephe_path(base_path + "/ephe/")
-
-console = Console()
-
-# from ._version import __version__
+def __getattr__(name):
+    if name in _LAZY_IMPORTS:
+        import importlib
+        module = importlib.import_module(_LAZY_IMPORTS[name])
+        attr = getattr(module, name)
+        globals()[name] = attr
+        return attr
+    if name == 'console':
+        from rich.console import Console
+        c = Console()
+        globals()['console'] = c
+        return c
+    if name == 'replace':
+        from dataclasses import replace as _replace
+        globals()['replace'] = _replace
+        return _replace
+    raise AttributeError(f"module 'libaditya' has no attribute {name}")
 

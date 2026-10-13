@@ -115,11 +115,13 @@ class CoT:
         # cindex is the index of the desired card in the quad
         # so cindex-pos is the index of the birth card
         # if cindex-pos>=0 this is fine, we can call getbirthspreadfromquad(cindex-pos,quad)
-        # otherwise, if cindex-pos=-1, then the index is actually 51, i.e, 52-1
+        # otherwise, if cindex-pos=-1, then the index is actually 51, i.e, 52+(-1)
+        # (td-eek4: this used to be 52-(cindex-pos), which for -1 gives 53 and
+        # walks off the end of the 52-card quadration -> IndexError)
         if cindex-pos>=0:
             return CoT.get_birthspread_from_quadration(cardsc.cards[quad[cindex-pos]],quad)
         else:
-            return CoT.get_birthspread_from_quadration(cardsc.cards[quad[52-(cindex-pos)]],quad)
+            return CoT.get_birthspread_from_quadration(cardsc.cards[quad[52+(cindex-pos)]],quad)
 
     @staticmethod
     def get_birth_spread_with_card_in_position(card,pos):
@@ -140,3 +142,72 @@ class CoT:
         for x in range(bc,bc+14):
             bspread.append(quad[x%52])
         return bspread
+
+    @staticmethod
+    def seat_rows(birthcard, decks=None):
+        """The same fourteen SEATS read in the jack, queen and king quadrations.
+
+        Each cell of the spread carries three cards: a small one at the bottom
+        left, the card face in the middle, and a small one at the top right.
+        They are not three calculations. The birth spread occupies
+        fourteen consecutive seats of the queen quadration, and the two small
+        cards are simply what the OTHER two quadrations hold at those same
+        seats. The spread is headed "Queen Quadration" because that names which
+        of the three the faces come from.
+
+        Returns ``(jack_row, queen_row, king_row)``, each a list of fourteen
+        two-letter card CODES. ``queen_row`` is exactly
+        ``get_birthspread_from_quadration(birthcard)`` translated through
+        ``cards_constants.cards``.
+
+        Codes rather than deck indices so that a caller never has to index
+        ``cards_constants.cards`` itself — that is app-side arithmetic on an
+        engine table, and it is the step where an off-by-one turns into a wrong
+        card that still looks like a card.
+
+        The seat comes from the QUEEN quadration for all three rows. Do not
+        "simplify" this to::
+
+            CoT.get_birthspread_from_quadration(birthcard, CoT.king_quadration())
+
+        That re-finds the birth card in the king deck, where it sits at a
+        different seat, and returns a different fourteen cards. For birth card
+        3D the seat is 5 in the queen deck but 16 in the king deck::
+
+            this method : QD 2C AS 9H 4D JH 6D 6S AC 9S 7S 3D 6H AD
+            that call   : 3D 6H AD TC 8C 3S 4H 5S QS 6C 3H AH 9D 5C
+
+        It never raises, and the wrong answer is not noise: ``quadraten(jackquad,
+        2)`` IS the king quadration, so that call returns the year spread for
+        age 1 -- a real spread from a different screen.
+
+        The same substitution is available on the jack row and is HARMLESS only
+        because the jack quadration is the unshuffled deck, so its own seat
+        always coincides. Do not conclude from that that the seats are
+        interchangeable.
+
+        Three birth cards hide the error completely: JH, 8C and KS are the fixed
+        points where the card sits at the same seat in the queen and king decks.
+        A chart with one of those as its birth card cannot detect the wrong
+        call, and its Mars/Jupiter/Uranus cell shows the same card three times.
+        """
+        # ``decks`` lets a caller pass the three quadrations it already holds.
+        # They are process constants -- none of the three takes a chart, a date
+        # or a context -- but ``queen_quadration()`` and ``king_quadration()``
+        # BUILD A NEW LIST on every call, so a caller that does not pass them
+        # re-shuffles a 52-card deck two or three times per spread for a value
+        # that cannot change.
+        if decks is None:
+            jack, queen, king = (CoT.jack_quadration(),
+                                 CoT.queen_quadration(),
+                                 CoT.king_quadration())
+        else:
+            jack, queen, king = decks
+        seat = list(queen).index(getindex(birthcard))
+        seats = [(seat + i) % 52 for i in range(14)]
+        # Read through each deck rather than using the seat number directly for
+        # the jack row: the two are equal only while jackquad is the identity,
+        # and writing the three rows as one expression is what keeps them so.
+        return ([cardsc.cards[jack[s]] for s in seats],
+                [cardsc.cards[queen[s]] for s in seats],
+                [cardsc.cards[king[s]] for s in seats])

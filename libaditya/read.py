@@ -98,8 +98,11 @@ def read_chtk(infile):
                 # usually this line is HH:MM:SS
                 # someimtes it is just HH:MM
                 # sometimes it is just H, so deal with all of those
-                line = clean_line(line).split(":")
-                sign = 1
+                # The sign belongs to the whole field, not the hour part:
+                # "-00:12:22" (LMT east of Greenwich) has hour int 0.
+                tzstr = clean_line(line).strip()
+                sign = -1 if tzstr.startswith("-") else 1
+                line = tzstr.lstrip("+-").split(":")
                 if line[0] == "UTC":
                     utcoff = 0
                     continue
@@ -114,26 +117,27 @@ def read_chtk(infile):
                     h = int(line[0])
                     m = int(line[1])
                     s = int(line[2])
-                if h < 0:
-                    sign = -1
-                    h = abs(h)
                 utcoff = sign*(int(h) + (int(m) / 60) + (int(s) / 3600))
             case 13:  # dst value
                 dst = intize_line(codecs.decode(line))
         linenum += 1
     placename = city + ", " + country
     ephclock = hour + min / 60 + sec / 3600
+    # Return LOCAL decimal hour and standard UTC offset separately.
+    # The caller (build_chart_from_recipe) computes UTC as timedec - utcoffset.
+    # Previously this returned (ephclock + utcoff - dst) as timedec,
+    # which was already UTC, causing double-offset when the caller subtracted again.
+    std_utc_offset = -(utcoff - dst)
     return (
         name,
         placename,
         month,
         day,
         year,
-        # below is the precise decimal hour needed to turn this into the proper JulianDay
-        ephclock + utcoff - dst,
+        ephclock,
         lat,
         long,
-        -(utcoff - dst),
+        std_utc_offset,
     )
 
 
@@ -160,7 +164,8 @@ def toml_to_Location(infile):
 # note: argument "toround" takes a tuple (bool,int) = (if toround; ifso, how much)
 def chtk_to_context(infile, sysflg=const.TROP,ayanamsa=98,hsys='C',circle=Circle.ADITYA,signize=True,toround=(True,3),print_nakshatras=True,print_outer_planets=True,names_type="mixed",sign_names="adityas"):
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset)
+    utc_timedec = timedec - utcoffset
+    timeJD = JulianDay((year,month,day,utc_timedec),utcoffset)
     location = Location(lat, long, 0, placename, timeJD.utcoffset)
     return EphContext(name=name,timeJD=timeJD,location=location,sysflg=sysflg,amsha=1,ayanamsa=ayanamsa,hsys=hsys,circle=circle,toround=toround,print_nakshatras=print_nakshatras, print_outer_planets=print_outer_planets, names_type=names_type,sign_names=sign_names)
 
@@ -218,7 +223,8 @@ def chtk_to_toml(infile):
     timezone = timeJD.mktimezone()
     """
     name, placename, month, day,year, timedec, lat, long, utcoffset = read_chtk(infile)
-    timeJD = JulianDay((year,month,day,timedec),utcoffset)
+    utc_timedec = timedec - utcoffset
+    timeJD = JulianDay((year,month,day,utc_timedec),utcoffset)
     location = Location(lat, long, 0, placename, utcoffset)
     d=dict()
     d["name"] = name

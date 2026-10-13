@@ -21,6 +21,18 @@ import time
 
 from libaditya import utils
 
+GREGORIAN_REFORM_JD = 2299160.5
+
+
+def _cal_flag(jd_val):
+    return swe.JUL_CAL if jd_val < GREGORIAN_REFORM_JD else swe.GREG_CAL
+
+
+def _cal_flag_ymd(year, month, day):
+    if year < 1582 or (year == 1582 and (month < 10 or (month == 10 and day < 15))):
+        return swe.JUL_CAL
+    return swe.GREG_CAL
+
 
 nowtime = time.gmtime()
 nowjdfloat = utils.tmod_to_jd(nowtime)
@@ -51,12 +63,12 @@ class JulianDay:
         if isinstance(jd, float) or isinstance(jd, int):
             self.jd = jd
         elif isinstance(jd, tuple):
-            self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3])
+            self.jd = swe.julday(jd[0], jd[1], jd[2], jd[3], _cal_flag_ymd(jd[0], jd[1], jd[2]))
         elif jd == "now":
             nowtime = time.gmtime()
             jd = utils.tmod_to_jd(nowtime)
             self.jd = jd
-        self.datetime = swe.revjul(self.jd)
+        self.datetime = swe.revjul(self.jd, _cal_flag(self.jd))
         self.utcoffset = float(utcoffset)
         self._timezone = self.mktimezone(timezone)
         self.usrdatetime = self.usrdt()
@@ -216,19 +228,37 @@ class JulianDay:
 
     def midnightjd(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
-        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)
+        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0, _cal_flag(self.jd))
 
     def midnightJD(self):
         """return the jd that is at midnight of this JulianDay's calendar day"""
-        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0),self.utcoffset)
+        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0, _cal_flag(self.jd)),self.utcoffset)
+
+    def usr_midnightJD(self):
+        """return the jd at midnight of this JulianDay's LOCAL calendar day
+
+        ``midnightJD`` anchors on ``self.datetime``, the UTC calendar day.
+        Anything that ALSO reads ``usrday()``/``usrmonth()`` must anchor here
+        instead, or the two disagree by a whole day whenever the local and UTC
+        dates differ — which is every evening west of Greenwich and every
+        early morning east of it. Added 2026-07-27 for SPEC-COT-001 E-6.
+        """
+        y, m, d = (int(self.usrdatetime[0]), int(self.usrdatetime[1]),
+                   int(self.usrdatetime[2]))
+        # julday() on the LOCAL Y/M/D gives local midnight expressed as though
+        # it were UTC; subtracting the offset turns it back into a real instant
+        # (usrdt() adds the offset going the other way).
+        usr_midnight = swe.julday(y, m, d, 0, _cal_flag_ymd(y, m, d))
+        return JulianDay(usr_midnight - self.utcoffset / 24,
+                         self.utcoffset, self.timezone())
 
     def next_midnightjd(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
-        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1
+        return swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0, _cal_flag(self.jd))+1
 
     def next_midnightJD(self):
         """return the jd that is at next_midnight of this JulianDay's calendar day"""
-        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0)+1,self.utcoffset,self.timezone())
+        return JulianDay(swe.julday(self.datetime[0], self.datetime[1], self.datetime[2], 0, _cal_flag(self.jd))+1,self.utcoffset,self.timezone())
 
     def ecliptic_obliquity(self):
         return swe.calc(self.jd, swe.ECL_NUT)[0][0]
@@ -262,4 +292,5 @@ class JulianDay:
         transform utc time into user specified time with self.utcoffset and timezone string
         return a tuple (year,month,day,hour)
         """
-        return swe.revjul(self.jd + self.utcoffset / 24)
+        usr_jd = self.jd + self.utcoffset / 24
+        return swe.revjul(usr_jd, _cal_flag(usr_jd))

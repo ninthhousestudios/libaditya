@@ -47,7 +47,7 @@ class SWERashi:
         return swe.sol_eclipse_when_loc(self.context.timeJD.jd_number(),self.context.location.swe_location(),backwards=True)
 
     def previous_solar_eclipse_here_maximum(self):
-        return repalce(self.context,timeJD=JulianDay(self.previous_solar_eclipse_here()[1][0],self.context.timeJD.utcoffset))
+        return replace(self.context,timeJD=JulianDay(self.previous_solar_eclipse_here()[1][0],self.context.timeJD.utcoffset))
 
     def next_solar_eclipse(self, etype=0) -> EphContext:
         """

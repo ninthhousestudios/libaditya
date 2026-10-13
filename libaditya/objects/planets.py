@@ -15,11 +15,11 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 from dataclasses import replace
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya.custom_ayanamsa import apply_sid_mode
 
 from .julian_day import JulianDay
 from .location import Location, Yamakoti
@@ -37,7 +37,7 @@ class Planet(CelestialObject,Longitude,PlanetBala):
     each Planet takes a planet number and an EphContext
     """
 
-    def __init__(self, pnumber, context=EphContext(),master=None):
+    def __init__(self, pnumber, context=EphContext(),master=None, *, display_name=None):
         self.timeJD = context.timeJD
         self.context = context
         self._amsha = self.context.amsha
@@ -49,7 +49,8 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         # below is what i want; effectively. const.names are globals
         # self.planet_name = const.planet_names[self.pnumber]
         # const.names[self.context.name_types]["planets"][self.pnumber]
-        self.planet_name = const.names[self.context.names_type]["planets"][self.pnumber]
+        self.planet_name = (display_name if display_name is not None else
+                            const.names[self.context.names_type]["planets"][self.pnumber])
         self.jd = self.timeJD.jd
         self._ayanamsa = self.context.ayanamsa
         self.system = self.context.sysflg
@@ -62,7 +63,9 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         # so at this point self.long with be Rahu's longitude, which we then change to Ketu's
         if isinstance(self,Ketu):
             self.long = (self.long-180)%360
-            self.pnumber = 8
+            # pnumber stays the Swiss north-node ID; Ketu is its antipode.
+            self.lat = -self.lat
+            self.lat_speed = -self.lat_speed
         # if we are not doing heliocentric or barycentric, then Earth will be opposite the Sun
         # this is really for the purpose of HD, which uses Earth as opposite the Sun
         if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
@@ -79,6 +82,9 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         # the others are set post-instantiation, since we need all the planets to fully determine
         # dignity, so then these are added later
         (self._right_ascension, self._declination, self._equatorial_distance,_,_,_) = swe.calc_ut(self.context.timeJD.jd_number(),self.swe_id(),swe.FLG_EQUATORIAL)[0]
+        if isinstance(self, Ketu):
+            self._right_ascension = (self._right_ascension + 180.0) % 360.0
+            self._declination = -self._declination
         from .nakshatras import Nakshatra
         self._nakshatra = Nakshatra(self)
 
@@ -111,10 +117,16 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         """
         loc = self.context.location.swe_location()
         if self.system == const.SID or self.system == (const.SID | const.TOPO):
-            # will need to add custom ayanamsas here
             if self.ayanamsa() == 98:
                 self._ayanamsa = 36
-            swe.set_sid_mode(self.ayanamsa())
+            if self.ayanamsa() in (99, 100):
+                # Vedanga Jyotisha: Swiss Ephemeris has no sid mode for 99/100, so a raw
+                # set_sid_mode renders Fagan/Bradley. Compute the TROPICAL position and
+                # apply the ecliptic solstice offset (SPEC-KUTA-AYA-001 3.3) so the
+                # displayed signs, nakshatra labels, offset readout and kuta share one
+                # Vedanga frame identity.
+                return self._vedanga_coords(loc)
+            apply_sid_mode(self.ayanamsa())
             if self.ayanamsa() == 97:
                 utils.set_swe_true_sidereal_ayanamsa()
         if self.system == const.TOPO or self.system == (const.SID | const.TOPO):
@@ -124,6 +136,24 @@ class Planet(CelestialObject,Longitude,PlanetBala):
         if isinstance(self,Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
             return swe.calc_ut(self.jd, swe.SUN, self.sysflg if self.sysflg >= 0 else 0)[0]
         return swe.calc_ut(self.jd, self.pnumber, self.sysflg if self.sysflg >= 0 else 0)[0]
+
+    def _vedanga_coords(self, loc):
+        """Tropical calc + Vedanga ecliptic solstice offset (ayanamsa 99/100).
+
+        Returns the 6-tuple ``init_coords`` expects (long, lat, dist, and their speeds),
+        with only the longitude shifted into the Vedanga frame. See
+        ``libaditya.utils.vedanga_ecliptic_aval`` and SPEC-KUTA-AYA-001 3.3.
+        """
+        if self.system == const.TOPO or self.system == (const.SID | const.TOPO):
+            swe.set_topo(loc[0], loc[1], loc[2])
+        aval = utils.vedanga_ecliptic_aval(self.jd)
+        trop_flg = self.sysflg & ~swe.FLG_SIDEREAL if self.sysflg >= 0 else 0
+        if isinstance(self, Earth) and self.context.sysflg != const.HELIO and self.context.sysflg != const.BARY:
+            coords = list(swe.calc_ut(self.jd, swe.SUN, trop_flg)[0])
+        else:
+            coords = list(swe.calc_ut(self.jd, self.pnumber, trop_flg)[0])
+        coords[0] = (coords[0] + aval) % 360.0
+        return coords
 
     def name(self) -> str:
         return self.planet_name + self.retrostr()
@@ -205,8 +235,6 @@ class Planet(CelestialObject,Longitude,PlanetBala):
                 return 6
             case swe.TRUE_NODE:
                 return 7
-            case swe.TRUE_NODE:
-                return 8
             case swe.URANUS:
                 return 9
             case swe.NEPTUNE:
@@ -560,7 +588,7 @@ class Sun(Planet):
             return False
 
     def is_oh(self):
-        if self.sign() == 5 and self.amsha_raw_in_sign_longitude() > 20:
+        if self.sign() == 5 and self.amsha_raw_in_sign_longitude() >= 20:
             return True
         else:
             return False
@@ -672,7 +700,7 @@ class Moon(Planet,SWEFirstLast):
             return False
 
     def is_mt(self):
-        if self.sign() == 2 and self.amsha_raw_in_sign_longitude() > 3:
+        if self.sign() == 2 and self.amsha_raw_in_sign_longitude() >= 3:
             return True
         else:
             return False
@@ -794,7 +822,7 @@ class Mars(Planet):
             return False
 
     def is_oh(self):
-        if (self.sign() == 1 and self.amsha_raw_in_sign_longitude() > 12) or self.sign() == 8:
+        if (self.sign() == 1 and self.amsha_raw_in_sign_longitude() >= 12) or self.sign() == 8:
             return True
         else:
             return False
@@ -997,7 +1025,7 @@ class Jupiter(Planet):
             return False
 
     def is_oh(self):
-        if self.sign() == 12 or (self.sign() == 9 and self.amsha_raw_in_sign_longitude() > 10):
+        if self.sign() == 12 or (self.sign() == 9 and self.amsha_raw_in_sign_longitude() >= 10):
             return True
         else:
             return False
@@ -1117,7 +1145,7 @@ class Venus(Planet,SWEFirstLast):
             return False
 
     def is_oh(self):
-        if self.sign() == 2 or (self.sign() == 7 and self.amsha_raw_in_sign_longitude() > 15):
+        if self.sign() == 2 or (self.sign() == 7 and self.amsha_raw_in_sign_longitude() >= 15):
             return True
         else:
             return False
@@ -1199,7 +1227,7 @@ class Saturn(Planet):
             return False
 
     def is_oh(self):
-        if self.sign() == 10 or (self.sign() == 11 and self.amsha_raw_in_sign_longitude() > 20):
+        if self.sign() == 10 or (self.sign() == 11 and self.amsha_raw_in_sign_longitude() >= 20):
             return True
         else:
             return False
@@ -1312,6 +1340,35 @@ class Ketu(Planet):
         super().__init__(swe.TRUE_NODE, context,master)
         self.planet_name = const.names[context.names_type]["planets"][11]
         self._id = "Ketu"
+
+    def list_index(self):
+        # Logical graha ordering is independent of the Swiss north-node ID.
+        return 8
+
+    @staticmethod
+    def _antipodal_event_flags(flags):
+        """Opposite geocentric point: rise/set and upper/lower transit exchange.
+
+        Refraction/topocentric limb events cannot be obtained by this symmetry;
+        reject those explicitly rather than returning the north node's event.
+        """
+        if flags & swe.BIT_HINDU_RISING != swe.BIT_HINDU_RISING:
+            raise ValueError("Ketu rise/set requires Hindu geometric event flags")
+        mask = swe.CALC_RISE | swe.CALC_SET | swe.CALC_MTRANSIT | swe.CALC_ITRANSIT
+        event = flags & mask
+        opposite = {0: swe.CALC_SET, swe.CALC_RISE: swe.CALC_SET,
+                    swe.CALC_SET: swe.CALC_RISE,
+                    swe.CALC_MTRANSIT: swe.CALC_ITRANSIT,
+                    swe.CALC_ITRANSIT: swe.CALC_MTRANSIT}
+        if event not in opposite:
+            raise ValueError("Expected a single rise/set/transit event")
+        return (flags & ~mask) | opposite[event]
+
+    def riseset(self, rs, location=Location()):
+        return super().riseset(self._antipodal_event_flags(rs | swe.BIT_HINDU_RISING), location)
+
+    def rise_trans(self, bitflags=swe.BIT_HINDU_RISING, location=None):
+        return super().rise_trans(self._antipodal_event_flags(bitflags), location)
 
     def number(self, system="vedic"):
         return 9
@@ -1555,6 +1612,8 @@ class Planets:
         self.system = context.sysflg
         self.sysflgstr = const.sysflgstr(context.sysflg)
         self._planets = self.init_Planets()
+        self._additional_bodies = {}
+        self.additional_body_errors = {}
         self.set_attributes()
         from .nakshatras import Nakshatras
         self._nakshatras = Nakshatras(self,self.context)
@@ -1575,6 +1634,18 @@ class Planets:
             for planet in self._planets.values():
                 if planet.number() == n:
                     return planet
+        if n not in self._planets:
+            from libaditya.optional_bodies import BODY_BY_NAME, BodyUnavailable, calculate_body
+            if n in BODY_BY_NAME:
+                if n in self.additional_body_errors:
+                    raise BodyUnavailable(self.additional_body_errors[n])
+                if n not in self._additional_bodies:
+                    try:
+                        self._additional_bodies[n] = calculate_body(n, self.context, self)
+                    except BodyUnavailable as exc:
+                        self.additional_body_errors[n] = str(exc)
+                        raise
+                return self._additional_bodies[n]
         return self._planets[n]
 
     def planets(self):
@@ -1625,19 +1696,26 @@ class Planets:
     def init_Planets(self):
         ret = {}
 
-        # chiron can only be computed in a certain time frame
+        # chiron can only be computed in a certain time frame.
+        # WI-1b / pre-mortem F2 (2026-08-29): iterate a per-call COPY so an
+        # out-of-range chart never mutates the module-global `natural_planets`.
+        # The old code did `natural_planets.pop("Chiron")` on the global with no
+        # restore, so computing ONE out-of-range chart stripped Chiron from every
+        # later chart in the long-running process. See test_hd_engine_frames.py.
+        planets = dict(natural_planets)
         if self.timeJD.jd < 1967601.5 or self.timeJD.jd > 3419437.5:
-            if "Chiron" in natural_planets.keys():
-                natural_planets.pop("Chiron")
+            planets.pop("Chiron", None)
             # swe can only compute Chiron between these two days
             # so if it is outside this range, get rid of Chiron
 
 #        # add Earth if using barycentric or heliocentric
 #        if self.system == const.BARY or self.system == const.HELIO:
 #            # add Earth to the planet_dict["planets"], after Pluto and before Chiron
-#            natural_planets["Earth"] = Earth
+#            # NB (WI-1b): mutate the per-call `planets` copy, NOT the module-global
+#            # `natural_planets`, or you reintroduce the F2 order-dependence bug.
+#            planets["Earth"] = Earth
 
-        for planet,constructor in natural_planets.items():
+        for planet,constructor in planets.items():
             ret[planet] = constructor(self.context,self)
 
         return ret
@@ -1820,6 +1898,7 @@ class Planets:
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
         """
+        from prettytable import PrettyTable
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -1881,6 +1960,7 @@ class Planets:
         return a PrettyTable string with coordinates for all planets on julianday
         using sysflag coordinates
         """
+        from prettytable import PrettyTable
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -1977,6 +2057,7 @@ class Planets:
         return header
 
     def hd_planets_definition(self) -> str:
+        from prettytable import PrettyTable
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -2018,6 +2099,7 @@ class Planets:
         return ret
 
     def hd_planets_state(self) -> str:
+        from prettytable import PrettyTable
         output = PrettyTable()
         output.field_names = [
             "Planet",
@@ -2056,4 +2138,3 @@ class Planets:
 
         return ret
     
-

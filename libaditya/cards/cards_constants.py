@@ -99,17 +99,53 @@ birth_card_order = list(cards.__reversed__())
 # first card of the month is as follows, starting with January
 # then each day goes in order according to calendar day number, based on the savana day at the equator for a given longitude
 # e.g., February 29 after sunrise will be
-first_card_of_the_month = [birth_card_order.index(card) for card in ["KS","JS","9S","7S","5S","3S","AS","QD","TD","8D","3D","4D"]]
+#
+# Every month starts two cards further down the sequence than the one before:
+# Jan KS(0), Feb JS(2), Mar 9S(4) ... Dec 4D(22). November read "3D" (index 23)
+# and was the ONLY break in that progression, which shifted every one of the 29
+# November birth cards by three and pushed 30 November past the end of the deck.
+# Corrected to "6D" (index 20) on 2026-07-27 against the published birth-card
+# table (NOV 1 = 6D, NOV 30 = 3H): Alain Delon 1935-11-08 returns KC with
+# this value and TC with the old one; the reference is KC, and all 14 of his
+# spread cards then match. SPEC-COT-001 E-4.
+first_card_of_the_month = [birth_card_order.index(card) for card in ["KS","JS","9S","7S","5S","3S","AS","QD","TD","8D","6D","4D"]]
 
-def days_in_the_month(month: int):
+def is_leap_year(year: int) -> bool:
+    """Leap year under the calendar in force for ``year``.
+
+    Julian before the 1582 reform (every fourth year, no century rule),
+    Gregorian after it — matching ``julian_day._cal_flag_ymd``, which decides
+    how the rest of the engine reads a date. A February that this engine dates
+    as the 29th must be a February this function calls long, or the birth-card
+    day would step somewhere the chart itself does not agree with.
     """
-    month is 0-indexed to january
-    for cards of truth, February has 29 days...so that "card" only gets that turn to play whenever it is feb.29, right?
+    if year < 1582:
+        return year % 4 == 0
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+
+def days_in_the_month(month: int, year: int = None) -> int:
+    """Days in a calendar month, ``month`` 1-indexed (1 = January).
+
+    ``year`` decides February. Omit it and February is 29 — the length the CARD
+    TABLE uses, where the 29th has its own row (9C) that is simply only
+    reachable in a leap year. Pass a year and February is the real length of
+    that year's, which is what a caller stepping back to "the last day of the
+    previous month" needs: the day before 1 March 1990 is the 28th, not a 29th
+    that did not happen.
+
+    Fixed 2026-07-27 (SPEC-COT-001 E-1/E-2/E-3). It previously read
+    ``match match:``, a ``NameError`` on every call — reachable by any birth
+    before sunrise on the 1st of a month. Behind that: February returned 20,
+    and the ``case`` arms were 1-indexed with December misfiled as a 30-day
+    month while the docstring and the caller both said 0-indexed. The three
+    defects masked each other, so none could be observed until the ``NameError``
+    was gone — and the year-blind February only became visible after that.
     """
-    match match:
-        case 1 | 3 | 5 | 7 | 8 | 10:
-            return 31
-        case 4 | 6 | 9 | 11 | 12:
-            return 30
-        case 2:
-            return 20
+    if not 1 <= month <= 12:
+        raise ValueError(f"month must be 1-12, got {month!r}")
+    if month == 2:
+        return 29 if year is None or is_leap_year(year) else 28
+    if month in (4, 6, 9, 11):
+        return 30
+    return 31

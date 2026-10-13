@@ -16,7 +16,6 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 
 from libaditya import constants as const
 from libaditya import utils
@@ -43,6 +42,9 @@ class YiLongitude:
 
     def __init__(self, longitude, gate_one=hdc.gate_one):
         self._longitude = longitude
+        # per-instance gate 1 anchor (EphContext.hd_gate_one via HDLongitude);
+        # the class attribute is only the default. Upstream PR ninthhousestudios/libaditya#2
+        self.gate_one = gate_one
         # declaring variables that are initialized in self.init_gate()
         self._distance = 0
         self._hexagrams = 0

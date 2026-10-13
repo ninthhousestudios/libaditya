@@ -20,7 +20,6 @@ a variety of functions to return string forms of various information
 that can be computed with libaditya
 """
 
-from prettytable import PrettyTable
 
 from libaditya import constants as const
 from libaditya.objects import Planet, Sign
@@ -57,6 +56,7 @@ def parashara_aspect_table_planets(aspects):
     aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects
     make a prettytable list of these values
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = [" "] + [glyph for glyph in const.graha_glyphs]
     output.align[" "] = "l"
@@ -74,6 +74,7 @@ def parashara_aspect_table_cusps(aspects):
     aspects is a list of lists, i.e., a list of rows returned by Planets.parashara_aspects
     make a prettytable list of these values
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = [" "] + [str(n) for n in range(1,13)]
     output.align[" "] = "l"
@@ -89,6 +90,7 @@ def jaimini_karakas_str(karakas) -> str:
     return a PrettyTable string displaying the Jaimini karakas in karakas
     karakas is a list of Planet classes, with ak being element 0, amk element 1, etc.
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["AK", "AmK", "BK", "MK/PuK", "PiK", "GK", "DK"]
 
@@ -202,6 +204,7 @@ def lajjitaadi_avasthas_table(avasthas) -> str:
     Takes the dict returned by Rashi.lajjitaadi_avasthas() and returns
     a PrettyTable string.
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Planet", "Avastha", "Source", "Details", "Strength"]
     output.align["Planet"] = "l"
@@ -236,6 +239,7 @@ AVASTHA_PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "S
 
 def avasthas_table(lajjitaadi, baladi, jagradadi, deeptadi, shayanadi) -> str:
     # simple avasthas table
+    from prettytable import PrettyTable
     simple = PrettyTable()
     simple.field_names = ["Planet", "Baladi", "Jagradadi", "Deeptadi", "Shayanadi"]
     simple.align = "l"
@@ -279,6 +283,7 @@ def akriti_yogas_table(akritis) -> str:
     Takes the list of AkritiYoga dataclasses returned by Rashi.akriti_yogas()
     and returns a PrettyTable string, sorted by to_move ascending.
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Yoga", "Translation", "To Move", "Houses"]
     output.align["Yoga"] = "l"
@@ -336,6 +341,7 @@ def nabhasa_yogas_table(yogas) -> str:
     Takes the list returned by Rashi.nabhasa_yogas() (or ashraya/dala/sankhya)
     and returns a PrettyTable string, sorted by to_move ascending.
     """
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Yoga", "Translation", "Category", "To Move", "Condition"]
     output.align["Yoga"] = "l"
@@ -394,6 +400,7 @@ def rich_nabhasa_yogas(yogas):
 
 
 def mahapurusha_yogas_table(yogas) -> str:
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Yoga", "Translation", "Planet", "Present", "House", "Dignity"]
     output.align["Yoga"] = "l"
@@ -440,6 +447,7 @@ def rich_mahapurusha_yogas(yogas):
 
 
 def solar_yogas_table(yogas) -> str:
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Yoga", "Present", "Planets"]
     output.align["Yoga"] = "l"
@@ -478,6 +486,7 @@ def rich_solar_yogas(yogas):
 
 
 def lunar_yogas_table(yogas) -> str:
+    from prettytable import PrettyTable
     output = PrettyTable()
     output.field_names = ["Yoga", "Present", "Planets"]
     output.align["Yoga"] = "l"

@@ -382,6 +382,23 @@ def is_stellarium_id(swe_id):
     return "HIP" in swe_id or " " in swe_id
 
 
+def vedanga_ecliptic_aval(jd):
+    """Vedanga Jyotisha solstice offset (``aval``) for a Julian Day.
+
+    Swiss Ephemeris has no sidereal mode for our custom ayanamsa IDs 99/100, so a raw
+    ``set_sid_mode(99|100)`` silently renders Fagan/Bradley. This returns the offset
+    ``aval`` such that a displayed sidereal longitude is ``(tropical + aval) % 360`` —
+    the SAME identity ``core.vimshottari_dasha.get_nakshatra_for_longitude`` uses for
+    99/100, so the wheel, the offset readout, nakshatra labels and kuta all agree on one
+    Vedanga frame (SPEC-KUTA-AYA-001 sections 3.3/3.4). Dhanishta begins at the winter
+    solstice (270 deg ecliptic), projected to the equator; Ashvini starts five
+    nakshatras before it.
+    """
+    naksize = 360.0 / 27.0
+    solequ = swe.cotrans((270, 0, 1), swe.calc(jd, swe.ECL_NUT)[0][0])[0]
+    return 360.0 - (solequ + 5 * naksize)
+
+
 def set_swe_true_sidereal_ayanamsa():
     """
     this is used by calling TheStars.set_true_sidereal_hd_ayanamsa()
