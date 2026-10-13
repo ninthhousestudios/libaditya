@@ -421,6 +421,23 @@ def is_stellarium_id(swe_id):
     return "HIP" in swe_id or " " in swe_id
 
 
+def vedanga_ecliptic_aval(jd):
+    """Vedanga Jyotisha solstice offset (``aval``) for a Julian Day.
+
+    Swiss Ephemeris has no sidereal mode for our custom ayanamsa IDs 99/100, so a raw
+    ``set_sid_mode(99|100)`` silently renders Fagan/Bradley. This returns the offset
+    ``aval`` such that a displayed sidereal longitude is ``(tropical + aval) % 360`` —
+    the SAME identity ``core.vimshottari_dasha.get_nakshatra_for_longitude`` uses for
+    99/100, so the wheel, the offset readout, nakshatra labels and kuta all agree on one
+    Vedanga frame (SPEC-KUTA-AYA-001 sections 3.3/3.4). Dhanishta begins at the winter
+    solstice (270 deg ecliptic), projected to the equator; Ashvini starts five
+    nakshatras before it.
+    """
+    naksize = 360.0 / 27.0
+    solequ = swe.cotrans((270, 0, 1), swe.calc(jd, swe.ECL_NUT)[0][0])[0]
+    return 360.0 - (solequ + 5 * naksize)
+
+
 def set_swe_true_sidereal_ayanamsa():
     """
     this is used by calling TheStars.set_true_sidereal_hd_ayanamsa()
@@ -442,16 +459,12 @@ def set_swe_true_sidereal_ayanamsa():
 def set_swe_sidereal_mode(ayanamsa):
     """Apply the Swiss Ephemeris sidereal mode for a libaditya ayanamsa code.
 
-    Centralises the true-sidereal (code 97) SVP override so planets, cusps and
-    nakshatras stay consistent: a plain swe.set_sid_mode(97) would silently clamp
-    to Fagan-Bradley. Does NOT apply the 98->36 sign remap -- callers that need
-    it (planets, cusps) remap before calling; nakshatras handle 98 separately via
-    dhruva_gc_equatorial and never reach here with 98.
+    kept for callers of the old name; custom_ayanamsa.apply_sid_mode is the one
+    place that sets the mode (true sidereal 97 and the custom ayanamsa 255).
     """
-    if ayanamsa == 97:
-        set_swe_true_sidereal_ayanamsa()
-    else:
-        swe.set_sid_mode(ayanamsa)
+    from libaditya.custom_ayanamsa import apply_sid_mode
+
+    apply_sid_mode(ayanamsa)
 
 
 def mkheader(obj):

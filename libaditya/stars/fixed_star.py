@@ -22,6 +22,7 @@ import swisseph as swe
 
 from libaditya import constants as const
 from libaditya import utils
+from libaditya.custom_ayanamsa import apply_sid_mode
 
 from libaditya.objects import Longitude, CelestialObject, EphContext
 
@@ -175,7 +176,7 @@ class FixedStar(CelestialObject, Longitude):
         if self.system == const.TOPO:
             swe.set_topo(loc[0], loc[1], loc[2])
         if self.system == (const.SID | const.TOPO):
-            swe.set_sid_mode(self.ayanamsa())
+            apply_sid_mode(self.ayanamsa())
             swe.set_topo(loc[0], loc[1], loc[2])
         return swe.fixstar2_ut(
             self.swe_id(),

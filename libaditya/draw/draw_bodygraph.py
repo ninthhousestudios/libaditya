@@ -18,7 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import drawsvg as draw
 
 from libaditya import constants as const
 from libaditya.hd import constants as hdc
@@ -36,6 +35,8 @@ class DrawBodyGraph:
         default outfile is name associated with the chart, all lowercase, spaces replaced with "-"
         if there is no name and outfile=None, then it uses the julianday number as the file name
         """
+        import drawsvg as draw
+
         d = draw.Drawing(500, 500)
         # initialize the theme from the theme_file
         theme = const.init_theme(theme_file)
@@ -91,6 +92,8 @@ class DrawBodyGraph:
     # will
     def draw_bodygraph(self, d, theme, cgates, ugates, rstr, lstr):
 
+        import drawsvg as draw
+
         d.append(
             draw.Rectangle(0, 0, 500, 500, rx=None, ry=None, fill=theme["background"])
         )
@@ -118,6 +121,8 @@ class DrawBodyGraph:
 
     def draw_centers(self, d, theme):
         # draw head center
+        import drawsvg as draw
+
         head = draw.Lines(
             210,
             50,
@@ -227,6 +232,8 @@ class DrawBodyGraph:
 
     def draw_gates(self, d, theme, gates):
 
+        import drawsvg as draw
+
         gtype = theme["gates"]
         gx = 2
         gy = 3
@@ -289,6 +296,7 @@ class DrawBodyGraph:
 
         if just one is defined, draw the whole channel with that color
         """
+        import drawsvg as draw
 
         # since some channels need to be drawn below others
         # this list is that order; that is why it is not done with
@@ -583,6 +591,8 @@ class DrawBodyGraph:
         return d
 
     def draw_gate_boxes(self, d, theme, cgates, ugates):
+        import drawsvg as draw
+
         cx = 450
         ux = 30
         y = 15
@@ -852,6 +862,8 @@ class DrawBodyGraph:
         return d
 
     def draw_info_boxes(self, d, theme, rstr, lstr):
+
+        import drawsvg as draw
 
         d.append(draw.Text(rstr, font_size=10, x=305, y=10, stroke=theme["right-text"]))
         d.append(draw.Text(lstr, font_size=10, x=80, y=10, stroke=theme["left-text"]))

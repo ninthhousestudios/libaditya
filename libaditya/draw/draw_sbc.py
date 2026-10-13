@@ -18,7 +18,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import drawsvg as draw
 from dataclasses import replace
 
 from libaditya import constants as const
@@ -36,7 +35,7 @@ class DrawSBC:
     meant to be used for names_type (eng,iast,deva,mixed,abbrev) or sign_names (adityas,zodiac)
     """
 
-    def draw_sbc(self, english_letters=False) -> draw.Drawing:
+    def draw_sbc(self, english_letters=False):
         """
         draw this chart as an sbc in .svg format
 
@@ -49,7 +48,8 @@ class DrawSBC:
 
         you should probably call this like: Rashi.draw_sbc()
         """
-        # first, initilize a drawsvg.Drawing
+        import drawsvg as draw
+
         d = draw.Drawing(500, 500)
 
         # from sbc.py:151: d = sc.draw_chakra(d, zodiac=zodiac, langfile=langfile, themefile=themefile)
@@ -227,6 +227,8 @@ def get_colors(file=const.sbc_default_theme):
 
 # pass in the drawsvg.drawing.Drawing object; return it too
 def draw_chakra_base(d, context, themefile=const.sbc_default_theme):
+    import drawsvg as draw
+
     (
         nak_color,
         tithi_color,
@@ -625,6 +627,7 @@ def draw_chakra_base(d, context, themefile=const.sbc_default_theme):
 
 def draw_english_letters(d):
     """draw english letter equivalents on the sanskrit letter boxes"""
+    import drawsvg as draw
 
     coords = make_coords()
 

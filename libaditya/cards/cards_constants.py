@@ -193,25 +193,36 @@ first_card_of_the_month = [
 
 
 def is_leap_year(year: int) -> bool:
+    """Leap year under the calendar in force for ``year``.
+
+    Julian before the 1582 reform (every fourth year, no century rule),
+    Gregorian after it — matching ``julian_day._cal_flag_ymd``, which decides
+    how the rest of the engine reads a date. A February that this engine dates
+    as the 29th must be a February this function calls long, or the birth-card
+    day would step somewhere the chart itself does not agree with.
     """
-    proleptic Gregorian, which is the calendar the rest of the library computes
-    in: every swe.julday/swe.revjul call here leaves cal at its GREG_CAL
-    default, pre-1582 dates included. a Julian rule here would disagree with
-    them -- it would call 1500 long, while swe.revjul rolls Gregorian 1500-02-29
-    straight to March 1.
-    """
+    if year < 1582:
+        return year % 4 == 0
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 
-def days_in_the_month(month: int, year: int | None = None) -> int:
-    """
-    month is 1-indexed to january
+def days_in_the_month(month: int, year: int = None) -> int:
+    """Days in a calendar month, ``month`` 1-indexed (1 = January).
 
-    year decides February. omit it and February is 29, the length the CARD TABLE
-    uses -- the 29th has its own card (9C) that is simply only reachable in a
-    leap year. pass a year and February is that year's real length, which is
-    what a caller stepping back to "the last day of the previous month" needs:
-    the day before March 1 1990 is the 28th, not a 29th that never happened.
+    ``year`` decides February. Omit it and February is 29 — the length the CARD
+    TABLE uses, where the 29th has its own row (9C) that is simply only
+    reachable in a leap year. Pass a year and February is the real length of
+    that year's, which is what a caller stepping back to "the last day of the
+    previous month" needs: the day before 1 March 1990 is the 28th, not a 29th
+    that did not happen.
+
+    Fixed 2026-07-27 (SPEC-COT-001 E-1/E-2/E-3). It previously read
+    ``match match:``, a ``NameError`` on every call — reachable by any birth
+    before sunrise on the 1st of a month. Behind that: February returned 20,
+    and the ``case`` arms were 1-indexed with December misfiled as a 30-day
+    month while the docstring and the caller both said 0-indexed. The three
+    defects masked each other, so none could be observed until the ``NameError``
+    was gone — and the year-blind February only became visible after that.
     """
     if not 1 <= month <= 12:
         raise ValueError(f"month must be 1-12, got {month!r}")

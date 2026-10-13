@@ -17,9 +17,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from rich import box
-from rich.table import Table
-from rich.console import Console
 
 from libaditya import utils
 from libaditya.objects import EphContext, Sun, JulianDay
@@ -272,6 +269,9 @@ class CardsOfTruth(CoT):
                 self.spread()[cusp.lord()].set_attribute(("cusps", cusp))
 
         def richDrawing(self):
+            from rich import box
+            from rich.table import Table
+
             spread = Table(box=box.SIMPLE)
 
             spread.add_column(" ", justify="center", style="white")

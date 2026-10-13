@@ -62,7 +62,7 @@ class SWERashi:
         )
 
     def previous_solar_eclipse_here_maximum(self):
-        return repalce(
+        return replace(
             self.context,
             timeJD=JulianDay(
                 self.previous_solar_eclipse_here()[1][0], self.context.timeJD.utcoffset

@@ -9,6 +9,8 @@ example*
 *.pdf
 *.txt
 !libaditya/ephe/sefstars.txt
+!libaditya/ephe/seleapsec.txt
+!libaditya/stars/stellarium/remote_control/LICENSE.txt
 *.sbc
 *.pyph
 debnds.py

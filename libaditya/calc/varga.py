@@ -19,11 +19,8 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 from dataclasses import replace
 
-from rich.table import Table
-from rich.console import Console
 
 from libaditya import constants as const
 from libaditya import utils
@@ -220,6 +217,8 @@ class Varga(Jaimini, API):
             )  # could pass self.planets(), but that is what Planets.dignities() will do without an argument
 
     def __str__(self):
+        from prettytable import PrettyTable
+
         output = PrettyTable()
         output.field_names = ["  ", "   ", "    ", "     "]
 
@@ -271,6 +270,8 @@ class Varga(Jaimini, API):
         return utils.mkheader(self)
 
     def richDrawing_south_indian(self):
+        from rich.table import Table
+
         spread = Table(box=None)
 
         spread.add_column(" ", justify="center")
@@ -307,6 +308,8 @@ class Varga(Jaimini, API):
         return spread
 
     def richDrawing_circular(self):
+        from rich.table import Table
+
         spread = Table(box=None)
 
         spread.add_column(" ", justify="center", style="#00ff00")
@@ -352,6 +355,8 @@ class Varga(Jaimini, API):
         return spread
 
     def rich(self, which="circular"):
+        from rich.console import Console
+
         console = Console()
         match which:
             case "south_indian":

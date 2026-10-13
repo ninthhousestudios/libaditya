@@ -19,10 +19,9 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 
 from libaditya import constants as const
-from libaditya import utils
+from libaditya.custom_ayanamsa import apply_sid_mode
 
 
 class Nakshatra:
@@ -130,6 +129,19 @@ class Nakshatra:
             return self.base_longitude()
         if self.ayanamsa == 101:
             return self.base_longitude()
+        # SPEC-KUTA-AYA-001 3.3: sidereal-built charts at Vedanga 99/100 already carry
+        # solstice-frame longitudes (planets/cusps are shifted by vedanga_ecliptic_aval
+        # at construction), and that frame's origin IS the start of Ashvini — so the
+        # base longitude already equals the degrees-from-Ashvini. Re-running the Vedanga
+        # formulas here would double-shift (99: adds the offset again) or mix frames
+        # (100: equatorial algorithm against the rendered ecliptic frame; for cusps it
+        # would even transform the already-shifted longitude). One frame identity for
+        # display, offset readout, nakshatra labels and kuta (AC-9).
+        if self.ayanamsa in (99, 100) and (
+            self.context.sysflg == swe.FLG_SIDEREAL
+            or self.context.sysflg == (swe.FLG_SIDEREAL | swe.FLG_TOPOCTR)
+        ):
+            return self.base_longitude() % 360
         if self.ayanamsa == 98:
             return self.dhruva_gc_equatorial()
         if self.ayanamsa == 99:
@@ -144,7 +156,7 @@ class Nakshatra:
             print(f"instance of type {type(self._occupant)} cannot be in a nakshatra")
 
     def init_ash_long_Planet(self):
-        utils.set_swe_sidereal_mode(self.ayanamsa)
+        apply_sid_mode(self.ayanamsa)
         long = swe.calc_ut(
             self.timeJD.jd_number(), self._occupant.pnumber, swe.FLG_SIDEREAL
         )[0][0]
@@ -152,14 +164,16 @@ class Nakshatra:
         return long
 
     def init_ash_long_Cusp(self):
-        utils.set_swe_sidereal_mode(self.ayanamsa)
-        cusps, _, _, _ = swe.houses_ex2(
+        apply_sid_mode(self.ayanamsa)
+        cusps, angles, _, _ = swe.houses_ex2(
             self._occupant.timeJD.jd_number(),
             self._occupant.location.lat,
             self._occupant.location.long,
             self._occupant.hsys,
             swe.FLG_SIDEREAL,
         )
+        if self._occupant.angle_index is not None:
+            return angles[self._occupant.angle_index]
         return cusps[self._occupant.cusp_index()]
 
     def ayanamsa_name(self):
@@ -254,6 +268,8 @@ class Nakshatras:
         return self.nakshatras[n]
 
     def __str__(self):
+        from prettytable import PrettyTable
+
         output = PrettyTable()
         output.field_names = [f"{self.occupant_type()}", "Nakshatra", "Percent Elapsed"]
         output.align[f"{self.occupant_type()}"] = "l"

@@ -19,7 +19,6 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 
 from libaditya import constants as const
 from libaditya import utils

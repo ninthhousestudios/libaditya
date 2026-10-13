@@ -19,7 +19,6 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from metar import Metar
 
 from libaditya import constants as const
 
@@ -40,7 +39,8 @@ class Location:
         self.alt = float(alt)
         self._placename = placename
         self.utcoffset = float(utcoffset)
-        self._timezone = f"{'+' if self.utcoffset > 0 else ''}{self.utcoffset}"
+        _sign = "+" if self.utcoffset > 0 else ""
+        self._timezone = f"{_sign}{self.utcoffset}"
         self.icao = icao
         self._planet = planet
         (
@@ -127,6 +127,8 @@ class Location:
 
         url is taken from get_report.py from python-metar package
         """
+        from metar import Metar
+
         BASE_URL = "https://tgftp.nws.noaa.gov/data/observations/metar/stations"
         if icao is not None:
             name = icao

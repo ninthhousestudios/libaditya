@@ -73,6 +73,10 @@ def ayanamsa_name(ayanamsa):
         return "Equatorial Vedanga Jyotisha"
     if ayanamsa == 101:
         return "28 Equal Nakshatras (Krittika at Equinox)"
+    if ayanamsa == 255:
+        from libaditya.custom_ayanamsa import get_custom_ayanamsa
+
+        return get_custom_ayanamsa()[0]
     swe.set_sid_mode(ayanamsa)
     return swe.get_ayanamsa_name(ayanamsa)
 

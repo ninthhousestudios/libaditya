@@ -19,18 +19,20 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 
 from .longitude import Longitude
 from .context import EphContext
 
 from libaditya import constants as const
-from libaditya import utils
+from libaditya.custom_ayanamsa import apply_sid_mode
 
 
 class Cusp(Longitude):
-    def __init__(self, longitude, amsha, speed, number, context=EphContext()):
+    def __init__(
+        self, longitude, amsha, speed, number, context=EphContext(), *, angle_index=None
+    ):
         self.context = context
+        self.angle_index = angle_index
         self.hsys = self.context.hsys.encode()
         self.location = self.context.location
         self.timeJD = self.context.timeJD
@@ -152,6 +154,12 @@ class Cusps:
         """
         return self.cusps[n - 1]
 
+    def ascendant(self):
+        """The actual rising angle, independently of the first house boundary."""
+        return Cusp(
+            self.ascmc[0], 1, self.ascmcspeed[0], 1, context=self.context, angle_index=0
+        )
+
     def armc(self):
         """
         right ascension of the midheaven
@@ -182,15 +190,42 @@ class Cusps:
         cusps will be a 12-tuple with cusps 1-12
         """
         flag = 0
-        if self.system == swe.FLG_SIDEREAL or self.system == swe.FLG_TOPOCTR:
-            flag = swe.FLG_SIDEREAL
-            if self.ayanamsa == 98:
-                utils.set_swe_sidereal_mode(36)
+        vedanga = False
+        # Sidereal iff the SIDEREAL flag is present: plain sidereal or
+        # sidereal+topocentric — same discriminator as Planet.init_coords. The old
+        # test (== FLG_SIDEREAL or == FLG_TOPOCTR) wrongly siderealized pure
+        # topocentric charts and missed sidereal-topocentric ones. Equality (not a
+        # bitmask) because the draconic sysflg is negative and would falsely match.
+        if self.system == swe.FLG_SIDEREAL or self.system == (
+            swe.FLG_SIDEREAL | swe.FLG_TOPOCTR
+        ):
+            if self.ayanamsa in (99, 100):
+                # Vedanga Jyotisha: Swiss Ephemeris has no sid mode for 99/100. Compute
+                # TROPICAL cusps (flag stays 0) and apply the ecliptic solstice offset
+                # below, matching the planet path and the nakshatra frame
+                # (SPEC-KUTA-AYA-001 3.3).
+                vedanga = True
+            elif self.ayanamsa == 98:
+                flag = swe.FLG_SIDEREAL
+                swe.set_sid_mode(36)
             else:
-                utils.set_swe_sidereal_mode(self.ayanamsa)
+                flag = swe.FLG_SIDEREAL
+                apply_sid_mode(self.ayanamsa)
         cusps, ascmc, speeds, ascmcspeeds = swe.houses_ex2(
             self.jd, self.location.lat, self.location.long, self.hsys, flag
         )
+        if vedanga:
+            from libaditya import utils
+
+            aval = utils.vedanga_ecliptic_aval(self.jd)
+            cusps = tuple((c + aval) % 360.0 for c in cusps)
+            # Shift every ecliptic-longitude ascmc entry into the Vedanga frame
+            # (0=Asc, 1=MC, 3=Vertex, 4=equatorial asc, 5/6=co-ascendants,
+            # 7=polar asc). ARMC (index 2, used as self._armc) is sidereal time in
+            # degrees, not an ecliptic longitude — leave it untouched.
+            ascmc = tuple(
+                v if i == 2 else (v + aval) % 360.0 for i, v in enumerate(ascmc)
+            )
         retcusps = []
         for n, cusp in enumerate(cusps):
             retcusps.append(
@@ -205,6 +240,8 @@ class Cusps:
         return retcusps, ascmc, ascmcspeeds
 
     def __str__(self):
+        from prettytable import PrettyTable
+
         output = PrettyTable()
         output.field_names = [
             "Cusp",

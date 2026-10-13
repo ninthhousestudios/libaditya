@@ -19,12 +19,8 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import swisseph as swe
-from prettytable import PrettyTable
 from typing import Self
 
-from rich import box
-from rich.table import Table
-from rich.console import Console
 
 from libaditya import constants as const
 from libaditya import utils
@@ -287,6 +283,8 @@ class Sign:
         return ret[:-1]
 
     def __repr__(self):
+        from prettytable import PrettyTable
+
         header = ""
         header += f"\n{self.sign()=} {self.sign_name()}\t{self.context.amsha}\n"
         output = PrettyTable()
@@ -307,6 +305,9 @@ class Sign:
         return header + ret
 
     def richDrawing(self, header_style="#6b00ff", info_style="#00ff00"):
+        from rich import box
+        from rich.table import Table
+
         sign = Table(box=box.ROUNDED, style=header_style)
 
         # add a "header_style=" argument to change color of this header itself
@@ -323,6 +324,8 @@ class Sign:
         return sign
 
     def rich(self):
+        from rich.console import Console
+
         console = Console()
         console.print(self.richDrawing())
 

@@ -17,9 +17,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-from rich import box
-from rich.table import Table
-from rich.console import Console
 
 from libaditya import constants as const
 
@@ -78,6 +75,9 @@ class Card:
         """
         return a rich.Table object representing this card
         """
+        from rich import box
+        from rich.table import Table
+
         card = Table(box=box.ROUNDED)
         color = "red" if (self.card()[1] == "H" or self.card()[1] == "D") else "white"
         card.add_column(self.glyph(), justify="center", style="white")
@@ -90,5 +90,7 @@ class Card:
         return card
 
     def rich(self):
+        from rich.console import Console
+
         console = Console()
         console.print(self.richDrawing())

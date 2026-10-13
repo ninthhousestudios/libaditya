@@ -1,0 +1,41 @@
+{
+  "retrieved": "2026-09-14",
+  "upstream": "Swiss Ephemeris / Astrodienst",
+  "mirror": "https://registry.npmjs.org/@kuntay/swisseph-asteroids/-/swisseph-asteroids-0.2.2.tgz",
+  "license": "AGPL-3.0 or Swiss Ephemeris professional license",
+  "files": [
+    {
+      "number": 16,
+      "name": "Psyche",
+      "file": "se00016s.se1",
+      "bytes": 36130,
+      "sha256": "494ceb60d14147ad8cbaa7a9a3242cc8ac410ab47e2dc9e91d6badd2d1d2527c",
+      "path": "ast0/se00016s.se1",
+      "jd_start": 2268922.5,
+      "jd_end": 2488922.5,
+      "jpl_de": 441
+    },
+    {
+      "number": 433,
+      "name": "Eros",
+      "file": "se00433s.se1",
+      "bytes": 93779,
+      "sha256": "6eb9c8ac6e14347d6f8980b562b2b701d1eb9d529c0dd77bac5f2b563daf0b00",
+      "path": "ast0/se00433s.se1",
+      "jd_start": 2268922.5,
+      "jd_end": 2488522.5,
+      "jpl_de": 441
+    },
+    {
+      "number": 7066,
+      "name": "Nessus",
+      "file": "se07066s.se1",
+      "bytes": 17772,
+      "sha256": "92142312772073c6377501dd0f81a7d8c95bf354f37f92c7b0d47435577bb0c8",
+      "path": "ast7/se07066s.se1",
+      "jd_start": 2268922.5,
+      "jd_end": 2488922.5,
+      "jpl_de": 441
+    }
+  ]
+}
