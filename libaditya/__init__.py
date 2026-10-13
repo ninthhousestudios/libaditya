@@ -107,4 +107,31 @@ def __getattr__(name):
 
         globals()["replace"] = _replace
         return _replace
+    if name == "__all__":
+        return _star_exports()
     raise AttributeError(f"module 'libaditya' has no attribute {name}")
+
+
+def _star_exports():
+    """`from libaditya import *` stays eager: everything the subpackages export.
+
+    `import libaditya` (and `from libaditya.x import y`) only pays for what it
+    touches; the star-import asks for __all__, which lands here and loads the
+    whole library, in the same order and with the same winners as before the
+    imports went lazy.
+    """
+    import importlib
+
+    g = globals()
+    aliases = {k: g[k] for k in ("const", "utils", "read", "write", "printf")}
+    for pkg in ("objects", "calc", "charts", "hd", "stars", "cards"):
+        mod = importlib.import_module(f"libaditya.{pkg}")
+        for n, v in vars(mod).items():
+            if not n.startswith("_"):
+                g[n] = v
+    g.update(aliases)
+    __getattr__("console")
+    __getattr__("replace")
+    names = [n for n in g if not n.startswith("_")]
+    g["__all__"] = names
+    return names
