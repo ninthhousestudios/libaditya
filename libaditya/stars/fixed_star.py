@@ -26,7 +26,12 @@ from libaditya.custom_ayanamsa import apply_sid_mode
 
 from libaditya.objects import Longitude, CelestialObject, EphContext
 
-from libaditya.stars.stellarium import Stellarium
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # annotation only: importing it for real pulls in requests (the
+    # stellarium extra) for every Chart
+    from libaditya.stars.stellarium import Stellarium
 
 
 def correct_nomen_name(swe_id):
@@ -93,7 +98,7 @@ class FixedStar(CelestialObject, Longitude):
         self,
         swe_id: str,
         context: EphContext = EphContext(),
-        rc: Stellarium = None,
+        rc: "Stellarium" = None,
         swe_string="",
     ):
         self.context = context

@@ -41,6 +41,11 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
 swe.set_ephe_path(base_path + "/ephe/")
 
+from libaditya._version import __version__
+from libaditya import _extras
+
+_extras.install()
+
 from libaditya import constants as const
 from libaditya import utils
 from libaditya import read

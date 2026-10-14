@@ -12,15 +12,13 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-# this sets __version__ for everyone
+# this sets __version__ for everyone, from the installed distribution's
+# metadata (pyproject.toml is not shipped inside a wheel)
 
-import toml
-import os
-import pathlib
+from importlib.metadata import PackageNotFoundError, version
 
-package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
-
-with open(package_path + "pyproject.toml", "r") as f:
-    config = toml.load(f)
-
-__version__ = config["project"]["version"]
+try:
+    __version__ = version("libaditya")
+except PackageNotFoundError:
+    # running from a source tree that was never installed
+    __version__ = "0+unknown"
