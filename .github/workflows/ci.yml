@@ -1,0 +1,63 @@
+# Build the wheel once, then run the golden-master suite and the unit tests
+# against that installed wheel (not the source tree), so what passes is exactly
+# what publish.yml uploads: ephemeris files and golden fixtures included.
+#
+# Runs on every push and pull request to master, and is called by publish.yml
+# before a release. Make "test" a required status check on master.
+
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv build
+      - name: Wheel carries the ephemeris
+        run: |
+          python3 - <<'EOF'
+          import glob, zipfile
+          (wheel,) = glob.glob("dist/*.whl")
+          names = set(zipfile.ZipFile(wheel).namelist())
+          for required in ("libaditya/ephe/seleapsec.txt", "libaditya/ephe/sepl_18.se1"):
+              assert required in names, f"{required} missing from {wheel}"
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install the built wheel
+        run: |
+          uv venv
+          uv pip install "$(ls dist/*.whl)[all]" pytest
+      # run from an empty directory so nothing resolves against a source tree
+      - name: Golden master
+        working-directory: ${{ runner.temp }}
+        run: $GITHUB_WORKSPACE/.venv/bin/python -m libaditya.tests.golden
+      - name: Unit tests
+        working-directory: ${{ runner.temp }}
+        run: $GITHUB_WORKSPACE/.venv/bin/python -m pytest --pyargs libaditya.tests

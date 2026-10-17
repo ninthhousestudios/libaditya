@@ -1,0 +1,46 @@
+# Pushing a tag vX.Y.Z publishes libaditya X.Y.Z to PyPI, if the tag matches
+# the version in pyproject.toml and ci.yml passes on the tagged commit.
+#
+# Uses PyPI Trusted Publishing (OIDC): no API token is stored anywhere. PyPI
+# trusts this repository, this workflow file and the "pypi" environment.
+#
+# PyPI versions are permanent: a bad release can be yanked, never re-uploaded
+# under the same number. Fix forward with the next patch version.
+
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches pyproject version
+        run: |
+          python3 - <<'EOF'
+          import os, tomllib
+          tag = os.environ["GITHUB_REF_NAME"]
+          with open("pyproject.toml", "rb") as f:
+              version = tomllib.load(f)["project"]["version"]
+          assert tag == f"v{version}", f"tag {tag} does not match pyproject version {version}"
+          EOF
+
+  ci:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
