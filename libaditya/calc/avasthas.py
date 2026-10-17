@@ -89,8 +89,9 @@ class LajjitaadiAvasthas:
         """
         planets = self.planets()
         signs = self.signs()
-        cusps = self.cusps()
         lagna = signs.lagna()
+        # whole-sign 5th: the 5th sign from the lagna's sign, whatever the
+        # house system; the 5th cusp never decides shame
         fifth_sign_num = lagna.astrological_signs_forward(5)
 
         result = {}
@@ -250,7 +251,7 @@ class LajjitaadiAvasthas:
             # prerequisite for the aspect trigger, not a standalone trigger
 
             # --- Shamed ---
-            # conjunct Sun/Mars/Saturn AND (conjunct Rahu/Ketu OR in 5th sign OR conjunct 5th cusp)
+            # conjunct Sun/Mars/Saturn AND (conjunct Rahu/Ketu OR in 5th sign)
             conj_sun_mars_saturn = []
             conj_rahu_ketu = False
             for other_name in GRAHAS:
@@ -266,8 +267,7 @@ class LajjitaadiAvasthas:
 
             if conj_sun_mars_saturn:
                 in_fifth_sign = sign_num == fifth_sign_num
-                conj_fifth_cusp = planet.sign() == cusps[5].sign()
-                if conj_rahu_ketu or in_fifth_sign or conj_fifth_cusp:
+                if conj_rahu_ketu or in_fifth_sign:
                     for trigger in conj_sun_mars_saturn:
                         _add(
                             avasthas,
@@ -289,12 +289,6 @@ class LajjitaadiAvasthas:
                             avasthas,
                             "shamed",
                             {"source": "condition", "detail": "in 5th sign"},
-                        )
-                    if conj_fifth_cusp and not in_fifth_sign:
-                        _add(
-                            avasthas,
-                            "shamed",
-                            {"source": "condition", "detail": "conjunct 5th cusp"},
                         )
 
             planet.attributes["lajjitaadi_avasthas"] = avasthas
