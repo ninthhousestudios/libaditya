@@ -14,7 +14,7 @@ Apply; modules that cache by ayanamsa id register ``on_change`` to drop their
 cache when it changes.
 """
 
-import swisseph as swe
+from libaditya import _swe as swe
 
 from libaditya import utils
 

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (C) 2026 Ninth House Studios LLC
 
-import swisseph as swe
+from libaditya import _swe as swe
 import os
 import pathlib
 

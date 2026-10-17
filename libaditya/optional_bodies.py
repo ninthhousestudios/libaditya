@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-import swisseph as swe
+from libaditya import _swe as swe
 
 
 @dataclass(frozen=True)

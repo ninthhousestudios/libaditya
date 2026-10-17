@@ -32,7 +32,7 @@ unless I have manually added a different one
 my additions are first; not a lot of them
 """
 
-import swisseph as swe
+from libaditya import _swe as swe
 
 from libaditya.objects import EphContext, Planet
 

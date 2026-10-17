@@ -19,7 +19,7 @@
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
 import math
-import swisseph as swe
+from libaditya import _swe as swe
 
 from libaditya import constants as const
 from libaditya import utils

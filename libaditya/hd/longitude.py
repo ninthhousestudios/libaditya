@@ -18,7 +18,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with libaditya.  If not, see <https://www.gnu.org/licenses/>.
 
-import swisseph as swe
+from libaditya import _swe as swe
 
 from libaditya import constants as const
 from libaditya import utils

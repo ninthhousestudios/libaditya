@@ -33,13 +33,13 @@ if _swe_backend and _swe_backend not in ("swisseph", "pyswisseph"):
 
     _sys.modules["swisseph"] = _importlib.import_module(_swe_backend)
 
-import swisseph as swe
+from libaditya import _swe as swe
 import os
 import pathlib
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 package_path = os.path.dirname(pathlib.Path(__file__).parent) + "/"
-swe.set_ephe_path(base_path + "/ephe/")
+swe.ensure_ephe_path()
 
 from libaditya._version import __version__
 from libaditya import _extras
