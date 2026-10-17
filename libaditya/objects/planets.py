@@ -338,10 +338,9 @@ class Planet(CelestialObject, Longitude, PlanetBala):
         return const.ayanamsa_name(self.ayanamsa())
 
     def retrograde(self) -> bool:
-        if self.longitude_speed() < 0:
-            return True
-        else:
-            return False
+        # Unrounded speed: rounding a small negative speed gives -0.0, which
+        # would hide the retrograde state near a station.
+        return self.long_speed < 0
 
     def retrostr(self) -> str:
         if self.retrograde():
