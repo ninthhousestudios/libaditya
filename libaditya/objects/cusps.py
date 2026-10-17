@@ -226,6 +226,13 @@ class Cusps:
             ascmc = tuple(
                 v if i == 2 else (v + aval) % 360.0 for i, v in enumerate(ascmc)
             )
+            if self.hsys == b"W":
+                # Whole Sign cusps are sign boundaries of the frame they are in.
+                # Shifting the tropical ones by aval leaves them aval degrees
+                # into a sign, and cusp 1 can land in the sign before the
+                # Ascendant's: rebuild them from the shifted Ascendant.
+                first = (ascmc[0] // 30.0) * 30.0
+                cusps = tuple((first + 30.0 * n) % 360.0 for n in range(12))
         retcusps = []
         for n, cusp in enumerate(cusps):
             retcusps.append(
