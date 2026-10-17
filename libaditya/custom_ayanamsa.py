@@ -14,6 +14,9 @@ Apply; modules that cache by ayanamsa id register ``on_change`` to drop their
 cache when it changes.
 """
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+
 from libaditya import _swe as swe
 
 from libaditya import utils
@@ -30,6 +33,7 @@ _state = {
     "year": DEFAULT_REFERENCE_YEAR,
 }
 _listeners = []
+_override = ContextVar("custom_ayanamsa_override", default=None)
 
 
 def reference_jd(year):
@@ -39,7 +43,25 @@ def reference_jd(year):
 
 def get_custom_ayanamsa():
     """(name, value_deg, reference_year) of the current definition."""
-    return _state["name"], _state["value"], _state["year"]
+    return _override.get() or (_state["name"], _state["value"], _state["year"])
+
+
+@contextmanager
+def using_custom_ayanamsa(value_deg, reference_year, name=""):
+    """A calculation-local definition; never replaces the process-wide one.
+
+    For previews (a Settings row showing what a value would give) and for
+    computing one chart under its own definition while other threads keep
+    theirs: the override lives in a ContextVar, so it is per thread and per
+    asyncio task, and no ``on_change`` listener fires.
+    """
+    token = _override.set(
+        ((name or "").strip() or DEFAULT_NAME, float(value_deg), int(reference_year))
+    )
+    try:
+        yield
+    finally:
+        _override.reset(token)
 
 
 def set_custom_ayanamsa(value_deg, reference_year, name=""):
@@ -75,10 +97,7 @@ def apply_sid_mode(ayanamsa):
     if ayanamsa == 97:
         utils.set_swe_true_sidereal_ayanamsa()
     elif ayanamsa == CUSTOM_AYANAMSA_ID:
-        swe.set_sid_mode(
-            swe.SIDM_USER + swe.SIDBIT_USER_UT,
-            reference_jd(_state["year"]),
-            _state["value"],
-        )
+        _name, value, year = get_custom_ayanamsa()
+        swe.set_sid_mode(swe.SIDM_USER + swe.SIDBIT_USER_UT, reference_jd(year), value)
     else:
         swe.set_sid_mode(ayanamsa)
